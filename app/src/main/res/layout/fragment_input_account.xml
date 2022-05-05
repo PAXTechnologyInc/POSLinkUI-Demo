@@ -54,7 +54,8 @@
         android:id="@+id/manual_message"
         android:textSize="14sp"
         android:textColor="@color/black"/>
-    <EditText
+    <TextView
+        android:background="@drawable/border"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_account"
@@ -62,7 +63,7 @@
         android:inputType="numberSigned"
         android:digits="0123456789 "
         android:layout_margin="20dp"
-        android:gravity="end"
+        android:gravity="center_horizontal"
         android:textSize="20sp"/>
 
     <LinearLayout

@@ -181,6 +181,9 @@ public class PINFragment extends Fragment {
             amountView.setVisibility(View.GONE);
         }
 
+        boolean couldBypass = pinRange!= null && pinRange.startsWith("0,");
+        view.findViewById(R.id.bypass).setVisibility(couldBypass? View.VISIBLE:View.GONE);
+
         if(isUsingExternalPinPad){
             view.findViewById(R.id.pinpad_layout).setVisibility(View.GONE);
             sendSecureArea();

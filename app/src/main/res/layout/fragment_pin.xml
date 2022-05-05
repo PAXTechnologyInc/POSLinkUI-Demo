@@ -48,12 +48,18 @@
             android:layout_height="wrap_content"
             android:id="@+id/edit_pin"
             android:hint=""
-            android:inputType="number"
             android:layout_margin="5dp"
             android:gravity="center_horizontal"
             android:padding="10dp"
             android:textSize="20sp"
             android:layout_marginVertical="10dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bypass"
+            android:gravity="center"
+            android:text="@string/prompt_no_pin"
+            android:textColor="@color/black"/>
     </LinearLayout>
 
     <androidx.gridlayout.widget.GridLayout

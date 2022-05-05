@@ -37,6 +37,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.ClssLightStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
+import com.pax.us.pay.ui.constant.status.SecurityStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
@@ -82,6 +83,7 @@ public class InputAccountFragment extends Fragment {
     private TextView amountTv;
 
     private BroadcastReceiver receiver;
+    private TextView panInputBox;
 
     public static InputAccountFragment newInstance(Intent intent){
         InputAccountFragment numFragment = new InputAccountFragment();
@@ -216,27 +218,27 @@ public class InputAccountFragment extends Fragment {
         TextView textView = view.findViewById(R.id.manual_message);
         textView.setText(hint);
 
-        EditText editText = view.findViewById(R.id.edit_account);
+        panInputBox = view.findViewById(R.id.edit_account);
 
         if(enableManual) {
-            editText.setEnabled(true);
+            panInputBox.setEnabled(true);
 
-            ViewTreeObserver observer = editText.getViewTreeObserver();
+            ViewTreeObserver observer = panInputBox.getViewTreeObserver();
             observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    editText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    panInputBox.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     if(Build.MODEL.equals("A35")){
                         new Handler().postDelayed(()-> {
-                            sendSecureArea(editText);
+                            sendSecureArea(panInputBox);
                         },100);
                     }else{
-                        sendSecureArea(editText);
+                        sendSecureArea(panInputBox);
                     }
                 }
             });
         }else{
-            editText.setEnabled(false);
+            panInputBox.setEnabled(false);
         }
         clssLightsView = view.findViewById(R.id.clss_light);
 
@@ -318,6 +320,12 @@ public class InputAccountFragment extends Fragment {
 
             intentFilter.addCategory(InformationStatus.CATEGORY);
             intentFilter.addAction(InformationStatus.TRANS_AMOUNT_CHANGED_IN_CARD_PROCESSING);
+
+            intentFilter.addCategory(SecurityStatus.CATEGORY);
+            intentFilter.addAction(SecurityStatus.SECURITY_ENTER_CLEARED);
+            intentFilter.addAction(SecurityStatus.SECURITY_ENTERING);
+            intentFilter.addAction(SecurityStatus.SECURITY_ENTER_DELETE);
+
             requireContext().registerReceiver(receiver,intentFilter);
         }
 
@@ -349,7 +357,7 @@ public class InputAccountFragment extends Fragment {
 
     }
 
-    private void sendSecureArea(EditText editText){
+    private void sendSecureArea(TextView editText){
         int[] location = new int[2];
         editText.getLocationInWindow(location);
         int x = location[0];
@@ -456,6 +464,15 @@ public class InputAccountFragment extends Fragment {
                     break;
                 case CardStatus.CARD_QUICK_REMOVAL_REQUIRED:
                     Toast.makeText(requireContext(),getString(R.string.please_remove_card_quickly),Toast.LENGTH_LONG).show();
+                    break;
+                case SecurityStatus.SECURITY_ENTER_CLEARED:
+                    Log.d("InputAccountFragment","SECURITY_ENTER_CLEARED");
+                    break;
+                case SecurityStatus.SECURITY_ENTERING:
+                    Log.d("InputAccountFragment","SECURITY_ENTERING");
+                    break;
+                case SecurityStatus.SECURITY_ENTER_DELETE:
+                    Log.d("InputAccountFragment","SECURITY_ENTER_DELETE");
                     break;
                 default:
                     break;
