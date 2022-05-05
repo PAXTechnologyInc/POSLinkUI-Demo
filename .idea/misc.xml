@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="../../../../../layout/custom_preview.xml" value="0.221875" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/drawable/light_blue.xml" value="0.1" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/drawable/selection_insert_card_a30.xml" value="0.1" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/activity_base_num.xml" value="0.17395833333333333" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/activity_entry.xml" value="0.17395833333333333" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/activity_input_account.xml" value="0.1" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_base_amount.xml" value="0.17395833333333333" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_base_num.xml" value="0.17395833333333333" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_cashback.xml" value="0.10833333333333334" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_input_account.xml" value="0.17395833333333333" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_pin.xml" value="0.10400000000000001" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_security.xml" value="0.17395833333333333" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_total_amount.xml" value="0.1" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/layout_clss_light_default.xml" value="0.17395833333333333" />
+        <entry key="app/src/main/res/layout/activity_base_num_text.xml" value="0.14791666666666667" />
+        <entry key="app/src/main/res/layout/fragment_amount.xml" value="0.14791666666666667" />
+        <entry key="app/src/main/res/layout/fragment_avs.xml" value="0.14791666666666667" />
+        <entry key="app/src/main/res/layout/fragment_base_amount.xml" value="0.19375" />
+        <entry key="app/src/main/res/layout/fragment_base_num_text.xml" value="0.13677536231884058" />
+        <entry key="app/src/main/res/layout/fragment_base_text.xml" value="0.13677536231884058" />
+        <entry key="app/src/main/res/layout/fragment_display_trans.xml" value="0.15760869565217392" />
+        <entry key="app/src/main/res/layout/fragment_expiry.xml" value="0.14791666666666667" />
+        <entry key="app/src/main/res/layout/fragment_information.xml" value="0.15760869565217392" />
+        <entry key="app/src/main/res/layout/fragment_input_account.xml" value="0.19375" />
+        <entry key="app/src/main/res/layout/fragment_pin.xml" value="0.19375" />
+        <entry key="app/src/main/res/layout/fragment_security.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_total_amount.xml" value="0.14791666666666667" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
