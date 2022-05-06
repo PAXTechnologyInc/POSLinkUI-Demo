@@ -6,31 +6,41 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
-import com.pax.us.pay.ui.constant.entry.InformationEntry;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
-import com.paxus.pay.poslinkui.demo.event.EntryAcceptedEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryDeclinedEvent;
+import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
 import com.paxus.pay.poslinkui.demo.event.InformationStatusEvent;
 import com.paxus.pay.poslinkui.demo.event.TransCompletedEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
+/**
+ * Using event bus could make code clean.
+ */
 public class POSLinkUIReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("POSLinkUIReceiver","Action: "+intent.getAction());
         switch (intent.getAction()){
             case EntryResponse.ACTION_ACCEPTED:
-                EventBus.getDefault().post(new EntryAcceptedEvent());
+                EventBus.getDefault().post(new EntryResponseEvent(intent.getAction()));
                 break;
-            case EntryResponse.ACTION_DECLINED:
-                onDeclined(intent);
+            case EntryResponse.ACTION_DECLINED: {
+                long resultCode = intent.getLongExtra(EntryResponse.PARAM_CODE,0);
+                String message = intent.getStringExtra(EntryResponse.PARAM_MSG);
+                EventBus.getDefault().post(new EntryResponseEvent(intent.getAction(),resultCode,message));
                 break;
-            case InformationStatus.TRANS_COMPLETED:
-                onTransCompleted(intent);
+            }
+            case InformationStatus.TRANS_COMPLETED:{
+                long resultCode = intent.getLongExtra(StatusData.PARAM_CODE,0);
+                String message = intent.getStringExtra(StatusData.PARAM_MSG);
+                long timeout = intent.getLongExtra(StatusData.PARAM_HOST_RESP_TIMEOUT,2000);
+
+                EventBus.getDefault().post(new TransCompletedEvent(resultCode,message,timeout));
                 break;
+            }
+
             case InformationStatus.TRANS_ONLINE_STARTED:
             case InformationStatus.TRANS_ONLINE_FINISHED:
             case InformationStatus.EMV_TRANS_ONLINE_STARTED:
@@ -50,19 +60,4 @@ public class POSLinkUIReceiver extends BroadcastReceiver {
         }
 
     }
-
-    private void onDeclined(Intent intent){
-        long resultCode = intent.getLongExtra(EntryResponse.PARAM_CODE,0);
-        String message = intent.getStringExtra(EntryResponse.PARAM_MSG);
-        EventBus.getDefault().post(new EntryDeclinedEvent(resultCode,message));
-    }
-
-    private void onTransCompleted(Intent intent){
-        long resultCode = intent.getLongExtra(StatusData.PARAM_CODE,0);
-        String message = intent.getStringExtra(StatusData.PARAM_MSG);
-        long timeout = intent.getLongExtra(StatusData.PARAM_HOST_RESP_TIMEOUT,2000);
-
-        EventBus.getDefault().post(new TransCompletedEvent(resultCode,message,timeout));
-    }
-
 }

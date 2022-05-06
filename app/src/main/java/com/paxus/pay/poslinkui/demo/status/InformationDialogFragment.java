@@ -1,10 +1,7 @@
 package com.paxus.pay.poslinkui.demo.status;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -17,7 +14,6 @@ import androidx.fragment.app.DialogFragment;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
-import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
 
 public class InformationDialogFragment extends DialogFragment {
@@ -30,12 +26,6 @@ public class InformationDialogFragment extends DialogFragment {
         dialogFragment.setArguments(bundle);
         return dialogFragment;
     }
-
-//    @Nullable
-//    @Override
-//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        return inflater.inflate(R.layout.fragment_trans_approve, container, false);
-//    }
 
     @NonNull
     @Override
@@ -84,11 +74,6 @@ public class InformationDialogFragment extends DialogFragment {
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         return dialog;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
 }

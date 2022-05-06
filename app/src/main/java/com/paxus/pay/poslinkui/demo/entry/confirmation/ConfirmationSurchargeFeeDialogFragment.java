@@ -1,7 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.confirmation;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -87,8 +86,7 @@ public class ConfirmationSurchargeFeeDialogFragment extends DialogFragment {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EntryRequestUtils.sendNext(requireContext(), packageName, action,EntryRequest.PARAM_CONFIRMED,true);
-                dismiss();
+                sendNext(true);
             }
         });
 
@@ -96,8 +94,7 @@ public class ConfirmationSurchargeFeeDialogFragment extends DialogFragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EntryRequestUtils.sendAbort(requireContext(), packageName, action);
-                dismiss();
+                sendAbort();
             }
         });
         Button bypass = view.findViewById(R.id.bypass_button);
@@ -105,14 +102,23 @@ public class ConfirmationSurchargeFeeDialogFragment extends DialogFragment {
             bypass.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EntryRequestUtils.sendNext(requireContext(), packageName, action,EntryRequest.PARAM_CONFIRMED,false);
-                    dismiss();
+                    sendNext(false);
                 }
             });
 
         }else{
             bypass.setVisibility(View.GONE);
         }
+    }
+
+    private void sendNext(boolean confirm){
+        dismiss();
+        EntryRequestUtils.sendNext(requireContext(), packageName, action,EntryRequest.PARAM_CONFIRMED,confirm);
+    }
+
+    private void sendAbort(){
+        dismiss();
+        EntryRequestUtils.sendAbort(requireContext(), packageName, action);
     }
 
 }

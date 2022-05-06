@@ -27,6 +27,10 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
+/**
+ * For ConfirmationEntry.ACTION_CONFIRM_CARD_PROCESS_RESULT, if timeout, treat it as confirmed.
+ * For other confirm actions, timeout is controlled by BroadPOS.
+ */
 public class ConfirmationDialogFragment extends DialogFragment {
     private String action;
     private String packageName;
@@ -54,15 +58,16 @@ public class ConfirmationDialogFragment extends DialogFragment {
         loadView(view);
 
         Dialog dialog = getDialog();
-        if(dialog!= null) {
+        if (dialog != null) {
             dialog.setCanceledOnTouchOutside(false);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            new Handler().postDelayed(()->{
-                if(dialog.isShowing()){
-                    EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
-                    dismiss();
-                }
-            },timeout);
+
+            //For CONFIRM_CARD_PROCESS_RESULT
+            if (!TextUtils.isEmpty(positiveText) && TextUtils.isEmpty(negativeText)) {
+                new Handler().postDelayed(() -> {
+                    sendNext(true);
+                }, timeout);
+            }
         }
         return view;
     }
@@ -104,8 +109,7 @@ public class ConfirmationDialogFragment extends DialogFragment {
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_CONFIRMED,true);
-                    dismiss();
+                    sendNext(true);
                 }
             });
         }else{
@@ -118,8 +122,7 @@ public class ConfirmationDialogFragment extends DialogFragment {
             negativeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_CONFIRMED,false);
-                    dismiss();
+                    sendNext(false);
                 }
             });
         }else{
@@ -252,4 +255,10 @@ public class ConfirmationDialogFragment extends DialogFragment {
             negativeText = negative;
         }
     }
+
+    private void sendNext(boolean confirm){
+        dismiss();
+        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_CONFIRMED,confirm);
+    }
+
 }

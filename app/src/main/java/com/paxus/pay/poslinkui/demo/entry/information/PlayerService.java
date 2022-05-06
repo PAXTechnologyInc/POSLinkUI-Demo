@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat;
 
 /**
  * Created by Yanina.Yang on 6/1/2020.
+ * Play sound in background (Do not block UI)
  */
 public class PlayerService extends Service {
     public static final String PARAM_RESOURCE_ID = "resourceId";

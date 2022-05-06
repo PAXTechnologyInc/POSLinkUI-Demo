@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +21,13 @@ import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
+import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.InputType;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryAcceptedEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryDeclinedEvent;
+import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
@@ -217,21 +218,22 @@ public class NumTextFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEntryAbort(EntryAbortEvent event) {
-        // Do something
+        
         sendAbort();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryAccepted(EntryAcceptedEvent event) {
-        // Do something
-        Toast.makeText(requireActivity(),"Accepted",Toast.LENGTH_SHORT).show();
-    }
+    public void onGetEntryResponse(EntryResponseEvent event){
+        switch (event.action){
+            case EntryResponse.ACTION_ACCEPTED:
+                Log.d("POSLinkUI","Entry "+action+" accepted");
+                break;
+            case EntryResponse.ACTION_DECLINED:{
+                Log.d("POSLinkUI","Entry "+action+" declined("+event.code+"-"+event.message+")");
+                Toast.makeText(requireActivity(),event.message,Toast.LENGTH_SHORT).show();
+            }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryDeclined(EntryDeclinedEvent event) {
-        // Do something
-
-        Toast.makeText(requireActivity(),event.code+"-"+event.message,Toast.LENGTH_SHORT).show();
+        }
     }
 
 

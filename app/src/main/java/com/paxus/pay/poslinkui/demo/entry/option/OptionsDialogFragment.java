@@ -3,14 +3,8 @@ package com.paxus.pay.poslinkui.demo.entry.option;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,12 +14,8 @@ import androidx.fragment.app.DialogFragment;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.OptionEntry;
-import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
-
-import java.lang.reflect.Field;
-import java.util.logging.Logger;
 
 public class OptionsDialogFragment extends DialogFragment {
     private String action;
