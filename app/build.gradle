@@ -39,5 +39,6 @@ dependencies {
     implementation "com.paxus.ui:constant:1.00.45"
 
     implementation("org.greenrobot:eventbus:3.3.1")
-
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 }

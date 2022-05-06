@@ -105,7 +105,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendSecureArea(Context context, String packageName, String action,
-                                      int x, int y, int width, int height, int fontSize, String fontColor){
+                                      int x, int y, int width, int height, int fontSize, String hint,String fontColor){
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
         bundle.putInt(EntryRequest.PARAM_X, x);
@@ -113,6 +113,7 @@ public class EntryRequestUtils {
         bundle.putInt(EntryRequest.PARAM_WIDTH, width);
         bundle.putInt(EntryRequest.PARAM_HEIGHT, height);
         bundle.putInt(EntryRequest.PARAM_FONT_SIZE, fontSize);
+        bundle.putString(EntryRequest.PARAM_HINT, hint);
         bundle.putString(EntryRequest.PARAM_COLOR, fontColor);
 
         Intent intent = new Intent(EntryRequest.ACTION_SECURITY_AREA);

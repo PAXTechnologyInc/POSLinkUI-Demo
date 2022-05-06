@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".entry.EntryActivity">
+    tools:context=".entry.EntryActivity"
+    android:background="@color/white">
     <FrameLayout
         android:id="@+id/fragment_placeholder"
         android:layout_width="match_parent"

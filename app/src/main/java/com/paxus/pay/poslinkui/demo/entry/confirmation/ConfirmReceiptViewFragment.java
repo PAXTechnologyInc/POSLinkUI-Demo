@@ -1,17 +1,22 @@
-package com.paxus.pay.poslinkui.demo.entry.security;
+package com.paxus.pay.poslinkui.demo.entry.confirmation;
 
 import android.content.Intent;
-import android.graphics.Rect;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.InputFilter;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.EditText;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,11 +26,10 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
-import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
-import com.pax.us.pay.ui.constant.entry.enumeration.VCodeName;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
 import com.paxus.pay.poslinkui.demo.event.EntryAcceptedEvent;
@@ -37,18 +41,22 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class SecurityFragment extends Fragment {
+import java.io.IOException;
+
+//TODO Yanina: Grant Permission for RECEIPT_URI
+public class ConfirmReceiptViewFragment extends Fragment {
     private String action;
     private String packageName;
     private String transType;
     private long timeOut;
-    private int minLength;
-    private int maxLength;
-    private String message = "";
     private String transMode;
 
-    public static SecurityFragment newInstance(Intent intent){
-        SecurityFragment numFragment = new SecurityFragment();
+    private String receiptUri;
+
+    private ImageView imageView;
+    private Animation receiptOutAnim;
+    public static ConfirmReceiptViewFragment newInstance(Intent intent){
+        ConfirmReceiptViewFragment numFragment = new ConfirmReceiptViewFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
         bundle.putAll(intent.getExtras());
@@ -66,7 +74,7 @@ public class SecurityFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_security, container, false);
+        return inflater.inflate(R.layout.fragment_receipt_view, container, false);
     }
 
     @Override
@@ -76,7 +84,6 @@ public class SecurityFragment extends Fragment {
         loadView(view);
         EventBus.getDefault().register(this);
 
-
     }
 
     @Override
@@ -84,7 +91,9 @@ public class SecurityFragment extends Fragment {
         super.onDestroyView();
 
         EventBus.getDefault().unregister(this);
-
+        if (receiptOutAnim != null) {
+            receiptOutAnim.cancel();
+        }
     }
 
     private void loadArgument(Bundle bundle){
@@ -97,44 +106,13 @@ public class SecurityFragment extends Fragment {
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
-        String valuePatten = "";
-        if(SecurityEntry.ACTION_ENTER_VCODE.equals(action)){
-            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"3-4");
-            message = getString(R.string.pls_input_vcode);
-            String vcodeName = bundle.getString(EntryExtraData.PARAM_VCODE_NAME);
-            if(VCodeName.CVV2.equals(vcodeName)){
-
-            }else if(VCodeName.CAV2.equals(vcodeName)){
-
-            }else if(VCodeName.CID.equals(vcodeName)){
-
-            }else {
-                message = vcodeName;
-            }
-        } else if(SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS.equals(action)){
-            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"4-4");
-            message = getString(R.string.prompt_input_4digit);
-        } else if(SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS.equals(action)){
-            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-19");
-            message = getString(R.string.prompt_input_all_digit);
-        }
-
-        if(!TextUtils.isEmpty(valuePatten) && valuePatten.contains("-")){
-            String[] tmp = valuePatten.split("-");
-            if(tmp.length == 2) {
-                minLength = Integer.parseInt(tmp[0]);
-                maxLength = Integer.parseInt(tmp[1]);
-            }
-        }
-
+        receiptUri = bundle.getString(EntryExtraData.PARAM_RECEIPT_URI);
     }
 
     private void loadView(View view){
-        if(!TextUtils.isEmpty(transType) && getActivity() instanceof AppCompatActivity){
-            ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            if(actionBar != null) {
-                actionBar.setTitle(transType);
-            }
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setTitle(getString(R.string.receipt_preview));
         }
 
         String mode = null;
@@ -155,48 +133,51 @@ public class SecurityFragment extends Fragment {
             ViewUtils.removeWaterMarkView(requireActivity());
         }
 
-        TextView textView = view.findViewById(R.id.message);
-        textView.setText(message);
-
-        EditText editText = view.findViewById(R.id.edit_security);
-        ViewTreeObserver observer = editText.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        receiptOutAnim = AnimationUtils.loadAnimation(requireActivity(), R.anim.receipt_out);
+        imageView = view.findViewById(R.id.print_preview);
+        Button confirmBtn = view.findViewById(R.id.confirm_button);
+        confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onGlobalLayout() {
-                editText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                if(Build.MODEL.equals("A35")){
-                    new Handler().postDelayed(()-> {
-                        sendSecureArea(editText);
-                    },100);
-                }else{
-                    sendSecureArea(editText);
-                }
+            public void onClick(View view) {
+                imageView.startAnimation(receiptOutAnim);
+                sendNext(true);
             }
         });
 
-    }
-    private void sendSecureArea(EditText editText){
-        int[] location = new int[2];
-        editText.getLocationInWindow(location);
-        int x = location[0];
-        int y = location[1];
-        int barHeight = 0;
-        boolean immersiveSticky = (requireActivity().getWindow().getDecorView().getSystemUiVisibility() &
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) > 0;
-        if (!immersiveSticky) {
-            //area of application
-            Rect outRect1 = new Rect();
-            requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(outRect1);
-            barHeight = outRect1.top;  //statusBar's height
+        try {
+            Uri imageUri = Uri.parse(receiptUri);
+            Bitmap bitmap = null;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), imageUri);
+            } else {
+                ImageDecoder.Source source = ImageDecoder.createSource(requireContext().getContentResolver(), imageUri);
+                ImageDecoder.OnHeaderDecodedListener listener = new ImageDecoder.OnHeaderDecodedListener() {
+                    @Override
+                    public void onHeaderDecoded(@NonNull ImageDecoder decoder, @NonNull ImageDecoder.ImageInfo info, @NonNull ImageDecoder.Source source) {
+                        decoder.setAllocator(ImageDecoder.ALLOCATOR_SOFTWARE);
+                        decoder.setMutableRequired(true);
+                    }
+                };
+                bitmap = ImageDecoder.decodeBitmap(source);
+            }
+            if (bitmap == null) {
+                Toast.makeText(requireContext(), getString(R.string.receipt_image_too_larger),Toast.LENGTH_SHORT).show();
+                sendAbort();
+            } else {
+                imageView.setImageBitmap(bitmap);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+//            tickTimerStop();
+            Toast.makeText(requireContext(), getString(R.string.receipt_image_too_long),Toast.LENGTH_SHORT).show();
+            sendAbort();
         }
-        int fontSize = (int)editText.getTextSize();
-        EntryRequestUtils.sendSecureArea(requireContext(), packageName, action, x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize,
-                "",
-                "FF9C27B0");
+
+
     }
 
-    private void sendTimeout(){
-        EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
+    private void sendNext(boolean confirm){
+        EntryRequestUtils.sendNext(requireContext(), packageName, action,EntryRequest.PARAM_CONFIRMED,confirm);
     }
 
     private void sendAbort(){

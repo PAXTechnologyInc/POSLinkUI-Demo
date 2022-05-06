@@ -17,4 +17,8 @@
     <color name="cancel">#FB3A3A</color>
     <color name="clear">#FF9903</color>
     <color name="enter">#46B54B</color>
+
+    <color name="success">#46B54B</color>
+    <color name="fail">#FB3A3A</color>
+
 </resources>

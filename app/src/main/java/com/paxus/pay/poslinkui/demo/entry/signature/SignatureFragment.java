@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -37,6 +38,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SignatureFragment extends Fragment {
     private String action;
@@ -52,6 +55,24 @@ public class SignatureFragment extends Fragment {
     private boolean enableCancel;
     private Button confirmBtn;
     private ElectronicSignatureView mSignatureView;
+    private TextView timeoutView;
+    private long tickTimeout;
+    private Handler handler = new Handler();
+    private Runnable tick = new Runnable() {
+        @Override
+        public void run() {
+            tickTimeout = tickTimeout - 1000;
+            long tick = tickTimeout/1000;
+            if(timeoutView != null){
+                timeoutView.setText(String.valueOf(tick));
+            }
+            if(tick == 0){
+                sendTimeout();
+            }else{
+                handler.postDelayed(this,1000);
+            }
+        }
+    };
 
     public static SignatureFragment newInstance(Intent intent){
         SignatureFragment numFragment = new SignatureFragment();
@@ -89,7 +110,7 @@ public class SignatureFragment extends Fragment {
         super.onDestroyView();
 
         EventBus.getDefault().unregister(this);
-
+        handler.removeCallbacks(tick);
     }
 
     private void loadArgument(Bundle bundle){
@@ -178,6 +199,10 @@ public class SignatureFragment extends Fragment {
 
             return false;
         });
+        timeoutView = view.findViewById(R.id.timeout);
+        tickTimeout = timeOut;
+        timeoutView.setText(String.valueOf(tickTimeout/1000));
+        handler.postDelayed(tick,1000);
     }
 
     private void onCancelClick(){
@@ -185,11 +210,11 @@ public class SignatureFragment extends Fragment {
     }
     private void onClearClick(){
         mSignatureView.clear();
+        tickTimeout = timeOut;
     }
 
     private void onConfirmClick(){
         if (!mSignatureView.getTouched()) {
-            //finish(new ActionResult(TransResult.SUCC, null));
             return;
         }
 
@@ -215,11 +240,19 @@ public class SignatureFragment extends Fragment {
     }
 
     private void sendNext(short[] signature){
+        handler.removeCallbacks(tick); //Stop Tick
+
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_SIGNATURE, signature);
     }
 
     private void sendAbort(){
+        handler.removeCallbacks(tick); //Stop Tick
+
         EntryRequestUtils.sendAbort(requireContext(), packageName, action);
+    }
+
+    private void sendTimeout(){
+        EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

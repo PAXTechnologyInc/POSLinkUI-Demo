@@ -12,9 +12,14 @@
         <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_base_amount.xml" value="0.17395833333333333" />
         <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_base_num.xml" value="0.17395833333333333" />
         <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_cashback.xml" value="0.10833333333333334" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_confirmation_dialog.xml" value="0.1" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_display_approve_msg.xml" value="0.1068840579710145" />
         <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_input_account.xml" value="0.17395833333333333" />
         <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_pin.xml" value="0.10400000000000001" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_receipt_view.xml" value="0.11458333333333333" />
         <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_security.xml" value="0.17395833333333333" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_signature.xml" value="0.17395833333333333" />
+        <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_surcharge_fee.xml" value="0.1" />
         <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_total_amount.xml" value="0.1" />
         <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/layout_clss_light_default.xml" value="0.17395833333333333" />
         <entry key="app/src/main/res/layout/activity_base_num_text.xml" value="0.14791666666666667" />
@@ -29,15 +34,11 @@
         <entry key="app/src/main/res/layout/fragment_input_account.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/fragment_pin.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/fragment_security.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_signature.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_tip.xml" value="0.10461956521739131" />
         <entry key="app/src/main/res/layout/fragment_total_amount.xml" value="0.14791666666666667" />
-        <entry key="app/src/main/res/layout/layout_cashback_option.xml" value="0.19375" />
-        <entry key="app/src/main/res/layout/layout_clss_light_default.xml" value="0.19375" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

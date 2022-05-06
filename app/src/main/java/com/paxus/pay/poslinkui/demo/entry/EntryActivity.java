@@ -11,8 +11,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
-import com.pax.us.pay.ui.constant.entry.EntryExtraData;
-import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.InformationEntry;
 import com.pax.us.pay.ui.constant.entry.OptionEntry;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
@@ -22,6 +20,8 @@ import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmationDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmationSurchargeFeeDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.information.DisplayApproveMessageFragment;
 import com.paxus.pay.poslinkui.demo.entry.information.DisplayTransInfoFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.OptionsDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.InputAccountFragment;
@@ -42,7 +42,6 @@ import com.paxus.pay.poslinkui.demo.event.InformationStatusEvent;
 import com.paxus.pay.poslinkui.demo.event.TransCompletedEvent;
 import com.paxus.pay.poslinkui.demo.status.InformationDialogFragment;
 import com.paxus.pay.poslinkui.demo.status.TransCompletedDialogFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -92,6 +91,7 @@ public class EntryActivity extends AppCompatActivity {
     }
 
     private void loadView(Intent intent){
+        Log.d("EntryActivity","Action: "+intent.getAction());
 
         Fragment fragment = createFragment(intent);
         if(fragment != null) {
@@ -102,10 +102,6 @@ public class EntryActivity extends AppCompatActivity {
             DialogFragment dialogFragment = createDialogFragment(intent);
             if(dialogFragment != null) {
                 dialogFragment.show(getSupportFragmentManager(), "EntryDialog");
-            }else if(InformationEntry.ACTION_DISPLAY_APPROVE_MESSAGE.equals(intent.getAction())) {
-                //TODO if you want play your online approve sound or animation, build your fragment.
-                Toast.makeText(this, "Online Approved", Toast.LENGTH_SHORT).show();
-                EntryRequestUtils.sendNext(this,intent.getStringExtra(EntryExtraData.PARAM_PACKAGE), InformationEntry.ACTION_DISPLAY_APPROVE_MESSAGE);
             }else {
                 Toast.makeText(this, "NOT FOUND:" + intent.getAction(), Toast.LENGTH_SHORT).show();
             }
@@ -268,6 +264,11 @@ public class EntryActivity extends AppCompatActivity {
                     return SignatureFragment.newInstance(intent);
                 }
 
+            } else if(categories.contains(ConfirmationEntry.CATEGORY)){
+                //TODO Bug: Grant Permission for RECEIPT_URI
+//                if(ConfirmationEntry.ACTION_CONFIRM_RECEIPT_VIEW.equals(action)){
+//                    return ConfirmReceiptViewFragment.newInstance(intent);
+//                }
             }
         }
 
@@ -279,15 +280,16 @@ public class EntryActivity extends AppCompatActivity {
         Set<String> categories = intent.getCategories();
         if(action != null) {
             if (categories.contains(OptionEntry.CATEGORY)) {
-                if(OptionEntry.ACTION_SELECT_INSTALLMENT_PLAN.equals(action)){
-                    //TODO Select Installment Plan
-                }else {
-                    return OptionsDialogFragment.newInstance(intent);
-                }
+                return OptionsDialogFragment.newInstance(intent);
             } else if(categories.contains(ConfirmationEntry.CATEGORY)){
-                if(ConfirmationEntry.ACTION_CONFIRM_UNIFIED_MESSAGE.equals(action)
-                        ||ConfirmationEntry.ACTION_CONFIRM_CARD_PROCESS_RESULT.equals(action)){
-                    return ConfirmationDialogFragment.newInstance(intent);
+                if(ConfirmationEntry.ACTION_CONFIRM_SURCHARGE_FEE.equals(action)){
+                    return ConfirmationSurchargeFeeDialogFragment.newInstance(intent);
+                }
+
+                return ConfirmationDialogFragment.newInstance(intent);
+            } else if(categories.contains(InformationEntry.CATEGORY)){
+                if(InformationEntry.ACTION_DISPLAY_APPROVE_MESSAGE.equals(action)) {
+                    return DisplayApproveMessageFragment.newInstance(intent);
                 }
             }
         }

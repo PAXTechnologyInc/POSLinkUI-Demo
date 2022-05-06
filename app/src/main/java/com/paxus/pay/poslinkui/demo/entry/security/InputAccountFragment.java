@@ -374,6 +374,7 @@ public class InputAccountFragment extends Fragment {
         TextPaint paint = editText.getPaint();
         int fontSize = (int)(paint.getTextSize()/paint.density);
         EntryRequestUtils.sendSecureArea(requireContext(), packageName, action, x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize,
+                "Card Number",
                 "FF9C27B0");
     }
 

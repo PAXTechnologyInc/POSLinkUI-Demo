@@ -3,6 +3,7 @@ package com.paxus.pay.poslinkui.demo.entry;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.pax.us.pay.ui.constant.entry.InformationEntry;
@@ -19,6 +20,7 @@ import org.greenrobot.eventbus.EventBus;
 public class POSLinkUIReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("POSLinkUIReceiver","Action: "+intent.getAction());
         switch (intent.getAction()){
             case EntryResponse.ACTION_ACCEPTED:
                 EventBus.getDefault().post(new EntryAcceptedEvent());

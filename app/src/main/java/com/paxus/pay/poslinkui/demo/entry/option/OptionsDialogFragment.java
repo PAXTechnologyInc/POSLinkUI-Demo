@@ -141,8 +141,4 @@ public class OptionsDialogFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    @Override
-    public void onDismiss(@NonNull DialogInterface dialog) {
-        super.onDismiss(dialog);
-    }
 }

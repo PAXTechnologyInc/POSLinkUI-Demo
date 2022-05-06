@@ -2,12 +2,10 @@ package com.paxus.pay.poslinkui.demo.status;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -54,14 +52,12 @@ public class TransCompletedDialogFragment extends DialogFragment {
             String msg = bundle.getString(StatusData.PARAM_MSG);
             long time = bundle.getLong(StatusData.PARAM_HOST_RESP_TIMEOUT);
 
-            String message = "Transaction Approval";
             if (code != 0) {
-                message = code + " " + msg;
-                textView.setTextColor(Color.RED);
+                textView.setTextColor(getResources().getColor(R.color.fail));
             }else {
-                textView.setTextColor(Color.GREEN);
+                textView.setTextColor(getResources().getColor(R.color.success));
             }
-            textView.setText(message);
+            textView.setText(msg);
 
             new Handler().postDelayed(this::dismiss, time);
         }
