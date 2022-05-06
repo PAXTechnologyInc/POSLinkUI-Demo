@@ -1,16 +1,15 @@
-package com.paxus.pay.poslinkui.demo.entry.text;
+package com.paxus.pay.poslinkui.demo.entry.signature;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
-import com.pax.us.pay.ui.constant.entry.TextEntry;
+import com.pax.us.pay.ui.constant.entry.SignatureEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
@@ -32,26 +31,30 @@ import com.paxus.pay.poslinkui.demo.event.EntryDeclinedEvent;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
-import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class AmountFragment extends Fragment {
+import java.util.List;
+
+public class SignatureFragment extends Fragment {
     private String action;
     private String packageName;
     private String transType;
-    private String transMode;
-
     private long timeOut;
-    private int minLength;
-    private int maxLength;
-    private String message = "";
-    private String currency = "";
+    private String transMode;
+    private long totalAmount;
+    private String currency;
 
-    public static AmountFragment newInstance(Intent intent){
-        AmountFragment numFragment = new AmountFragment();
+    private String signLine1;
+    private String signLine2;
+    private boolean enableCancel;
+    private Button confirmBtn;
+    private ElectronicSignatureView mSignatureView;
+
+    public static SignatureFragment newInstance(Intent intent){
+        SignatureFragment numFragment = new SignatureFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
         bundle.putAll(intent.getExtras());
@@ -69,7 +72,7 @@ public class AmountFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_amount, container, false);
+        return inflater.inflate(R.layout.fragment_signature, container, false);
     }
 
     @Override
@@ -78,7 +81,6 @@ public class AmountFragment extends Fragment {
 
         loadView(view);
         EventBus.getDefault().register(this);
-
 
     }
 
@@ -99,31 +101,12 @@ public class AmountFragment extends Fragment {
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
-        currency =  bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
 
-        String valuePatten = "";
-        if(TextEntry.ACTION_ENTER_AMOUNT.equals(action)){
-            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"1-12");
-            if(CurrencyType.POINT.equals(currency)) {
-                message = getString(R.string.prompt_input_point);
-            }else {
-                message = getString(R.string.prompt_input_amount);
-            }
-        } else if(TextEntry.ACTION_ENTER_FUEL_AMOUNT.equals(action)){
-            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-12");
-            message = getString(R.string.prompt_input_fuel_amount);
-        } else if(TextEntry.ACTION_ENTER_TAX_AMOUNT.equals(action)){
-            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-12");
-            message = getString(R.string.prompt_input_tax_amount);
-        }
-
-        if(!TextUtils.isEmpty(valuePatten) && valuePatten.contains("-")){
-            String[] tmp = valuePatten.split("-");
-            if(tmp.length == 2) {
-                minLength = Integer.parseInt(tmp[0]);
-                maxLength = Integer.parseInt(tmp[1]);
-            }
-        }
+        signLine1 = bundle.getString(EntryExtraData.PARAM_SIGNLINE1);
+        signLine2 = bundle.getString(EntryExtraData.PARAM_SIGNLINE2);
+        enableCancel = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_CANCEL);
+        totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
+        currency = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
 
     }
 
@@ -153,45 +136,86 @@ public class AmountFragment extends Fragment {
             ViewUtils.removeWaterMarkView(requireActivity());
         }
 
-        TextView textView = view.findViewById(R.id.message);
-        textView.setText(message);
+        Button cancelBtn = view.findViewById(R.id.cancel_button);
+        if(enableCancel){
+            cancelBtn.setOnClickListener(view1->onCancelClick());
+        }else {
+            cancelBtn.setVisibility(View.GONE);
+        }
 
-        EditText editText = view.findViewById(R.id.edit_amount);
-        editText.setSelected(false);
-        editText.setText(CurrencyUtils.convert(0,currency));
-        editText.setSelection(editText.getEditableText().length());
+        Button clearBtn = view.findViewById(R.id.clear_button);
+        clearBtn.setOnClickListener(view1->onClearClick());
+        confirmBtn = view.findViewById(R.id.confirm_button);
+        confirmBtn.setOnClickListener(view1 -> onConfirmClick());
 
-        editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
+        TextView line1 = view.findViewById(R.id.sign_line1);
+        if(!TextUtils.isEmpty(signLine1)){
+            line1.setText(signLine1);
+        }
+        TextView line2 = view.findViewById(R.id.sign_line2);
+        if(!TextUtils.isEmpty(signLine2)){
+            line2.setText(signLine2);
+        }
 
-        Button confirmBtn = view.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                long value = CurrencyUtils.parse(editText.getText().toString());
-                if(String.valueOf(value).length() < minLength){
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-                }else {
-                    sendNext(value);
+        TextView total = view.findViewById(R.id.total_amount);
+        total.setText(CurrencyUtils.convert(totalAmount,currency));
+
+        mSignatureView = view.findViewById(R.id.signature_board);
+        mSignatureView.setBitmap(new Rect(0, 0, 384, 128), 0, Color.WHITE);
+        mSignatureView.setOnKeyListener((view12, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP){
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    onConfirmClick();
+                    return true;
+                } else if(keyCode == KeyEvent.KEYCODE_DEL){
+                    onClearClick();
+                    return true;
+                } else if(keyCode == KeyEvent.KEYCODE_BACK){
+                    onCancelClick();
+                    return true;
                 }
             }
-        });
 
+            return false;
+        });
     }
 
+    private void onCancelClick(){
+        sendAbort();
+    }
+    private void onClearClick(){
+        mSignatureView.clear();
+    }
 
-    private void sendNext(long value){
+    private void onConfirmClick(){
+        if (!mSignatureView.getTouched()) {
+            //finish(new ActionResult(TransResult.SUCC, null));
+            return;
+        }
 
-        String param = "";
-        if(TextEntry.ACTION_ENTER_AMOUNT.equals(action)){
-            param = EntryRequest.PARAM_AMOUNT;
-        }else if(TextEntry.ACTION_ENTER_FUEL_AMOUNT.equals(action)){
-            param = EntryRequest.PARAM_FUEL_AMOUNT;
-        } else if(TextEntry.ACTION_ENTER_TAX_AMOUNT.equals(action)){
-            param = EntryRequest.PARAM_TAX_AMOUNT;
+        try {
+            confirmBtn.setClickable(false);
+            List<float[]> pathPos = mSignatureView.getPathPos();
+            int len = 0;
+            for (float[] ba : pathPos) {
+                len += ba.length;
+            }
+            short[] total = new short[len];
+            int index = 0;
+            for (float[] ba : pathPos) {
+                for (float b : ba) {
+                    total[index++] = (short) b;
+                }
+            }
+
+            sendNext(total);
+        } finally {
+            confirmBtn.setClickable(true);
         }
-        if(!TextUtils.isEmpty(param)){
-            EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
-        }
+    }
+
+    private void sendNext(short[] signature){
+        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_SIGNATURE, signature);
     }
 
     private void sendAbort(){
@@ -216,5 +240,7 @@ public class AmountFragment extends Fragment {
 
         Toast.makeText(requireActivity(),event.code+"-"+event.message,Toast.LENGTH_SHORT).show();
     }
+
+
 
 }

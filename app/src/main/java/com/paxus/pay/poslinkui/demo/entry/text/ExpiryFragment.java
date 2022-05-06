@@ -194,10 +194,6 @@ public class ExpiryFragment extends Fragment {
         }
     }
 
-    private void sendTimeout(){
-        EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
-    }
-
     private void sendAbort(){
         EntryRequestUtils.sendAbort(requireContext(), packageName, action);
     }

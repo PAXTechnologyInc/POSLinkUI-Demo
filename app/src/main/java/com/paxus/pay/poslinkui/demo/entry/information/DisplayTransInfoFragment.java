@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -38,7 +39,6 @@ public class DisplayTransInfoFragment extends Fragment {
     private String packageName;
     private String transType;
     private long timeOut;
-    private String message = "";
     private String transMode;
 
     private String[] leftColumns;
@@ -63,7 +63,7 @@ public class DisplayTransInfoFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_base_num, container, false);
+        return inflater.inflate(R.layout.fragment_display_trans, container, false);
     }
 
     @Override
@@ -72,7 +72,6 @@ public class DisplayTransInfoFragment extends Fragment {
 
         loadView(view);
         EventBus.getDefault().register(this);
-
 
     }
 

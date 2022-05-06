@@ -102,7 +102,7 @@
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
-            android:background="#FB3A3A"/>
+            android:background="@color/cancel"/>
         <TextView
             android:id="@+id/key_4"
             android:text="4"
@@ -131,7 +131,7 @@
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
-            android:background="#FF9903"/>
+            android:background="@color/clear"/>
         <TextView
             android:id="@+id/key_7"
             android:text="7"
@@ -161,7 +161,7 @@
             app:layout_rowWeight="1"
             app:layout_rowSpan="2"
             android:gravity="center"
-            android:background="#46B54B"/>
+            android:background="@color/enter"/>
         <TextView
             android:text=""
             app:layout_columnWeight="1"

@@ -1,9 +1,11 @@
 package com.paxus.pay.poslinkui.demo.entry.text;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,7 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
+import com.pax.us.pay.ui.constant.entry.enumeration.UnitType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
 import com.paxus.pay.poslinkui.demo.event.EntryAcceptedEvent;
@@ -41,7 +44,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CashbackFragment extends Fragment {
+public class TipFragment extends Fragment {
     private String action;
     private String packageName;
     private String transType;
@@ -52,13 +55,19 @@ public class CashbackFragment extends Fragment {
     private int maxLength;
 
     private String currency = "";
-    private long[] cashBackOptions;
-    private boolean promptOther;
+    private long[] tipOptions;
+    private String[] percentages;
+    private boolean noTip;
+    private String tipName;
+    private long baseAmount;
+    private String tipUnit;
+    private String[] enabledTipNames;
+    private long[] enabledTipValues;
 
-    private CashbackOption selectedItem;
+    private TipOption selectedItem;
 
-    public static CashbackFragment newInstance(Intent intent){
-        CashbackFragment numFragment = new CashbackFragment();
+    public static TipFragment newInstance(Intent intent){
+        TipFragment numFragment = new TipFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
         bundle.putAll(intent.getExtras());
@@ -76,7 +85,7 @@ public class CashbackFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_cashback, container, false);
+        return inflater.inflate(R.layout.fragment_tip, container, false);
     }
 
     @Override
@@ -118,19 +127,36 @@ public class CashbackFragment extends Fragment {
             }
         }
 
-        String[] options = bundle.getStringArray(EntryExtraData.PARAM_CASHBACK_OPTIONS);
+        String[] options = bundle.getStringArray(EntryExtraData.PARAM_TIP_OPTIONS);
         if(options != null){
-            cashBackOptions = new long[options.length];
+            tipOptions = new long[options.length];
             for(int i = 0;i< options.length;i++){
                 try {
-                    cashBackOptions[i] = Long.parseLong(options[i]);
+                    tipOptions[i] = Long.parseLong(options[i]);
                 }catch (Exception e){
-                    cashBackOptions[i] = 0;
+                    tipOptions[i] = 0;
                 }
             }
         }
-        promptOther = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_OTHER_PROMPT);
 
+        percentages = bundle.getStringArray(EntryExtraData.PARAM_TIP_RATE_OPTIONS);
+        noTip = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_NO_TIP_SELECTION);
+        tipName = bundle.getString(EntryExtraData.PARAM_TIP_NAME);
+        baseAmount = bundle.getLong(EntryExtraData.PARAM_BASE_AMOUNT, -1);
+        tipUnit = bundle.getString(EntryExtraData.PARAM_TIP_UNIT, UnitType.CENT);
+        enabledTipNames = bundle.getStringArray(EntryExtraData.PARAM_TIP_NAMES);
+
+        String[] amounts = bundle.getStringArray(EntryExtraData.PARAM_TIP_AMOUNTS);
+        if(amounts != null){
+            enabledTipValues = new long[amounts.length];
+            for(int i = 0;i< amounts.length;i++){
+                try {
+                    enabledTipValues[i] = Long.parseLong(amounts[i]);
+                }catch (Exception e){
+                    enabledTipValues[i] = 0;
+                }
+            }
+        }
     }
 
     private void loadView(View view){
@@ -159,19 +185,34 @@ public class CashbackFragment extends Fragment {
             ViewUtils.removeWaterMarkView(requireActivity());
         }
 
-        boolean haveOptions = cashBackOptions != null && cashBackOptions.length>0;
+        TextView tvBaseAmount = view.findViewById(R.id.base_amount);
+        if(baseAmount > 0){
+            tvBaseAmount.setText(CurrencyUtils.convert(baseAmount, currency));
+        }else {
+            tvBaseAmount.setVisibility(View.INVISIBLE);
+        }
+
+        TextView tvTipName = view.findViewById(R.id.tip_name);
+        tvTipName.setText(tipName);
+
+        boolean haveOptions = tipOptions != null && tipOptions.length>0 || noTip;
 
         RecyclerView optionView = view.findViewById(R.id.options_layout);
         if(haveOptions) {
-            List<CashbackOption> options = new ArrayList<>();
-            for(long amt: cashBackOptions){
-                options.add(new CashbackOption(amt));
+            List<TipOption> options = new ArrayList<>();
+            for(long amt: tipOptions){
+                options.add(new TipOption(amt));
             }
-            if(promptOther){
-                CashbackOption op = new CashbackOption(0);
-                op.editStyle = true;
-                options.add(op);
+            for(int i = 0;i<percentages.length;i++){
+                options.get(i).percentage = percentages[i];
             }
+            if(noTip){
+                options.add(new TipOption(0));
+            }
+            TipOption op = new TipOption(0);
+            op.editStyle = true;
+            options.add(op);
+
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireActivity());
             linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             optionView.setLayoutManager(linearLayoutManager);
@@ -179,31 +220,83 @@ public class CashbackFragment extends Fragment {
         }
         TextView textView = view.findViewById(R.id.message);
         if(haveOptions){
-            textView.setText(getString(R.string.select_cashback_amount));
+            textView.setVisibility(View.GONE);
         }else {
-            textView.setText(getString(R.string.prompt_input_cashback));
+            textView.setText(getString(R.string.prompt_input_tip));
         }
-        EditText editText = view.findViewById(R.id.edit_cashback);
+
+        EditText editText = view.findViewById(R.id.edit_tip);
         if(haveOptions){
             editText.setVisibility(View.GONE);
         }else {
             editText.setVisibility(View.VISIBLE);
-            editText.addTextChangedListener(new AmountTextWatcher(maxLength,currency));
+            if(UnitType.CENT.equals(tipUnit)) {
+                editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
+            }
         }
         Button confirmBtn = view.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if(editText.getVisibility() == View.VISIBLE) {
-                        long value = CurrencyUtils.parse(editText.getText().toString());
+                        String text = editText.getText().toString();
+                        long value = CurrencyUtils.parse(text);
+                        if(UnitType.DOLLAR.equals(tipUnit)){
+                            value = value*100;
+                        }
                         sendNext(value);
                     }else {
                         if(selectedItem != null){
-                            sendNext(selectedItem.cashbackAmt);
+                            sendNext(selectedItem.tipAmt);
                         }
                     }
                 }
             });
+
+        View tipSummary = view.findViewById(R.id.tips_summary);
+        if(enabledTipNames != null && enabledTipNames.length> 1){
+            TextView sale = view.findViewById(R.id.summary_sale);
+
+            sale.setText(CurrencyUtils.convert(baseAmount,currency));
+            sale.setTextColor(Color.BLUE);
+
+            ((TextView)view.findViewById(R.id.summary_tip1_name)).setText(enabledTipNames[0]);
+            ((TextView)view.findViewById(R.id.summary_tip2_name)).setText(enabledTipNames[1]);
+            if(enabledTipNames.length >= 3){
+                ((TextView)view.findViewById(R.id.summary_tip3_name)).setText(enabledTipNames[2]);
+            }else {
+                view.findViewById(R.id.summary_tip3).setVisibility(View.GONE);
+            }
+
+            if(enabledTipValues != null){
+                TextView tip1 = view.findViewById(R.id.summary_tip1_amt);
+                TextView tip2 = view.findViewById(R.id.summary_tip2_amt);
+                TextView tip3 = view.findViewById(R.id.summary_tip3_amt);
+
+                if(enabledTipValues.length >= 1){
+                    tip1.setText(CurrencyUtils.convert(enabledTipValues[0],currency));
+                    tip1.setTextColor(Color.BLUE);
+                }else {
+                    tip1.setText(CurrencyUtils.convert(0,currency));
+                }
+
+                if(enabledTipValues.length >= 2){
+                    tip2.setText(CurrencyUtils.convert(enabledTipValues[1],currency));
+                    tip2.setTextColor(Color.BLUE);
+                }else {
+                    tip2.setText(CurrencyUtils.convert(0,currency));
+                }
+
+                if(enabledTipValues.length >= 3){
+                    tip3.setText(CurrencyUtils.convert(enabledTipValues[2],currency));
+                    tip3.setTextColor(Color.BLUE);
+                }else {
+                    tip3.setText(CurrencyUtils.convert(0,currency));
+                }
+            }
+        }else {
+            tipSummary.setVisibility(View.GONE);
+        }
 
 
     }
@@ -211,7 +304,7 @@ public class CashbackFragment extends Fragment {
 
     private void sendNext(long value){
 
-        String param = EntryRequest.PARAM_CASHBACK_AMOUNT;
+        String param = EntryRequest.PARAM_TIP;
         EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
     }
 
@@ -240,8 +333,8 @@ public class CashbackFragment extends Fragment {
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder>{
 
-        private final List<CashbackOption> list;
-        public Adapter(List<CashbackOption> list){
+        private final List<TipOption> list;
+        public Adapter(List<TipOption> list){
             this.list = list;
         }
         @NonNull
@@ -254,13 +347,13 @@ public class CashbackFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            CashbackOption option = list.get(position);
+            TipOption option = list.get(position);
 
             holder.optionButton.setChecked(option.selected);
             holder.optionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    for(CashbackOption option: list){
+                    for(TipOption option: list){
                         option.selected = false;
                     }
                     option.selected = true;
@@ -271,21 +364,44 @@ public class CashbackFragment extends Fragment {
             });
             if(option.editStyle){
                 holder.editText.setVisibility(View.VISIBLE);
-                holder.editText.setHint(getString(R.string.other_amount));
-                holder.editText.addTextChangedListener(new AmountTextWatcher(maxLength,currency){
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        super.afterTextChanged(s);
-                        option.cashbackAmt = CurrencyUtils.parse(s.toString());
-                    }
-                });
+                holder.editText.setHint(getString(R.string.other));
+                if(UnitType.CENT.equals(tipUnit)) {
+                    holder.editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency) {
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            super.afterTextChanged(s);
+                            option.tipAmt = CurrencyUtils.parse(s.toString());
+                        }
+                    });
+                }else {
+                    holder.editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+                            option.tipAmt = CurrencyUtils.parse(editable.toString()) * 100;
+                        }
+                    });
+                }
                 holder.optionButton.setText("");
             }else {
                 holder.editText.setVisibility(View.GONE);
-                if(option.cashbackAmt == 0){
-                    holder.optionButton.setText(getString(R.string.no_thanks));
+                if(option.tipAmt == 0){
+                    holder.optionButton.setText(getString(R.string.no_tip));
                 }else {
-                    holder.optionButton.setText(CurrencyUtils.convert(option.cashbackAmt, currency));
+                    if(!TextUtils.isEmpty(option.percentage)) {
+                        holder.optionButton.setText(CurrencyUtils.convert(option.tipAmt, currency) + "(" + option.percentage + ")");
+                    }else {
+                        holder.optionButton.setText(CurrencyUtils.convert(option.tipAmt, currency));
+                    }
                 }
             }
         }
@@ -296,12 +412,13 @@ public class CashbackFragment extends Fragment {
         }
     }
 
-    private class CashbackOption{
+    private class TipOption {
          boolean selected;
-         long cashbackAmt;
+         long tipAmt;
+         String percentage;
          boolean editStyle;
-         CashbackOption(long cashbackAmt){
-             this.cashbackAmt = cashbackAmt;
+         TipOption(long tipAmt){
+             this.tipAmt = tipAmt;
          }
     }
 

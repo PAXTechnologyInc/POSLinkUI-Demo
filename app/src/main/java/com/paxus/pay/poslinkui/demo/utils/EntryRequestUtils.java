@@ -51,6 +51,17 @@ public class EntryRequestUtils {
         context.sendBroadcast(intent);
     }
 
+    public static void sendNext(Context context, String packageName, String action, String param, short[] value){
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_ACTION, action);
+        bundle.putShortArray(param, value);
+
+        Intent intent = new Intent(EntryRequest.ACTION_NEXT);
+        intent.putExtras(bundle);
+        intent.setPackage(packageName);
+        context.sendBroadcast(intent);
+    }
+
     public static void sendNext(Context context, String packageName, String action){
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);

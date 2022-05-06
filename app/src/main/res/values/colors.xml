@@ -14,4 +14,7 @@
     <color name="clss_red">#F44336</color>
 
     <color name="tip_background">#F8F4F4</color>
+    <color name="cancel">#FB3A3A</color>
+    <color name="clear">#FF9903</color>
+    <color name="enter">#46B54B</color>
 </resources>

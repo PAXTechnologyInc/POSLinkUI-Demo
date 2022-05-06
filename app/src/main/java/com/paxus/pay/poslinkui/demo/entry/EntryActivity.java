@@ -11,9 +11,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
+import com.pax.us.pay.ui.constant.entry.EntryExtraData;
+import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.InformationEntry;
 import com.pax.us.pay.ui.constant.entry.OptionEntry;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
+import com.pax.us.pay.ui.constant.entry.SignatureEntry;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
@@ -24,18 +27,22 @@ import com.paxus.pay.poslinkui.demo.entry.option.OptionsDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.InputAccountFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.PINFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.SecurityFragment;
+import com.paxus.pay.poslinkui.demo.entry.signature.SignatureFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.AVSFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.AmountFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.CashbackFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.ExpiryFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.NumFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.NumTextFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.TextFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.TipFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.TotalAmountFragment;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
 import com.paxus.pay.poslinkui.demo.event.InformationStatusEvent;
 import com.paxus.pay.poslinkui.demo.event.TransCompletedEvent;
 import com.paxus.pay.poslinkui.demo.status.InformationDialogFragment;
 import com.paxus.pay.poslinkui.demo.status.TransCompletedDialogFragment;
+import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -98,6 +105,7 @@ public class EntryActivity extends AppCompatActivity {
             }else if(InformationEntry.ACTION_DISPLAY_APPROVE_MESSAGE.equals(intent.getAction())) {
                 //TODO if you want play your online approve sound or animation, build your fragment.
                 Toast.makeText(this, "Online Approved", Toast.LENGTH_SHORT).show();
+                EntryRequestUtils.sendNext(this,intent.getStringExtra(EntryExtraData.PARAM_PACKAGE), InformationEntry.ACTION_DISPLAY_APPROVE_MESSAGE);
             }else {
                 Toast.makeText(this, "NOT FOUND:" + intent.getAction(), Toast.LENGTH_SHORT).show();
             }
@@ -197,6 +205,10 @@ public class EntryActivity extends AppCompatActivity {
                     case TextEntry.ACTION_ENTER_FUEL_AMOUNT:
                     case TextEntry.ACTION_ENTER_TAX_AMOUNT:
                         return AmountFragment.newInstance(intent);
+                    case TextEntry.ACTION_ENTER_CASH_BACK:
+                        return CashbackFragment.newInstance(intent);
+                    case TextEntry.ACTION_ENTER_TIP:
+                        return TipFragment.newInstance(intent);
                     case TextEntry.ACTION_ENTER_TOTAL_AMOUNT:
                         return TotalAmountFragment.newInstance(intent);
                     case TextEntry.ACTION_ENTER_CLERK_ID:
@@ -249,6 +261,11 @@ public class EntryActivity extends AppCompatActivity {
             }else if(categories.contains(InformationEntry.CATEGORY)){
                 if(InformationEntry.ACTION_DISPLAY_TRANS_INFORMATION.equals(action)){
                     return DisplayTransInfoFragment.newInstance(intent);
+                }
+
+            }else if(categories.contains(SignatureEntry.CATEGORY)){
+                if(SignatureEntry.ACTION_SIGNATURE.equals(action)){
+                    return SignatureFragment.newInstance(intent);
                 }
 
             }

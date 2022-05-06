@@ -29,7 +29,11 @@
         <entry key="app/src/main/res/layout/fragment_input_account.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/fragment_pin.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/fragment_security.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_signature.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_tip.xml" value="0.10461956521739131" />
         <entry key="app/src/main/res/layout/fragment_total_amount.xml" value="0.14791666666666667" />
+        <entry key="app/src/main/res/layout/layout_cashback_option.xml" value="0.19375" />
+        <entry key="app/src/main/res/layout/layout_clss_light_default.xml" value="0.19375" />
       </map>
     </option>
   </component>

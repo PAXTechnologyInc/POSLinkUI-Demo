@@ -104,6 +104,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
+                <action android:name="com.pax.us.pay.action.DISPLAY_APPROVE_MESSAGE" />
+
+                <category android:name="com.pax.us.pay.ui.category.DETAILS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
                 <action android:name="com.pax.us.pay.action.DISPLAY_TRANS_INFORMATION" />
 
                 <category android:name="com.pax.us.pay.ui.category.DETAILS" />

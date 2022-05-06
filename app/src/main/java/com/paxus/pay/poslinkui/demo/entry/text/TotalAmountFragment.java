@@ -231,10 +231,6 @@ public class TotalAmountFragment extends Fragment {
         EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
     }
 
-    private void sendTimeout(){
-        EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
-    }
-
     private void sendAbort(){
         EntryRequestUtils.sendAbort(requireContext(), packageName, action);
     }

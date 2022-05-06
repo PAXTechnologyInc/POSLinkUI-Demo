@@ -8,44 +8,24 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/base_amount"
-        android:textSize="18sp"
-        android:textColor="@color/black"
-        android:paddingVertical="10dp"
-        android:gravity="center"
-        />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tip_name"
-        android:textSize="18sp"
-        android:textColor="@color/black"
-        android:paddingBottom="10dp"
-        android:gravity="center"
-        />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/message"
         android:textSize="18sp"
         android:textColor="@color/black"
         />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/options_layout"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/edit_amount"
+        android:id="@+id/edit_cashback"
         android:hint=""
         android:layout_margin="20dp"
         android:inputType="numberSigned"
         android:digits="0123456789,.$€"
         android:gravity="center_horizontal"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/no_tip_button"
-        android:text="@string/no_tip"
-        android:background="@drawable/tip_select_style"
-        android:layout_marginVertical="10dp"/>
 
     <Button
         android:layout_width="match_parent"

@@ -143,7 +143,6 @@
     <string name="prompt_input_4digit">Please Enter Last 4 Digits</string>
     <string name="prompt_input_all_digit">Please Enter All Digits</string>
     <string name="prompt_input_cashback">Please Enter Cashback</string>
-    <string name="prompt_select_cashback">Please Select Cashback</string>
     <string name="pls_input_orig_trans_date">Please Enter Original Transaction Date</string>
     <string name="pls_input_pin_again">PIN Error, Please Retry\n\nPlease Enter PIN</string>
     <string name="pls_input_pin_last">Last PIN Attempt\n\nPlease Enter PIN</string>
@@ -250,6 +249,7 @@
     <string name="sale_amt">Sale</string>
     <string name="tip_amount">Tip Amount:</string>
     <string name="other_amount">Others</string>
+    <string name="other">Other</string>
     <string name="no_tip">No Tip</string>
 
     <string name="column_left">Left</string>
