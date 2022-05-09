@@ -21,7 +21,6 @@ import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmationDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmationSurchargeFeeDialogFragment;
-import com.paxus.pay.poslinkui.demo.entry.information.DisplayApproveMessageFragment;
 import com.paxus.pay.poslinkui.demo.entry.information.DisplayTransInfoFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.OptionsDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.InputAccountFragment;
@@ -289,10 +288,6 @@ public class EntryActivity extends AppCompatActivity {
                 }
 
                 return ConfirmationDialogFragment.newInstance(intent);
-            } else if(categories.contains(InformationEntry.CATEGORY)){
-                if(InformationEntry.ACTION_DISPLAY_APPROVE_MESSAGE.equals(action)) {
-                    return DisplayApproveMessageFragment.newInstance(intent);
-                }
             }
         }
         return null;
