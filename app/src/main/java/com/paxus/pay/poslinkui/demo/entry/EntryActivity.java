@@ -1,106 +1,115 @@
 package com.paxus.pay.poslinkui.demo.entry;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
-import com.pax.us.pay.ui.constant.entry.InformationEntry;
-import com.pax.us.pay.ui.constant.entry.OptionEntry;
-import com.pax.us.pay.ui.constant.entry.SecurityEntry;
-import com.pax.us.pay.ui.constant.entry.SignatureEntry;
-import com.pax.us.pay.ui.constant.entry.TextEntry;
+import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
+import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmationDialogFragment;
-import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmationSurchargeFeeDialogFragment;
-import com.paxus.pay.poslinkui.demo.entry.information.DisplayTransInfoFragment;
-import com.paxus.pay.poslinkui.demo.entry.option.OptionsDialogFragment;
-import com.paxus.pay.poslinkui.demo.entry.security.InputAccountFragment;
-import com.paxus.pay.poslinkui.demo.entry.security.PINFragment;
-import com.paxus.pay.poslinkui.demo.entry.security.SecurityFragment;
-import com.paxus.pay.poslinkui.demo.entry.signature.SignatureFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.AVSFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.AmountFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.CashbackFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.ExpiryFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.NumFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.NumTextFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.TextFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.TipFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.TotalAmountFragment;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.InformationStatusEvent;
-import com.paxus.pay.poslinkui.demo.event.TransCompletedEvent;
-import com.paxus.pay.poslinkui.demo.status.InformationDialogFragment;
-import com.paxus.pay.poslinkui.demo.status.TransCompletedDialogFragment;
+import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.Set;
 
 public class EntryActivity extends AppCompatActivity {
+
+    private Toolbar toolbar;
+    private View fragmentContainer;
+    private BroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry);
-        Log.d("EntryActivity","onCreate");
 
-        EventBus.getDefault().register(this);
-        loadView(getIntent());
+        Logger.d("EntryActivity onCreate");
+
+        fragmentContainer = findViewById(R.id.fragment_placeholder);
+        toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        registerUIReceiver();
+
+        loadEntry(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("EntryActivity","onNewIntent");
-
-        loadView(intent);
+        Logger.d("EntryActivity onNewIntent");
+        //If activity is at the top of stack, startActivity will trigger onNewIntent.
+        //So you can load entry here
+        loadEntry(intent);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("EntryActivity","onResume");
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Logger.d("EntryActivity onSaveInstanceState");
 
+        //If EntryActivity is not at the top of stack, a new EntryActivity will be created.
+        //After that, the old one need kill itself.
+        unregisterUIReceiver();
+        this.finishAndRemoveTask();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("EntryActivity","onDestroy");
 
-        EventBus.getDefault().unregister(this);
+        Logger.d("EntryActivity onDestroy");
+        unregisterUIReceiver();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
 
-        //User cancel
+        Logger.d("EntryActivity onBackPressed");
+        //Click KEY_BACK, trigger user abort
         EventBus.getDefault().post(new EntryAbortEvent());
     }
 
-    private void loadView(Intent intent){
-        Log.d("EntryActivity","Action: "+intent.getAction());
+    private void loadEntry(Intent intent){
+        Logger.i("start Entry Action \""+intent.getAction()+"\"");
 
-        Fragment fragment = createFragment(intent);
+        Fragment fragment = UIFragmentHelper.createFragment(intent);
+        Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
         if(fragment != null) {
+            if(frag == null) {
+                //Show tool bar
+                toolbar.setVisibility(View.VISIBLE);
+                fragmentContainer.setVisibility(View.VISIBLE);
+            }
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_placeholder, fragment);
             ft.commit();
         }else {
-            DialogFragment dialogFragment = createDialogFragment(intent);
+            if(frag == null){
+                //To show dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, hide tool bar.
+                toolbar.setVisibility(View.GONE);
+                fragmentContainer.setVisibility(View.GONE);
+            }
+            DialogFragment dialogFragment = UIFragmentHelper.createDialogFragment(intent);
             if(dialogFragment != null) {
                 dialogFragment.show(getSupportFragmentManager(), "EntryDialog");
             }else {
@@ -109,188 +118,80 @@ public class EntryActivity extends AppCompatActivity {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onTransactionCompleted(TransCompletedEvent event) {
-
-        if(event.code == -3){//Transaction Cancelled
-            finish();
+    public void loadStatus(Intent intent){
+        String action = intent.getAction();
+        Logger.i("receive Status Action \"" + action + "\"");
+        if(InformationStatus.TRANS_COMPLETED.equals(action)){
+            long code = intent.getLongExtra(StatusData.PARAM_CODE,0L);
+            if(code == -3){//Transaction Cancelled
+                finish();
+                return;
+            }
+        }
+        String dialogTag = UIFragmentHelper.createStatusDialogTag(action);
+        if(!TextUtils.isEmpty(dialogTag)) {
+            DialogFragment dialogFragment = UIFragmentHelper.createDialogFragment(intent);
+            if (dialogFragment != null) {
+                UIFragmentHelper.showDialog(getSupportFragmentManager(), dialogFragment, dialogTag);
+            } else {
+                UIFragmentHelper.closeDialog(getSupportFragmentManager(),dialogTag);
+            }
         }else {
-
-            DialogFragment dialogFragment = TransCompletedDialogFragment.newInstance(
-                    event.code,
-                    event.message,
-                    event.timeout
-            );
-
-            dialogFragment.show(getSupportFragmentManager(), "TransCompleteDialog");
+            Logger.e("unsupported receive Status Action"+action);
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onInformationEvent(InformationStatusEvent event) {
-        switch (event.action){
-            case InformationStatus.TRANS_ONLINE_STARTED:
-                showInfoDialog(event.action,"trans_online");
-                break;
-            case InformationStatus.TRANS_ONLINE_FINISHED:
-                closeDialog("trans_online");
-                break;
-            case InformationStatus.EMV_TRANS_ONLINE_STARTED:
-                showInfoDialog(event.action,"emv_trans_online");
-                break;
-            case InformationStatus.EMV_TRANS_ONLINE_FINISHED:
-                closeDialog("emv_trans_online");
-                break;
-            case InformationStatus.RKI_STARTED:
-                showInfoDialog(event.action,"rki_process");
-                break;
-            case InformationStatus.RKI_FINISHED:
-                closeDialog("rki_process");
-                break;
-            case InformationStatus.DCC_ONLINE_STARTED:
-                showInfoDialog(event.action,"dcc_online");
-                break;
-            case InformationStatus.DCC_ONLINE_FINISHED:
-                closeDialog("dcc_online");
-                break;
-            case InformationStatus.PINPAD_CONNECTION_STARTED:
-                showInfoDialog(event.action,"pin_pad_connection");
-                break;
-            case InformationStatus.PINPAD_CONNECTION_FINISHED:
-                closeDialog("pin_pad_connection");
-                break;
-            case CardStatus.CARD_REMOVAL_REQUIRED:
-                showInfoDialog(event.action,"remove_card");
-                break;
-            case CardStatus.CARD_REMOVED:
-                closeDialog("remove_card");
-                break;
-            case CardStatus.CARD_PROCESS_STARTED:
-                showInfoDialog(event.action,"card_process");
-                break;
-            case CardStatus.CARD_PROCESS_COMPLETED:
-                closeDialog("card_process");
-                break;
-            default:
-                break;
+    private void registerUIReceiver(){
+        receiver = new POSLinkUIReceiver();
+        IntentFilter filter = new IntentFilter();
+        //----------------Entry Response-----------------
+        filter.addAction(EntryResponse.ACTION_ACCEPTED);
+        filter.addAction(EntryResponse.ACTION_DECLINED);
+
+        //----------------Information Status-----------------
+        filter.addCategory(InformationStatus.CATEGORY);
+        filter.addAction(InformationStatus.DCC_ONLINE_STARTED);
+        filter.addAction(InformationStatus.DCC_ONLINE_FINISHED);
+        filter.addAction(InformationStatus.EMV_TRANS_ONLINE_STARTED);
+        filter.addAction(InformationStatus.EMV_TRANS_ONLINE_FINISHED);
+        filter.addAction(InformationStatus.TRANS_ONLINE_STARTED);
+        filter.addAction(InformationStatus.TRANS_ONLINE_FINISHED);
+        filter.addAction(InformationStatus.RKI_STARTED);
+        filter.addAction(InformationStatus.RKI_FINISHED);
+        filter.addAction(InformationStatus.PINPAD_CONNECTION_STARTED);
+        filter.addAction(InformationStatus.PINPAD_CONNECTION_FINISHED);
+        filter.addAction(InformationStatus.TRANS_COMPLETED);
+        filter.addAction(InformationStatus.ERROR);
+
+        //----------------Card Status-----------------
+        filter.addCategory(CardStatus.CATEGORY);
+        filter.addAction(CardStatus.CARD_REMOVED);
+        filter.addAction(CardStatus.CARD_REMOVAL_REQUIRED);
+        filter.addAction(CardStatus.CARD_PROCESS_STARTED);
+        filter.addAction(CardStatus.CARD_PROCESS_COMPLETED);
+
+        this.registerReceiver(receiver, filter);
+    }
+    
+    private void unregisterUIReceiver(){
+        if(receiver != null){
+            this.unregisterReceiver(receiver);
+            receiver = null;
         }
     }
 
-    private void showInfoDialog(String action, String tag){
-        DialogFragment dialogFragment = InformationDialogFragment.newInstance(
-                action
-        );
-
-        dialogFragment.show(getSupportFragmentManager(), tag);
-    }
-
-    private void closeDialog(String tag){
-        Fragment prev = getSupportFragmentManager().findFragmentByTag(tag);
-        if (prev != null) {
-            DialogFragment df = (DialogFragment) prev;
-            df.dismiss();
-        }
-    }
-
-    private Fragment createFragment(Intent intent){
-        String action = intent.getAction();
-        Set<String> categories = intent.getCategories();
-        if(action != null){
-            if(categories.contains(TextEntry.CATEGORY)) {
-                switch (action) {
-                    case TextEntry.ACTION_ENTER_AMOUNT:
-                    case TextEntry.ACTION_ENTER_FUEL_AMOUNT:
-                    case TextEntry.ACTION_ENTER_TAX_AMOUNT:
-                        return AmountFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_CASH_BACK:
-                        return CashbackFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_TIP:
-                        return TipFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_TOTAL_AMOUNT:
-                        return TotalAmountFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_CLERK_ID:
-                    case TextEntry.ACTION_ENTER_SERVER_ID:
-                    case TextEntry.ACTION_ENTER_TABLE_NUMBER:
-                    case TextEntry.ACTION_ENTER_CS_PHONE_NUMBER:
-                    case TextEntry.ACTION_ENTER_PHONE_NUMBER:
-                    case TextEntry.ACTION_ENTER_GUEST_NUMBER:
-                    case TextEntry.ACTION_ENTER_MERCHANT_TAX_ID:
-                    case TextEntry.ACTION_ENTER_PROMPT_RESTRICTION_CODE:
-                    case TextEntry.ACTION_ENTER_TRANS_NUMBER:
-                        return NumFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_ADDRESS:
-                    case TextEntry.ACTION_ENTER_AUTH:
-                    case TextEntry.ACTION_ENTER_CUSTOMER_CODE:
-                    case TextEntry.ACTION_ENTER_ORDER_NUMBER:
-                    case TextEntry.ACTION_ENTER_PO_NUMBER:
-                    case TextEntry.ACTION_ENTER_PROD_DESC:
-                        return TextFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_ZIPCODE:
-                    case TextEntry.ACTION_ENTER_DEST_ZIPCODE:
-                    case TextEntry.ACTION_ENTER_INVOICE_NUMBER:
-                    case TextEntry.ACTION_ENTER_VOUCHER_DATA:
-                    case TextEntry.ACTION_ENTER_REFERENCE_NUMBER:
-                    case TextEntry.ACTION_ENTER_MERCHANT_REFERENCE_NUMBER:
-                    case TextEntry.ACTION_ENTER_OCT_REFERENCE_NUMBER:
-                        return NumTextFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_AVS_DATA:
-                        return AVSFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_EXPIRY_DATE:
-                        return ExpiryFragment.newInstance(intent);
-                    default:
-                        return null;
-                }
-            }
-            else if(categories.contains(SecurityEntry.CATEGORY)){
-                switch (action) {
-                    case SecurityEntry.ACTION_INPUT_ACCOUNT:
-                    case SecurityEntry.ACTION_MANAGE_INPUT_ACCOUNT:
-                        return InputAccountFragment.newInstance(intent);
-                    case SecurityEntry.ACTION_ENTER_VCODE:
-                    case SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS:
-                    case SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS:
-                        return SecurityFragment.newInstance(intent);
-                    case SecurityEntry.ACTION_ENTER_PIN:
-                        return PINFragment.newInstance(intent);
-                    default:
-                        return null;
-                }
-            }else if(categories.contains(InformationEntry.CATEGORY)){
-                if(InformationEntry.ACTION_DISPLAY_TRANS_INFORMATION.equals(action)){
-                    return DisplayTransInfoFragment.newInstance(intent);
-                }
-
-            }else if(categories.contains(SignatureEntry.CATEGORY)){
-                if(SignatureEntry.ACTION_SIGNATURE.equals(action)){
-                    return SignatureFragment.newInstance(intent);
-                }
-
-            } else if(categories.contains(ConfirmationEntry.CATEGORY)){
-                //TODO Bug: Grant Permission for RECEIPT_URI
-//                if(ConfirmationEntry.ACTION_CONFIRM_RECEIPT_VIEW.equals(action)){
-//                    return ConfirmReceiptViewFragment.newInstance(intent);
-//                }
+    public class POSLinkUIReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())){
+                EventBus.getDefault().post(new EntryResponseEvent(intent.getAction()));
+            }else if(EntryResponse.ACTION_DECLINED.equals(intent.getAction())){
+                long resultCode = intent.getLongExtra(EntryResponse.PARAM_CODE,0);
+                String message = intent.getStringExtra(EntryResponse.PARAM_MSG);
+                EventBus.getDefault().post(new EntryResponseEvent(intent.getAction(),resultCode,message));
+            }else{
+                loadStatus(intent);
             }
         }
-
-        return null;
     }
-
-    private DialogFragment createDialogFragment(Intent intent){
-        String action = intent.getAction();
-        Set<String> categories = intent.getCategories();
-        if(action != null) {
-            if (categories.contains(OptionEntry.CATEGORY)) {
-                return OptionsDialogFragment.newInstance(intent);
-            } else if(categories.contains(ConfirmationEntry.CATEGORY)){
-                if(ConfirmationEntry.ACTION_CONFIRM_SURCHARGE_FEE.equals(action)){
-                    return ConfirmationSurchargeFeeDialogFragment.newInstance(intent);
-                }
-
-                return ConfirmationDialogFragment.newInstance(intent);
-            }
-        }
-        return null;
-    }
-
 }

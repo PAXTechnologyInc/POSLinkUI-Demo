@@ -27,11 +27,11 @@ import android.graphics.PathMeasure;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.paxus.pay.poslinkui.demo.R;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -308,13 +308,13 @@ public class ElectronicSignatureView extends View {
             if (buffer != null) {
                 File file = new File(path);
                 if (!file.delete()) {
-                    Log.w("", file.toString() + "is not existed");
+                    Logger.d(file.toString() + "is not existed");
                 }
 
                 try (OutputStream outputStream = new FileOutputStream(file)) {
                     outputStream.write(buffer);
                 } catch (Exception e) {
-                    Log.w("", e.getMessage());
+                    Logger.e(e);
                 }
             }
         }).start();

@@ -1,7 +1,9 @@
 package com.paxus.pay.poslinkui.demo.status;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -73,6 +75,16 @@ public class InformationDialogFragment extends DialogFragment {
         Dialog dialog = builder.create();
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
+        dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
+                    //Do not dismiss dialog by KEY BACK
+                    return true;
+                }
+                return false;
+            }
+        });
         return dialog;
     }
 

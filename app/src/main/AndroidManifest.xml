@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.paxus.pay.poslinkui.demo">
+
+<!--    Add permissions for write log-->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -8,7 +16,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.POSLinkUI">
+        android:theme="@style/Theme.POSLinkUI"
+        android:name=".DemoApplication"
+        android:requestLegacyExternalStorage="true">
+
+<!--        1. exported should be true. Then this activity can be started by Intent.-->
+<!--        2. launchMode is set to singleTop. If the activity is at the top of stack, it will not be created. New intent will be called.-->
+<!--        3. To show some dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE. The theme is set to No Action Bar and transparent.-->
         <activity
             android:name=".entry.EntryActivity"
             android:exported="true"
@@ -227,42 +241,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <receiver
-            android:name=".entry.POSLinkUIReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.pax.us.pay.ui.ACCEPTED" />
-                <action android:name="com.pax.us.pay.ui.DECLINED" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.pax.us.pay.TRANS_COMPLETED" />
-                <action android:name="com.pax.us.pay.TRANS_ONLINE_STARTED" />
-                <action android:name="com.pax.us.pay.TRANS_ONLINE_FINISHED" />
 
-                <action android:name="com.pax.us.pay.PINPAD_CONNECTION_STARTED" />
-                <action android:name="com.pax.us.pay.PINPAD_CONNECTION_FINISHED" />
-
-                <action android:name="com.pax.us.pay.EMV_TRANS_ONLINE_STARTED" />
-                <action android:name="com.pax.us.pay.EMV_TRANS_ONLINE_FINISHED" />
-
-                <action android:name="com.pax.us.pay.DCC_ONLINE_STARTED" />
-                <action android:name="com.pax.us.pay.DCC_ONLINE_FINISHED" />
-
-                <action android:name="com.pax.us.pay.RKI_STARTED" />
-                <action android:name="com.pax.us.pay.RKI_FINISHED" />
-
-                <action android:name="com.pax.us.pay.ERROR" />
-
-                <category android:name="com.pax.us.pay.status.category.INFORMATION" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.pax.us.pay.CARD_PROCESS_STARTED" />
-                <action android:name="com.pax.us.pay.CARD_PROCESS_COMPLETED" />
-                <action android:name="com.pax.us.pay.CARD_REMOVAL_REQUIRED" />
-                <action android:name="com.pax.us.pay.CARD_REMOVED" />
-                <category android:name="com.pax.us.pay.status.category.CARD" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

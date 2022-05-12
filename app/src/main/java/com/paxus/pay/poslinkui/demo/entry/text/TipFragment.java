@@ -6,48 +6,37 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
-import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.pax.us.pay.ui.constant.entry.enumeration.UnitType;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class TipFragment extends Fragment {
-    private String action;
-    private String packageName;
+public class TipFragment extends BaseEntryFragment {
     private String transType;
     private String transMode;
 
@@ -83,34 +72,13 @@ public class TipFragment extends Fragment {
         loadArgument(getArguments());
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_tip, container, false);
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_tip;
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        loadView(view);
-        EventBus.getDefault().register(this);
-
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        EventBus.getDefault().unregister(this);
-
-    }
-
-    private void loadArgument(Bundle bundle){
-        if(bundle == null){
-            return;
-        }
+    protected void loadArgument(@NonNull Bundle bundle) {
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
@@ -160,7 +128,8 @@ public class TipFragment extends Fragment {
         }
     }
 
-    private void loadView(View view){
+    @Override
+    protected void loadView(View rootView) {
         if(!TextUtils.isEmpty(transType) && getActivity() instanceof AppCompatActivity){
             ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
             if(actionBar != null) {
@@ -186,19 +155,19 @@ public class TipFragment extends Fragment {
             ViewUtils.removeWaterMarkView(requireActivity());
         }
 
-        TextView tvBaseAmount = view.findViewById(R.id.base_amount);
+        TextView tvBaseAmount = rootView.findViewById(R.id.base_amount);
         if(baseAmount > 0){
             tvBaseAmount.setText(CurrencyUtils.convert(baseAmount, currency));
         }else {
             tvBaseAmount.setVisibility(View.INVISIBLE);
         }
 
-        TextView tvTipName = view.findViewById(R.id.tip_name);
+        TextView tvTipName = rootView.findViewById(R.id.tip_name);
         tvTipName.setText(tipName);
 
         boolean haveOptions = tipOptions != null && tipOptions.length>0 || noTip;
 
-        RecyclerView optionView = view.findViewById(R.id.options_layout);
+        RecyclerView optionView = rootView.findViewById(R.id.options_layout);
         if(haveOptions) {
             List<TipOption> options = new ArrayList<>();
             for(long amt: tipOptions){
@@ -219,14 +188,14 @@ public class TipFragment extends Fragment {
             optionView.setLayoutManager(linearLayoutManager);
             optionView.setAdapter(new Adapter(options));
         }
-        TextView textView = view.findViewById(R.id.message);
+        TextView textView = rootView.findViewById(R.id.message);
         if(haveOptions){
             textView.setVisibility(View.GONE);
         }else {
             textView.setText(getString(R.string.prompt_input_tip));
         }
 
-        EditText editText = view.findViewById(R.id.edit_tip);
+        EditText editText = rootView.findViewById(R.id.edit_tip);
         if(haveOptions){
             editText.setVisibility(View.GONE);
         }else {
@@ -235,7 +204,7 @@ public class TipFragment extends Fragment {
                 editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
             }
         }
-        Button confirmBtn = view.findViewById(R.id.confirm_button);
+        Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -254,25 +223,25 @@ public class TipFragment extends Fragment {
                 }
             });
 
-        View tipSummary = view.findViewById(R.id.tips_summary);
+        View tipSummary = rootView.findViewById(R.id.tips_summary);
         if(enabledTipNames != null && enabledTipNames.length> 1){
-            TextView sale = view.findViewById(R.id.summary_sale);
+            TextView sale = rootView.findViewById(R.id.summary_sale);
 
             sale.setText(CurrencyUtils.convert(baseAmount,currency));
             sale.setTextColor(Color.BLUE);
 
-            ((TextView)view.findViewById(R.id.summary_tip1_name)).setText(enabledTipNames[0]);
-            ((TextView)view.findViewById(R.id.summary_tip2_name)).setText(enabledTipNames[1]);
+            ((TextView)rootView.findViewById(R.id.summary_tip1_name)).setText(enabledTipNames[0]);
+            ((TextView)rootView.findViewById(R.id.summary_tip2_name)).setText(enabledTipNames[1]);
             if(enabledTipNames.length >= 3){
-                ((TextView)view.findViewById(R.id.summary_tip3_name)).setText(enabledTipNames[2]);
+                ((TextView)rootView.findViewById(R.id.summary_tip3_name)).setText(enabledTipNames[2]);
             }else {
-                view.findViewById(R.id.summary_tip3).setVisibility(View.GONE);
+                rootView.findViewById(R.id.summary_tip3).setVisibility(View.GONE);
             }
 
             if(enabledTipValues != null){
-                TextView tip1 = view.findViewById(R.id.summary_tip1_amt);
-                TextView tip2 = view.findViewById(R.id.summary_tip2_amt);
-                TextView tip3 = view.findViewById(R.id.summary_tip3_amt);
+                TextView tip1 = rootView.findViewById(R.id.summary_tip1_amt);
+                TextView tip2 = rootView.findViewById(R.id.summary_tip2_amt);
+                TextView tip3 = rootView.findViewById(R.id.summary_tip3_amt);
 
                 if(enabledTipValues.length >= 1){
                     tip1.setText(CurrencyUtils.convert(enabledTipValues[0],currency));
@@ -307,30 +276,6 @@ public class TipFragment extends Fragment {
 
         String param = EntryRequest.PARAM_TIP;
         EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
-    }
-
-    private void sendAbort(){
-        EntryRequestUtils.sendAbort(requireContext(), packageName, action);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryAbort(EntryAbortEvent event) {
-        
-        sendAbort();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetEntryResponse(EntryResponseEvent event){
-        switch (event.action){
-            case EntryResponse.ACTION_ACCEPTED:
-                Log.d("POSLinkUI","Entry "+action+" accepted");
-                break;
-            case EntryResponse.ACTION_DECLINED:{
-                Log.d("POSLinkUI","Entry "+action+" declined("+event.code+"-"+event.message+")");
-                Toast.makeText(requireActivity(),event.message,Toast.LENGTH_SHORT).show();
-            }
-
-        }
     }
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder>{
@@ -414,7 +359,7 @@ public class TipFragment extends Fragment {
         }
     }
 
-    private class TipOption {
+    private static class TipOption {
          boolean selected;
          long tipAmt;
          String percentage;

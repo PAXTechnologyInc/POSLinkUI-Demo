@@ -2,9 +2,9 @@ package com.paxus.pay.poslinkui.demo.view;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 public class AmountTextWatcher implements TextWatcher {
 
@@ -21,12 +21,12 @@ public class AmountTextWatcher implements TextWatcher {
         if (!mEditing) {
             mPreStr = s.toString();
         }
-        Log.d("AmountFragment","beforeTextChanged:"+mPreStr);
+        Logger.d("AmountFragment beforeTextChanged:"+mPreStr);
     }
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        Log.d("AmountFragment","onTextChanged:"+mPreStr);
+        Logger.d("AmountFragment onTextChanged:"+mPreStr);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class AmountTextWatcher implements TextWatcher {
             }else {
                 String formatted = CurrencyUtils.convert(Long.parseLong(value), currency);
                 s.replace(0, s.length(), formatted);
-                Log.d("AmountFragment","afterTextChanged:"+formatted);
+                Logger.d("AmountFragment afterTextChanged:"+formatted);
             }
             mEditing = false;
         }

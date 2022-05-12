@@ -6,42 +6,28 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
-import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 
-public class SignatureFragment extends Fragment {
-    private String action;
-    private String packageName;
+public class SignatureFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;
     private String transMode;
@@ -82,39 +68,12 @@ public class SignatureFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        loadArgument(getArguments());
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_signature, container, false);
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_signature;
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        loadView(view);
-        EventBus.getDefault().register(this);
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        EventBus.getDefault().unregister(this);
-        handler.removeCallbacks(tick);
-    }
-
-    private void loadArgument(Bundle bundle){
-        if(bundle == null){
-            return;
-        }
+    protected void loadArgument(@NonNull Bundle bundle){
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
@@ -129,7 +88,8 @@ public class SignatureFragment extends Fragment {
 
     }
 
-    private void loadView(View view){
+    @Override
+    protected void loadView(View rootView) {
         if(!TextUtils.isEmpty(transType) && getActivity() instanceof AppCompatActivity){
             ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
             if(actionBar != null) {
@@ -155,31 +115,31 @@ public class SignatureFragment extends Fragment {
             ViewUtils.removeWaterMarkView(requireActivity());
         }
 
-        Button cancelBtn = view.findViewById(R.id.cancel_button);
+        Button cancelBtn = rootView.findViewById(R.id.cancel_button);
         if(enableCancel){
             cancelBtn.setOnClickListener(view1->onCancelClick());
         }else {
             cancelBtn.setVisibility(View.GONE);
         }
 
-        Button clearBtn = view.findViewById(R.id.clear_button);
+        Button clearBtn = rootView.findViewById(R.id.clear_button);
         clearBtn.setOnClickListener(view1->onClearClick());
-        confirmBtn = view.findViewById(R.id.confirm_button);
+        confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(view1 -> onConfirmClick());
 
-        TextView line1 = view.findViewById(R.id.sign_line1);
+        TextView line1 = rootView.findViewById(R.id.sign_line1);
         if(!TextUtils.isEmpty(signLine1)){
             line1.setText(signLine1);
         }
-        TextView line2 = view.findViewById(R.id.sign_line2);
+        TextView line2 = rootView.findViewById(R.id.sign_line2);
         if(!TextUtils.isEmpty(signLine2)){
             line2.setText(signLine2);
         }
 
-        TextView total = view.findViewById(R.id.total_amount);
+        TextView total = rootView.findViewById(R.id.total_amount);
         total.setText(CurrencyUtils.convert(totalAmount,currency));
 
-        mSignatureView = view.findViewById(R.id.signature_board);
+        mSignatureView = rootView.findViewById(R.id.signature_board);
         mSignatureView.setBitmap(new Rect(0, 0, 384, 128), 0, Color.WHITE);
         mSignatureView.setOnKeyListener((view12, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_UP){
@@ -197,7 +157,7 @@ public class SignatureFragment extends Fragment {
 
             return false;
         });
-        timeoutView = view.findViewById(R.id.timeout);
+        timeoutView = rootView.findViewById(R.id.timeout);
         tickTimeout = timeOut;
         timeoutView.setText(String.valueOf(tickTimeout/1000));
         handler.postDelayed(tick,1000);
@@ -243,36 +203,15 @@ public class SignatureFragment extends Fragment {
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_SIGNATURE, signature);
     }
 
-    private void sendAbort(){
-        handler.removeCallbacks(tick); //Stop Tick
+    @Override
+    protected void sendAbort() {
+        super.sendAbort();
 
-        EntryRequestUtils.sendAbort(requireContext(), packageName, action);
+        handler.removeCallbacks(tick); //Stop Tick
     }
 
     private void sendTimeout(){
         EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
     }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryAbort(EntryAbortEvent event) {
-        
-        sendAbort();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetEntryResponse(EntryResponseEvent event){
-        switch (event.action){
-            case EntryResponse.ACTION_ACCEPTED:
-                Log.d("POSLinkUI","Entry "+action+" accepted");
-                break;
-            case EntryResponse.ACTION_DECLINED:{
-                Log.d("POSLinkUI","Entry "+action+" declined("+event.code+"-"+event.message+")");
-                Toast.makeText(requireActivity(),event.message,Toast.LENGTH_SHORT).show();
-            }
-
-        }
-    }
-
-
 
 }

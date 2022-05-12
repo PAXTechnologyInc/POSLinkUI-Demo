@@ -4,39 +4,26 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
-import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-public class NumFragment extends Fragment {
-    private String action;
-    private String packageName;
+public class NumFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;
     private int minLength;
@@ -54,40 +41,13 @@ public class NumFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        loadArgument(getArguments());
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_base_num, container, false);
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_base_num;
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    protected void loadArgument(@NonNull Bundle bundle) {
 
-        loadView(view);
-        EventBus.getDefault().register(this);
-
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        EventBus.getDefault().unregister(this);
-
-    }
-
-    private void loadArgument(Bundle bundle){
-        if(bundle == null){
-            return;
-        }
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
@@ -134,7 +94,8 @@ public class NumFragment extends Fragment {
 
     }
 
-    private void loadView(View view){
+    @Override
+    protected void loadView(View rootView) {
         if(!TextUtils.isEmpty(transType) && getActivity() instanceof AppCompatActivity){
             ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
             if(actionBar != null) {
@@ -160,15 +121,15 @@ public class NumFragment extends Fragment {
             ViewUtils.removeWaterMarkView(requireActivity());
         }
 
-        TextView textView = view.findViewById(R.id.message);
+        TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        EditText editText = view.findViewById(R.id.edit_number);
+        EditText editText = rootView.findViewById(R.id.edit_number);
         if(maxLength > 0 ) {
             editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
         }
 
-        Button confirmBtn = view.findViewById(R.id.confirm_button);
+        Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -185,7 +146,10 @@ public class NumFragment extends Fragment {
     }
 
     private void sendNext(String value){
-
+        if(TextEntry.ACTION_ENTER_TRANS_NUMBER.equals(action)){
+            EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_TRANS_NUMBER,Long.parseLong(value));
+            return;
+        }
         String param = "";
 
         if(TextEntry.ACTION_ENTER_CLERK_ID.equals(action)){
@@ -204,38 +168,11 @@ public class NumFragment extends Fragment {
             param = EntryRequest.PARAM_MERCHANT_TAX_ID;
         } else if(TextEntry.ACTION_ENTER_PROMPT_RESTRICTION_CODE.equals(action)){
             param = EntryRequest.PARAM_PROMPT_RESTRICTION_CODE;
-        }else if(TextEntry.ACTION_ENTER_TRANS_NUMBER.equals(action)){
-            param = EntryRequest.PARAM_TRANS_NUMBER;
         }
         if(!TextUtils.isEmpty(param)){
             EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
         }
     }
-
-    private void sendAbort(){
-        EntryRequestUtils.sendAbort(requireContext(), packageName, action);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryAbort(EntryAbortEvent event) {
-        
-        sendAbort();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetEntryResponse(EntryResponseEvent event){
-        switch (event.action){
-            case EntryResponse.ACTION_ACCEPTED:
-                Log.d("POSLinkUI","Entry "+action+" accepted");
-                break;
-            case EntryResponse.ACTION_DECLINED:{
-                Log.d("POSLinkUI","Entry "+action+" declined("+event.code+"-"+event.message+")");
-                Toast.makeText(requireActivity(),event.message,Toast.LENGTH_SHORT).show();
-            }
-
-        }
-    }
-
 
 
 }

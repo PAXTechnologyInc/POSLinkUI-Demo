@@ -1,17 +1,8 @@
 package com.paxus.pay.poslinkui.demo.utils;
 
-import android.annotation.TargetApi;
-import android.icu.util.ULocale;
-import android.os.Build;
-import android.util.Log;
-
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Currency;
-import java.util.Locale;
 
 /**
  * Created by Yanina.Yang on 5/3/2022.

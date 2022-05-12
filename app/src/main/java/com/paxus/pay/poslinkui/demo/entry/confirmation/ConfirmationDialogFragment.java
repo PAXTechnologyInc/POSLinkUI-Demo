@@ -1,20 +1,14 @@
 package com.paxus.pay.poslinkui.demo.entry.confirmation;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
@@ -24,6 +18,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.ConfirmationType;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.PrintStatusType;
 import com.paxus.pay.poslinkui.demo.R;
+import com.paxus.pay.poslinkui.demo.entry.BaseEntryDialogFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
@@ -31,9 +26,7 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * For ConfirmationEntry.ACTION_CONFIRM_CARD_PROCESS_RESULT, if timeout, treat it as confirmed.
  * For other confirm actions, timeout is controlled by BroadPOS.
  */
-public class ConfirmationDialogFragment extends DialogFragment {
-    private String action;
-    private String packageName;
+public class ConfirmationDialogFragment extends BaseEntryDialogFragment {
     private long timeout;
 
     private String message;
@@ -50,34 +43,13 @@ public class ConfirmationDialogFragment extends DialogFragment {
         return dialogFragment;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_confirmation_dialog, container, false);
-        loadParameter(getArguments());
-        loadView(view);
-
-        Dialog dialog = getDialog();
-        if (dialog != null) {
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-            //For CONFIRM_CARD_PROCESS_RESULT
-            if (!TextUtils.isEmpty(positiveText) && TextUtils.isEmpty(negativeText)) {
-                new Handler().postDelayed(() -> {
-                    sendNext(true);
-                }, timeout);
-            }
-        }
-        return view;
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_confirmation_dialog;
     }
 
-    private void loadParameter(Bundle bundle){
-        if(bundle == null){
-            Log.e("ConfirmDialog","No arguments");
-            return;
-        }
-
+    @Override
+    protected void loadParameter(@NonNull Bundle bundle) {
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
 
@@ -99,11 +71,12 @@ public class ConfirmationDialogFragment extends DialogFragment {
         formatOptions(options);
     }
 
-    private void loadView(View view){
-        TextView messageTv = view.findViewById(R.id.message);
+    @Override
+    protected void loadView(View rootView) {
+        TextView messageTv = rootView.findViewById(R.id.message);
         messageTv.setText(message);
 
-        Button positiveButton = view.findViewById(R.id.confirm_button);
+        Button positiveButton = rootView.findViewById(R.id.confirm_button);
         if(!TextUtils.isEmpty(positiveText)) {
             positiveButton.setText(positiveText);
             positiveButton.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +89,7 @@ public class ConfirmationDialogFragment extends DialogFragment {
             positiveButton.setVisibility(View.GONE);
         }
 
-        Button negativeButton = view.findViewById(R.id.cancel_button);
+        Button negativeButton = rootView.findViewById(R.id.cancel_button);
 
         if(!TextUtils.isEmpty(negativeText)) {
             negativeButton.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +101,20 @@ public class ConfirmationDialogFragment extends DialogFragment {
         }else{
             negativeButton.setVisibility(View.GONE);
         }
+
+        //For CONFIRM_CARD_PROCESS_RESULT
+        if (!TextUtils.isEmpty(positiveText) && TextUtils.isEmpty(negativeText)) {
+            new Handler().postDelayed(() -> {
+                if(active) {
+                    sendNext(true);
+                }
+            }, timeout);
+        }
+    }
+
+    @Override
+    protected void onBackPressed() {
+        sendAbort();
     }
 
     private String formatMessage(String action, String message, Bundle bundle){

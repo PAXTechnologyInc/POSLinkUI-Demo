@@ -3,13 +3,12 @@ package com.paxus.pay.poslinkui.demo.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 
 public class EntryRequestUtils {
     public static void sendNext(Context context, String packageName, String action, String param, String value){
-        Log.d("POSLinkUI","send ACTION_NEXT "+action);
+        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -22,7 +21,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendNext(Context context, String packageName, String action, String param, long value){
-        Log.d("POSLinkUI","send ACTION_NEXT "+action);
+        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -35,7 +34,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendNext(Context context, String packageName, String action, String param, int value){
-        Log.d("POSLinkUI","send ACTION_NEXT "+action);
+        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -48,7 +47,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendNext(Context context, String packageName, String action, String param, boolean value){
-        Log.d("POSLinkUI","send ACTION_NEXT "+action);
+        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
         bundle.putBoolean(param, value);
@@ -60,7 +59,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendNext(Context context, String packageName, String action, String param, short[] value){
-        Log.d("POSLinkUI","send ACTION_NEXT "+action);
+        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -73,7 +72,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendNext(Context context, String packageName, String action){
-        Log.d("POSLinkUI","send ACTION_NEXT "+action);
+        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -85,7 +84,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendNextAVS(Context context, String packageName, String action, String address, String zip){
-        Log.d("POSLinkUI","send ACTION_NEXT "+action);
+        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -99,7 +98,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendTimeout(Context context, String packageName, String action){
-        Log.d("POSLinkUI","send ACTION_TIME_OUT "+action);
+        Logger.i("Entry Request:ACTION_TIME_OUT \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -111,7 +110,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendAbort(Context context, String packageName, String action){
-        Log.d("POSLinkUI","send ACTION_ABORT "+action);
+        Logger.i("Entry Request:ACTION_ABORT \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -124,7 +123,7 @@ public class EntryRequestUtils {
 
     public static void sendSecureArea(Context context, String packageName, String action,
                                       int x, int y, int width, int height, int fontSize, String hint,String fontColor){
-        Log.d("POSLinkUI","send ACTION_SECURITY_AREA "+action);
+        Logger.i("send Entry Request ACTION_SECURITY_AREA for action \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);

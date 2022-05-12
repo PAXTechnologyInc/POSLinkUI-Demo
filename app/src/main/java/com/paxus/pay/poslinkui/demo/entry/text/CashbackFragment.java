@@ -4,47 +4,35 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
-import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class CashbackFragment extends Fragment {
-    private String action;
-    private String packageName;
+public class CashbackFragment extends BaseEntryFragment {
     private String transType;
     private String transMode;
 
@@ -68,40 +56,13 @@ public class CashbackFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        loadArgument(getArguments());
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_cashback, container, false);
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_cashback;
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    protected void loadArgument(@NonNull Bundle bundle) {
 
-        loadView(view);
-        EventBus.getDefault().register(this);
-
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        EventBus.getDefault().unregister(this);
-
-    }
-
-    private void loadArgument(Bundle bundle){
-        if(bundle == null){
-            return;
-        }
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
@@ -134,7 +95,9 @@ public class CashbackFragment extends Fragment {
 
     }
 
-    private void loadView(View view){
+    @Override
+    protected void loadView(View rootView) {
+
         if(!TextUtils.isEmpty(transType) && getActivity() instanceof AppCompatActivity){
             ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
             if(actionBar != null) {
@@ -162,7 +125,7 @@ public class CashbackFragment extends Fragment {
 
         boolean haveOptions = cashBackOptions != null && cashBackOptions.length>0;
 
-        RecyclerView optionView = view.findViewById(R.id.options_layout);
+        RecyclerView optionView = rootView.findViewById(R.id.options_layout);
         if(haveOptions) {
             List<CashbackOption> options = new ArrayList<>();
             for(long amt: cashBackOptions){
@@ -178,20 +141,20 @@ public class CashbackFragment extends Fragment {
             optionView.setLayoutManager(linearLayoutManager);
             optionView.setAdapter(new Adapter(options));
         }
-        TextView textView = view.findViewById(R.id.message);
+        TextView textView = rootView.findViewById(R.id.message);
         if(haveOptions){
             textView.setText(getString(R.string.select_cashback_amount));
         }else {
             textView.setText(getString(R.string.prompt_input_cashback));
         }
-        EditText editText = view.findViewById(R.id.edit_cashback);
+        EditText editText = rootView.findViewById(R.id.edit_cashback);
         if(haveOptions){
             editText.setVisibility(View.GONE);
         }else {
             editText.setVisibility(View.VISIBLE);
             editText.addTextChangedListener(new AmountTextWatcher(maxLength,currency));
         }
-        Button confirmBtn = view.findViewById(R.id.confirm_button);
+        Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -214,30 +177,6 @@ public class CashbackFragment extends Fragment {
 
         String param = EntryRequest.PARAM_CASHBACK_AMOUNT;
         EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
-    }
-
-    private void sendAbort(){
-        EntryRequestUtils.sendAbort(requireContext(), packageName, action);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryAbort(EntryAbortEvent event) {
-        
-        sendAbort();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetEntryResponse(EntryResponseEvent event){
-        switch (event.action){
-            case EntryResponse.ACTION_ACCEPTED:
-                Log.d("POSLinkUI","Entry "+action+" accepted");
-                break;
-            case EntryResponse.ACTION_DECLINED:{
-                Log.d("POSLinkUI","Entry "+action+" declined("+event.code+"-"+event.message+")");
-                Toast.makeText(requireActivity(),event.message,Toast.LENGTH_SHORT).show();
-            }
-
-        }
     }
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder>{

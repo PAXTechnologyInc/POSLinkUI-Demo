@@ -2,6 +2,7 @@ package com.paxus.pay.poslinkui.demo.status;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -18,12 +19,10 @@ import com.paxus.pay.poslinkui.demo.R;
 
 public class TransCompletedDialogFragment extends DialogFragment {
 
-    public static DialogFragment newInstance(long code, String result, long timeout){
+    public static DialogFragment newInstance(Intent intent){
         TransCompletedDialogFragment dialogFragment = new TransCompletedDialogFragment();
         Bundle bundle = new Bundle();
-        bundle.putLong(StatusData.PARAM_CODE,code);
-        bundle.putString(StatusData.PARAM_MSG, result);
-        bundle.putLong(StatusData.PARAM_HOST_RESP_TIMEOUT,timeout);
+        bundle.putAll(intent.getExtras());
 
         dialogFragment.setArguments(bundle);
         return dialogFragment;
@@ -44,7 +43,7 @@ public class TransCompletedDialogFragment extends DialogFragment {
         if(bundle != null) {
             long code = bundle.getLong(StatusData.PARAM_CODE);
             String msg = bundle.getString(StatusData.PARAM_MSG);
-            long time = bundle.getLong(StatusData.PARAM_HOST_RESP_TIMEOUT);
+            long time = bundle.getLong(StatusData.PARAM_HOST_RESP_TIMEOUT,2000);
 
             if (code != 0) {
                 textView.setTextColor(getResources().getColor(R.color.fail));
@@ -68,6 +67,6 @@ public class TransCompletedDialogFragment extends DialogFragment {
         super.onDismiss(dialog);
 
         //Close activity after Trans completed
-        requireActivity().finish();
+        requireActivity().finishAndRemoveTask();
     }
 }

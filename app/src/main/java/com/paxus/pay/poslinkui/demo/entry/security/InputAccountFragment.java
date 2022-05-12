@@ -10,24 +10,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextPaint;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
-import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.PanStyles;
@@ -38,21 +32,15 @@ import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.SecurityStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import com.paxus.pay.poslinkui.demo.view.ClssLight;
 import com.paxus.pay.poslinkui.demo.view.ClssLightsView;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-public class InputAccountFragment extends Fragment {
-    private String action;
-    private String packageName;
+public class InputAccountFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;
     private int minLength;
@@ -90,55 +78,15 @@ public class InputAccountFragment extends Fragment {
         return numFragment;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d("InputAccountFragment","onCreate");
-
-        loadArgument(getArguments());
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d("InputAccountFragment","onCreateView");
-
-        return inflater.inflate(R.layout.fragment_input_account, container, false);
-    }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Log.d("InputAccountFragment","onViewCreated");
-
-        loadView(view);
-        EventBus.getDefault().register(this);
-
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_input_account;
     }
+
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d("InputAccountFragment","onDestroyView");
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("InputAccountFragment","onDestroy");
-
-        EventBus.getDefault().unregister(this);
-
-        if(receiver != null){
-            requireContext().unregisterReceiver(receiver);
-        }
-    }
-
-    private void loadArgument(Bundle bundle){
-        if(bundle == null){
-            return;
-        }
+    protected void loadArgument(@NonNull Bundle bundle) {
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
@@ -185,7 +133,8 @@ public class InputAccountFragment extends Fragment {
 
     }
 
-    private void loadView(View view){
+    @Override
+    protected void loadView(View rootView) {
         if(!TextUtils.isEmpty(transType) && getActivity() instanceof AppCompatActivity){
             ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
             if(actionBar != null) {
@@ -211,10 +160,10 @@ public class InputAccountFragment extends Fragment {
             ViewUtils.removeWaterMarkView(requireActivity());
         }
 
-        TextView textView = view.findViewById(R.id.manual_message);
+        TextView textView = rootView.findViewById(R.id.manual_message);
         textView.setText(hint);
 
-        panInputBox = view.findViewById(R.id.edit_account);
+        panInputBox = rootView.findViewById(R.id.edit_account);
 
         if(enableManual) {
             panInputBox.setEnabled(true);
@@ -236,7 +185,7 @@ public class InputAccountFragment extends Fragment {
         }else{
             panInputBox.setEnabled(false);
         }
-        clssLightsView = view.findViewById(R.id.clss_light);
+        clssLightsView = rootView.findViewById(R.id.clss_light);
 
         int swipeId = R.drawable.selection_swipe_card_a920;
         int insertId = R.drawable.selection_insert_card_a920;
@@ -280,9 +229,9 @@ public class InputAccountFragment extends Fragment {
             swipeId = R.drawable.selection_swipe_card_a800;
         }
 
-        TextView insert = view.findViewById(R.id.insert);
-        TextView tap = view.findViewById(R.id.tap);
-        TextView swipe = view.findViewById(R.id.swipe);
+        TextView insert = rootView.findViewById(R.id.insert);
+        TextView tap = rootView.findViewById(R.id.tap);
+        TextView swipe = rootView.findViewById(R.id.swipe);
 
         insert.setBackgroundResource(insertId);
         tap.setBackgroundResource(tapId);
@@ -292,10 +241,10 @@ public class InputAccountFragment extends Fragment {
         tap.setEnabled(enableTap);
         swipe.setEnabled(enableSwipe);
 
-        ImageView nfc = view.findViewById(R.id.nfc);
-        ImageView apple = view.findViewById(R.id.apple);
-        ImageView google = view.findViewById(R.id.google);
-        ImageView samsung = view.findViewById(R.id.samsung);
+        ImageView nfc = rootView.findViewById(R.id.nfc);
+        ImageView apple = rootView.findViewById(R.id.apple);
+        ImageView google = rootView.findViewById(R.id.google);
+        ImageView samsung = rootView.findViewById(R.id.samsung);
 
         nfc.setVisibility(supportNFC? View.VISIBLE: View.GONE);
         apple.setVisibility(supportApplePay? View.VISIBLE: View.GONE);
@@ -325,8 +274,8 @@ public class InputAccountFragment extends Fragment {
             requireContext().registerReceiver(receiver,intentFilter);
         }
 
-        TextView merchantTv = view.findViewById(R.id.merchant);
-        TextView merchantNameTv = view.findViewById(R.id.merchantName);
+        TextView merchantTv = rootView.findViewById(R.id.merchant);
+        TextView merchantNameTv = rootView.findViewById(R.id.merchantName);
 
         if(!TextUtils.isEmpty(merchantName)){
             merchantNameTv.setText(merchantName);
@@ -335,8 +284,8 @@ public class InputAccountFragment extends Fragment {
             merchantNameTv.setVisibility(View.GONE);
         }
 
-        TextView totalAmountTv = view.findViewById(R.id.total_amount);
-        amountTv = view.findViewById(R.id.amount_view);
+        TextView totalAmountTv = rootView.findViewById(R.id.total_amount);
+        amountTv = rootView.findViewById(R.id.amount_view);
         if(!TextUtils.isEmpty(amountMessage)){
             totalAmountTv.setText(amountMessage);
         }else if(totalAmount != null){
@@ -374,35 +323,20 @@ public class InputAccountFragment extends Fragment {
                 "FF9C27B0");
     }
 
-    private void sendAbort(){
-        EntryRequestUtils.sendAbort(requireContext(), packageName, action);
-    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryAbort(EntryAbortEvent event) {
-        
-        sendAbort();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetEntryResponse(EntryResponseEvent event){
-        switch (event.action){
-            case EntryResponse.ACTION_ACCEPTED:
-                Log.d("POSLinkUI","Entry "+action+" accepted");
-                break;
-            case EntryResponse.ACTION_DECLINED:{
-                Log.d("POSLinkUI","Entry "+action+" declined("+event.code+"-"+event.message+")");
-                Toast.makeText(requireActivity(),event.message,Toast.LENGTH_SHORT).show();
-            }
-
+        if(receiver != null){
+            requireContext().unregisterReceiver(receiver);
         }
     }
-
 
     private class Receiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Logger.i("receive Status Action \""+intent.getAction()+"\"");
             switch (intent.getAction()) {
                 case ClssLightStatus.CLSS_LIGHT_COMPLETED:
                 case ClssLightStatus.CLSS_LIGHT_NOT_READY: //Fix ANBP-383, ANFDRC-319
@@ -435,8 +369,7 @@ public class InputAccountFragment extends Fragment {
                     clssLightsView.setLight(2, ClssLight.ON);
                     clssLightsView.setLight(3, ClssLight.OFF);
                     break;
-                case InformationStatus
-                            .TRANS_AMOUNT_CHANGED_IN_CARD_PROCESSING:
+                case InformationStatus.TRANS_AMOUNT_CHANGED_IN_CARD_PROCESSING:
                     totalAmount = intent.getLongExtra(StatusData.PARAM_TOTAL_AMOUNT,totalAmount);
                     amountTv.setText(CurrencyUtils.convert(totalAmount, currencyType));
                     break;
@@ -459,14 +392,12 @@ public class InputAccountFragment extends Fragment {
                     Toast.makeText(requireContext(),getString(R.string.please_remove_card_quickly),Toast.LENGTH_LONG).show();
                     break;
                 case SecurityStatus.SECURITY_ENTER_CLEARED:
-                    Log.d("InputAccountFragment","SECURITY_ENTER_CLEARED");
-                    break;
                 case SecurityStatus.SECURITY_ENTERING:
-                    Log.d("InputAccountFragment","SECURITY_ENTERING");
+                case SecurityStatus.SECURITY_ENTER_DELETE: {
+                    //You can update Confirm Button status according to the 3 actions
+                    //Example: if input length>0, enabled confirm button. Else, disable confirm button
                     break;
-                case SecurityStatus.SECURITY_ENTER_DELETE:
-                    Log.d("InputAccountFragment","SECURITY_ENTER_DELETE");
-                    break;
+                }
                 default:
                     break;
             }

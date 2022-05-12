@@ -8,10 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -19,31 +16,24 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
-import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 
 //TODO Yanina: Grant Permission for RECEIPT_URI
-public class ConfirmReceiptViewFragment extends Fragment {
-    private String action;
-    private String packageName;
+public class ConfirmReceiptViewFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;
     private String transMode;
@@ -62,30 +52,15 @@ public class ConfirmReceiptViewFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        loadArgument(getArguments());
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_receipt_view;
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_receipt_view, container, false);
-    }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        loadView(view);
-        EventBus.getDefault().register(this);
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
+        Logger.d("POSLinkUIDemo","ConfirmReceiptView onDestroy");
 
         EventBus.getDefault().unregister(this);
         if (receiptOutAnim != null) {
@@ -93,10 +68,8 @@ public class ConfirmReceiptViewFragment extends Fragment {
         }
     }
 
-    private void loadArgument(Bundle bundle){
-        if(bundle == null){
-            return;
-        }
+    @Override
+    protected void loadArgument(@NonNull Bundle bundle) {
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
@@ -106,7 +79,8 @@ public class ConfirmReceiptViewFragment extends Fragment {
         receiptUri = bundle.getString(EntryExtraData.PARAM_RECEIPT_URI);
     }
 
-    private void loadView(View view){
+    @Override
+    protected void loadView(View rootView) {
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if(actionBar != null) {
             actionBar.setTitle(getString(R.string.receipt_preview));
@@ -131,8 +105,8 @@ public class ConfirmReceiptViewFragment extends Fragment {
         }
 
         receiptOutAnim = AnimationUtils.loadAnimation(requireActivity(), R.anim.receipt_out);
-        imageView = view.findViewById(R.id.print_preview);
-        Button confirmBtn = view.findViewById(R.id.confirm_button);
+        imageView = rootView.findViewById(R.id.print_preview);
+        Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -164,8 +138,7 @@ public class ConfirmReceiptViewFragment extends Fragment {
                 imageView.setImageBitmap(bitmap);
             }
         } catch (IOException e) {
-            e.printStackTrace();
-//            tickTimerStop();
+            Logger.e(e);
             Toast.makeText(requireContext(), getString(R.string.receipt_image_too_long),Toast.LENGTH_SHORT).show();
             sendAbort();
         }
@@ -176,31 +149,5 @@ public class ConfirmReceiptViewFragment extends Fragment {
     private void sendNext(boolean confirm){
         EntryRequestUtils.sendNext(requireContext(), packageName, action,EntryRequest.PARAM_CONFIRMED,confirm);
     }
-
-    private void sendAbort(){
-        EntryRequestUtils.sendAbort(requireContext(), packageName, action);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryAbort(EntryAbortEvent event) {
-        
-        sendAbort();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetEntryResponse(EntryResponseEvent event){
-        switch (event.action){
-            case EntryResponse.ACTION_ACCEPTED:
-                Log.d("POSLinkUI","Entry "+action+" accepted");
-                break;
-            case EntryResponse.ACTION_DECLINED:{
-                Log.d("POSLinkUI","Entry "+action+" declined("+event.code+"-"+event.message+")");
-                Toast.makeText(requireActivity(),event.message,Toast.LENGTH_SHORT).show();
-            }
-
-        }
-    }
-
-
 
 }
