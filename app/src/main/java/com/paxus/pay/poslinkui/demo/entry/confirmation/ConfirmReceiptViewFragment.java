@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
@@ -33,6 +34,9 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 
 //TODO Yanina: Grant Permission for RECEIPT_URI
+/**
+ * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_RECEIPT_VIEW}
+ */
 public class ConfirmReceiptViewFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;

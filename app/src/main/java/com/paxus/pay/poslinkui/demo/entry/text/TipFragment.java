@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
+import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.pax.us.pay.ui.constant.entry.enumeration.UnitType;
@@ -36,6 +37,9 @@ import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implement text entry action {@value TextEntry#ACTION_ENTER_TIP}<br>
+ */
 public class TipFragment extends BaseEntryFragment {
     private String transType;
     private String transMode;

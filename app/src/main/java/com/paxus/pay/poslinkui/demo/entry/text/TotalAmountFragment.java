@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
+import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
@@ -26,6 +27,9 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
+/**
+ * Implement text entry action {@value TextEntry#ACTION_ENTER_TOTAL_AMOUNT}<br>
+ */
 public class TotalAmountFragment extends BaseEntryFragment {
     private String transType;
     private String transMode;

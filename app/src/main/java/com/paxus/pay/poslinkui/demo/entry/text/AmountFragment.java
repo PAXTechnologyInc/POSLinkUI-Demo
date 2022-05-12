@@ -26,6 +26,13 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
+/**
+ * Implement text entry actions:<br>
+ * {@value TextEntry#ACTION_ENTER_AMOUNT}<br>
+ * {@value TextEntry#ACTION_ENTER_FUEL_AMOUNT}<br>
+ * {@value TextEntry#ACTION_ENTER_TAX_AMOUNT}<br>
+ */
+
 public class AmountFragment extends BaseEntryFragment {
     private String transType;
     private String transMode;

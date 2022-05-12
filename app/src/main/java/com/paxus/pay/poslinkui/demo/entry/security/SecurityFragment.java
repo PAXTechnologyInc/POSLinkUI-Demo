@@ -25,6 +25,12 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
+/**
+ * Implement security entry actions:<br>
+ * {@value SecurityEntry#ACTION_ENTER_VCODE}<br>
+ * {@value SecurityEntry#ACTION_ENTER_CARD_LAST_4_DIGITS}<br>
+ * {@value SecurityEntry#ACTION_ENTER_CARD_ALL_DIGITS}<br>
+ */
 public class SecurityFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;

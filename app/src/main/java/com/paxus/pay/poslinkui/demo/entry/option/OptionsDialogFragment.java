@@ -18,6 +18,9 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryDialogFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
+/**
+ * Implement all option entry actions defined in {@link OptionEntry}
+ */
 public class OptionsDialogFragment extends BaseEntryDialogFragment {
     private String[] items;
     private ListView listView;

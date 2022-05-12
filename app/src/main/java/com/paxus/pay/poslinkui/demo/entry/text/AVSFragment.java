@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
+import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.InputType;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
@@ -22,7 +23,9 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
-
+/**
+ * Implement text entry action {@value TextEntry#ACTION_ENTER_AVS_DATA}<br>
+ */
 public class AVSFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;

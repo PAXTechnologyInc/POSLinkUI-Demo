@@ -40,6 +40,9 @@ import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import com.paxus.pay.poslinkui.demo.view.ClssLight;
 import com.paxus.pay.poslinkui.demo.view.ClssLightsView;
 
+/**
+ * Implement security entry actions {@link SecurityEntry#ACTION_INPUT_ACCOUNT} and  {@link SecurityEntry#ACTION_MANAGE_INPUT_ACCOUNT}
+ */
 public class InputAccountFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;

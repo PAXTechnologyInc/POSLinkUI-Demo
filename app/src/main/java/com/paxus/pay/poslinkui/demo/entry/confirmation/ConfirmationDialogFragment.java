@@ -23,7 +23,10 @@ import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
- * For ConfirmationEntry.ACTION_CONFIRM_CARD_PROCESS_RESULT, if timeout, treat it as confirmed.
+ * Implement all entry actions defined in {@link ConfirmationEntry} <br>
+ * except for {@value ConfirmationEntry#ACTION_CONFIRM_SURCHARGE_FEE} and {@value ConfirmationEntry#ACTION_CONFIRM_RECEIPT_VIEW}
+ *
+ * For {@link ConfirmationEntry#ACTION_CONFIRM_CARD_PROCESS_RESULT}, if timeout, treat it as confirmed.
  * For other confirm actions, timeout is controlled by BroadPOS.
  */
 public class ConfirmationDialogFragment extends BaseEntryDialogFragment {
@@ -102,7 +105,7 @@ public class ConfirmationDialogFragment extends BaseEntryDialogFragment {
             negativeButton.setVisibility(View.GONE);
         }
 
-        //For CONFIRM_CARD_PROCESS_RESULT
+        //For ConfirmationEntry.ACTION_CONFIRM_CARD_PROCESS_RESULT, if timeout, treat it as confirmed.
         if (!TextUtils.isEmpty(positiveText) && TextUtils.isEmpty(negativeText)) {
             new Handler().postDelayed(() -> {
                 if(active) {

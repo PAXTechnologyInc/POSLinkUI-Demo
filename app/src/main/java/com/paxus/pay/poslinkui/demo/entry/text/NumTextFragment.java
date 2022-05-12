@@ -23,7 +23,16 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
-
+/**
+ * Implement text entry actions:<br>
+ * {@value TextEntry#ACTION_ENTER_ZIPCODE}<br>
+ * {@value TextEntry#ACTION_ENTER_DEST_ZIPCODE}<br>
+ * {@value TextEntry#ACTION_ENTER_INVOICE_NUMBER}<br>
+ * {@value TextEntry#ACTION_ENTER_VOUCHER_DATA}<br>
+ * {@value TextEntry#ACTION_ENTER_REFERENCE_NUMBER}<br>
+ * {@value TextEntry#ACTION_ENTER_MERCHANT_REFERENCE_NUMBER}<br>
+ * {@value TextEntry#ACTION_ENTER_OCT_REFERENCE_NUMBER}<br>
+ */
 public class NumTextFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;

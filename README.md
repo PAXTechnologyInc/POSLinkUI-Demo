@@ -6,13 +6,16 @@ Use fragment to implement all UI (Activity and Dialog).
 2. launchMode is set to singleTop. If the activity is at the top of stack, it will not be created. New intent will be called.
 3. To show some dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE. The theme is set to No Action Bar and transparent.
 
+```
     <activity
         android:name=".entry.EntryActivity"
         android:exported="true"
         android:launchMode="singleTop"
         android:theme="@style/Theme.POSLinkUI">
+```
 
-## POSLinkUI flow
+## POSLinkUI Transaction flow
+The log below would help you understand how POSLinkUI run when do a transaction.
 
 1.Example for a chip transaction:
 
@@ -46,7 +49,6 @@ Use fragment to implement all UI (Activity and Dialog).
     receive Status Action "com.pax.us.pay.TRANS_COMPLETED"
 
 2.Example for Entry Response ACTION_DECLINED:
-BroadPOS will send ACTION_DECLINED with validation result if validation fail.
 
     start Entry Action "com.pax.us.pay.action.ENTER_AMOUNT"
     send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"

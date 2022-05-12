@@ -27,6 +27,9 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 
+/**
+ * Use fragment to implement all UI (Activity and Dialog).
+ */
 public class EntryActivity extends AppCompatActivity {
 
     private Toolbar toolbar;

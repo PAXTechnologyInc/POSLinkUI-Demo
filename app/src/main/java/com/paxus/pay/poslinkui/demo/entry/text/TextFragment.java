@@ -23,6 +23,15 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
+/**
+ * Implement text entry actions:<br>
+ * {@value TextEntry#ACTION_ENTER_ADDRESS}<br>
+ * {@value TextEntry#ACTION_ENTER_AUTH}<br>
+ * {@value TextEntry#ACTION_ENTER_CUSTOMER_CODE}<br>
+ * {@value TextEntry#ACTION_ENTER_ORDER_NUMBER}<br>
+ * {@value TextEntry#ACTION_ENTER_PO_NUMBER}<br>
+ * {@value TextEntry#ACTION_ENTER_PROD_DESC}<br>
+ */
 public class TextFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;

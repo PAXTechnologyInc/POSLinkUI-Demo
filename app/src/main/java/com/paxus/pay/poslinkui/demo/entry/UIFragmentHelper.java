@@ -44,6 +44,11 @@ class UIFragmentHelper {
 
     }
 
+    /**
+     * Create all dialogs
+     * @param intent Intent
+     * @return DialogFragment
+     */
     public static DialogFragment createDialogFragment(Intent intent){
         String action = intent.getAction();
         Set<String> categories = intent.getCategories();
@@ -82,6 +87,11 @@ class UIFragmentHelper {
         return null;
     }
 
+    /**
+     * Create dialog tag cuz we use it to close dialog
+     * @param action action
+     * @return tag
+     */
     public static String createStatusDialogTag(String action){
         switch (action) {
             case InformationStatus.TRANS_COMPLETED:
@@ -112,6 +122,11 @@ class UIFragmentHelper {
         }
     }
 
+    /**
+     * Create all entry fragments which not dialog
+     * @param intent Intent
+     * @return DialogFragment
+     */
     public static Fragment createFragment(Intent intent){
         String action = intent.getAction();
         Set<String> categories = intent.getCategories();

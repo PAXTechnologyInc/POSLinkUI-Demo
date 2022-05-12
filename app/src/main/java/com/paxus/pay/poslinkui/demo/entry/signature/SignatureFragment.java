@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
+import com.pax.us.pay.ui.constant.entry.SignatureEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
@@ -27,6 +28,9 @@ import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 import java.util.List;
 
+/**
+ * Implement signature entry action {@value SignatureEntry#ACTION_SIGNATURE}<br>
+ */
 public class SignatureFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;

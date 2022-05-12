@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
+import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.paxus.pay.poslinkui.demo.R;
@@ -16,6 +17,9 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryDialogFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
+/**
+ * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_SURCHARGE_FEE}
+ */
 public class ConfirmationSurchargeFeeDialogFragment extends BaseEntryDialogFragment {
     private long timeout;
     private String feeName;

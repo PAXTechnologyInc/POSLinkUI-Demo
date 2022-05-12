@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
+import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.PinStyles;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
@@ -31,6 +33,9 @@ import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implement security entry action {@link SecurityEntry#ACTION_ENTER_PIN}
+ */
 public class PINFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;
@@ -148,10 +153,11 @@ public class PINFragment extends BaseEntryFragment {
         boolean couldBypass = pinRange!= null && pinRange.startsWith("0,");
         rootView.findViewById(R.id.bypass).setVisibility(couldBypass? View.VISIBLE:View.GONE);
 
-        if(isUsingExternalPinPad){
+        if(isUsingExternalPinPad || hasPhysicalKeyboard()){
             rootView.findViewById(R.id.pinpad_layout).setVisibility(View.GONE);
             sendSecureArea();
         }else {
+            //For customized pin pad.
             ViewTreeObserver observer = pinBox.getViewTreeObserver();
             observer.addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -159,6 +165,9 @@ public class PINFragment extends BaseEntryFragment {
                         public void onGlobalLayout() {
                             pinBox.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
+                            /*
+                             * If you don't want customize pin pad, you don't need send pin pad location
+                             */
                             //---------------------Send Pin Pad Location------------------
                             Map<String, Integer> padMap = new HashMap<>();
                             padMap.put(EntryRequest.PARAM_KEY_0, R.id.key_0);
@@ -196,7 +205,6 @@ public class PINFragment extends BaseEntryFragment {
 
     }
 
-
     private void sendSecureArea(){
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -206,6 +214,17 @@ public class PINFragment extends BaseEntryFragment {
         intent.setPackage(packageName);
         requireContext().sendBroadcast(intent);
 
+    }
+
+    public boolean hasPhysicalKeyboard(){
+        //For devices which has physical pin pad, do not prompt virtual pin pad
+        String buildModel = Build.MODEL;
+
+        return "A80".equals(buildModel)
+                || "A30".equals(buildModel)
+                || "A35".equals(buildModel)
+                || "Aries6".equals(buildModel)
+                || "Aries8".equals(buildModel);
     }
 
     private class Receiver extends BroadcastReceiver {
