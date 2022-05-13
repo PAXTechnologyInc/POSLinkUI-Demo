@@ -5,13 +5,14 @@ Use fragment to implement all UI (Activity and Dialog).
 1. exported should be true. Then this activity can be started by Intent.
 2. launchMode is set to singleTop. If the activity is at the top of stack, it will not be created. New intent will be called.
 3. To show some dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE. The theme is set to No Action Bar and transparent.
-
+4. To not confuse user by seeing 2 app in recents, auto remove from recents
 ```
     <activity
         android:name=".entry.EntryActivity"
         android:exported="true"
         android:launchMode="singleTop"
-        android:theme="@style/Theme.POSLinkUI">
+        android:theme="@style/Theme.POSLinkUI"
+        android:autoRemoveFromRecents="true">
 ```
 
 ## POSLinkUI Transaction flow

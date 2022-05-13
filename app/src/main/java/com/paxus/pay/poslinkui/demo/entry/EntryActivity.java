@@ -127,7 +127,7 @@ public class EntryActivity extends AppCompatActivity {
         if(InformationStatus.TRANS_COMPLETED.equals(action)){
             long code = intent.getLongExtra(StatusData.PARAM_CODE,0L);
             if(code == -3){//Transaction Cancelled
-                finish();
+                finishAndRemoveTask();
                 return;
             }
         }

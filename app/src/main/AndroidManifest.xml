@@ -6,7 +6,7 @@
 <!--    Add permissions for write log-->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28"
+        android:maxSdkVersion="29"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -20,6 +20,17 @@
         android:name=".DemoApplication"
         android:requestLegacyExternalStorage="true">
 
+        <activity android:name=".MainActivity"
+            android:theme="@style/Theme.Main">
+            <!--            Add launcher then you can see the app in desktop and uninstall it easily-->
+            <intent-filter>
+
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
 <!--        1. exported should be true. Then this activity can be started by Intent.-->
 <!--        2. launchMode is set to singleTop. If the activity is at the top of stack, it will not be created. New intent will be called.-->
 <!--        3. To show some dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE. The theme is set to No Action Bar and transparent.-->
@@ -27,7 +38,8 @@
             android:name=".entry.EntryActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.POSLinkUI">
+            android:theme="@style/Theme.POSLinkUI"
+            android:autoRemoveFromRecents="true">
             <intent-filter>
                 <action android:name="com.pax.us.pay.action.ENTER_AMOUNT" />
                 <action android:name="com.pax.us.pay.action.ENTER_FUEL_AMOUNT" />
