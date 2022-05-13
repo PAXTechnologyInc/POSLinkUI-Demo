@@ -102,7 +102,7 @@ public class InputAccountFragment extends BaseEntryFragment {
 
         supportApplePay = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_APPLEPAY);
         supportGooglePay = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_GOOGLEPAY);
-        supportSamsungPay = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_SUMSUNGPAY);
+        supportSamsungPay = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_SAMSUNGPAY);
         supportNFC = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_NFCPAY);
 
         String valuePatten = "";
