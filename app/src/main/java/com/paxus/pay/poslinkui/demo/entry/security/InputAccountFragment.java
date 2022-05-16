@@ -232,13 +232,13 @@ public class InputAccountFragment extends BaseEntryFragment {
             swipeId = R.drawable.selection_swipe_card_a800;
         }
 
-        TextView insert = rootView.findViewById(R.id.insert);
-        TextView tap = rootView.findViewById(R.id.tap);
-        TextView swipe = rootView.findViewById(R.id.swipe);
+        ImageView insert = rootView.findViewById(R.id.insert);
+        ImageView tap = rootView.findViewById(R.id.tap);
+        ImageView swipe = rootView.findViewById(R.id.swipe);
 
-        insert.setBackgroundResource(insertId);
-        tap.setBackgroundResource(tapId);
-        swipe.setBackgroundResource(swipeId);
+        insert.setImageResource(insertId);
+        tap.setImageResource(tapId);
+        swipe.setImageResource(swipeId);
 
         insert.setEnabled(enableInsert);
         tap.setEnabled(enableTap);
@@ -277,14 +277,12 @@ public class InputAccountFragment extends BaseEntryFragment {
             requireContext().registerReceiver(receiver,intentFilter);
         }
 
-        TextView merchantTv = rootView.findViewById(R.id.merchant);
         TextView merchantNameTv = rootView.findViewById(R.id.merchantName);
 
         if(!TextUtils.isEmpty(merchantName)){
             merchantNameTv.setText(merchantName);
         }else {
-            merchantTv.setVisibility(View.GONE);
-            merchantNameTv.setVisibility(View.GONE);
+            rootView.findViewById(R.id.ly_merchant).setVisibility(View.GONE);
         }
 
         TextView totalAmountTv = rootView.findViewById(R.id.total_amount);
