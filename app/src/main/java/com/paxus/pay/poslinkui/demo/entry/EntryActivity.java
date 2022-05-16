@@ -20,6 +20,7 @@ import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
+import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
 import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
@@ -150,6 +151,20 @@ public class EntryActivity extends AppCompatActivity {
         //----------------Entry Response-----------------
         filter.addAction(EntryResponse.ACTION_ACCEPTED);
         filter.addAction(EntryResponse.ACTION_DECLINED);
+
+        //-----------------Uncategory Status-----------------
+        filter.addAction(Uncategory.PRINT_STARTED);
+        filter.addAction(Uncategory.PRINT_COMPLETED);
+        filter.addAction(Uncategory.FILE_UPDATE_STARTED);
+        filter.addAction(Uncategory.FILE_UPDATE_COMPLETED);
+        filter.addAction(Uncategory.FCP_FILE_UPDATE_STARTED);
+        filter.addAction(Uncategory.FCP_FILE_UPDATE_COMPLETED);
+        filter.addAction(Uncategory.CAPK_UPDATE_STARTED);
+        filter.addAction(Uncategory.CAPK_UPDATE_COMPLETED);
+        filter.addAction(Uncategory.LOG_UPLOAD_STARTED);
+        filter.addAction(Uncategory.LOG_UPLOAD_CONNECTED);
+        filter.addAction(Uncategory.LOG_UPLOAD_UPLOADING);
+        filter.addAction(Uncategory.LOG_UPLOAD_COMPLETED);
 
         //----------------Information Status-----------------
         filter.addCategory(InformationStatus.CATEGORY);

@@ -12,6 +12,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,6 +72,8 @@ public class InputAccountFragment extends BaseEntryFragment {
 
     private BroadcastReceiver receiver;
     private TextView panInputBox;
+    private Button confirmButton;
+    private int panLength = 0;
 
     public static InputAccountFragment newInstance(Intent intent){
         InputAccountFragment numFragment = new InputAccountFragment();
@@ -167,9 +170,15 @@ public class InputAccountFragment extends BaseEntryFragment {
         textView.setText(hint);
 
         panInputBox = rootView.findViewById(R.id.edit_account);
-
+        confirmButton = rootView.findViewById(R.id.confirm_button);
         if(enableManual) {
             panInputBox.setEnabled(true);
+            confirmButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    EntryRequestUtils.sendNext(requireContext(),packageName,action);
+                }
+            });
 
             ViewTreeObserver observer = panInputBox.getViewTreeObserver();
             observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -186,7 +195,7 @@ public class InputAccountFragment extends BaseEntryFragment {
                 }
             });
         }else{
-            panInputBox.setEnabled(false);
+            rootView.findViewById(R.id.layout_manual).setVisibility(View.GONE);
         }
         clssLightsView = rootView.findViewById(R.id.clss_light);
 
@@ -342,65 +351,73 @@ public class InputAccountFragment extends BaseEntryFragment {
                 case ClssLightStatus.CLSS_LIGHT_COMPLETED:
                 case ClssLightStatus.CLSS_LIGHT_NOT_READY: //Fix ANBP-383, ANFDRC-319
                     clssLightsView.setLights(-1, ClssLight.OFF);
-                    break;
+                    return;
                 case ClssLightStatus.CLSS_LIGHT_ERROR:
                     clssLightsView.setLight(0, ClssLight.OFF);
                     clssLightsView.setLight(1, ClssLight.OFF);
                     clssLightsView.setLight(2, ClssLight.OFF);
                     clssLightsView.setLight(3, ClssLight.ON);
-                    break;
+                    return;
                 case ClssLightStatus.CLSS_LIGHT_IDLE:
                     clssLightsView.setLights(0, ClssLight.BLINK);
-                    break;
+                    return;
                 case ClssLightStatus.CLSS_LIGHT_PROCESSING:
                     clssLightsView.setLight(0, ClssLight.ON);
                     clssLightsView.setLight(1, ClssLight.ON);
                     clssLightsView.setLight(2, ClssLight.OFF);
                     clssLightsView.setLight(3, ClssLight.OFF);
-                    break;
+                    return;
                 case ClssLightStatus.CLSS_LIGHT_READY_FOR_TXN:
                     clssLightsView.setLight(0, ClssLight.ON);
                     clssLightsView.setLight(1, ClssLight.OFF);
                     clssLightsView.setLight(2, ClssLight.OFF);
                     clssLightsView.setLight(3, ClssLight.OFF);
-                    break;
+                    return;
                 case ClssLightStatus.CLSS_LIGHT_REMOVE_CARD:
                     clssLightsView.setLight(0, ClssLight.ON);
                     clssLightsView.setLight(1, ClssLight.ON);
                     clssLightsView.setLight(2, ClssLight.ON);
                     clssLightsView.setLight(3, ClssLight.OFF);
-                    break;
+                    return;
                 case InformationStatus.TRANS_AMOUNT_CHANGED_IN_CARD_PROCESSING:
                     totalAmount = intent.getLongExtra(StatusData.PARAM_TOTAL_AMOUNT,totalAmount);
                     amountTv.setText(CurrencyUtils.convert(totalAmount, currencyType));
-                    break;
+                    return;
                 case CardStatus.CARD_INSERT_REQUIRED:
                     clssLightsView.setLights(0, ClssLight.BLINK);
                     Toast.makeText(requireContext(),getString(R.string.please_insert_chip_card),Toast.LENGTH_LONG).show();
-                    break;
+                    return;
                 case CardStatus.CARD_TAP_REQUIRED:
                     clssLightsView.setLight(0, ClssLight.ON);
                     clssLightsView.setLight(1, ClssLight.OFF);
                     clssLightsView.setLight(2, ClssLight.OFF);
                     clssLightsView.setLight(3, ClssLight.OFF);
                     Toast.makeText(requireContext(),getString(R.string.please_tap_card),Toast.LENGTH_LONG).show();
-                    break;
+                    return;
                 case CardStatus.CARD_SWIPE_REQUIRED:
                     clssLightsView.setLights(0, ClssLight.BLINK);
                     Toast.makeText(requireContext(),getString(R.string.please_swipe_card),Toast.LENGTH_LONG).show();
-                    break;
+                    return;
                 case CardStatus.CARD_QUICK_REMOVAL_REQUIRED:
                     Toast.makeText(requireContext(),getString(R.string.please_remove_card_quickly),Toast.LENGTH_LONG).show();
+                    return;
+                case SecurityStatus.SECURITY_ENTER_CLEARED:{
+                    panLength = 0;
                     break;
-                case SecurityStatus.SECURITY_ENTER_CLEARED:
-                case SecurityStatus.SECURITY_ENTERING:
+                }
+                case SecurityStatus.SECURITY_ENTERING:{
+                    panLength++;
+                }
                 case SecurityStatus.SECURITY_ENTER_DELETE: {
-                    //You can update Confirm Button status according to the 3 actions
-                    //Example: if input length>0, enabled confirm button. Else, disable confirm button
+                    panLength--;
                     break;
                 }
                 default:
                     break;
+            }
+
+            if(confirmButton!=null) {
+                confirmButton.setEnabled(panLength > 0);
             }
 
         }

@@ -130,7 +130,7 @@ public class NumTextFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        EditText editText = rootView.findViewById(R.id.edit_text);
+        EditText editText = rootView.findViewById(R.id.edit_number_text);
         if(maxLength > 0 ) {
             editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
         }

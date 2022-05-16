@@ -14,6 +14,7 @@ import com.pax.us.pay.ui.constant.entry.SignatureEntry;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
+import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmationDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmationSurchargeFeeDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.information.DisplayTransInfoFragment;
@@ -33,6 +34,7 @@ import com.paxus.pay.poslinkui.demo.entry.text.TipFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.TotalAmountFragment;
 import com.paxus.pay.poslinkui.demo.status.InformationDialogFragment;
 import com.paxus.pay.poslinkui.demo.status.TransCompletedDialogFragment;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 import java.util.Set;
 
@@ -53,35 +55,44 @@ class UIFragmentHelper {
         String action = intent.getAction();
         Set<String> categories = intent.getCategories();
         if(action != null) {
-            if (categories.contains(OptionEntry.CATEGORY)) {
-                return OptionsDialogFragment.newInstance(intent);
-            } else if(categories.contains(ConfirmationEntry.CATEGORY)){
-                if(ConfirmationEntry.ACTION_CONFIRM_SURCHARGE_FEE.equals(action)){
-                    return ConfirmationSurchargeFeeDialogFragment.newInstance(intent);
+            if(categories != null) {
+                if (categories.contains(OptionEntry.CATEGORY)) {
+                    return OptionsDialogFragment.newInstance(intent);
+                } else if (categories.contains(ConfirmationEntry.CATEGORY)) {
+                    if (ConfirmationEntry.ACTION_CONFIRM_SURCHARGE_FEE.equals(action)) {
+                        return ConfirmationSurchargeFeeDialogFragment.newInstance(intent);
+                    }
+                    return ConfirmationDialogFragment.newInstance(intent);
                 }
+            }
 
-                return ConfirmationDialogFragment.newInstance(intent);
-            }else if(categories.contains(InformationStatus.CATEGORY)){
-                switch (action){
-                    case InformationStatus.TRANS_COMPLETED:
-                        return TransCompletedDialogFragment.newInstance(intent);
-                    case InformationStatus.TRANS_ONLINE_STARTED:
-                    case InformationStatus.EMV_TRANS_ONLINE_STARTED:
-                    case InformationStatus.RKI_STARTED:
-                    case InformationStatus.DCC_ONLINE_STARTED:
-                    case InformationStatus.PINPAD_CONNECTION_STARTED:
-                        return InformationDialogFragment.newInstance(action);
-                    default:
-                        break;
+            switch (action){
+                case InformationStatus.TRANS_COMPLETED: {
+                    if(categories == null){
+                        Logger.e("WARNING:\""+action+"\" Category is missing!");
+                    }
+                    return TransCompletedDialogFragment.newInstance(intent);
                 }
-            }else if(categories.contains(CardStatus.CATEGORY)){
-                switch (action){
-                    case CardStatus.CARD_REMOVAL_REQUIRED:
-                    case CardStatus.CARD_PROCESS_STARTED:
-                        return InformationDialogFragment.newInstance(action);
-                    default:
-                        break;
+                case InformationStatus.TRANS_ONLINE_STARTED:
+                case InformationStatus.EMV_TRANS_ONLINE_STARTED:
+                case InformationStatus.RKI_STARTED:
+                case InformationStatus.DCC_ONLINE_STARTED:
+                case InformationStatus.PINPAD_CONNECTION_STARTED:
+                case CardStatus.CARD_REMOVAL_REQUIRED:
+                case CardStatus.CARD_PROCESS_STARTED: {
+                    if (categories == null) {
+                        Logger.e("WARNING:\"" + action + "\" Category is missing!");
+                    }
+                    return InformationDialogFragment.newInstance(action);
                 }
+                case Uncategory.PRINT_STARTED:
+                case Uncategory.FILE_UPDATE_STARTED:
+                case Uncategory.FCP_FILE_UPDATE_STARTED:
+                case Uncategory.LOG_UPLOAD_STARTED:
+                case Uncategory.LOG_UPLOAD_CONNECTED:
+                case Uncategory.LOG_UPLOAD_UPLOADING:
+                case Uncategory.CAPK_UPDATE_STARTED:
+                    return InformationDialogFragment.newInstance(action);
             }
         }
         return null;
@@ -117,6 +128,23 @@ class UIFragmentHelper {
             case CardStatus.CARD_PROCESS_STARTED:
             case CardStatus.CARD_PROCESS_COMPLETED:
                 return "card_process";
+            case Uncategory.PRINT_STARTED:
+            case Uncategory.PRINT_COMPLETED:
+                return "print_process";
+            case Uncategory.FILE_UPDATE_STARTED:
+            case Uncategory.FILE_UPDATE_COMPLETED:
+                return "file_update";
+            case Uncategory.FCP_FILE_UPDATE_STARTED:
+            case Uncategory.FCP_FILE_UPDATE_COMPLETED:
+                return "fcp_file_update";
+            case Uncategory.CAPK_UPDATE_STARTED:
+            case Uncategory.CAPK_UPDATE_COMPLETED:
+                return "capk_update";
+            case Uncategory.LOG_UPLOAD_STARTED:
+            case Uncategory.LOG_UPLOAD_CONNECTED:
+            case Uncategory.LOG_UPLOAD_UPLOADING:
+            case Uncategory.LOG_UPLOAD_COMPLETED:
+                return "log_upload";
             default:
                 return null;
         }
@@ -130,7 +158,7 @@ class UIFragmentHelper {
     public static Fragment createFragment(Intent intent){
         String action = intent.getAction();
         Set<String> categories = intent.getCategories();
-        if(action != null){
+        if(action != null && categories != null){
             if(categories.contains(TextEntry.CATEGORY)) {
                 switch (action) {
                     case TextEntry.ACTION_ENTER_AMOUNT:
@@ -207,7 +235,6 @@ class UIFragmentHelper {
 //                }
             }
         }
-
         return null;
     }
 

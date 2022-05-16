@@ -1,6 +1,9 @@
 package com.paxus.pay.poslinkui.demo.entry.security;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,6 +11,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -20,9 +24,11 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.pax.us.pay.ui.constant.entry.enumeration.VCodeName;
+import com.pax.us.pay.ui.constant.status.SecurityStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 /**
@@ -38,6 +44,10 @@ public class SecurityFragment extends BaseEntryFragment {
     private int maxLength;
     private String message = "";
     private String transMode;
+
+    private Button confirmButton;
+    private int secureLength;
+    private BroadcastReceiver receiver;
 
     public static SecurityFragment newInstance(Intent intent){
         SecurityFragment numFragment = new SecurityFragment();
@@ -66,14 +76,17 @@ public class SecurityFragment extends BaseEntryFragment {
             valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"3-4");
             message = getString(R.string.pls_input_vcode);
             String vcodeName = bundle.getString(EntryExtraData.PARAM_VCODE_NAME);
-            if(VCodeName.CVV2.equals(vcodeName)){
-
-            }else if(VCodeName.CAV2.equals(vcodeName)){
-
-            }else if(VCodeName.CID.equals(vcodeName)){
-
-            }else {
-                message = vcodeName;
+            if(!TextUtils.isEmpty(vcodeName)) {
+                if (VCodeName.CVV2.equals(vcodeName)) {
+                    message = getString(R.string.pls_input_cvv2);
+                } else if (VCodeName.CAV2.equals(vcodeName)) {
+                    message = getString(R.string.pls_input_cav2);
+                } else if (VCodeName.CID.equals(vcodeName)) {
+                    message = getString(R.string.pls_input_cid);
+                } else {
+                    message = vcodeName;
+                    Logger.e("unknown vcode name:"+vcodeName);
+                }
             }
         } else if(SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS.equals(action)){
             valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"4-4");
@@ -90,7 +103,6 @@ public class SecurityFragment extends BaseEntryFragment {
                 maxLength = Integer.parseInt(tmp[1]);
             }
         }
-
     }
 
     @Override
@@ -139,6 +151,21 @@ public class SecurityFragment extends BaseEntryFragment {
             }
         });
 
+        confirmButton = rootView.findViewById(R.id.confirm_button);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EntryRequestUtils.sendNext(requireContext(),packageName,action);
+            }
+        });
+        receiver = new SecurityFragment.Receiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addCategory(SecurityStatus.CATEGORY);
+        intentFilter.addAction(SecurityStatus.SECURITY_ENTER_CLEARED);
+        intentFilter.addAction(SecurityStatus.SECURITY_ENTERING);
+        intentFilter.addAction(SecurityStatus.SECURITY_ENTER_DELETE);
+
+        requireContext().registerReceiver(receiver,intentFilter);
     }
     private void sendSecureArea(EditText editText){
         int[] location = new int[2];
@@ -160,4 +187,40 @@ public class SecurityFragment extends BaseEntryFragment {
                 "FF9C27B0");
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if(receiver != null){
+            requireContext().unregisterReceiver(receiver);
+        }
+    }
+
+    private class Receiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Logger.i("receive Status Action \""+intent.getAction()+"\"");
+            switch (intent.getAction()) {
+                case SecurityStatus.SECURITY_ENTER_CLEARED:{
+                    secureLength = 0;
+                    break;
+                }
+                case SecurityStatus.SECURITY_ENTERING:{
+                    secureLength++;
+                }
+                case SecurityStatus.SECURITY_ENTER_DELETE: {
+                    secureLength--;
+                    break;
+                }
+                default:
+                    break;
+            }
+
+            if(confirmButton!=null) {
+                confirmButton.setEnabled(secureLength > 0);
+            }
+
+        }
+    }
 }

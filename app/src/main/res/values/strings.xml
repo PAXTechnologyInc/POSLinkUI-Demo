@@ -141,6 +141,9 @@
     <string name="pls_input_oct_reference_number">Please Enter OCT Reference Number</string>
     <string name="pls_input_pin">Please Enter PIN</string>
     <string name="pls_input_vcode">Please Enter V-Code</string>
+    <string name="pls_input_cvv2">Please Enter CVV2</string>
+    <string name="pls_input_cav2">Please Enter CAV2</string>
+    <string name="pls_input_cid">Please Enter CID</string>
     <string name="prompt_input_4digit">Please Enter Last 4 Digits</string>
     <string name="prompt_input_all_digit">Please Enter All Digits</string>
     <string name="prompt_input_cashback">Please Enter Cashback</string>

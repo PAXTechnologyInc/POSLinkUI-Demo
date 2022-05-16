@@ -14,9 +14,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 
+/**
+ *  Implement information status action {@value InformationStatus#TRANS_COMPLETED}
+ */
 public class TransCompletedDialogFragment extends DialogFragment {
 
     public static DialogFragment newInstance(Intent intent){
@@ -44,7 +49,7 @@ public class TransCompletedDialogFragment extends DialogFragment {
             long code = bundle.getLong(StatusData.PARAM_CODE);
             String msg = bundle.getString(StatusData.PARAM_MSG);
             long time = bundle.getLong(StatusData.PARAM_HOST_RESP_TIMEOUT,2000);
-
+            Logger.i("TRANS_COMPLETED:"+code+","+msg);
             if (code != 0) {
                 textView.setTextColor(getResources().getColor(R.color.fail));
             }else {

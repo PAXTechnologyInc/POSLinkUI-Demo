@@ -50,25 +50,36 @@
             android:gravity="end"/>
     </RelativeLayout>
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/manual_message"
-        android:textSize="14sp"
-        android:textColor="@color/black" />
-    <TextView
-        android:background="@drawable/border"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/edit_account"
-        android:hint=""
-        android:inputType="numberSigned"
-        android:digits="0123456789 "
-        android:layout_margin="20dp"
-        android:gravity="center_horizontal"
-        android:textSize="20sp"/>
+        android:layout_weight="4"
+        android:orientation="vertical"
+        android:id="@+id/layout_manual">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/manual_message"
+            android:textSize="14sp"
+            android:textColor="@color/black" />
+        <TextView
+            android:background="@drawable/border"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_account"
+            android:hint=""
+            android:inputType="numberSigned"
+            android:digits="0123456789 "
+            android:layout_margin="10dp"
+            android:gravity="center_horizontal"
+            android:textSize="20sp"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/confirm"
+            android:textAllCaps="false"
+            android:id="@+id/confirm_button"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
