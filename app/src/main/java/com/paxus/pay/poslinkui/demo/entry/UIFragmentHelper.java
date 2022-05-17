@@ -15,6 +15,7 @@ import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.Uncategory;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmReceiptViewFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmationDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmationSurchargeFeeDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.information.DisplayTransInfoFragment;
@@ -229,10 +230,9 @@ class UIFragmentHelper {
                 }
 
             } else if(categories.contains(ConfirmationEntry.CATEGORY)){
-                //TODO Bug: Grant Permission for RECEIPT_URI
-//                if(ConfirmationEntry.ACTION_CONFIRM_RECEIPT_VIEW.equals(action)){
-//                    return ConfirmReceiptViewFragment.newInstance(intent);
-//                }
+                if(ConfirmationEntry.ACTION_CONFIRM_RECEIPT_VIEW.equals(action)){
+                    return ConfirmReceiptViewFragment.newInstance(intent);
+                }
             }
         }
         return null;

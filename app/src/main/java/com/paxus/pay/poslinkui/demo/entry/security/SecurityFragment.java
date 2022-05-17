@@ -208,6 +208,7 @@ public class SecurityFragment extends BaseEntryFragment {
                 }
                 case SecurityStatus.SECURITY_ENTERING:{
                     secureLength++;
+                    break;
                 }
                 case SecurityStatus.SECURITY_ENTER_DELETE: {
                     secureLength--;

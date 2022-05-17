@@ -407,6 +407,7 @@ public class InputAccountFragment extends BaseEntryFragment {
                 }
                 case SecurityStatus.SECURITY_ENTERING:{
                     panLength++;
+                    break;
                 }
                 case SecurityStatus.SECURITY_ENTER_DELETE: {
                     panLength--;

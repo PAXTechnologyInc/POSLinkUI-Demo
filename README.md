@@ -60,5 +60,4 @@ The log below would help you understand how POSLinkUI run when do a transaction.
 ## TODO List:
 1. Implement "com.pax.us.pay.action.ENTER_FLEET_DATA".
 2. Implement "com.pax.us.pay.action.ENTER_FSA_DATA"
-3. For action "com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW", BroadPOS should give a valid "receiptUri".
-4. Implement PoslinkEntry
+3. Implement PoslinkEntry

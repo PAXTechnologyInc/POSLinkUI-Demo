@@ -33,7 +33,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
-//TODO Yanina: Grant Permission for RECEIPT_URI
 /**
  * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_RECEIPT_VIEW}
  */
@@ -144,6 +143,10 @@ public class ConfirmReceiptViewFragment extends BaseEntryFragment {
         } catch (IOException e) {
             Logger.e(e);
             Toast.makeText(requireContext(), getString(R.string.receipt_image_too_long),Toast.LENGTH_SHORT).show();
+            sendAbort();
+        } catch (Exception e){
+            Logger.e(e);
+            Toast.makeText(requireContext(), e.getMessage(),Toast.LENGTH_SHORT).show();
             sendAbort();
         }
 
