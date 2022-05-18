@@ -20,33 +20,21 @@ Use fragment to implement all UI (Activity and Dialog).
 ## POSLinkUI Transaction flow
 The log below would help you understand how POSLinkUI run when do a transaction.
 
-A simple explanation for reading log (Step by Step):
-(1)BroadPOS startActivity "com.pax.us.pay.action.ENTER_AMOUNT"
-(2)POSLinkUIDemo create activity per intent
-
-    start Entry Action "com.pax.us.pay.action.ENTER_AMOUNT"
-
-(3)After click confirm button, POSLInkUIDemo send next broadcast with result to BroadPOS
-
-    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
-
-(4)BroadPOS return entry response tell POSLinkUIDemo that the result could be accepted or declined
-(5)If declined, that means the input is not valid, user need retry. Generally POSLinkUIDemo will show a toast message.
-
-    receive Entry Response ACTION_DECLINED for action "com.pax.us.pay.action.ENTER_AMOUNT" (-32-Please Input Amount)
-
-(6)After user redo input amount, click confirm button, POSLinkUIDemo request next again.
-
-    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
-
-(7)Finally, ACTION_NEXT was accepted. The ENTER_AMOUNT action end.
-
-    receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_AMOUNT"
-
-(8)Then generally BroadPOS will go to next step. Like startActivity for enter tip.
-
-    start Entry Action "com.pax.us.pay.action.ENTER_TIP"
-
+A simple explanation for reading log (Step by Step)
+-BroadPOS startActivity "com.pax.us.pay.action.ENTER_AMOUNT"
+-POSLinkUIDemo create activity per intent
+    >start Entry Action "com.pax.us.pay.action.ENTER_AMOUNT"
+-After click confirm button, POSLInkUIDemo send next broadcast with result to BroadPOS
+    >send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
+-BroadPOS return entry response tell POSLinkUIDemo that the result could be accepted or declined
+-If declined, that means the input is not valid, user need retry. Generally POSLinkUIDemo will show a toast message.
+    >receive Entry Response ACTION_DECLINED for action "com.pax.us.pay.action.ENTER_AMOUNT" (-32-Please Input Amount)
+-After user redo input amount, click confirm button, POSLinkUIDemo request next again.
+    >send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
+-Finally, ACTION_NEXT was accepted. The ENTER_AMOUNT action end.
+    >receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_AMOUNT"
+-Then generally BroadPOS will go to next step. Like startActivity for enter tip.
+    >start Entry Action "com.pax.us.pay.action.ENTER_TIP"
 
 
 1.Example log for a chip transaction:
