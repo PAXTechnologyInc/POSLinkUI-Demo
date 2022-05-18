@@ -25,6 +25,10 @@ import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_EXPIRY_DATE}<br>
+ * <p>
+ *     UI Tips:
+ *     If confirm button clicked, sendNext
+ * </p>
  */
 public class ExpiryFragment extends BaseEntryFragment {
 
@@ -34,6 +38,7 @@ public class ExpiryFragment extends BaseEntryFragment {
     private long timeOut;
     private String message = "";
 
+    private EditText editText;
     public static ExpiryFragment newInstance(Intent intent){
         ExpiryFragment numFragment = new ExpiryFragment();
         Bundle bundle = new Bundle();
@@ -90,7 +95,7 @@ public class ExpiryFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        EditText editText = rootView.findViewById(R.id.edit_expiry);
+        editText = rootView.findViewById(R.id.edit_expiry);
         editText.setSelection(editText.getEditableText().length());
 
         editText.addTextChangedListener(new TextWatcher() {
@@ -132,18 +137,17 @@ public class ExpiryFragment extends BaseEntryFragment {
         });
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        confirmBtn.setOnClickListener( v -> onConfirmButtonClicked());
 
-                String value = editText.getText().toString();
-                value = value.replaceAll("[^0-9]", "");
-                if(value.length() == 4){
-                    sendNext(value);
-                }
-            }
-        });
+    }
 
+    //If confirm button clicked, sendNext
+    private void onConfirmButtonClicked(){
+        String value = editText.getText().toString();
+        value = value.replaceAll("[^0-9]", "");
+        if(value.length() == 4){
+            sendNext(value);
+        }
     }
 
 

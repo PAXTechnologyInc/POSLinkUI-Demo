@@ -23,6 +23,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
@@ -31,6 +32,11 @@ import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
  * {@value TextEntry#ACTION_ENTER_AMOUNT}<br>
  * {@value TextEntry#ACTION_ENTER_FUEL_AMOUNT}<br>
  * {@value TextEntry#ACTION_ENTER_TAX_AMOUNT}<br>
+ *
+ * <p>
+ *     UI Tips:
+ *     If confirm button clicked, sendNext
+ * </p>
  */
 
 public class AmountFragment extends BaseEntryFragment {
@@ -43,6 +49,7 @@ public class AmountFragment extends BaseEntryFragment {
     private String message = "";
     private String currency = "";
 
+    private EditText editText;
     public static AmountFragment newInstance(Intent intent){
         AmountFragment numFragment = new AmountFragment();
         Bundle bundle = new Bundle();
@@ -83,12 +90,9 @@ public class AmountFragment extends BaseEntryFragment {
             message = getString(R.string.prompt_input_tax_amount);
         }
 
-        if(!TextUtils.isEmpty(valuePatten) && valuePatten.contains("-")){
-            String[] tmp = valuePatten.split("-");
-            if(tmp.length == 2) {
-                minLength = Integer.parseInt(tmp[0]);
-                maxLength = Integer.parseInt(tmp[1]);
-            }
+        if(!TextUtils.isEmpty(valuePatten)){
+            minLength = ValuePatternUtils.getMinLength(valuePatten);
+            maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
 
     }
@@ -123,7 +127,7 @@ public class AmountFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        EditText editText = rootView.findViewById(R.id.edit_amount);
+        editText = rootView.findViewById(R.id.edit_amount);
         editText.setSelected(false);
         editText.setText(CurrencyUtils.convert(0,currency));
         editText.setSelection(editText.getEditableText().length());
@@ -131,18 +135,18 @@ public class AmountFragment extends BaseEntryFragment {
         editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                long value = CurrencyUtils.parse(editText.getText().toString());
-                if(String.valueOf(value).length() < minLength){
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-                }else {
-                    sendNext(value);
-                }
-            }
-        });
+        confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
+    }
+
+    //1.If confirm button clicked, sendNext
+    private void onConfirmButtonClicked(){
+        long value = CurrencyUtils.parse(editText.getText().toString());
+        if(String.valueOf(value).length() < minLength){
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+        }else {
+            sendNext(value);
+        }
     }
 
 

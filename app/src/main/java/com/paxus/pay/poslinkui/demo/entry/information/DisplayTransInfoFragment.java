@@ -22,6 +22,10 @@ import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 /**
  * Implement information entry action {@value InformationEntry#ACTION_DISPLAY_TRANS_INFORMATION}
+ * <p>
+ *     UI Tips:
+ *     If confirm button clicked, sendNext()
+ * </p>
  */
 public class DisplayTransInfoFragment extends BaseEntryFragment {
     private String transType;
@@ -102,13 +106,13 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
         key.setText(left.toString());
         value.setText(right.toString());
 
+        //Send Next when clicking confirm button
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendNext();
-            }
-        });
+        confirmBtn.setOnClickListener( v -> onConfirmButtonClicked());
+    }
+
+    private void onConfirmButtonClicked(){
+        sendNext();
     }
 
     private void sendNext(){

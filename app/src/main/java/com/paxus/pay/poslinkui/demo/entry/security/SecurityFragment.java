@@ -29,6 +29,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 /**
@@ -36,6 +37,12 @@ import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
  * {@value SecurityEntry#ACTION_ENTER_VCODE}<br>
  * {@value SecurityEntry#ACTION_ENTER_CARD_LAST_4_DIGITS}<br>
  * {@value SecurityEntry#ACTION_ENTER_CARD_ALL_DIGITS}<br>
+ * <p>
+ *     UI Tips:
+ *     1.When input box layout ready, send secure area location (Done on ViewTreeObserver.OnGlobalLayoutListener)
+ *     2.When confirm button clicked, sendNext
+ *     3.Update confirm button status when received SecurityStatus
+ * </p>
  */
 public class SecurityFragment extends BaseEntryFragment {
     private String transType;
@@ -48,6 +55,7 @@ public class SecurityFragment extends BaseEntryFragment {
     private Button confirmButton;
     private int secureLength;
     private BroadcastReceiver receiver;
+    private EditText editText;
 
     public static SecurityFragment newInstance(Intent intent){
         SecurityFragment numFragment = new SecurityFragment();
@@ -96,12 +104,9 @@ public class SecurityFragment extends BaseEntryFragment {
             message = getString(R.string.prompt_input_all_digit);
         }
 
-        if(!TextUtils.isEmpty(valuePatten) && valuePatten.contains("-")){
-            String[] tmp = valuePatten.split("-");
-            if(tmp.length == 2) {
-                minLength = Integer.parseInt(tmp[0]);
-                maxLength = Integer.parseInt(tmp[1]);
-            }
+        if(!TextUtils.isEmpty(valuePatten)){
+            minLength = ValuePatternUtils.getMinLength(valuePatten);
+            maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
     }
 
@@ -135,29 +140,19 @@ public class SecurityFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        EditText editText = rootView.findViewById(R.id.edit_security);
+        editText = rootView.findViewById(R.id.edit_security);
         ViewTreeObserver observer = editText.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 editText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                if(Build.MODEL.equals("A35")){
-                    new Handler().postDelayed(()-> {
-                        sendSecureArea(editText);
-                    },100);
-                }else{
-                    sendSecureArea(editText);
-                }
+                onInputBoxLayoutReady();
             }
         });
 
+        //Send Next when clicking confirm button
         confirmButton = rootView.findViewById(R.id.confirm_button);
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EntryRequestUtils.sendNext(requireContext(),packageName,action);
-            }
-        });
+        confirmButton.setOnClickListener(v->onConfirmButtonClicked());
         receiver = new SecurityFragment.Receiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addCategory(SecurityStatus.CATEGORY);
@@ -167,6 +162,18 @@ public class SecurityFragment extends BaseEntryFragment {
 
         requireContext().registerReceiver(receiver,intentFilter);
     }
+
+    //1.When input box layout ready, send secure area location
+    private void onInputBoxLayoutReady(){
+        if(Build.MODEL.equals("A35")){
+            new Handler().postDelayed(()-> {
+                sendSecureArea(editText);
+            },100);
+        }else{
+            sendSecureArea(editText);
+        }
+    }
+
     private void sendSecureArea(EditText editText){
         int[] location = new int[2];
         editText.getLocationInWindow(location);
@@ -185,6 +192,12 @@ public class SecurityFragment extends BaseEntryFragment {
         EntryRequestUtils.sendSecureArea(requireContext(), packageName, action, x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize,
                 "",
                 "FF9C27B0");
+    }
+
+    //2.When confirm button clicked, sendNext
+
+    private void onConfirmButtonClicked(){
+        EntryRequestUtils.sendNext(requireContext(),packageName,action);
     }
 
     @Override
@@ -218,6 +231,7 @@ public class SecurityFragment extends BaseEntryFragment {
                     break;
             }
 
+            //3.Update confirm button status
             if(confirmButton!=null) {
                 confirmButton.setEnabled(secureLength > 0);
             }

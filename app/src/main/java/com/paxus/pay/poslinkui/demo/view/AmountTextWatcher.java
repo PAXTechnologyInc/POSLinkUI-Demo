@@ -3,9 +3,18 @@ package com.paxus.pay.poslinkui.demo.view;
 import android.text.Editable;
 import android.text.TextWatcher;
 
+import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
+/**
+ * TextWatcher for input format
+ * Example: <br>
+ * if currency is {@value CurrencyType#USD}<br>
+ *      "1" --> "$1.00" <br>
+ * if currency is {@value CurrencyType#POINT}<br>
+ *      "1" --> "$1.00" <br>
+ */
 public class AmountTextWatcher implements TextWatcher {
 
     protected boolean mEditing;
@@ -21,12 +30,12 @@ public class AmountTextWatcher implements TextWatcher {
         if (!mEditing) {
             mPreStr = s.toString();
         }
-        Logger.d("AmountFragment beforeTextChanged:"+mPreStr);
+        Logger.d("AmountTextWatcher beforeTextChanged:"+mPreStr);
     }
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        Logger.d("AmountFragment onTextChanged:"+mPreStr);
+        Logger.d("AmountTextWatcher onTextChanged:"+mPreStr);
     }
 
     @Override
@@ -39,10 +48,10 @@ public class AmountTextWatcher implements TextWatcher {
             }
             if(value.length() > maxLength){
                 s.replace(0, s.length(), mPreStr);
-            }else {
+            } else {
                 String formatted = CurrencyUtils.convert(Long.parseLong(value), currency);
                 s.replace(0, s.length(), formatted);
-                Logger.d("AmountFragment afterTextChanged:"+formatted);
+                Logger.d("AmountTextWatcher afterTextChanged:"+formatted);
             }
             mEditing = false;
         }

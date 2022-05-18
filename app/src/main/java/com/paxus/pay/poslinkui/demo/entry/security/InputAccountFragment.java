@@ -15,11 +15,11 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -34,22 +34,33 @@ import com.pax.us.pay.ui.constant.status.SecurityStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.entry.UIFragmentHelper;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import com.paxus.pay.poslinkui.demo.view.ClssLight;
 import com.paxus.pay.poslinkui.demo.view.ClssLightsView;
 
 /**
  * Implement security entry actions {@link SecurityEntry#ACTION_INPUT_ACCOUNT} and  {@link SecurityEntry#ACTION_MANAGE_INPUT_ACCOUNT}
+ * <p>
+ *     UI Tips:
+ *     1.When input box layout ready, send secure area location (Done on ViewTreeObserver.OnGlobalLayoutListener)
+ *     2.When confirm button clicked, sendNext
+ *     3.Update contactless light when received ClssLightStatus
+ *     4.Update amount when received InformationStatus.TRANS_AMOUNT_CHANGED_IN_CARD_PROCESSING
+ *     5.Update confirm button status when received SecurityStatus
+ *     6.Update entry mode when received CardStatus.CARD_INSERT_REQUIRED, CardStatus.CARD_TAP_REQUIRED,CardStatus.CARD_SWIPE_REQUIRED:
+ * </p>
  */
 public class InputAccountFragment extends BaseEntryFragment {
     private String transType;
     private long timeOut;
     private int minLength;
     private int maxLength;
-    private String hint = "";
+    private String manualMessage = "";
     private String transMode;
 
     private boolean enableInsert;
@@ -62,6 +73,8 @@ public class InputAccountFragment extends BaseEntryFragment {
     private boolean supportSamsungPay;
     private boolean supportGooglePay;
 
+    private boolean enableContactlessLight;
+
     private Long totalAmount;
     private String merchantName;
     private String currencyType;
@@ -71,6 +84,7 @@ public class InputAccountFragment extends BaseEntryFragment {
     private TextView amountTv;
 
     private BroadcastReceiver receiver;
+    private View rootView;
     private TextView panInputBox;
     private Button confirmButton;
     private int panLength = 0;
@@ -108,27 +122,26 @@ public class InputAccountFragment extends BaseEntryFragment {
         supportSamsungPay = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_SAMSUNGPAY);
         supportNFC = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_NFCPAY);
 
+        enableContactlessLight = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_CONTACTLESS_LIGHT);
+
         String valuePatten = "";
         if(SecurityEntry.ACTION_INPUT_ACCOUNT.equals(action)){
             valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-19");
             String panStyle = bundle.getString(EntryExtraData.PARAM_PAN_STYLES, PanStyles.NORMAL);
             if(PanStyles.NEW_PAN.equals(panStyle)) {
-                hint = getString(R.string.enter_new_account);
+                manualMessage = getString(R.string.enter_new_account);
             }else {
-                hint = getString(R.string.hint_enter_account);
+                manualMessage = getString(R.string.hint_enter_account);
             }
         } else if(SecurityEntry.ACTION_MANAGE_INPUT_ACCOUNT.equals(action)){
             valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-19");
-            hint = getString(R.string.hint_enter_account);
+            manualMessage = getString(R.string.hint_enter_account);
             amountMessage = bundle.getString(EntryExtraData.PARAM_AMOUNT_MESSAGE);
         }
 
-        if(!TextUtils.isEmpty(valuePatten) && valuePatten.contains("-")){
-            String[] tmp = valuePatten.split("-");
-            if(tmp.length == 2) {
-                minLength = Integer.parseInt(tmp[0]);
-                maxLength = Integer.parseInt(tmp[1]);
-            }
+        if(!TextUtils.isEmpty(valuePatten)){
+            minLength = ValuePatternUtils.getMinLength(valuePatten);
+            maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
 
         merchantName = bundle.getString(EntryExtraData.PARAM_MERCHANT_NAME);
@@ -141,6 +154,7 @@ public class InputAccountFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
+        this.rootView = rootView;
         if(!TextUtils.isEmpty(transType) && getActivity() instanceof AppCompatActivity){
             ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
             if(actionBar != null) {
@@ -167,37 +181,27 @@ public class InputAccountFragment extends BaseEntryFragment {
         }
 
         TextView textView = rootView.findViewById(R.id.manual_message);
-        textView.setText(hint);
+        textView.setText(manualMessage);
 
         panInputBox = rootView.findViewById(R.id.edit_account);
         confirmButton = rootView.findViewById(R.id.confirm_button);
         if(enableManual) {
             panInputBox.setEnabled(true);
-            confirmButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    EntryRequestUtils.sendNext(requireContext(),packageName,action);
-                }
-            });
+            confirmButton.setOnClickListener(v -> onConfirmButtonClicked());
 
             ViewTreeObserver observer = panInputBox.getViewTreeObserver();
             observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
                     panInputBox.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    if(Build.MODEL.equals("A35")){
-                        new Handler().postDelayed(()-> {
-                            sendSecureArea(panInputBox);
-                        },100);
-                    }else{
-                        sendSecureArea(panInputBox);
-                    }
+                    onPanInputBoxLayoutReady();
                 }
             });
         }else{
             rootView.findViewById(R.id.layout_manual).setVisibility(View.GONE);
         }
         clssLightsView = rootView.findViewById(R.id.clss_light);
+        clssLightsView.setVisibility(enableContactlessLight? View.VISIBLE: View.GONE);
 
         int swipeId = R.drawable.selection_swipe_card_a920;
         int insertId = R.drawable.selection_insert_card_a920;
@@ -312,7 +316,25 @@ public class InputAccountFragment extends BaseEntryFragment {
 
     }
 
-    private void sendSecureArea(TextView editText){
+    //1.When input box layout ready, send secure area location
+    // For A35, need delay 100ms (Ticket: BPOSANDJAX-325)
+    private void onPanInputBoxLayoutReady(){
+        //Change hint and font color if you want
+        if(Build.MODEL.equals("A35")){
+            new Handler().postDelayed(()-> {
+                sendSecureArea(panInputBox,"Card Number", "FF9C27B0");
+            },100);
+        }else{
+            sendSecureArea(panInputBox,"Card Number", "FF9C27B0");
+        }
+    }
+
+    //2.When confirm button clicked, sendNext
+    private void onConfirmButtonClicked(){
+        EntryRequestUtils.sendNext(requireContext(),packageName,action);
+    }
+
+    private void sendSecureArea(TextView editText, String hint, String fontColor){
         int[] location = new int[2];
         editText.getLocationInWindow(location);
         int x = location[0];
@@ -328,9 +350,70 @@ public class InputAccountFragment extends BaseEntryFragment {
         }
         TextPaint paint = editText.getPaint();
         int fontSize = (int)(paint.getTextSize()/paint.density);
-        EntryRequestUtils.sendSecureArea(requireContext(), packageName, action, x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize,
-                "Card Number",
-                "FF9C27B0");
+        EntryRequestUtils.sendSecureArea(requireContext(), packageName, action, x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize, hint,fontColor);
+    }
+
+    private void onUpdateEntryMode(Intent intent){
+        String action = intent.getAction();
+        if(CardStatus.CARD_TAP_REQUIRED.equals(action)){
+            updateCtlessLightStatus(ClssLightStatus.CLSS_LIGHT_READY_FOR_TXN);
+        }
+
+        enableManual = false;
+        enableInsert = CardStatus.CARD_INSERT_REQUIRED.equals(action);
+        enableSwipe = CardStatus.CARD_SWIPE_REQUIRED.equals(action);
+        enableTap = CardStatus.CARD_TAP_REQUIRED.equals(action);
+        enableContactlessLight = enableContactlessLight && enableTap;
+
+        loadView(rootView);
+
+        DialogFragment dialogFragment = UIFragmentHelper.createDialogFragment(intent);
+        if(dialogFragment != null){
+            String tag = "update_entry_mode";
+            UIFragmentHelper.showDialog(getParentFragmentManager(),dialogFragment,tag);
+            new Handler().postDelayed(()-> UIFragmentHelper.closeDialog(getParentFragmentManager(),tag),2000);
+        }
+    }
+
+    private void updateCtlessLightStatus(String status){
+        if(clssLightsView.getVisibility() != View.VISIBLE){
+            return;
+        }
+        switch (status) {
+            case ClssLightStatus.CLSS_LIGHT_COMPLETED:
+            case ClssLightStatus.CLSS_LIGHT_NOT_READY: //Fix ANBP-383, ANFDRC-319
+                clssLightsView.setLights(-1, ClssLight.OFF);
+                return;
+            case ClssLightStatus.CLSS_LIGHT_ERROR:
+                clssLightsView.setLight(0, ClssLight.OFF);
+                clssLightsView.setLight(1, ClssLight.OFF);
+                clssLightsView.setLight(2, ClssLight.OFF);
+                clssLightsView.setLight(3, ClssLight.ON);
+                return;
+            case ClssLightStatus.CLSS_LIGHT_IDLE:
+                clssLightsView.setLights(0, ClssLight.BLINK);
+                return;
+            case ClssLightStatus.CLSS_LIGHT_PROCESSING:
+                clssLightsView.setLight(0, ClssLight.ON);
+                clssLightsView.setLight(1, ClssLight.ON);
+                clssLightsView.setLight(2, ClssLight.OFF);
+                clssLightsView.setLight(3, ClssLight.OFF);
+                return;
+            case ClssLightStatus.CLSS_LIGHT_READY_FOR_TXN:
+                clssLightsView.setLight(0, ClssLight.ON);
+                clssLightsView.setLight(1, ClssLight.OFF);
+                clssLightsView.setLight(2, ClssLight.OFF);
+                clssLightsView.setLight(3, ClssLight.OFF);
+                return;
+            case ClssLightStatus.CLSS_LIGHT_REMOVE_CARD:
+                clssLightsView.setLight(0, ClssLight.ON);
+                clssLightsView.setLight(1, ClssLight.ON);
+                clssLightsView.setLight(2, ClssLight.ON);
+                clssLightsView.setLight(3, ClssLight.OFF);
+                return;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -349,57 +432,25 @@ public class InputAccountFragment extends BaseEntryFragment {
             Logger.i("receive Status Action \""+intent.getAction()+"\"");
             switch (intent.getAction()) {
                 case ClssLightStatus.CLSS_LIGHT_COMPLETED:
-                case ClssLightStatus.CLSS_LIGHT_NOT_READY: //Fix ANBP-383, ANFDRC-319
-                    clssLightsView.setLights(-1, ClssLight.OFF);
-                    return;
+                case ClssLightStatus.CLSS_LIGHT_NOT_READY:
                 case ClssLightStatus.CLSS_LIGHT_ERROR:
-                    clssLightsView.setLight(0, ClssLight.OFF);
-                    clssLightsView.setLight(1, ClssLight.OFF);
-                    clssLightsView.setLight(2, ClssLight.OFF);
-                    clssLightsView.setLight(3, ClssLight.ON);
-                    return;
                 case ClssLightStatus.CLSS_LIGHT_IDLE:
-                    clssLightsView.setLights(0, ClssLight.BLINK);
-                    return;
                 case ClssLightStatus.CLSS_LIGHT_PROCESSING:
-                    clssLightsView.setLight(0, ClssLight.ON);
-                    clssLightsView.setLight(1, ClssLight.ON);
-                    clssLightsView.setLight(2, ClssLight.OFF);
-                    clssLightsView.setLight(3, ClssLight.OFF);
-                    return;
                 case ClssLightStatus.CLSS_LIGHT_READY_FOR_TXN:
-                    clssLightsView.setLight(0, ClssLight.ON);
-                    clssLightsView.setLight(1, ClssLight.OFF);
-                    clssLightsView.setLight(2, ClssLight.OFF);
-                    clssLightsView.setLight(3, ClssLight.OFF);
-                    return;
                 case ClssLightStatus.CLSS_LIGHT_REMOVE_CARD:
-                    clssLightsView.setLight(0, ClssLight.ON);
-                    clssLightsView.setLight(1, ClssLight.ON);
-                    clssLightsView.setLight(2, ClssLight.ON);
-                    clssLightsView.setLight(3, ClssLight.OFF);
+                    //3.Update contactless light according status
+                    updateCtlessLightStatus(intent.getAction());
                     return;
                 case InformationStatus.TRANS_AMOUNT_CHANGED_IN_CARD_PROCESSING:
+                    //4.Update amount
                     totalAmount = intent.getLongExtra(StatusData.PARAM_TOTAL_AMOUNT,totalAmount);
                     amountTv.setText(CurrencyUtils.convert(totalAmount, currencyType));
                     return;
                 case CardStatus.CARD_INSERT_REQUIRED:
-                    clssLightsView.setLights(0, ClssLight.BLINK);
-                    Toast.makeText(requireContext(),getString(R.string.please_insert_chip_card),Toast.LENGTH_LONG).show();
-                    return;
                 case CardStatus.CARD_TAP_REQUIRED:
-                    clssLightsView.setLight(0, ClssLight.ON);
-                    clssLightsView.setLight(1, ClssLight.OFF);
-                    clssLightsView.setLight(2, ClssLight.OFF);
-                    clssLightsView.setLight(3, ClssLight.OFF);
-                    Toast.makeText(requireContext(),getString(R.string.please_tap_card),Toast.LENGTH_LONG).show();
-                    return;
                 case CardStatus.CARD_SWIPE_REQUIRED:
-                    clssLightsView.setLights(0, ClssLight.BLINK);
-                    Toast.makeText(requireContext(),getString(R.string.please_swipe_card),Toast.LENGTH_LONG).show();
-                    return;
-                case CardStatus.CARD_QUICK_REMOVAL_REQUIRED:
-                    Toast.makeText(requireContext(),getString(R.string.please_remove_card_quickly),Toast.LENGTH_LONG).show();
+                    //6.Update entry mode
+                    onUpdateEntryMode(intent);
                     return;
                 case SecurityStatus.SECURITY_ENTER_CLEARED:{
                     panLength = 0;
@@ -417,6 +468,7 @@ public class InputAccountFragment extends BaseEntryFragment {
                     break;
             }
 
+            //5.Update confirm button status when received SecurityStatus
             if(confirmButton!=null) {
                 confirmButton.setEnabled(panLength > 0);
             }

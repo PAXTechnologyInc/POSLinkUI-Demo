@@ -19,6 +19,7 @@ import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
 import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.R;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 /**
  *  Implement dialog actions:<br>
@@ -36,6 +37,10 @@ import com.paxus.pay.poslinkui.demo.R;
  *  {@value Uncategory#LOG_UPLOAD_CONNECTED},<br>
  *  {@value Uncategory#LOG_UPLOAD_UPLOADING},<br>
  *  {@value Uncategory#CAPK_UPDATE_STARTED},<br>
+ *
+ *  <br>
+ *  UI Requirement:
+ *       Display status by dialog. Do not close dialog by press KEY_BACK <br>
  */
 public class InformationDialogFragment extends DialogFragment {
 
@@ -61,62 +66,8 @@ public class InformationDialogFragment extends DialogFragment {
 
         Bundle bundle = getArguments();
         if(bundle != null) {
-            String action  = bundle.getString(EntryRequest.PARAM_ACTION);
-            String message = "";
-            switch (action) {
-                case InformationStatus.TRANS_ONLINE_STARTED:
-                    message = getString(R.string.info_trans_online);
-                    break;
-                case InformationStatus.EMV_TRANS_ONLINE_STARTED:
-                    message = getString(R.string.info_emv_trans_online);
-                    break;
-                case InformationStatus.DCC_ONLINE_STARTED:
-                    message = getString(R.string.info_dcc_online_start);
-                    break;
-                case InformationStatus.PINPAD_CONNECTION_STARTED:
-                    message = getString(R.string.info_pin_pad_connection_start);
-                    break;
-                case InformationStatus.RKI_STARTED:
-                    message = getString(R.string.info_rki_start);
-                    break;
-                case CardStatus.CARD_REMOVAL_REQUIRED:
-                    message = getString(R.string.please_remove_card);
-                    break;
-                case CardStatus.CARD_PROCESS_STARTED:
-                    message = getString(R.string.emv_process_start);
-                    break;
-                case Uncategory.PRINT_STARTED:
-                    message = getString(R.string.print_process);
-                    break;
-                case Uncategory.FILE_UPDATE_STARTED:
-                    message = getString(R.string.update_process);
-                    break;
-                case Uncategory.FCP_FILE_UPDATE_STARTED:
-                    message = getString(R.string.check_for_update_start);
-                    break;
-                case Uncategory.CAPK_UPDATE_STARTED:
-                    message = getString(R.string.download_emv_capk);
-                    break;
-                case Uncategory.LOG_UPLOAD_STARTED:
-                    message = getString(R.string.log_uploading_start);
-                    break;
-                case Uncategory.LOG_UPLOAD_CONNECTED:{
-                    long uploadPercent = bundle.getLong(StatusData.PARAM_UPLOAD_CURRENT_PERCENT, 0L);
-                    message = getString(R.string.log_connected) + " (" + uploadPercent + "%)";
-                    break;
-                }
-                case Uncategory.LOG_UPLOAD_UPLOADING:{
-                    long logUploadCount = bundle.getLong(StatusData.PARAM_UPLOAD_CURRENT_COUNT, 0L);
-                    long logTotalCount = bundle.getLong(StatusData.PARAM_UPLOAD_TOTAL_COUNT, 0L);
-                    long logUploadPercent = bundle.getLong(StatusData.PARAM_UPLOAD_CURRENT_PERCENT, 0L);
-                    message = getString(R.string.update_process) + " " + logUploadCount + "/" + logTotalCount + "("
-                            + logUploadPercent + "%)";
-                    break;
-                }
-                default:
-                    break;
-            }
-            textView.setText(message);
+            //Display status by dialog
+            textView.setText(formatStatusMessage(bundle));
         }
 
         builder.setView(view);
@@ -127,13 +78,85 @@ public class InformationDialogFragment extends DialogFragment {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                 if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
-                    //Do not dismiss dialog by KEY BACK
+                    //Do not close dialog by press KEY_BACK
                     return true;
                 }
                 return false;
             }
         });
         return dialog;
+    }
+
+    private String formatStatusMessage(Bundle bundle){
+        String action  = bundle.getString(EntryRequest.PARAM_ACTION);
+        String message = "";
+        switch (action) {
+            case InformationStatus.TRANS_ONLINE_STARTED:
+                message = getString(R.string.info_trans_online);
+                break;
+            case InformationStatus.EMV_TRANS_ONLINE_STARTED:
+                message = getString(R.string.info_emv_trans_online);
+                break;
+            case InformationStatus.DCC_ONLINE_STARTED:
+                message = getString(R.string.info_dcc_online_start);
+                break;
+            case InformationStatus.PINPAD_CONNECTION_STARTED:
+                message = getString(R.string.info_pin_pad_connection_start);
+                break;
+            case InformationStatus.RKI_STARTED:
+                message = getString(R.string.info_rki_start);
+                break;
+            case CardStatus.CARD_REMOVAL_REQUIRED:
+                message = getString(R.string.please_remove_card);
+                break;
+            case CardStatus.CARD_QUICK_REMOVAL_REQUIRED:
+                message = getString(R.string.please_remove_card_quickly);
+                break;
+            case CardStatus.CARD_SWIPE_REQUIRED:
+                message = getString(R.string.please_swipe_card);
+                break;
+            case CardStatus.CARD_INSERT_REQUIRED:
+                message = getString(R.string.please_insert_chip_card);
+                break;
+            case CardStatus.CARD_TAP_REQUIRED:
+                message = getString(R.string.please_tap_card);
+                break;
+            case CardStatus.CARD_PROCESS_STARTED:
+                message = getString(R.string.emv_process_start);
+                break;
+            case Uncategory.PRINT_STARTED:
+                message = getString(R.string.print_process);
+                break;
+            case Uncategory.FILE_UPDATE_STARTED:
+                message = getString(R.string.update_process);
+                break;
+            case Uncategory.FCP_FILE_UPDATE_STARTED:
+                message = getString(R.string.check_for_update_start);
+                break;
+            case Uncategory.CAPK_UPDATE_STARTED:
+                message = getString(R.string.download_emv_capk);
+                break;
+            case Uncategory.LOG_UPLOAD_STARTED:
+                message = getString(R.string.log_uploading_start);
+                break;
+            case Uncategory.LOG_UPLOAD_CONNECTED:{
+                long uploadPercent = bundle.getLong(StatusData.PARAM_UPLOAD_CURRENT_PERCENT, 0L);
+                message = getString(R.string.log_connected) + " (" + uploadPercent + "%)";
+                break;
+            }
+            case Uncategory.LOG_UPLOAD_UPLOADING:{
+                long logUploadCount = bundle.getLong(StatusData.PARAM_UPLOAD_CURRENT_COUNT, 0L);
+                long logTotalCount = bundle.getLong(StatusData.PARAM_UPLOAD_TOTAL_COUNT, 0L);
+                long logUploadPercent = bundle.getLong(StatusData.PARAM_UPLOAD_CURRENT_PERCENT, 0L);
+                message = getString(R.string.update_process) + " " + logUploadCount + "/" + logTotalCount + "("
+                        + logUploadPercent + "%)";
+                break;
+            }
+            default:
+                Logger.e("Information unknown status:"+action);
+                break;
+        }
+        return message;
     }
 
 }

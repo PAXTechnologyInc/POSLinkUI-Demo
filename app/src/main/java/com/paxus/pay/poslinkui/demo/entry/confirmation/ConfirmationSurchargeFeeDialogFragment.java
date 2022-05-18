@@ -19,6 +19,13 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
  * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_SURCHARGE_FEE}
+ * <p>
+ *     UI Tips:
+ *     1.If click confirm, sendNext(true)
+ *     2.If click cancel, sendAbort
+ *     3.If click bypass, sendNext(false)
+ *     4.If enableBypass is true, display bypass button, else hide it.
+ * </p>
  */
 public class ConfirmationSurchargeFeeDialogFragment extends BaseEntryDialogFragment {
     private long timeout;
@@ -70,32 +77,29 @@ public class ConfirmationSurchargeFeeDialogFragment extends BaseEntryDialogFragm
         total.setText(CurrencyUtils.convert(totalAmount, currency));
 
         Button confirm = rootView.findViewById(R.id.confirm_button);
-        confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendNext(true);
-            }
-        });
+        confirm.setOnClickListener(v-> onConfirmButtonClicked());
 
         Button cancel = rootView.findViewById(R.id.cancel_button);
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendAbort();
-            }
-        });
+        cancel.setOnClickListener(v-> onCancelButtonClicked());
         Button bypass = rootView.findViewById(R.id.bypass_button);
         if(enableBypass){
-            bypass.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    sendNext(false);
-                }
-            });
+            bypass.setOnClickListener(v-> onBypassButtonClicked());
 
         }else{
             bypass.setVisibility(View.GONE);
         }
+    }
+
+    private void onConfirmButtonClicked(){
+        sendNext(true);
+    }
+
+    private void onCancelButtonClicked(){
+        sendAbort();
+    }
+
+    private void onBypassButtonClicked(){
+        sendNext(false);
     }
 
     private void sendNext(boolean confirm){

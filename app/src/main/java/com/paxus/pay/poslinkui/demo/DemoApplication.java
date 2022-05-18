@@ -8,6 +8,8 @@ import com.paxus.pay.poslinkui.demo.utils.FileLogAdapter;
 
 /**
  * Created by Yanina.Yang on 5/11/2022.
+ *
+ * Init log when application started
  */
 public class DemoApplication extends Application {
 

@@ -27,6 +27,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
@@ -35,6 +36,10 @@ import java.util.List;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_CASH_BACK}<br>
+ * <p>
+ *     UI Tips:
+ *     If confirm button clicked, sendNext
+ * </p>
  */
 public class CashbackFragment extends BaseEntryFragment {
     private String transType;
@@ -49,6 +54,8 @@ public class CashbackFragment extends BaseEntryFragment {
     private boolean promptOther;
 
     private CashbackOption selectedItem;
+
+    private EditText editText;
 
     public static CashbackFragment newInstance(Intent intent){
         CashbackFragment numFragment = new CashbackFragment();
@@ -76,12 +83,9 @@ public class CashbackFragment extends BaseEntryFragment {
 
         String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-12");
 
-        if(!TextUtils.isEmpty(valuePatten) && valuePatten.contains("-")){
-            String[] tmp = valuePatten.split("-");
-            if(tmp.length == 2) {
-                minLength = Integer.parseInt(tmp[0]);
-                maxLength = Integer.parseInt(tmp[1]);
-            }
+        if(!TextUtils.isEmpty(valuePatten)){
+            minLength = ValuePatternUtils.getMinLength(valuePatten);
+            maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
 
         String[] options = bundle.getStringArray(EntryExtraData.PARAM_CASHBACK_OPTIONS);
@@ -151,7 +155,8 @@ public class CashbackFragment extends BaseEntryFragment {
         }else {
             textView.setText(getString(R.string.prompt_input_cashback));
         }
-        EditText editText = rootView.findViewById(R.id.edit_cashback);
+
+        editText = rootView.findViewById(R.id.edit_cashback);
         if(haveOptions){
             editText.setVisibility(View.GONE);
         }else {
@@ -159,21 +164,20 @@ public class CashbackFragment extends BaseEntryFragment {
             editText.addTextChangedListener(new AmountTextWatcher(maxLength,currency));
         }
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(editText.getVisibility() == View.VISIBLE) {
-                        long value = CurrencyUtils.parse(editText.getText().toString());
-                        sendNext(value);
-                    }else {
-                        if(selectedItem != null){
-                            sendNext(selectedItem.cashbackAmt);
-                        }
-                    }
-                }
-            });
+        confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
+    }
 
+    //If confirm button clicked, sendNext
+    private void onConfirmButtonClicked(){
+        if(editText.getVisibility() == View.VISIBLE) {
+            long value = CurrencyUtils.parse(editText.getText().toString());
+            sendNext(value);
+        }else {
+            if(selectedItem != null){
+                sendNext(selectedItem.cashbackAmt);
+            }
+        }
     }
 
 

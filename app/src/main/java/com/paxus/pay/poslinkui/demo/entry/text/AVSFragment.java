@@ -21,10 +21,15 @@ import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_AVS_DATA}<br>
+ * <p>
+ *     UI Tips:
+ *     If confirm button clicked, sendNext
+ * </p>
  */
 public class AVSFragment extends BaseEntryFragment {
     private String transType;
@@ -35,6 +40,9 @@ public class AVSFragment extends BaseEntryFragment {
     private int maxLengthZip;
     private String transMode;
     private boolean zipText;
+
+    private EditText editTextAddr;
+    private EditText editTextZip;
 
     public static AVSFragment newInstance(Intent intent){
         AVSFragment numFragment = new AVSFragment();
@@ -62,20 +70,14 @@ public class AVSFragment extends BaseEntryFragment {
         String valuePattenZip = bundle.getString(EntryExtraData.PARAM_ZIP_CODE_PATTERN,"0-9");
 
 
-        if(!TextUtils.isEmpty(valuePattenAddr) && valuePattenAddr.contains("-")){
-            String[] tmp = valuePattenAddr.split("-");
-            if(tmp.length == 2) {
-                minLengthAddr = Integer.parseInt(tmp[0]);
-                maxLengthAddr = Integer.parseInt(tmp[1]);
-            }
+        if(!TextUtils.isEmpty(valuePattenAddr)){
+            minLengthAddr = ValuePatternUtils.getMinLength(valuePattenAddr);
+            maxLengthAddr = ValuePatternUtils.getMaxLength(valuePattenAddr);
         }
 
-        if(!TextUtils.isEmpty(valuePattenZip) && valuePattenZip.contains("-")){
-            String[] tmp = valuePattenZip.split("-");
-            if(tmp.length == 2) {
-                minLengthZip = Integer.parseInt(tmp[0]);
-                maxLengthZip = Integer.parseInt(tmp[1]);
-            }
+        if(!TextUtils.isEmpty(valuePattenZip) ){
+            minLengthZip = ValuePatternUtils.getMinLength(valuePattenZip);
+            maxLengthZip = ValuePatternUtils.getMaxLength(valuePattenZip);
         }
         zipText = InputType.ALLTEXT.equals(bundle.getString(EntryExtraData.PARAM_EINPUT_TYPE));
 
@@ -108,30 +110,35 @@ public class AVSFragment extends BaseEntryFragment {
             ViewUtils.removeWaterMarkView(requireActivity());
         }
 
-        EditText editTextAddr = rootView.findViewById(R.id.edit_address);
+        editTextAddr = rootView.findViewById(R.id.edit_address);
         if(maxLengthAddr > 0 ) {
             editTextAddr.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthAddr)});
         }
 
-        EditText editTextZip = rootView.findViewById(R.id.edit_zip);
+        editTextZip = rootView.findViewById(R.id.edit_zip);
         if(maxLengthZip > 0 ) {
             editTextAddr.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthZip)});
         }
+        if(zipText){
+            editTextAddr.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
+        }else {
+            editTextAddr.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        }
 
+        //Send Next when clicking confirm button
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String addr = editTextAddr.getText().toString();
-                String zip = editTextZip.getText().toString();
-
-                if(zip.length() < minLengthZip){
-                    Toast.makeText(requireContext(), getString(R.string.pls_input_zip_code), Toast.LENGTH_SHORT).show();
-                }else {
-                    EntryRequestUtils.sendNextAVS(requireContext(),packageName,action,addr,zip);
-                }
-            }
-        });
+        confirmBtn.setOnClickListener( v-> onConfirmButtonClicked());
     }
 
+    //If confirm button clicked, sendNext
+    private void onConfirmButtonClicked(){
+        String addr = editTextAddr.getText().toString();
+        String zip = editTextZip.getText().toString();
+
+        if(zip.length() < minLengthZip){
+            Toast.makeText(requireContext(), getString(R.string.pls_input_zip_code), Toast.LENGTH_SHORT).show();
+        }else {
+            EntryRequestUtils.sendNextAVS(requireContext(),packageName,action,addr,zip);
+        }
+    }
 }

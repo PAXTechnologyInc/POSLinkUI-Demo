@@ -25,9 +25,13 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 /**
  * Implement all entry actions defined in {@link ConfirmationEntry} <br>
  * except for {@value ConfirmationEntry#ACTION_CONFIRM_SURCHARGE_FEE} and {@value ConfirmationEntry#ACTION_CONFIRM_RECEIPT_VIEW}
+ *<p>
+ *     UI Tips:
+ *     1.For {@link ConfirmationEntry#ACTION_CONFIRM_UNIFIED_MESSAGE}, use options {@link ConfirmationType#YES,ConfirmationType#NO}
+ *     2.For {@link ConfirmationEntry#ACTION_CONFIRM_CARD_PROCESS_RESULT}, there is only one option {@link ConfirmationType#YES}, so if timeout, treat it as confirmed.
+ *       For other confirm actions, timeout is controlled by BroadPOS.
+ *</p>
  *
- * For {@link ConfirmationEntry#ACTION_CONFIRM_CARD_PROCESS_RESULT}, if timeout, treat it as confirmed.
- * For other confirm actions, timeout is controlled by BroadPOS.
  */
 public class ConfirmationDialogFragment extends BaseEntryDialogFragment {
     private long timeout;
@@ -82,12 +86,7 @@ public class ConfirmationDialogFragment extends BaseEntryDialogFragment {
         Button positiveButton = rootView.findViewById(R.id.confirm_button);
         if(!TextUtils.isEmpty(positiveText)) {
             positiveButton.setText(positiveText);
-            positiveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    sendNext(true);
-                }
-            });
+            positiveButton.setOnClickListener( v-> onPositiveButtonClicked());
         }else{
             positiveButton.setVisibility(View.GONE);
         }
@@ -95,12 +94,7 @@ public class ConfirmationDialogFragment extends BaseEntryDialogFragment {
         Button negativeButton = rootView.findViewById(R.id.cancel_button);
 
         if(!TextUtils.isEmpty(negativeText)) {
-            negativeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    sendNext(false);
-                }
-            });
+            negativeButton.setOnClickListener( v -> onNegativeButtonClicked());
         }else{
             negativeButton.setVisibility(View.GONE);
         }
@@ -115,9 +109,12 @@ public class ConfirmationDialogFragment extends BaseEntryDialogFragment {
         }
     }
 
-    @Override
-    protected void onBackPressed() {
-        sendAbort();
+    private void onNegativeButtonClicked(){
+        sendNext(false);
+    }
+
+    private void onPositiveButtonClicked(){
+        sendNext(true);
     }
 
     private String formatMessage(String action, String message, Bundle bundle){

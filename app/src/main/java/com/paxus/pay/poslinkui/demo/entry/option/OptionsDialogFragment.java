@@ -20,6 +20,10 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
  * Implement all option entry actions defined in {@link OptionEntry}
+ * <p>
+ *     UI Tips:
+ *     If confirm button clicked, sendNext
+ * </p>
  */
 public class OptionsDialogFragment extends BaseEntryDialogFragment {
     private String[] items;
@@ -59,24 +63,21 @@ public class OptionsDialogFragment extends BaseEntryDialogFragment {
         listView.setAdapter(adapter);
 
         Button cancelButton = rootView.findViewById(R.id.cancel_button);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendAbort();
-            }
-        });
+        cancelButton.setOnClickListener(v-> onCancelButtonClicked());
 
         Button confirmButton = rootView.findViewById(R.id.confirm_button);
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(listView.getCheckedItemPosition()>= 0 ){
-                    sendNext(listView.getCheckedItemPosition());
-                }
-            }
-        });
+        confirmButton.setOnClickListener(v->onConfirmButtonClicked());
     }
 
+    private void onCancelButtonClicked(){
+        sendAbort();
+    }
+
+    private void onConfirmButtonClicked(){
+        if(listView.getCheckedItemPosition()>= 0 ){
+            sendNext(listView.getCheckedItemPosition());
+        }
+    }
 
     private String formatTitle(String action){
         String title = "";

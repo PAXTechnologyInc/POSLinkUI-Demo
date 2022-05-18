@@ -5,6 +5,9 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utils for parse value patten
+ */
 public class ValuePatternUtils {
     public static int getMaxLength(String lengthRange) {
         List<Integer> list = getLengthList(lengthRange);

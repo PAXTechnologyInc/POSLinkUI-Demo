@@ -2,9 +2,7 @@ package com.paxus.pay.poslinkui.demo.entry.text;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,11 +22,18 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
-import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
+import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_TOTAL_AMOUNT}<br>
+ * <p>
+ *     UI Tips:
+ *     If noTipEnabled, display no tip button, else hide it.
+ *     If click no tip button, send next with base amount
+ *     If click confirm button, send next with input amount
+ * </p>
  */
 public class TotalAmountFragment extends BaseEntryFragment {
     private String transType;
@@ -43,6 +48,8 @@ public class TotalAmountFragment extends BaseEntryFragment {
     private long baseAmount;
     private boolean noTipEnabled;
     private String tipName;
+
+    private EditText editText;
 
     public static TotalAmountFragment newInstance(Intent intent){
         TotalAmountFragment numFragment = new TotalAmountFragment();
@@ -70,12 +77,9 @@ public class TotalAmountFragment extends BaseEntryFragment {
         String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"1-12");
         message = getString(R.string.prompt_input_total_amount);
 
-        if(!TextUtils.isEmpty(valuePatten) && valuePatten.contains("-")){
-            String[] tmp = valuePatten.split("-");
-            if(tmp.length == 2) {
-                minLength = Integer.parseInt(tmp[0]);
-                maxLength = Integer.parseInt(tmp[1]);
-            }
+        if(!TextUtils.isEmpty(valuePatten)){
+            minLength = ValuePatternUtils.getMinLength(valuePatten);
+            maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
 
         baseAmount = bundle.getLong(EntryExtraData.PARAM_BASE_AMOUNT);
@@ -114,59 +118,15 @@ public class TotalAmountFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        EditText editText = rootView.findViewById(R.id.edit_amount);
+        editText = rootView.findViewById(R.id.edit_amount);
         editText.setSelected(false);
         editText.setText(CurrencyUtils.convert(0,currency));
         editText.setSelection(editText.getEditableText().length());
 
-        editText.addTextChangedListener(new TextWatcher() {
-            protected boolean mEditing;
-            protected String mPreStr;
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if (!mEditing) {
-                    mPreStr = s.toString();
-                }
-                Logger.d("beforeTextChanged:"+mPreStr);
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Logger.d("onTextChanged:"+mPreStr);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (!mEditing) {
-                    mEditing = true;
-                    String value = s.toString().replaceAll("[^0-9]", "");
-                    if (value.length() == 0) {
-                        value = "0";
-                    }
-                    if(value.length() > maxLength){
-                        s.replace(0, s.length(), mPreStr);
-                    }else {
-                        String formatted = CurrencyUtils.convert(Long.parseLong(value), currency);
-                        s.replace(0, s.length(), formatted);
-                        Logger.d("afterTextChanged:"+formatted);
-                    }
-                    mEditing = false;
-                }
-            }
-        });
+        editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                long value = CurrencyUtils.parse(editText.getText().toString());
-                if(String.valueOf(value).length() < minLength){
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-                }else {
-                    sendNext(value);
-                }
-            }
-        });
+        confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
         TextView baseAmountTv = rootView.findViewById(R.id.base_amount);
         baseAmountTv.setText(CurrencyUtils.convert(baseAmount,currency));
 
@@ -177,12 +137,7 @@ public class TotalAmountFragment extends BaseEntryFragment {
 
         Button noTipButton = rootView.findViewById(R.id.no_tip_button);
         if(noTipEnabled){
-            noTipButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    sendNext(baseAmount);
-                }
-            });
+            noTipButton.setOnClickListener(v -> onNoTipButtonClicked());
         }else {
             noTipButton.setVisibility(View.GONE);
         }
@@ -196,5 +151,20 @@ public class TotalAmountFragment extends BaseEntryFragment {
         EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
     }
 
+    //-----------Click Callback for buttons-----------
+    //If click no tip button, send next with base amount
+    private void onNoTipButtonClicked(){
+        sendNext(baseAmount);
+    }
+
+    //If click confirm button, send next with input amount
+    private void onConfirmButtonClicked(){
+        long value = CurrencyUtils.parse(editText.getText().toString());
+        if(String.valueOf(value).length() < minLength){
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+        }else {
+            sendNext(value);
+        }
+    }
 
 }

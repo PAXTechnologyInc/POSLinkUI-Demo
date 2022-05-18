@@ -6,6 +6,9 @@ import android.os.Bundle;
 
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 
+/**
+ * Utils for handle EntryRequest
+ */
 public class EntryRequestUtils {
     public static void sendNext(Context context, String packageName, String action, String param, String value){
         Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");

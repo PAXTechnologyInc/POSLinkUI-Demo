@@ -35,6 +35,11 @@ import java.io.IOException;
 
 /**
  * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_RECEIPT_VIEW}
+ * <p>
+ *     UI Tips:
+ *     If print button clicked, sendNext(true)
+ *     If receipt bitmap parse fail, sendAbort()
+ * </p>
  */
 public class ConfirmReceiptViewFragment extends BaseEntryFragment {
     private String transType;
@@ -109,14 +114,8 @@ public class ConfirmReceiptViewFragment extends BaseEntryFragment {
 
         receiptOutAnim = AnimationUtils.loadAnimation(requireActivity(), R.anim.receipt_out);
         imageView = rootView.findViewById(R.id.print_preview);
-        Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                imageView.startAnimation(receiptOutAnim);
-                sendNext(true);
-            }
-        });
+        Button printBtn = rootView.findViewById(R.id.print_button);
+        printBtn.setOnClickListener(v->onPrintButtonClicked());
 
         try {
             Uri imageUri = Uri.parse(receiptUri);
@@ -151,6 +150,11 @@ public class ConfirmReceiptViewFragment extends BaseEntryFragment {
         }
 
 
+    }
+
+    private void onPrintButtonClicked(){
+        imageView.startAnimation(receiptOutAnim);
+        sendNext(true);
     }
 
     private void sendNext(boolean confirm){

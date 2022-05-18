@@ -42,7 +42,7 @@ import java.util.Set;
 /**
  * Created by Yanina.Yang on 5/12/2022.
  */
-class UIFragmentHelper {
+public class UIFragmentHelper {
     private UIFragmentHelper(){
 
     }
@@ -80,6 +80,10 @@ class UIFragmentHelper {
                 case InformationStatus.DCC_ONLINE_STARTED:
                 case InformationStatus.PINPAD_CONNECTION_STARTED:
                 case CardStatus.CARD_REMOVAL_REQUIRED:
+                case CardStatus.CARD_QUICK_REMOVAL_REQUIRED:
+                case CardStatus.CARD_SWIPE_REQUIRED:
+                case CardStatus.CARD_INSERT_REQUIRED:
+                case CardStatus.CARD_TAP_REQUIRED:
                 case CardStatus.CARD_PROCESS_STARTED: {
                     if (categories == null) {
                         Logger.e("WARNING:\"" + action + "\" Category is missing!");
@@ -124,6 +128,7 @@ class UIFragmentHelper {
             case InformationStatus.PINPAD_CONNECTION_FINISHED:
                 return "pin_pad_connection";
             case CardStatus.CARD_REMOVAL_REQUIRED:
+            case CardStatus.CARD_QUICK_REMOVAL_REQUIRED:
             case CardStatus.CARD_REMOVED:
                 return "remove_card";
             case CardStatus.CARD_PROCESS_STARTED:

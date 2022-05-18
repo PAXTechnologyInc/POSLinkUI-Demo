@@ -21,6 +21,14 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 /**
  *  Implement information status action {@value InformationStatus#TRANS_COMPLETED}
+ *  <br>
+ *  UI Requirement:
+ *       Display transaction result by dialog. <br>
+ *       Close dialog after timeout.<br>
+ *       After dismiss, close activity by <br>
+ *  <pre>
+ *      requireActivity().finishAndRemoveTask();
+ *  </pre>
  */
 public class TransCompletedDialogFragment extends DialogFragment {
 
@@ -46,6 +54,7 @@ public class TransCompletedDialogFragment extends DialogFragment {
 
         Bundle bundle = getArguments();
         if(bundle != null) {
+            //Display transaction result by dialog.
             long code = bundle.getLong(StatusData.PARAM_CODE);
             String msg = bundle.getString(StatusData.PARAM_MSG);
             long time = bundle.getLong(StatusData.PARAM_HOST_RESP_TIMEOUT,2000);
@@ -57,6 +66,7 @@ public class TransCompletedDialogFragment extends DialogFragment {
             }
             textView.setText(msg);
 
+            //Close dialog after timeout.
             new Handler().postDelayed(this::dismiss, time);
         }
 
@@ -71,7 +81,7 @@ public class TransCompletedDialogFragment extends DialogFragment {
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
 
-        //Close activity after Trans completed
+        //After dismiss, close activity
         requireActivity().finishAndRemoveTask();
     }
 }

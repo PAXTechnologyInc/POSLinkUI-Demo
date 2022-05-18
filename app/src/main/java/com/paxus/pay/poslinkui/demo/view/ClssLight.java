@@ -10,6 +10,9 @@ import androidx.appcompat.widget.AppCompatImageView;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * Virtual Contactless Light
+ */
 public class ClssLight extends AppCompatImageView {
 
     public static final int OFF = 0;

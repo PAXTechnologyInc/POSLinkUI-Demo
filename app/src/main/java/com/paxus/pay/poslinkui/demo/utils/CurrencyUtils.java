@@ -6,6 +6,8 @@ import java.text.DecimalFormat;
 
 /**
  * Created by Yanina.Yang on 5/3/2022.
+ *
+ * Utils for parse Amount
  */
 public class CurrencyUtils {
     public static String convert(long amount, String currencyType) {

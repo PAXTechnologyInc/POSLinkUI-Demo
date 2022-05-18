@@ -17,6 +17,9 @@ import android.view.ViewGroup;
 
 import com.paxus.pay.poslinkui.demo.R;
 
+/**
+ * Utils for handle water mark
+ */
 public class ViewUtils {
     private static final String WATERMARK_TAG = "watermark";
 

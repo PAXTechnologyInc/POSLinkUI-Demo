@@ -30,6 +30,13 @@ import java.util.List;
 
 /**
  * Implement signature entry action {@value SignatureEntry#ACTION_SIGNATURE}<br>
+ * <p>
+ *     UI Tips:
+ *     1.When cancel button clicked, sendAbort
+ *     2.When clear button clicked, clear signature board and reset timeout.
+ *     3.When confirm button clicked, if signature board has been touched, sendNext
+ *     4.If timeout, sendTimeout
+ * </p>
  */
 public class SignatureFragment extends BaseEntryFragment {
     private String transType;
@@ -45,8 +52,8 @@ public class SignatureFragment extends BaseEntryFragment {
     private ElectronicSignatureView mSignatureView;
     private TextView timeoutView;
     private long tickTimeout;
-    private Handler handler = new Handler();
-    private Runnable tick = new Runnable() {
+    private final Handler handler = new Handler();
+    private final Runnable tick = new Runnable() {
         @Override
         public void run() {
             tickTimeout = tickTimeout - 1000;
@@ -55,6 +62,7 @@ public class SignatureFragment extends BaseEntryFragment {
                 timeoutView.setText(String.valueOf(tick));
             }
             if(tick == 0){
+                //4.If timeout, sendTimeout
                 sendTimeout();
             }else{
                 handler.postDelayed(this,1000);
@@ -121,15 +129,15 @@ public class SignatureFragment extends BaseEntryFragment {
 
         Button cancelBtn = rootView.findViewById(R.id.cancel_button);
         if(enableCancel){
-            cancelBtn.setOnClickListener(view1->onCancelClick());
+            cancelBtn.setOnClickListener(view1-> onCancelButtonClicked());
         }else {
             cancelBtn.setVisibility(View.GONE);
         }
 
         Button clearBtn = rootView.findViewById(R.id.clear_button);
-        clearBtn.setOnClickListener(view1->onClearClick());
+        clearBtn.setOnClickListener(view1-> onClearButtonClicked());
         confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(view1 -> onConfirmClick());
+        confirmBtn.setOnClickListener(view1 -> onConfirmButtonClicked());
 
         TextView line1 = rootView.findViewById(R.id.sign_line1);
         if(!TextUtils.isEmpty(signLine1)){
@@ -148,13 +156,13 @@ public class SignatureFragment extends BaseEntryFragment {
         mSignatureView.setOnKeyListener((view12, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_UP){
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    onConfirmClick();
+                    onConfirmButtonClicked();
                     return true;
                 } else if(keyCode == KeyEvent.KEYCODE_DEL){
-                    onClearClick();
+                    onClearButtonClicked();
                     return true;
                 } else if(keyCode == KeyEvent.KEYCODE_BACK){
-                    onCancelClick();
+                    onCancelButtonClicked();
                     return true;
                 }
             }
@@ -167,15 +175,19 @@ public class SignatureFragment extends BaseEntryFragment {
         handler.postDelayed(tick,1000);
     }
 
-    private void onCancelClick(){
+    //1.When cancel button clicked, sendAbort
+    private void onCancelButtonClicked(){
         sendAbort();
     }
-    private void onClearClick(){
+
+    //2.When clear button clicked, clear signature board and reset timeout.
+    private void onClearButtonClicked(){
         mSignatureView.clear();
         tickTimeout = timeOut;
     }
 
-    private void onConfirmClick(){
+    //3.When confirm button clicked, sendNext
+    private void onConfirmButtonClicked(){
         if (!mSignatureView.getTouched()) {
             return;
         }

@@ -41,6 +41,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Signature Board
+ */
 public class ElectronicSignatureView extends View {
 
     /**

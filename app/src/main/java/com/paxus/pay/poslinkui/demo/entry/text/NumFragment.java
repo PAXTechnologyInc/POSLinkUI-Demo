@@ -21,6 +21,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 /**
@@ -34,6 +35,11 @@ import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
  * {@value TextEntry#ACTION_ENTER_MERCHANT_TAX_ID}<br>
  * {@value TextEntry#ACTION_ENTER_PROMPT_RESTRICTION_CODE}<br>
  * {@value TextEntry#ACTION_ENTER_TRANS_NUMBER}<br>
+ *
+ * <p>
+ *     UI Tips:
+ *     If confirm button clicked, sendNext
+ * </p>
  */
 public class NumFragment extends BaseEntryFragment {
     private String transType;
@@ -42,6 +48,8 @@ public class NumFragment extends BaseEntryFragment {
     private int maxLength;
     private String message = "";
     private String transMode;
+
+    private EditText editText;
 
     public static NumFragment newInstance(Intent intent){
         NumFragment numFragment = new NumFragment();
@@ -96,12 +104,9 @@ public class NumFragment extends BaseEntryFragment {
             message = getString(R.string.pls_input_transaction_number);
         }
 
-        if(!TextUtils.isEmpty(valuePatten) && valuePatten.contains("-")){
-            String[] tmp = valuePatten.split("-");
-            if(tmp.length == 2) {
-                minLength = Integer.parseInt(tmp[0]);
-                maxLength = Integer.parseInt(tmp[1]);
-            }
+        if(!TextUtils.isEmpty(valuePatten)){
+            minLength = ValuePatternUtils.getMinLength(valuePatten);
+            maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
 
     }
@@ -136,25 +141,25 @@ public class NumFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        EditText editText = rootView.findViewById(R.id.edit_number);
+        editText = rootView.findViewById(R.id.edit_number);
         if(maxLength > 0 ) {
             editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
         }
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String value = editText.getText().toString();
-                if(minLength == maxLength && maxLength>0){
-                    Toast.makeText(requireContext(), "Must be "+minLength+" digits.", Toast.LENGTH_SHORT).show();
-                }else if(value.length() < minLength){
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-                }else {
-                    sendNext(value);
-                }
-            }
-        });
+        confirmBtn.setOnClickListener(v->onConfirmButtonClicked());
+    }
+
+    //If confirm button clicked, sendNext
+    private void onConfirmButtonClicked(){
+        String value = editText.getText().toString();
+        if(minLength == maxLength && maxLength>0){
+            Toast.makeText(requireContext(), "Must be "+minLength+" digits.", Toast.LENGTH_SHORT).show();
+        }else if(value.length() < minLength){
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+        }else {
+            sendNext(value);
+        }
     }
 
     private void sendNext(String value){

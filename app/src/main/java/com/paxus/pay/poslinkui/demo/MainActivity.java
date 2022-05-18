@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by Yanina.Yang on 5/13/2022.
+ *
+ * Add a log on Android HOME for easy install&uninstall
  */
 public class MainActivity extends AppCompatActivity {
     @Override

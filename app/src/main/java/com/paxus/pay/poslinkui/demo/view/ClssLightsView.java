@@ -13,7 +13,9 @@ import androidx.annotation.Nullable;
 
 import com.paxus.pay.poslinkui.demo.R;
 
-
+/**
+ * Virtual Contactless Light View
+ */
 public class ClssLightsView extends LinearLayout {
 
     private final ClssLight[] lights = new ClssLight[4];

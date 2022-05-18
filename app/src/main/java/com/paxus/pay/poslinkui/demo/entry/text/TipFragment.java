@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
@@ -31,6 +30,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
@@ -39,6 +39,10 @@ import java.util.List;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_TIP}<br>
+ * <p>
+ *     UI Tips:
+ *     If confirm button clicked, sendNext
+ * </p>
  */
 public class TipFragment extends BaseEntryFragment {
     private String transType;
@@ -59,6 +63,8 @@ public class TipFragment extends BaseEntryFragment {
     private long[] enabledTipValues;
 
     private TipOption selectedItem;
+    
+    private EditText editText;
 
     public static TipFragment newInstance(Intent intent){
         TipFragment numFragment = new TipFragment();
@@ -67,13 +73,6 @@ public class TipFragment extends BaseEntryFragment {
         bundle.putAll(intent.getExtras());
         numFragment.setArguments(bundle);
         return numFragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        loadArgument(getArguments());
     }
 
     @Override
@@ -92,12 +91,9 @@ public class TipFragment extends BaseEntryFragment {
 
         String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-12");
 
-        if(!TextUtils.isEmpty(valuePatten) && valuePatten.contains("-")){
-            String[] tmp = valuePatten.split("-");
-            if(tmp.length == 2) {
-                minLength = Integer.parseInt(tmp[0]);
-                maxLength = Integer.parseInt(tmp[1]);
-            }
+        if(!TextUtils.isEmpty(valuePatten)){
+            minLength = ValuePatternUtils.getMinLength(valuePatten);
+            maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
 
         String[] options = bundle.getStringArray(EntryExtraData.PARAM_TIP_OPTIONS);
@@ -199,7 +195,7 @@ public class TipFragment extends BaseEntryFragment {
             textView.setText(getString(R.string.prompt_input_tip));
         }
 
-        EditText editText = rootView.findViewById(R.id.edit_tip);
+        editText = rootView.findViewById(R.id.edit_tip);
         if(haveOptions){
             editText.setVisibility(View.GONE);
         }else {
@@ -209,23 +205,7 @@ public class TipFragment extends BaseEntryFragment {
             }
         }
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(editText.getVisibility() == View.VISIBLE) {
-                        String text = editText.getText().toString();
-                        long value = CurrencyUtils.parse(text);
-                        if(UnitType.DOLLAR.equals(tipUnit)){
-                            value = value*100;
-                        }
-                        sendNext(value);
-                    }else {
-                        if(selectedItem != null){
-                            sendNext(selectedItem.tipAmt);
-                        }
-                    }
-                }
-            });
+        confirmBtn.setOnClickListener( v -> onConfirmButtonClicked());
 
         View tipSummary = rootView.findViewById(R.id.tips_summary);
         if(enabledTipNames != null && enabledTipNames.length> 1){
@@ -275,6 +255,21 @@ public class TipFragment extends BaseEntryFragment {
 
     }
 
+    //If confirm button clicked, sendNext
+    private void onConfirmButtonClicked(){
+        if(editText.getVisibility() == View.VISIBLE) {
+            String text = editText.getText().toString();
+            long value = CurrencyUtils.parse(text);
+            if(UnitType.DOLLAR.equals(tipUnit)){
+                value = value*100;
+            }
+            sendNext(value);
+        }else {
+            if(selectedItem != null){
+                sendNext(selectedItem.tipAmt);
+            }
+        }
+    }
 
     private void sendNext(long value){
 

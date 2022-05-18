@@ -1,5 +1,7 @@
 # POSLinkUI-Demo
 
+This is a simple demo for POSLinkUI.
+
 ## EntryActivity
 Use fragment to implement all UI (Activity and Dialog).
 1. exported should be true. Then this activity can be started by Intent.
@@ -18,7 +20,23 @@ Use fragment to implement all UI (Activity and Dialog).
 ## POSLinkUI Transaction flow
 The log below would help you understand how POSLinkUI run when do a transaction.
 
-1.Example for a chip transaction:
+A simple explanation for reading log (Step by Step):
+(1)BroadPOS startActivity "com.pax.us.pay.action.ENTER_AMOUNT"
+(2)POSLinkUIDemo create activity per intent
+    start Entry Action "com.pax.us.pay.action.ENTER_AMOUNT"
+(3)After click confirm button, POSLInkUIDemo send next broadcast with result to BroadPOS
+    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
+(4)BroadPOS return entry response tell POSLinkUIDemo that the result could be accepted or declined
+(5)If declined, that means the input is not valid, user need retry. Generally POSLinkUIDemo will show a toast message.
+    receive Entry Response ACTION_DECLINED for action "com.pax.us.pay.action.ENTER_AMOUNT" (-32-Please Input Amount)
+(6)After user redo input amount, click confirm button, POSLinkUIDemo request next again.
+    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
+(7)Finally, ACTION_NEXT was accepted. The ENTER_AMOUNT action end.
+    receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_AMOUNT"
+(8)Then generally BroadPOS will go to next step. Like startActivity for enter tip.
+    start Entry Action "com.pax.us.pay.action.ENTER_TIP"
+
+1.Example log for a chip transaction:
 
     start Entry Action "com.pax.us.pay.action.ENTER_AMOUNT"
     send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
@@ -49,7 +67,7 @@ The log below would help you understand how POSLinkUI run when do a transaction.
     receive Status Action "com.pax.us.pay.CARD_REMOVED"
     receive Status Action "com.pax.us.pay.TRANS_COMPLETED"
 
-2.Example for Entry Response ACTION_DECLINED:
+2.Example log for Entry Response ACTION_DECLINED:
 
     start Entry Action "com.pax.us.pay.action.ENTER_AMOUNT"
     send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"

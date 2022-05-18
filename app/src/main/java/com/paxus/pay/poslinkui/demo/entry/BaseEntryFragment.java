@@ -23,6 +23,16 @@ import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by Yanina.Yang on 5/11/2022.
+ *
+ * Base Dialog Fragment for most entry actions
+ * <p>
+ *     UI Tips:
+ *     1. Load layout in onCreateView (getLayoutResourceId, loadParameter, loadView)
+ *     2. On KEYCODE_BACK (on navigation bar) clicked , generally abort action
+ *     3. After send next to BroadPOS, the request might be accepted or declined,
+ *        (1)when got declined, prompt declined message
+ *        (2)when got accepted, should not response AbortEvent any more.
+ * </p>
  */
 public abstract class BaseEntryFragment extends Fragment {
     //Common Input for every Entry Action
@@ -35,6 +45,7 @@ public abstract class BaseEntryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Logger.d(this.getClass().getSimpleName()+" onCreateView");
 
+        //1. Load layout in onCreateView (getLayoutResourceId, loadParameter, loadView)
         Bundle bundle = getArguments();
         if(bundle != null) {
             loadArgument(bundle);
@@ -98,7 +109,7 @@ public abstract class BaseEntryFragment extends Fragment {
     protected void onEntryAccepted(){
         Logger.i("receive Entry Response ACTION_ACCEPTED for action \""+action+"\"");
 
-        //Yanina: After entry accepted, should not response AbortEvent.
+        //3.2 when got accepted, should not response AbortEvent any more.
         deactivate();
     }
 
@@ -108,6 +119,7 @@ public abstract class BaseEntryFragment extends Fragment {
      * @param errMessage Error Message
      */
     protected void onEntryDeclined(long errCode, String errMessage){
+        //3.1 when got declined, prompt declined message
         Logger.i("receive Entry Response ACTION_DECLINED for action \""+action+"\" ("+errCode+"-"+errMessage+")");
         Toast.makeText(requireActivity(),errMessage,Toast.LENGTH_SHORT).show();
     }
@@ -124,6 +136,8 @@ public abstract class BaseEntryFragment extends Fragment {
         }
     }
 
+
+    //2. On KEYCODE_BACK (on navigation bar) clicked , generally abort action
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEntryAbort(EntryAbortEvent event) {
         sendAbort();

@@ -185,6 +185,7 @@ public class EntryActivity extends AppCompatActivity {
         filter.addCategory(CardStatus.CATEGORY);
         filter.addAction(CardStatus.CARD_REMOVED);
         filter.addAction(CardStatus.CARD_REMOVAL_REQUIRED);
+        filter.addAction(CardStatus.CARD_QUICK_REMOVAL_REQUIRED);
         filter.addAction(CardStatus.CARD_PROCESS_STARTED);
         filter.addAction(CardStatus.CARD_PROCESS_COMPLETED);
 

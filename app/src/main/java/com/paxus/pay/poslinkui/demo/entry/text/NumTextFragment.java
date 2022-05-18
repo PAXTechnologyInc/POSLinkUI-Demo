@@ -22,6 +22,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 /**
  * Implement text entry actions:<br>
@@ -32,6 +33,11 @@ import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
  * {@value TextEntry#ACTION_ENTER_REFERENCE_NUMBER}<br>
  * {@value TextEntry#ACTION_ENTER_MERCHANT_REFERENCE_NUMBER}<br>
  * {@value TextEntry#ACTION_ENTER_OCT_REFERENCE_NUMBER}<br>
+ *
+ * <p>
+ *     UI Tips:
+ *     If confirm button clicked, sendNext
+ * </p>
  */
 public class NumTextFragment extends BaseEntryFragment {
     private String transType;
@@ -41,6 +47,8 @@ public class NumTextFragment extends BaseEntryFragment {
     private String message = "";
     private String transMode;
     private boolean allText;
+
+    private EditText editText;
 
     public static NumTextFragment newInstance(Intent intent){
         NumTextFragment numFragment = new NumTextFragment();
@@ -88,12 +96,9 @@ public class NumTextFragment extends BaseEntryFragment {
             message = getString(R.string.pls_input_oct_reference_number);
         }
 
-        if(!TextUtils.isEmpty(valuePatten) && valuePatten.contains("-")){
-            String[] tmp = valuePatten.split("-");
-            if(tmp.length == 2) {
-                minLength = Integer.parseInt(tmp[0]);
-                maxLength = Integer.parseInt(tmp[1]);
-            }
+        if(!TextUtils.isEmpty(valuePatten)){
+            minLength = ValuePatternUtils.getMinLength(valuePatten);
+            maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
 
         allText = InputType.ALLTEXT.equals(bundle.getString(EntryExtraData.PARAM_EINPUT_TYPE));
@@ -130,7 +135,7 @@ public class NumTextFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        EditText editText = rootView.findViewById(R.id.edit_number_text);
+        editText = rootView.findViewById(R.id.edit_number_text);
         if(maxLength > 0 ) {
             editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
         }
@@ -141,19 +146,18 @@ public class NumTextFragment extends BaseEntryFragment {
         }
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String value = editText.getText().toString();
-                if(minLength == maxLength && maxLength>0){
-                    Toast.makeText(requireContext(), "Must be "+minLength+" digits.", Toast.LENGTH_SHORT).show();
-                }else if(value.length() < minLength){
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-                }else {
-                    sendNext(value);
-                }
-            }
-        });
+        confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
+    }
+
+    private void onConfirmButtonClicked(){
+        String value = editText.getText().toString();
+        if(minLength == maxLength && maxLength>0){
+            Toast.makeText(requireContext(), "Must be "+minLength+" digits.", Toast.LENGTH_SHORT).show();
+        }else if(value.length() < minLength){
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+        }else {
+            sendNext(value);
+        }
     }
 
     private void sendNext(String value){

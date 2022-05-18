@@ -35,6 +35,14 @@ import java.util.Map;
 
 /**
  * Implement security entry action {@link SecurityEntry#ACTION_ENTER_PIN}
+ * <p>
+ *     UI Tips:
+ *     1.If want customized pin pad layout,
+ *          (1)when pin pad layout ready, send pin pad and secure area location (Done on ViewTreeObserver.OnGlobalLayoutListener)
+ *          (2)When using external pin pad or terminal has physical pin pad, do not use customized pin pad.
+ *     2.If don't want customized pin pad, don't need send pin pad location
+ *     3.Update input box according PinStatus
+ * </p>
  */
 public class PINFragment extends BaseEntryFragment {
     private String transType;
@@ -47,6 +55,7 @@ public class PINFragment extends BaseEntryFragment {
     private String currencyType;
     private String pinRange;
 
+    private View rootView;
     private TextView pinBox;
 
     private BroadcastReceiver receiver;
@@ -104,6 +113,8 @@ public class PINFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
+        this.rootView = rootView;
+
         if(!TextUtils.isEmpty(transType) && getActivity() instanceof AppCompatActivity){
             ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
             if(actionBar != null) {
@@ -153,51 +164,20 @@ public class PINFragment extends BaseEntryFragment {
         boolean couldBypass = pinRange!= null && pinRange.startsWith("0,");
         rootView.findViewById(R.id.bypass).setVisibility(couldBypass? View.VISIBLE:View.GONE);
 
+        View customizedPinPad = rootView.findViewById(R.id.pinpad_layout);
         if(isUsingExternalPinPad || hasPhysicalKeyboard()){
-            rootView.findViewById(R.id.pinpad_layout).setVisibility(View.GONE);
+            //(2)When using external pin pad or terminal has physical pin pad, do not use customized pin pad.
+            customizedPinPad.setVisibility(View.GONE);
             sendSecureArea();
         }else {
-            //For customized pin pad.
-            ViewTreeObserver observer = pinBox.getViewTreeObserver();
+            ViewTreeObserver observer = customizedPinPad.getViewTreeObserver();
             observer.addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            pinBox.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            customizedPinPad.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                            /*
-                             * If you don't want customize pin pad, you don't need send pin pad location
-                             */
-                            //---------------------Send Pin Pad Location------------------
-                            Map<String, Integer> padMap = new HashMap<>();
-                            padMap.put(EntryRequest.PARAM_KEY_0, R.id.key_0);
-                            padMap.put(EntryRequest.PARAM_KEY_1, R.id.key_1);
-                            padMap.put(EntryRequest.PARAM_KEY_2, R.id.key_2);
-                            padMap.put(EntryRequest.PARAM_KEY_3, R.id.key_3);
-                            padMap.put(EntryRequest.PARAM_KEY_4, R.id.key_4);
-                            padMap.put(EntryRequest.PARAM_KEY_5, R.id.key_5);
-                            padMap.put(EntryRequest.PARAM_KEY_6, R.id.key_6);
-                            padMap.put(EntryRequest.PARAM_KEY_7, R.id.key_7);
-                            padMap.put(EntryRequest.PARAM_KEY_8, R.id.key_8);
-                            padMap.put(EntryRequest.PARAM_KEY_9, R.id.key_9);
-                            padMap.put(EntryRequest.PARAM_KEY_CLEAR, R.id.key_clear);
-                            padMap.put(EntryRequest.PARAM_KEY_ENTER, R.id.key_enter);
-                            padMap.put(EntryRequest.PARAM_KEY_CANCEL, R.id.key_cancel);
-
-                            Bundle bundle = new Bundle();
-                            bundle.putString(EntryRequest.PARAM_ACTION, action);
-                            for (Map.Entry<String, Integer> entry : padMap.entrySet()) {
-                                View v = rootView.findViewById(entry.getValue());
-                                int[] location = new int[2];
-                                v.getLocationOnScreen(location);
-                                bundle.putParcelable(entry.getKey(), new Rect(location[0], location[1], location[0] + v.getWidth(), location[1] + v.getHeight()));
-                            }
-                            Intent intent = new Intent(EntryRequest.ACTION_SET_PIN_KEY_LAYOUT);
-                            intent.setPackage(packageName);
-                            intent.putExtras(bundle);
-                            requireContext().sendBroadcast(intent);
-                            //---------------------Send Security Area------------------
-                            sendSecureArea();
+                            onCustomizedPinPadLayoutReady();
                         }
                     });
 
@@ -205,6 +185,49 @@ public class PINFragment extends BaseEntryFragment {
 
     }
 
+    //(1)when pin pad layout ready, send pin pad layout and secure area location
+    private void onCustomizedPinPadLayoutReady(){
+        /*
+         * If you don't want customize pin pad, you don't need send pin pad location
+         */
+        //---------------------Send Pin Pad Location------------------
+        Map<String, Integer> padMap = new HashMap<>();
+        padMap.put(EntryRequest.PARAM_KEY_0, R.id.key_0);
+        padMap.put(EntryRequest.PARAM_KEY_1, R.id.key_1);
+        padMap.put(EntryRequest.PARAM_KEY_2, R.id.key_2);
+        padMap.put(EntryRequest.PARAM_KEY_3, R.id.key_3);
+        padMap.put(EntryRequest.PARAM_KEY_4, R.id.key_4);
+        padMap.put(EntryRequest.PARAM_KEY_5, R.id.key_5);
+        padMap.put(EntryRequest.PARAM_KEY_6, R.id.key_6);
+        padMap.put(EntryRequest.PARAM_KEY_7, R.id.key_7);
+        padMap.put(EntryRequest.PARAM_KEY_8, R.id.key_8);
+        padMap.put(EntryRequest.PARAM_KEY_9, R.id.key_9);
+        padMap.put(EntryRequest.PARAM_KEY_CLEAR, R.id.key_clear);
+        padMap.put(EntryRequest.PARAM_KEY_ENTER, R.id.key_enter);
+        padMap.put(EntryRequest.PARAM_KEY_CANCEL, R.id.key_cancel);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_ACTION, action);
+        for (Map.Entry<String, Integer> entry : padMap.entrySet()) {
+            View v = rootView.findViewById(entry.getValue());
+            int[] location = new int[2];
+            v.getLocationOnScreen(location);
+            String key = entry.getKey();
+            Rect value = new Rect(location[0], location[1], location[0] + v.getWidth(), location[1] + v.getHeight());
+            bundle.putParcelable(key, value);
+            Logger.d("PIN Layout["+key+"]:"+value);
+        }
+        Intent intent = new Intent(EntryRequest.ACTION_SET_PIN_KEY_LAYOUT);
+        intent.setPackage(packageName);
+        intent.putExtras(bundle);
+        requireContext().sendBroadcast(intent);
+        //---------------------Send Security Area------------------
+        sendSecureArea();
+    }
+
+    /**
+     * For this action, EntryRequest.ACTION_SECURITY_AREA is just used to tell BroadPOS you are ready.
+     */
     private void sendSecureArea(){
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -234,6 +257,7 @@ public class PINFragment extends BaseEntryFragment {
             Logger.i("receive Status Action \""+intent.getAction()+"\"");
             String text = pinBox.getText().toString();
 
+            //3.Update input box according PinStatus
             if(PINStatus.PIN_ENTERING.equals(intent.getAction())){
                 pinBox.setText(text + "*");
             }else if(PINStatus.PIN_ENTER_CLEARED.equals(intent.getAction())){
