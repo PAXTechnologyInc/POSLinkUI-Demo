@@ -41,42 +41,94 @@ A simple explanation for reading log (Step by Step)
 
 1.Example log for a chip transaction:
 
+    EntryActivity onCreate
     start Entry Action "com.pax.us.pay.action.ENTER_AMOUNT"
+    AmountFragment onCreateView
+    AmountTextWatcher afterTextChanged:$0.01
+    AmountTextWatcher afterTextChanged:$0.10
+    AmountTextWatcher afterTextChanged:$1.00
     send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
     receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_AMOUNT"
+    EntryActivity onNewIntent
     start Entry Action "com.pax.us.pay.action.ENTER_TIP"
+    TipFragment onCreateView
+    AmountFragment onDestroy
     send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
     receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_TIP"
+    EntryActivity onNewIntent
     start Entry Action "com.pax.us.pay.action.INPUT_ACCOUNT"
+    InputAccountFragment onCreateView
+    TipFragment onDestroy
     send Entry Request ACTION_SECURITY_AREA for action "com.pax.us.pay.action.INPUT_ACCOUNT"
     receive Status Action "com.pax.us.pay.CLSS_LIGHT_READY_FOR_TXN"
     receive Status Action "com.pax.us.pay.CLSS_LIGHT_READY_FOR_TXN"
     receive Status Action "com.pax.us.pay.CARD_PROCESS_STARTED"
     receive Status Action "com.pax.us.pay.CARD_PROCESS_COMPLETED"
     receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.INPUT_ACCOUNT"
+    EntryActivity onNewIntent
     start Entry Action "com.pax.us.pay.action.SELECT_AID"
+    OptionsDialogFragment onCreateView
     send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.SELECT_AID"
     receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.SELECT_AID"
+    OptionsDialogFragment onDismiss
     receive Status Action "com.pax.us.pay.CARD_PROCESS_STARTED"
     receive Status Action "com.pax.us.pay.CARD_PROCESS_COMPLETED"
+    EntryActivity onNewIntent
     start Entry Action "com.pax.us.pay.action.ENTER_PIN"
+    PINFragment onCreateView
+    InputAccountFragment onDestroy
+    PIN Layout[key_cancel]:Rect(481, 665 - 712, 804)
+    PIN Layout[key_3]:Rect(323, 665 - 465, 804)
+    PIN Layout[key_clear]:Rect(481, 820 - 712, 960)
+    PIN Layout[key_enter]:Rect(481, 976 - 712, 1272)
+    PIN Layout[key_4]:Rect(8, 820 - 150, 960)
+    PIN Layout[key_0]:Rect(166, 1132 - 307, 1272)
+    PIN Layout[key_7]:Rect(8, 976 - 150, 1116)
+    PIN Layout[key_9]:Rect(323, 976 - 465, 1116)
+    PIN Layout[key_8]:Rect(166, 976 - 307, 1116)
+    PIN Layout[key_6]:Rect(323, 820 - 465, 960)
+    PIN Layout[key_5]:Rect(166, 820 - 307, 960)
+    PIN Layout[key_2]:Rect(166, 665 - 307, 804)
+    PIN Layout[key_1]:Rect(8, 665 - 150, 804)
+    send Entry Request ACTION_SET_PIN_KEY_LAYOUT for action "com.pax.us.pay.action.ENTER_PIN"
+    send Entry Request ACTION_SECURITY_AREA for action "com.pax.us.pay.action.ENTER_PIN"
+    receive Status Action "com.pax.us.pay.PIN_ENTERING"
+    receive Status Action "com.pax.us.pay.PIN_ENTERING"
+    receive Status Action "com.pax.us.pay.PIN_ENTERING"
+    receive Status Action "com.pax.us.pay.PIN_ENTERING"
     receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_PIN"
-    receive Status Action "com.pax.us.pay.EMV_TRANS_ONLINE_STARTED"
-    receive Status Action "com.pax.us.pay.EMV_TRANS_ONLINE_FINISHED"
+    receive Status Action "com.pax.us.pay.CARD_REMOVAL_REQUIRED"
+    receive Status Action "com.pax.us.pay.CARD_REMOVED"
+    EntryActivity onCreate
     start Entry Action "com.pax.us.pay.action.GET_SIGNATURE"
+    SignatureFragment onCreateView
+    EntryActivity onSaveInstanceState
     send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.GET_SIGNATURE"
     receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.GET_SIGNATURE"
+    EntryActivity onNewIntent
+    start Entry Action "com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW"
+    ConfirmReceiptViewFragment onCreateView
+    SignatureFragment onDestroy
+    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW"
+    receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW"
+    receive Status Action "com.pax.us.pay.PRINT_STARTED"
+    receive Status Action "com.pax.us.pay.PRINT_COMPLETED"
+    EntryActivity onNewIntent
+    start Entry Action "com.pax.us.pay.action.CONFIRM_PRINT_CUSTOMER_COPY"
+    ConfirmationDialogFragment onCreateView
+    PINFragment onDestroy
+    EntryActivity onDestroy
+    ConfirmationDialogFragment onDismiss
+    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.CONFIRM_PRINT_CUSTOMER_COPY"
+    receive Status Action "com.pax.us.pay.PRINT_STARTED"
+    receive Status Action "com.pax.us.pay.PRINT_COMPLETED"
+    receive Status Action "com.pax.us.pay.PRINT_COMPLETED"
     receive Status Action "com.pax.us.pay.CARD_REMOVAL_REQUIRED"
     receive Status Action "com.pax.us.pay.CARD_REMOVED"
     receive Status Action "com.pax.us.pay.TRANS_COMPLETED"
-
-2.Example log for Entry Response ACTION_DECLINED:
-  
-    start Entry Action "com.pax.us.pay.action.ENTER_AMOUNT"
-    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
-    receive Entry Response ACTION_DECLINED for action "com.pax.us.pay.action.ENTER_AMOUNT" (-32-Please Input Amount)
-    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
-    receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_AMOUNT"
+    TRANS_COMPLETED:0,CREDIT SALE SUCCESS
+    ConfirmReceiptViewFragment onDestroy
+    EntryActivity onDestroy
 
 ## TODO List:
 1. Implement "com.pax.us.pay.action.ENTER_FLEET_DATA".

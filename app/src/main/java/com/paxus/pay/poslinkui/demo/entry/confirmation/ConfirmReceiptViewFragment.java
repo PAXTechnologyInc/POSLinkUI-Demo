@@ -29,8 +29,6 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.io.IOException;
 
 /**
@@ -68,9 +66,7 @@ public class ConfirmReceiptViewFragment extends BaseEntryFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Logger.d("POSLinkUIDemo","ConfirmReceiptView onDestroy");
 
-        EventBus.getDefault().unregister(this);
         if (receiptOutAnim != null) {
             receiptOutAnim.cancel();
         }

@@ -27,6 +27,7 @@ import com.pax.us.pay.ui.constant.status.PINStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
@@ -217,6 +218,7 @@ public class PINFragment extends BaseEntryFragment {
             bundle.putParcelable(key, value);
             Logger.d("PIN Layout["+key+"]:"+value);
         }
+        Logger.i("send Entry Request ACTION_SET_PIN_KEY_LAYOUT for action \""+action+"\"");
         Intent intent = new Intent(EntryRequest.ACTION_SET_PIN_KEY_LAYOUT);
         intent.setPackage(packageName);
         intent.putExtras(bundle);
@@ -229,14 +231,7 @@ public class PINFragment extends BaseEntryFragment {
      * For this action, EntryRequest.ACTION_SECURITY_AREA is just used to tell BroadPOS you are ready.
      */
     private void sendSecureArea(){
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, action);
-
-        Intent intent = new Intent(EntryRequest.ACTION_SECURITY_AREA);
-        intent.putExtras(bundle);
-        intent.setPackage(packageName);
-        requireContext().sendBroadcast(intent);
-
+        EntryRequestUtils.sendSecureArea(requireContext(),packageName,action);
     }
 
     public boolean hasPhysicalKeyboard(){

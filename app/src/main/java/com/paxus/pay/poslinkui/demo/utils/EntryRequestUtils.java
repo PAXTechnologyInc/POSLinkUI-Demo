@@ -144,4 +144,23 @@ public class EntryRequestUtils {
         context.sendBroadcast(intent);
 
     }
+
+    /**
+     * For {@link com.pax.us.pay.ui.constant.entry.SecurityEntry#ACTION_ENTER_PIN} use only
+     * For this action, EntryRequest.ACTION_SECURITY_AREA is just used to tell BroadPOS you are ready.
+     * @param context Context
+     * @param packageName package name
+     * @param action action name
+     */
+    public static void sendSecureArea(Context context, String packageName, String action){
+        Logger.i("send Entry Request ACTION_SECURITY_AREA for action \""+action+"\"");
+
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_ACTION, action);
+
+        Intent intent = new Intent(EntryRequest.ACTION_SECURITY_AREA);
+        intent.putExtras(bundle);
+        intent.setPackage(packageName);
+        context.sendBroadcast(intent);
+    }
 }
