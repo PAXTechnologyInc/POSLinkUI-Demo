@@ -595,4 +595,13 @@
     <string name="confirm_option_decline">Decline</string>
     <string name="confirm_option_reverse">Reverse</string>
 
+    <string name="prompt_input_transit_amount">Please Enter Transit Amount</string>
+    <string name="prompt_input_healthcare_amount">Please Enter HealthCare Amount</string>
+    <string name="prompt_input_clinical_amount">Please Enter Clinical Amount</string>
+    <string name="prompt_input_dental_amount">Please Enter Dental Amount</string>
+    <string name="prompt_input_co_pay_amount">Please Enter Co-Payment Amount</string>
+    <string name="prompt_input_rx_amount">Please Enter Prescription/Rx Amount</string>
+    <string name="prompt_input_vision_amount">Please Enter Vision Amount</string>
+    <string name="prompt_input_otc_amount">Please Enter OTC Amount</string>
+
 </resources>

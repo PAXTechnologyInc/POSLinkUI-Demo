@@ -28,6 +28,8 @@ import com.paxus.pay.poslinkui.demo.entry.text.AVSFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.AmountFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.CashbackFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.ExpiryFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.FSAFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.FleetDataFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.NumFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.NumTextFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.TextFragment;
@@ -206,6 +208,10 @@ public class UIFragmentHelper {
                         return AVSFragment.newInstance(intent);
                     case TextEntry.ACTION_ENTER_EXPIRY_DATE:
                         return ExpiryFragment.newInstance(intent);
+                    case TextEntry.ACTION_ENTER_FSA_DATA:
+                        return FSAFragment.newInstance(intent);
+                    case TextEntry.ACTION_ENTER_FLEET_DATA:
+                        return FleetDataFragment.newInstance(intent);
                     default:
                         return null;
                 }
