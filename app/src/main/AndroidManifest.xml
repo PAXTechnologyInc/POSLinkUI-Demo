@@ -21,7 +21,8 @@
         android:requestLegacyExternalStorage="true">
 
         <activity android:name=".MainActivity"
-            android:theme="@style/Theme.Main">
+            android:theme="@style/Theme.Main"
+            android:autoRemoveFromRecents="true">
             <!--            Add launcher then you can see the app in desktop and uninstall it easily-->
             <intent-filter>
 
@@ -254,6 +255,39 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".status.StatusActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.POSLinkUI"
+            android:autoRemoveFromRecents="true">
+        </activity>
+
+        <receiver
+            android:name=".status.StatusReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.pax.us.pay.PRINT_STARTED" />
+                <action android:name="com.pax.us.pay.FILE_UPDATE_STARTED"/>
+                <action android:name="com.pax.us.pay.FCP_FILE_UPDATE_STARTED"/>
+                <action android:name="com.pax.us.pay.LOG_UPLOAD_STARTED"/>
+                <action android:name="com.pax.us.pay.CAPK_UPDATE_STARTED"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.pax.us.pay.CARD_PROCESS_STARTED" />
+                <action android:name="com.pax.us.pay.CARD_REMOVAL_REQUIRED"/>
+                <action android:name="com.pax.us.pay.CARD_QUICK_REMOVAL_REQUIRED"/>
+                <category android:name="com.pax.us.pay.status.category.CARD" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.pax.us.pay.TRANS_COMPLETED" />
+                <action android:name="com.pax.us.pay.TRANS_ONLINE_STARTED" />
+                <action android:name="com.pax.us.pay.EMV_TRANS_ONLINE_STARTED" />
+                <action android:name="com.pax.us.pay.PINPAD_CONNECTION_STARTED" />
+                <action android:name="com.pax.us.pay.DCC_ONLINE_STARTED" />
+                <category android:name="com.pax.us.pay.status.category.INFORMATION" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
