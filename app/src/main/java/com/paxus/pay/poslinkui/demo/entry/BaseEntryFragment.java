@@ -81,6 +81,10 @@ public abstract class BaseEntryFragment extends Fragment {
         }
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
     /**
      * Get Layout
      * @return layout xml resource
