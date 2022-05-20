@@ -62,7 +62,7 @@ public class FleetDataFragment extends Fragment {
             Logger.e(this.getClass().getSimpleName()+" arguments missing!!!");
         }
 
-        View view = inflater.inflate(R.layout.fragment_base_num_text, container, false);
+        View view = inflater.inflate(R.layout.fragment_fleet_data, container, false);
         loadView(view);
         return view;
     }

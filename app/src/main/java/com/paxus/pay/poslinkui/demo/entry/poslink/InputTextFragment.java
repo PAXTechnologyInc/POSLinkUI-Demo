@@ -55,7 +55,7 @@ public class InputTextFragment extends BaseEntryFragment {
 
     private EditText editText;
     private Handler handler;
-    private Runnable timeoutRun = new Runnable() {
+    private final Runnable timeoutRun = new Runnable() {
         @Override
         public void run() {
             EntryRequestUtils.sendTimeout(requireContext(),packageName,action);
@@ -74,7 +74,7 @@ public class InputTextFragment extends BaseEntryFragment {
 
     @Override
     protected int getLayoutResourceId() {
-        return R.layout.fragment_base_text;
+        return R.layout.fragment_input_text;
     }
 
     @Override
@@ -183,14 +183,30 @@ public class InputTextFragment extends BaseEntryFragment {
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
-        handler = new Handler();
-        handler.postDelayed(timeoutRun, timeOut);
+        if(timeOut > 0 ) {
+            handler = new Handler();
+            handler.postDelayed(timeoutRun, timeOut);
+        }
+    }
+
+    @Override
+    protected void onEntryAccepted() {
+        super.onEntryAccepted();
+
+        if(handler!= null) {
+            handler.removeCallbacks(timeoutRun);
+            handler = null;
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(timeoutRun);
+
+        if(handler != null) {
+            handler.removeCallbacks(timeoutRun);
+            handler = null;
+        }
     }
 
     //If confirm button clicked, sendNext
