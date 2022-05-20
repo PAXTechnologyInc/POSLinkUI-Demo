@@ -137,7 +137,7 @@ public class FleetFragment extends BaseEntryFragment {
             getChildFragmentManager().setFragmentResultListener(FleetDataFragment.RESULT, this, new FragmentResultListener() {
                         @Override
                         public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                            onGetEnterValue(requestKey, bundle.getString(FSAAmountFragment.VALUE));
+                            onGetEnterValue(requestKey, bundle.getString(FleetDataFragment.VALUE));
                         }
                     });
             return;

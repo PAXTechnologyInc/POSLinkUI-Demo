@@ -6,7 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_centerInParent="true">
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -16,44 +17,41 @@
             android:autoSizeTextType="uniform"
             android:maxLines="1"
             android:gravity="center"/>
-        <LinearLayout
+        <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <Button
-                android:layout_width="0dp"
+            <RadioButton
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAllCaps="false"
                 android:id="@+id/button1"
-                android:layout_margin="5dp"
-                android:layout_weight="1"/>
-            <Button
-                android:layout_width="0dp"
+                android:layout_margin="5dp"/>
+            <RadioButton
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAllCaps="false"
                 android:id="@+id/button2"
-                android:layout_margin="5dp"
-                android:layout_weight="1"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Button
-                android:layout_width="0dp"
+                android:layout_margin="5dp"/>
+            <RadioButton
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAllCaps="false"
                 android:id="@+id/button3"
-                android:layout_margin="5dp"
-                android:layout_weight="1"/>
-            <Button
-                android:layout_width="0dp"
+                android:layout_margin="5dp"/>
+            <RadioButton
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAllCaps="false"
                 android:id="@+id/button4"
-                android:layout_margin="5dp"
-                android:layout_weight="1"/>
-        </LinearLayout>
-
+                android:layout_margin="5dp"/>
+        </RadioGroup>
+		<Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/confirm_button"
+                android:text="@string/confirm"
+                android:textAllCaps="false"
+				android:layout_margin="10dp"/>
     </LinearLayout>
 
 </RelativeLayout>
