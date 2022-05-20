@@ -22,6 +22,7 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmationSurchargeFeeD
 import com.paxus.pay.poslinkui.demo.entry.information.DisplayTransInfoFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.OptionsDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.InputTextFragment;
+import com.paxus.pay.poslinkui.demo.entry.poslink.ShowDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowThankYouFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.InputAccountFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.PINFragment;
@@ -253,6 +254,8 @@ public class UIFragmentHelper {
                         return InputTextFragment.newInstance(intent);
                     case PoslinkEntry.ACTION_SHOW_THANK_YOU:
                         return ShowThankYouFragment.newInstance(intent);
+                    case PoslinkEntry.ACTION_SHOW_DIALOG:
+                        return ShowDialogFragment.newInstance(intent);
                     default:
                         return null;
                 }
