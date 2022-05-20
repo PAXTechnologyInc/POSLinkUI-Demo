@@ -14,9 +14,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,14 +23,12 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
-import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.pax.us.pay.ui.constant.entry.enumeration.UnitType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
-import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
 import java.util.ArrayList;
@@ -66,13 +63,13 @@ public class TipFragment extends BaseEntryFragment {
     
     private EditText editText;
 
-    public static TipFragment newInstance(Intent intent){
-        TipFragment numFragment = new TipFragment();
+    public static Fragment newInstance(Intent intent){
+        TipFragment fragment = new TipFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
         bundle.putAll(intent.getExtras());
-        numFragment.setArguments(bundle);
-        return numFragment;
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
@@ -130,30 +127,9 @@ public class TipFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        if(!TextUtils.isEmpty(transType) && getActivity() instanceof AppCompatActivity){
-            ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            if(actionBar != null) {
-                actionBar.setTitle(transType);
-            }
-        }
+        
 
-        String mode = null;
-        if(!TextUtils.isEmpty(transMode)){
-            if(TransMode.DEMO.equals(transMode)){
-                mode = getString(R.string.demo_only);
-            }else if(TransMode.TEST.equals(transMode)){
-                mode = getString(R.string.test_only);
-            }else if(TransMode.TEST_AND_DEMO.equals(transMode)){
-                mode = getString(R.string.test_and_demo);
-            }else {
-                mode = "";
-            }
-        }
-        if(!TextUtils.isEmpty(mode)){
-            ViewUtils.addWaterMarkView(requireActivity(),mode);
-        }else{
-            ViewUtils.removeWaterMarkView(requireActivity());
-        }
+        
 
         TextView tvBaseAmount = rootView.findViewById(R.id.base_amount);
         if(baseAmount > 0){

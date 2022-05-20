@@ -1,13 +1,9 @@
 package com.paxus.pay.poslinkui.demo.entry.text;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -15,16 +11,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.entry.option.OptionsDialogFragment;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 /**
  * Created by Yanina.Yang on 5/19/2022.
  */
-public class GeneralOptionsDialogFragment extends DialogFragment {
+public class FsaOptionsFragment extends Fragment {
 
     public static final String TITLE = "title";
     public static final String OPTIONS = "options";
@@ -32,17 +27,17 @@ public class GeneralOptionsDialogFragment extends DialogFragment {
     public static final String RESULT = "result";
     public static final String INDEX = "index";
 
-    public static DialogFragment newInstance(String title, String[] options){
+    public static Fragment newInstance(String title, String[] options){
         if(options == null || options.length <= 0){
             throw  new IllegalArgumentException("options could not be none.");
         }
-        OptionsDialogFragment dialogFragment = new OptionsDialogFragment();
+        Fragment fragment = new FsaOptionsFragment();
         Bundle bundle = new Bundle();
         bundle.putString(TITLE, title);
         bundle.putStringArray(OPTIONS, options);
 
-        dialogFragment.setArguments(bundle);
-        return dialogFragment;
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Nullable
@@ -50,7 +45,7 @@ public class GeneralOptionsDialogFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Logger.d(this.getClass().getSimpleName()+" onCreateView");
         //------1. Load layout in onCreateView (getLayoutResourceId, loadParameter, loadView)---------
-        View view = inflater.inflate(R.layout.fragment_option_dialog, container, false);
+        View view = inflater.inflate(R.layout.fragment_fsa_option, container, false);
 
         Bundle bundle = getArguments();
         if(bundle!= null) {
@@ -59,22 +54,6 @@ public class GeneralOptionsDialogFragment extends DialogFragment {
 
         loadView(view);
 
-        Dialog dialog = getDialog();
-        if (dialog != null) {
-            //-------2. Dialog should not be canceled by touch outside-------
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-                @Override
-                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                    if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
-                        onBackPressed();
-                        return true;
-                    }
-                    return false;
-                }
-            });
-        }
         return view;
     }
 
@@ -97,19 +76,8 @@ public class GeneralOptionsDialogFragment extends DialogFragment {
                 android.R.layout.simple_list_item_single_choice, items);
         listView.setAdapter(adapter);
 
-        Button cancelButton = rootView.findViewById(R.id.cancel_button);
-        cancelButton.setOnClickListener(v-> onCancelButtonClicked());
-
         Button confirmButton = rootView.findViewById(R.id.confirm_button);
         confirmButton.setOnClickListener(v->onConfirmButtonClicked());
-    }
-
-    private void onCancelButtonClicked(){
-
-    }
-
-    private void onBackPressed(){
-
     }
 
     private void onConfirmButtonClicked(){

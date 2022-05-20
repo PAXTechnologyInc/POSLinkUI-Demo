@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -18,16 +17,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
-import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
-import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 import java.io.IOException;
 
@@ -48,13 +46,13 @@ public class ConfirmReceiptViewFragment extends BaseEntryFragment {
 
     private ImageView imageView;
     private Animation receiptOutAnim;
-    public static ConfirmReceiptViewFragment newInstance(Intent intent){
-        ConfirmReceiptViewFragment numFragment = new ConfirmReceiptViewFragment();
+    public static Fragment newInstance(Intent intent){
+        ConfirmReceiptViewFragment fragment = new ConfirmReceiptViewFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
         bundle.putAll(intent.getExtras());
-        numFragment.setArguments(bundle);
-        return numFragment;
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
@@ -88,24 +86,6 @@ public class ConfirmReceiptViewFragment extends BaseEntryFragment {
         ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if(actionBar != null) {
             actionBar.setTitle(getString(R.string.receipt_preview));
-        }
-
-        String mode = null;
-        if(!TextUtils.isEmpty(transMode)){
-            if(TransMode.DEMO.equals(transMode)){
-                mode = getString(R.string.demo_only);
-            }else if(TransMode.TEST.equals(transMode)){
-                mode = getString(R.string.test_only);
-            }else if(TransMode.TEST_AND_DEMO.equals(transMode)){
-                mode = getString(R.string.test_and_demo);
-            }else {
-                mode = "";
-            }
-        }
-        if(!TextUtils.isEmpty(mode)){
-            ViewUtils.addWaterMarkView(requireActivity(),mode);
-        }else{
-            ViewUtils.removeWaterMarkView(requireActivity());
         }
 
         receiptOutAnim = AnimationUtils.loadAnimation(requireActivity(), R.anim.receipt_out);

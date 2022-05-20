@@ -131,6 +131,4 @@ A simple explanation for reading log (Step by Step)
     EntryActivity onDestroy
 
 ## TODO List:
-1. Implement "com.pax.us.pay.action.ENTER_FLEET_DATA".
-2. Implement "com.pax.us.pay.action.ENTER_FSA_DATA"
-3. Implement PoslinkEntry
+1. Implement PoslinkEntry

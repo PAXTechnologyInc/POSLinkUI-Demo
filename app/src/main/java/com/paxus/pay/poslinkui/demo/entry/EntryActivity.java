@@ -10,13 +10,16 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
+import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
@@ -25,17 +28,26 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
 import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
 /**
  * Use fragment to implement all UI (Activity and Dialog).
+ * <p>
+ *     UI Tips:
+ *     1. Display water mask according to {@link EntryExtraData#PARAM_TRANS_MODE}
+ *     2. Display {@link EntryExtraData#PARAM_TRANS_TYPE} on navigation bar
+ * </p>
  */
 public class EntryActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private View fragmentContainer;
     private BroadcastReceiver receiver;
+
+    private String transType = "";
+    private String transMode = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,9 +108,14 @@ public class EntryActivity extends AppCompatActivity {
     private void loadEntry(Intent intent){
         Logger.i("start Entry Action \""+intent.getAction()+"\"");
 
+        updateTransMode(intent.getStringExtra(EntryExtraData.PARAM_TRANS_MODE));
+
         Fragment fragment = UIFragmentHelper.createFragment(intent);
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
         if(fragment != null) {
+
+            updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
+
             if(frag == null) {
                 //Show tool bar
                 toolbar.setVisibility(View.VISIBLE);
@@ -144,6 +161,46 @@ public class EntryActivity extends AppCompatActivity {
             Logger.e("unsupported receive Status Action"+action);
         }
     }
+
+
+
+    //1. Display water mask according to {@link EntryExtraData#PARAM_TRANS_MODE}
+    private void updateTransMode(String transMode){
+        if(!TextUtils.isEmpty(transMode) && !transMode.equals(this.transMode)){
+            this.transMode = transMode;
+
+            String mode = null;
+            if(!TextUtils.isEmpty(transMode)){
+                if(TransMode.DEMO.equals(transMode)){
+                    mode = getString(R.string.demo_only);
+                }else if(TransMode.TEST.equals(transMode)){
+                    mode = getString(R.string.test_only);
+                }else if(TransMode.TEST_AND_DEMO.equals(transMode)){
+                    mode = getString(R.string.test_and_demo);
+                }else {
+                    mode = "";
+                }
+            }
+            if(!TextUtils.isEmpty(mode)){
+                ViewUtils.addWaterMarkView(this,mode);
+            }else{
+                ViewUtils.removeWaterMarkView(this);
+            }
+        }
+    }
+
+    //2. Display {@link EntryExtraData#PARAM_TRANS_TYPE} on navigation bar
+    private void updateTransType(String transType){
+        if(transType!= null && !transType.equals(this.transType)){
+            this.transType = transType;
+
+            ActionBar actionBar = getSupportActionBar();
+            if(actionBar != null) {
+                actionBar.setTitle(transType);
+            }
+        }
+    }
+
 
     private void registerUIReceiver(){
         receiver = new POSLinkUIReceiver();

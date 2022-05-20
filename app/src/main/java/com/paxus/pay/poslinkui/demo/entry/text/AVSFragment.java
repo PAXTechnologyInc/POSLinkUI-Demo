@@ -10,19 +10,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.InputType;
-import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
-import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_AVS_DATA}<br>
@@ -44,13 +41,13 @@ public class AVSFragment extends BaseEntryFragment {
     private EditText editTextAddr;
     private EditText editTextZip;
 
-    public static AVSFragment newInstance(Intent intent){
-        AVSFragment numFragment = new AVSFragment();
+    public static Fragment newInstance(Intent intent){
+        AVSFragment fragment = new AVSFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
         bundle.putAll(intent.getExtras());
-        numFragment.setArguments(bundle);
-        return numFragment;
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
@@ -85,30 +82,9 @@ public class AVSFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        if(!TextUtils.isEmpty(transType) && getActivity() instanceof AppCompatActivity){
-            ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            if(actionBar != null) {
-                actionBar.setTitle(transType);
-            }
-        }
+        
 
-        String mode = null;
-        if(!TextUtils.isEmpty(transMode)){
-            if(TransMode.DEMO.equals(transMode)){
-                mode = getString(R.string.demo_only);
-            }else if(TransMode.TEST.equals(transMode)){
-                mode = getString(R.string.test_only);
-            }else if(TransMode.TEST_AND_DEMO.equals(transMode)){
-                mode = getString(R.string.test_and_demo);
-            }else {
-                mode = "";
-            }
-        }
-        if(!TextUtils.isEmpty(mode)){
-            ViewUtils.addWaterMarkView(requireActivity(),mode);
-        }else{
-            ViewUtils.removeWaterMarkView(requireActivity());
-        }
+        
 
         editTextAddr = rootView.findViewById(R.id.edit_address);
         if(maxLengthAddr > 0 ) {

@@ -2,32 +2,34 @@ package com.paxus.pay.poslinkui.demo.entry.text;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
+import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.FSAType;
-import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
-import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by Yanina.Yang on 5/19/2022.
+ *
+ * Implement {@link TextEntry#ACTION_ENTER_FSA_DATA}
+ *
+ * <p>
+ *     UI Tips:
+ *     This action is a complex action. Please see implementation details on {@link #loadFsaAmountOptions()} and {@link #sendNext()}
+ * </p>
  */
 public class FSAFragment extends BaseEntryFragment {
     private String transType;
@@ -49,13 +51,13 @@ public class FSAFragment extends BaseEntryFragment {
 
     private int amtIndex = 0;
 
-    public static FSAFragment newInstance(Intent intent){
-        FSAFragment numFragment = new FSAFragment();
+    public static Fragment newInstance(Intent intent){
+        FSAFragment fragment = new FSAFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
         bundle.putAll(intent.getExtras());
-        numFragment.setArguments(bundle);
-        return numFragment;
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
@@ -80,39 +82,23 @@ public class FSAFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        if(!TextUtils.isEmpty(transType) && getActivity() instanceof AppCompatActivity){
-            ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            if(actionBar != null) {
-                actionBar.setTitle(transType);
-            }
-        }
+        loadFsaAmountOptions();
+    }
 
-        String mode = null;
-        if(!TextUtils.isEmpty(transMode)){
-            if(TransMode.DEMO.equals(transMode)){
-                mode = getString(R.string.demo_only);
-            }else if(TransMode.TEST.equals(transMode)){
-                mode = getString(R.string.test_only);
-            }else if(TransMode.TEST_AND_DEMO.equals(transMode)){
-                mode = getString(R.string.test_and_demo);
-            }else {
-                mode = "";
-            }
-        }
-        if(!TextUtils.isEmpty(mode)){
-            ViewUtils.addWaterMarkView(requireActivity(),mode);
-        }else{
-            ViewUtils.removeWaterMarkView(requireActivity());
-        }
-
+    private void loadFsaAmountOptions(){
         if(fsaAmountOptions != null && fsaAmountOptions.size()>0){
             boolean healthCareEnabled = fsaAmountOptions.contains(EntryRequest.PARAM_HEALTH_CARE_AMOUNT);
             boolean transitEnabled = fsaAmountOptions.contains(EntryRequest.PARAM_TRANSIT_AMOUNT);
             if( healthCareEnabled && transitEnabled){
                 selectFsaType();
             }else if(transitEnabled){
+                fsaOption = FSAType.TRANSIT;
                 enterTransitAmount();
             }else if(healthCareEnabled){
+                fsaOption = FSAType.HEALTH_CARE;
+                selectHealthCareSubType();
+            }else {
+                Logger.e("NOT Typical FSA Options:"+Arrays.toString(fsaAmountOptions.toArray(new String[0])));
                 selectHealthCareSubType();
             }
         }else {
@@ -124,19 +110,18 @@ public class FSAFragment extends BaseEntryFragment {
     private void selectFsaType(){
 
         String[] fsaTypes = new String[]{FSAType.TRANSIT, FSAType.HEALTH_CARE};
-        DialogFragment dialogFragment = GeneralOptionsDialogFragment.newInstance(
+        Fragment fragment = FsaOptionsFragment.newInstance(
                 getString(R.string.select_fsa_type),
                 fsaTypes
         );
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_placeholder, dialogFragment).commit();
+        transaction.replace(R.id.fragment_placeholder, fragment).commit();
         getChildFragmentManager().beginTransaction();
 
-        getChildFragmentManager()
-                .setFragmentResultListener(GeneralOptionsDialogFragment.RESULT, this, new FragmentResultListener() {
+        getChildFragmentManager().setFragmentResultListener(FsaOptionsFragment.RESULT, this, new FragmentResultListener() {
                     @Override
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                        int index = bundle.getInt(GeneralOptionsDialogFragment.INDEX);
+                        int index = bundle.getInt(FsaOptionsFragment.INDEX);
                         fsaOption = fsaTypes[index];
                         if(FSAType.TRANSIT.equals(fsaOption)){
                             enterTransitAmount();
@@ -148,16 +133,15 @@ public class FSAFragment extends BaseEntryFragment {
     }
 
     private void enterTransitAmount(){
-        Fragment fragment = GeneralAmountFragment.newInstance(
-                getString(R.string.prompt_input_transit_amount),0,9,currency
+        Fragment fragment = FSAAmountFragment.newInstance(
+                getString(R.string.prompt_input_transit_amount),0,9,currency,totalAmount
         );
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.fragment_placeholder, fragment).commit();
-        getChildFragmentManager()
-                .setFragmentResultListener(GeneralAmountFragment.RESULT, this, new FragmentResultListener() {
+        transaction.replace(R.id.fragment_placeholder, fragment).commit();
+        getChildFragmentManager().setFragmentResultListener(FSAAmountFragment.RESULT, this, new FragmentResultListener() {
                     @Override
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                        transitAmt = bundle.getLong(GeneralAmountFragment.VALUE);
+                        transitAmt = bundle.getLong(FSAAmountFragment.VALUE);
                         sendNext();
                     }
                 });
@@ -166,20 +150,18 @@ public class FSAFragment extends BaseEntryFragment {
     private void selectHealthCareSubType(){
         String[] healthCareTypes = new String[]{getString(R.string.healthcare_total),
                 getString(R.string.healthcare_sub_type)};
-        DialogFragment dialogFragment = GeneralOptionsDialogFragment.newInstance(
+        Fragment fragment = FsaOptionsFragment.newInstance(
                 getString(R.string.select_health_sub_types),
                 healthCareTypes
         );
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_placeholder, dialogFragment).commit();
+        transaction.replace(R.id.fragment_placeholder, fragment).commit();
         getChildFragmentManager().beginTransaction();
 
-        getChildFragmentManager()
-                .setFragmentResultListener(GeneralOptionsDialogFragment.RESULT, this, new FragmentResultListener() {
+        getChildFragmentManager().setFragmentResultListener(FsaOptionsFragment.RESULT, this, new FragmentResultListener() {
                     @Override
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                        int index = bundle.getInt(GeneralOptionsDialogFragment.INDEX);
-                        fsaOption = FSAType.HEALTH_CARE;
+                        int index = bundle.getInt(FsaOptionsFragment.INDEX);
                         if(index == 0){
                             enterTotalHealthCareAmount();
                         }else {
@@ -190,16 +172,15 @@ public class FSAFragment extends BaseEntryFragment {
     }
 
     private void enterTotalHealthCareAmount(){
-        Fragment fragment = GeneralAmountFragment.newInstance(
-                getString(R.string.prompt_input_healthcare_amount),0,9,currency
+        Fragment fragment = FSAAmountFragment.newInstance(
+                getString(R.string.prompt_input_healthcare_amount),0,9,currency,totalAmount
         );
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.fragment_placeholder, fragment).commit();
-        getChildFragmentManager()
-                .setFragmentResultListener(GeneralAmountFragment.RESULT, this, new FragmentResultListener() {
+        transaction.replace(R.id.fragment_placeholder, fragment).commit();
+        getChildFragmentManager().setFragmentResultListener(FSAAmountFragment.RESULT, this, new FragmentResultListener() {
                     @Override
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                        healthAmt = bundle.getLong(GeneralAmountFragment.VALUE);
+                        healthAmt = bundle.getLong(FSAAmountFragment.VALUE);
                         sendNext();
                     }
                 });
@@ -209,28 +190,29 @@ public class FSAFragment extends BaseEntryFragment {
         if(amtIndex>=0 && amtIndex< fsaAmountOptions.size()){
             String amtOption = fsaAmountOptions.get(amtIndex);
             if(!EntryRequest.PARAM_TRANSIT_AMOUNT.equals(amtOption) && !EntryRequest.PARAM_HEALTH_CARE_AMOUNT.equals(amtOption)){
-                Fragment fragment = GeneralAmountFragment.newInstance(
-                        getSubHealthCareAmountTitle(amtOption),0,9,currency
+                Fragment fragment = FSAAmountFragment.newInstance(
+                        getSubHealthCareAmountTitle(amtOption),0,9,currency, totalAmount
                 );
                 FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-                transaction.add(R.id.fragment_placeholder, fragment).commit();
-                getChildFragmentManager()
-                        .setFragmentResultListener(GeneralAmountFragment.RESULT, this, new FragmentResultListener() {
+                transaction.replace(R.id.fragment_placeholder, fragment).commit();
+                getChildFragmentManager().setFragmentResultListener(FSAAmountFragment.RESULT, this, new FragmentResultListener() {
                             @Override
                             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                               onGetSubHealthCareAmount(amtOption, bundle.getLong(GeneralAmountFragment.VALUE));
+                               onGetSubHealthCareAmount(amtOption, bundle.getLong(FSAAmountFragment.VALUE));
                             }
                         });
                 return;
             }
+            amtIndex++;
+            enterSubHealthCareAmount();
+            return;
         }
-        healthAmt = clinicAmt + prescriptionAmt + dentalAmt + visionAmt + copayAmt + otcAmt;
         sendNext();
     }
 
     private String getSubHealthCareAmountTitle(String amtOption){
         if(EntryRequest.PARAM_CLINIC_AMOUNT.equals(amtOption)){
-            return getString(R.string.prompt_input_healthcare_amount);
+            return getString(R.string.prompt_input_clinical_amount);
         }else if(EntryRequest.PARAM_PRESCRIPTION_AMOUNT.equals(amtOption)){
             return getString(R.string.prompt_input_rx_amount);
         }else if(EntryRequest.PARAM_DENTAL_AMOUNT.equals(amtOption)){
@@ -263,12 +245,35 @@ public class FSAFragment extends BaseEntryFragment {
         enterSubHealthCareAmount();
     }
 
+    @Override
+    protected void onEntryDeclined(long errCode, String errMessage) {
+        super.onEntryDeclined(errCode, errMessage);
+
+        //Re enter sub health care amount
+        if(FSAType.HEALTH_CARE.equals(fsaOption)){
+            if(healthAmt <= 0) {
+                amtIndex = 0;
+                clinicAmt = 0;
+                prescriptionAmt = 0;
+                dentalAmt = 0;
+                visionAmt = 0;
+                copayAmt = 0;
+                otcAmt = 0;
+                enterSubHealthCareAmount();
+            }
+        }
+    }
+
+    private long getHealthCareAmount(){
+        return healthAmt>0 ? healthAmt : clinicAmt + prescriptionAmt + dentalAmt + visionAmt + copayAmt + otcAmt;
+    }
+
     private void sendNext(){
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
         bundle.putString(EntryRequest.PARAM_FSA_OPTION, fsaOption);
         if(fsaAmountOptions.contains(EntryRequest.PARAM_HEALTH_CARE_AMOUNT)){
-            bundle.putLong(EntryRequest.PARAM_HEALTH_CARE_AMOUNT, healthAmt);
+            bundle.putLong(EntryRequest.PARAM_HEALTH_CARE_AMOUNT, getHealthCareAmount());
         }
         if(fsaAmountOptions.contains(EntryRequest.PARAM_CLINIC_AMOUNT)){
             bundle.putLong(EntryRequest.PARAM_CLINIC_AMOUNT, clinicAmt);

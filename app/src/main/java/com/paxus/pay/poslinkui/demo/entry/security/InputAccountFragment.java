@@ -17,16 +17,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.PanStyles;
-import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.ClssLightStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
@@ -39,7 +37,6 @@ import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
-import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import com.paxus.pay.poslinkui.demo.view.ClssLight;
 import com.paxus.pay.poslinkui.demo.view.ClssLightsView;
 
@@ -89,13 +86,13 @@ public class InputAccountFragment extends BaseEntryFragment {
     private Button confirmButton;
     private int panLength = 0;
 
-    public static InputAccountFragment newInstance(Intent intent){
-        InputAccountFragment numFragment = new InputAccountFragment();
+    public static Fragment newInstance(Intent intent){
+        InputAccountFragment fragment = new InputAccountFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
         bundle.putAll(intent.getExtras());
-        numFragment.setArguments(bundle);
-        return numFragment;
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
 
@@ -155,30 +152,9 @@ public class InputAccountFragment extends BaseEntryFragment {
     @Override
     protected void loadView(View rootView) {
         this.rootView = rootView;
-        if(!TextUtils.isEmpty(transType) && getActivity() instanceof AppCompatActivity){
-            ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            if(actionBar != null) {
-                actionBar.setTitle(transType);
-            }
-        }
+        
 
-        String mode = null;
-        if(!TextUtils.isEmpty(transMode)){
-            if(TransMode.DEMO.equals(transMode)){
-                mode = getString(R.string.demo_only);
-            }else if(TransMode.TEST.equals(transMode)){
-                mode = getString(R.string.test_only);
-            }else if(TransMode.TEST_AND_DEMO.equals(transMode)){
-                mode = getString(R.string.test_and_demo);
-            }else {
-                mode = "";
-            }
-        }
-        if(!TextUtils.isEmpty(mode)){
-            ViewUtils.addWaterMarkView(requireActivity(),mode);
-        }else{
-            ViewUtils.removeWaterMarkView(requireActivity());
-        }
+        
 
         TextView textView = rootView.findViewById(R.id.manual_message);
         textView.setText(manualMessage);

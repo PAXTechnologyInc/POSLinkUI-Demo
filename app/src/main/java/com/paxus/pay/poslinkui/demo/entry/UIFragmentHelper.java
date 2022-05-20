@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.InformationEntry;
 import com.pax.us.pay.ui.constant.entry.OptionEntry;
+import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.SignatureEntry;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
@@ -29,7 +30,7 @@ import com.paxus.pay.poslinkui.demo.entry.text.AmountFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.CashbackFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.ExpiryFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.FSAFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.FleetDataFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.FleetFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.NumFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.NumTextFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.TextFragment;
@@ -211,7 +212,7 @@ public class UIFragmentHelper {
                     case TextEntry.ACTION_ENTER_FSA_DATA:
                         return FSAFragment.newInstance(intent);
                     case TextEntry.ACTION_ENTER_FLEET_DATA:
-                        return FleetDataFragment.newInstance(intent);
+                        return FleetFragment.newInstance(intent);
                     default:
                         return null;
                 }
@@ -244,6 +245,8 @@ public class UIFragmentHelper {
                 if(ConfirmationEntry.ACTION_CONFIRM_RECEIPT_VIEW.equals(action)){
                     return ConfirmReceiptViewFragment.newInstance(intent);
                 }
+            } else if(categories.contains(PoslinkEntry.CATEGORY)){
+
             }
         }
         return null;

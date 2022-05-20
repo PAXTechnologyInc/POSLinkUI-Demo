@@ -1,173 +1,103 @@
 package com.paxus.pay.poslinkui.demo.entry.text;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.text.InputFilter;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
-import androidx.fragment.app.FragmentTransaction;
 
-import com.pax.us.pay.ui.constant.entry.EntryExtraData;
-import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 /**
- * Created by Yanina.Yang on 5/19/2022.
+ * Fragment which used to input fleet data
+ * See {@link FleetFragment}
  */
-public class FleetDataFragment extends BaseEntryFragment {
-    private String transType;
-    private String transMode;
-    private long timeOut;
+public class FleetDataFragment extends Fragment {
+    private static final String ARG_TITLE = "title";
+    private static final String ARG_MIN_LENGTH = "min_length";
+    private static final String ARG_MAX_LENGTH = "max_length";
+    private static final String ARG_INPUT_TYPE = "input_type";
 
-    private String driverIdPattern;
-    private String odometerPattern;
-    private String vehicleNumberPattern;
-    private String licenseNumberPattern;
-    private String jobNumberPattern;
-    private String departmentNumberPattern;
-    private String customerDataPattern;
-    private String userIdPattern;
-    private String vehicleIdPattern;
-    private List<String> requestList = new ArrayList<>();
-    private int requestIndex = 0;
+    public static final String RESULT = "result";
+    public static final String VALUE = "value";
 
-    private Bundle nextBundle;
-    public static Fragment newInstance(Intent intent){
+    private int minLength;
+    private int maxLength;
+    private String message = "";
+    private int inputType;
+
+    private EditText editText;
+
+
+    public static Fragment newInstance(String title, int minLength, int maxLength, int inputType){
         FleetDataFragment fragment = new FleetDataFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
+        bundle.putString(ARG_TITLE, title);
+        bundle.putInt(ARG_MIN_LENGTH, minLength);
+        bundle.putInt(ARG_MAX_LENGTH, maxLength);
+        bundle.putInt(ARG_INPUT_TYPE, inputType);
         fragment.setArguments(bundle);
         return fragment;
     }
 
+    @Nullable
     @Override
-    protected int getLayoutResourceId() {
-        return R.layout.fragment_fleet;
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Logger.d(this.getClass().getSimpleName()+" onCreateView");
+
+        //1. Load layout in onCreateView (getLayoutResourceId, loadParameter, loadView)
+        Bundle bundle = getArguments();
+        if(bundle != null) {
+            loadArgument(bundle);
+        }else {
+            Logger.e(this.getClass().getSimpleName()+" arguments missing!!!");
+        }
+
+        View view = inflater.inflate(R.layout.fragment_base_num_text, container, false);
+        loadView(view);
+        return view;
     }
 
-    @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
-        driverIdPattern = bundle.getString(EntryExtraData.PARAM_FLEET_DRIVER_ID_PATTERN);
-        odometerPattern = bundle.getString(EntryExtraData.PARAM_FLEET_ODOMETER_PATTERN);
-        vehicleNumberPattern = bundle.getString(EntryExtraData.PARAM_FLEET_VEHICLE_NUMBER_PATTERN);
-        licenseNumberPattern = bundle.getString(EntryExtraData.PARAM_FLEET_LICENSE_NUMBER_PATTERN);
-        jobNumberPattern = bundle.getString(EntryExtraData.PARAM_FLEET_JOB_NUMBER_PATTERN);
-        departmentNumberPattern = bundle.getString(EntryExtraData.PARAM_FLEET_DEPARTMENT_NUMBER_PATTERN);
-        customerDataPattern = bundle.getString(EntryExtraData.PARAM_FLEET_CUSTOMER_DATA_PATTERN);
-        userIdPattern = bundle.getString(EntryExtraData.PARAM_FLEET_USER_ID_PATTERN);
-        vehicleIdPattern = bundle.getString(EntryExtraData.PARAM_FLEET_VEHICLE_ID_PATTERN);
-
-        nextBundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, action);
+        message = bundle.getString(ARG_TITLE);
+        minLength = bundle.getInt(ARG_MIN_LENGTH,0);
+        maxLength = bundle.getInt(ARG_MAX_LENGTH,32);
+        inputType = bundle.getInt(ARG_INPUT_TYPE);
     }
 
-    @Override
     protected void loadView(View rootView) {
-        if(!TextUtils.isEmpty(driverIdPattern)){
-            requestList.add(EntryRequest.PARAM_FLEET_DRIVER_ID);
-        }
-        if(!TextUtils.isEmpty(odometerPattern)){
-            requestList.add(EntryRequest.PARAM_FLEET_ODOMETER);
-        }
-        if(!TextUtils.isEmpty(vehicleNumberPattern)){
-            requestList.add(EntryRequest.PARAM_FLEET_VEHICLE_NUMBER);
-        }
-        if(!TextUtils.isEmpty(licenseNumberPattern)){
-            requestList.add(EntryRequest.PARAM_FLEET_LICENSE_NUMBER);
-        }
-        if(!TextUtils.isEmpty(jobNumberPattern)){
-            requestList.add(EntryRequest.PARAM_FLEET_JOB_NUMBER);
-        }
-        if(!TextUtils.isEmpty(departmentNumberPattern)){
-            requestList.add(EntryRequest.PARAM_FLEET_DEPARTMENT_NUMBER);
-        }
-        if(!TextUtils.isEmpty(customerDataPattern)){
-            requestList.add(EntryRequest.PARAM_FLEET_CUSTOMER_DATA);
-        }
-        if(!TextUtils.isEmpty(userIdPattern)){
-            requestList.add(EntryRequest.PARAM_FLEET_USER_ID);
-        }
-        if(!TextUtils.isEmpty(vehicleIdPattern)){
-            requestList.add(EntryRequest.PARAM_FLEET_VEHICLE_ID);
-        }
-        enterFleetData();
+        TextView textView = rootView.findViewById(R.id.message);
+        textView.setText(message);
+
+        editText = rootView.findViewById(R.id.edit_number_text);
+        editText.setInputType(inputType);
+        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+        editText.requestFocus();
+
+        Button confirmBtn = rootView.findViewById(R.id.confirm_button);
+        confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
+
     }
 
-    private void enterFleetData(){
-        if(requestIndex>=0 && requestIndex< requestList.size()){
-            String requestKey = requestList.get(requestIndex);
-            String valuePattern = getValuePattern(requestKey);
-            Fragment fragment = GeneralNumFragment.newInstance(
-                    getTitle(requestKey), ValuePatternUtils.getMinLength(valuePattern),ValuePatternUtils.getMaxLength(valuePattern)
-            );
-            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.add(R.id.fragment_placeholder, fragment).commit();
-            getChildFragmentManager()
-                    .setFragmentResultListener(GeneralNumFragment.RESULT, this, new FragmentResultListener() {
-                        @Override
-                        public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                            onGetEnterValue(requestKey, bundle.getString(GeneralAmountFragment.VALUE));
-                        }
-                    });
-            return;
-        }
-        sendNext();
-    }
-
-    private void onGetEnterValue(String requestKey, String value){
-        nextBundle.putString(requestKey, value);
-        requestIndex++;
-        enterFleetData();
-    }
-
-    private String getTitle(String requestData){
-        switch (requestData){
-            case EntryRequest.PARAM_FLEET_DRIVER_ID: return getString(R.string.prompt_input_fleet_driver_id);
-            case EntryRequest.PARAM_FLEET_ODOMETER: return getString(R.string.prompt_input_fleet_odometer);
-            case EntryRequest.PARAM_FLEET_VEHICLE_NUMBER: return getString(R.string.prompt_input_fleet_vehicle_no);
-            case EntryRequest.PARAM_FLEET_LICENSE_NUMBER: return getString(R.string.prompt_input_fleet_license_no);
-            case EntryRequest.PARAM_FLEET_JOB_NUMBER: return getString(R.string.prompt_input_fleet_job_no);
-            case EntryRequest.PARAM_FLEET_DEPARTMENT_NUMBER: return getString(R.string.prompt_input_fleet_department_no);
-            case EntryRequest.PARAM_FLEET_CUSTOMER_DATA: return getString(R.string.prompt_input_fleet_customer_data);
-            case EntryRequest.PARAM_FLEET_USER_ID: return getString(R.string.prompt_input_fleet_user_id);
-            case EntryRequest.PARAM_FLEET_VEHICLE_ID: return getString(R.string.prompt_input_fleet_vehicle_id);
-            default:return "";
+    //1.If confirm button clicked, sendNext
+    private void onConfirmButtonClicked(){
+        String value = editText.getText().toString();
+        if(value.length() < minLength){
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+        }else {
+            Bundle bundle = new Bundle();
+            bundle.putString(VALUE, value);
+            getParentFragmentManager().setFragmentResult(RESULT, bundle);
         }
     }
 
-    private String getValuePattern(String requestData){
-        switch (requestData){
-            case EntryRequest.PARAM_FLEET_DRIVER_ID: return driverIdPattern;
-            case EntryRequest.PARAM_FLEET_ODOMETER: return odometerPattern;
-            case EntryRequest.PARAM_FLEET_VEHICLE_NUMBER: return vehicleNumberPattern;
-            case EntryRequest.PARAM_FLEET_LICENSE_NUMBER: return licenseNumberPattern;
-            case EntryRequest.PARAM_FLEET_JOB_NUMBER: return jobNumberPattern;
-            case EntryRequest.PARAM_FLEET_DEPARTMENT_NUMBER: return departmentNumberPattern;
-            case EntryRequest.PARAM_FLEET_CUSTOMER_DATA: return customerDataPattern;
-            case EntryRequest.PARAM_FLEET_USER_ID: return userIdPattern;
-            case EntryRequest.PARAM_FLEET_VEHICLE_ID: return vehicleIdPattern;
-            default:return "";
-        }
-    }
-
-    private void sendNext(){
-        Intent intent = new Intent(EntryRequest.ACTION_NEXT);
-        intent.putExtras(nextBundle);
-        intent.setPackage(packageName);
-        requireContext().sendBroadcast(intent);
-    }
 }

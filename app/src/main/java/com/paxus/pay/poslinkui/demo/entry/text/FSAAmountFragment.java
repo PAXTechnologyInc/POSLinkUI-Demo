@@ -19,32 +19,41 @@ import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
+/**
+ * Fragment which used to input fsa amount
+ * See {@link FSAFragment}
+ */
+public class FSAAmountFragment extends Fragment {
+    private static final String ARG_TITLE = "title";
+    private static final String ARG_MIN_LENGTH = "min_length";
+    private static final String ARG_MAX_LENGTH = "max_length";
+    private static final String ARG_TOTAL_AMOUNT = "total_amount";
+    private static final String ARG_CURRENCY = "currency";
 
-public class GeneralAmountFragment extends Fragment {
+    public static final String RESULT = "result";
+    public static final String VALUE = "value";
+
     private int minLength;
     private int maxLength;
     private String message = "";
     private String currency = "";
+    private long totalAmount = 0;
 
     private EditText editText;
 
-    public static final String TITLE = "title";
-    public static final String MIN_LENGTH = "min_length";
-    public static final String MAX_LENGTH = "max_length";
 
-    public static final String CURRENCY = "currency";
 
-    public static final String RESULT = "result";
-    public static final String VALUE = "value";
-    public static Fragment newInstance(String title, int minLength, int maxLength, String currency){
-        GeneralAmountFragment numFragment = new GeneralAmountFragment();
+
+    public static Fragment newInstance(String title, int minLength, int maxLength, String currency, long totalAmount){
+        FSAAmountFragment fragment = new FSAAmountFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(TITLE, title);
-        bundle.putInt(MIN_LENGTH, minLength);
-        bundle.putInt(MAX_LENGTH, maxLength);
-        bundle.putString(CURRENCY,currency);
-        numFragment.setArguments(bundle);
-        return numFragment;
+        bundle.putString(ARG_TITLE, title);
+        bundle.putInt(ARG_MIN_LENGTH, minLength);
+        bundle.putInt(ARG_MAX_LENGTH, maxLength);
+        bundle.putString(ARG_CURRENCY,currency);
+        bundle.putLong(ARG_TOTAL_AMOUNT, totalAmount);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Nullable
@@ -60,19 +69,26 @@ public class GeneralAmountFragment extends Fragment {
             Logger.e(this.getClass().getSimpleName()+" arguments missing!!!");
         }
 
-        View view = inflater.inflate(R.layout.fragment_amount, container, false);
+        View view = inflater.inflate(R.layout.fragment_fsa_amount, container, false);
         loadView(view);
         return view;
     }
 
     protected void loadArgument(@NonNull Bundle bundle) {
-        message = bundle.getString(TITLE);
-        currency =  bundle.getString(CURRENCY, CurrencyType.USD);
-        minLength = bundle.getInt(MIN_LENGTH,0);
-        maxLength = bundle.getInt(MAX_LENGTH,9);
+        message = bundle.getString(ARG_TITLE);
+        currency =  bundle.getString(ARG_CURRENCY, CurrencyType.USD);
+        minLength = bundle.getInt(ARG_MIN_LENGTH,0);
+        maxLength = bundle.getInt(ARG_MAX_LENGTH,9);
+        totalAmount = bundle.getLong(ARG_TOTAL_AMOUNT,0L);
     }
 
     protected void loadView(View rootView) {
+        TextView totalAmtView = rootView.findViewById(R.id.total_amount);
+        if(totalAmount>0) {
+            totalAmtView.setText(CurrencyUtils.convert(totalAmount,currency));
+        }else {
+            rootView.findViewById(R.id.amount_layout).setVisibility(View.GONE);
+        }
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
@@ -82,26 +98,22 @@ public class GeneralAmountFragment extends Fragment {
         editText.setSelection(editText.getEditableText().length());
 
         editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
+        editText.requestFocus();
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
     }
 
-    //1.If confirm button clicked, sendNext
     private void onConfirmButtonClicked(){
         long value = CurrencyUtils.parse(editText.getText().toString());
         if(String.valueOf(value).length() < minLength){
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
         }else {
-            sendNext(value);
+            Bundle bundle = new Bundle();
+            bundle.putLong(VALUE, value);
+            getParentFragmentManager().setFragmentResult(RESULT, bundle);
         }
     }
 
-
-    private void sendNext(long value){
-        Bundle bundle = new Bundle();
-        bundle.putLong(VALUE, value);
-        getParentFragmentManager().setFragmentResult(RESULT, bundle);
-    }
 }
