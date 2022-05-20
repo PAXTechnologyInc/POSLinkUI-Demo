@@ -44,44 +44,10 @@
                 <action android:name="com.pax.us.pay.action.ENTER_AMOUNT" />
                 <action android:name="com.pax.us.pay.action.ENTER_FUEL_AMOUNT" />
                 <action android:name="com.pax.us.pay.action.ENTER_TAX_AMOUNT" />
-
-                <category android:name="com.pax.us.pay.ui.category.TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="com.pax.us.pay.action.ENTER_TOTAL_AMOUNT" />
+                <action android:name="com.pax.us.pay.action.ENTER_TIP" />
+                <action android:name="com.pax.us.pay.action.ENTER_CASH_BACK" />
 
-                <category android:name="com.pax.us.pay.ui.category.TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.pax.us.pay.action.INPUT_ACCOUNT" />
-                <action android:name="com.pax.us.pay.action.MANAGE_INPUT_ACCOUNT" />
-
-                <category android:name="com.pax.us.pay.ui.category.SECURITY" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.pax.us.pay.action.ENTER_EXPIRY_DATE" />
-
-                <category android:name="com.pax.us.pay.ui.category.TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.pax.us.pay.action.ENTER_CARD_ALL_DIGITS" />
-                <action android:name="com.pax.us.pay.action.ENTER_CARD_LAST_4_DIGITS" />
-                <action android:name="com.pax.us.pay.action.ENTER_CVV" />
-
-                <category android:name="com.pax.us.pay.ui.category.SECURITY" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.pax.us.pay.action.ENTER_PIN" />
-
-                <category android:name="com.pax.us.pay.ui.category.SECURITY" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="com.pax.us.pay.action.ENTER_ADDRESS" />
                 <action android:name="com.pax.us.pay.action.ENTER_AUTH_CODE" />
                 <action android:name="com.pax.us.pay.action.ENTER_CUSTOMER_CODE" />
@@ -89,10 +55,6 @@
                 <action android:name="com.pax.us.pay.action.ENTER_PO_NUMBER" />
                 <action android:name="com.pax.us.pay.action.ENTER_PROD_DESC" />
 
-                <category android:name="com.pax.us.pay.ui.category.TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="com.pax.us.pay.action.ENTER_CLERK_ID" />
                 <action android:name="com.pax.us.pay.action.ENTER_SERVER_ID" />
                 <action android:name="com.pax.us.pay.action.ENTER_TABLE_NUMBER" />
@@ -103,10 +65,6 @@
                 <action android:name="com.pax.us.pay.action.ENTER_PHONE_NUMBER" />
                 <action android:name="com.pax.us.pay.action.ENTER_TRANS_NUMBER" />
 
-                <category android:name="com.pax.us.pay.ui.category.TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="com.pax.us.pay.action.ENTER_ZIP_CODE" />
                 <action android:name="com.pax.us.pay.action.ENTER_DEST_ZIP_CODE" />
                 <action android:name="com.pax.us.pay.action.ENTER_INVOICE_NUMBER" />
@@ -115,21 +73,30 @@
                 <action android:name="com.pax.us.pay.action.ENTER_REFERENCE_NUMBER" />
                 <action android:name="com.pax.us.pay.action.ENTER_VOUCHER_DATA" />
 
-                <category android:name="com.pax.us.pay.ui.category.TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
+                <action android:name="com.pax.us.pay.action.ENTER_EXPIRY_DATE" />
                 <action android:name="com.pax.us.pay.action.ENTER_AVS_DATA" />
+                <action android:name="com.pax.us.pay.action.GET_SIGNATURE" />
+                <action android:name="com.pax.us.pay.action.ENTER_ORIG_DATE" />
+                <action android:name="com.pax.us.pay.action.ENTER_FLEET_DATA" />
+                <action android:name="com.pax.us.pay.action.ENTER_FSA_DATA" />
 
                 <category android:name="com.pax.us.pay.ui.category.TEXT" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
+                <action android:name="com.pax.us.pay.action.INPUT_ACCOUNT" />
+                <action android:name="com.pax.us.pay.action.MANAGE_INPUT_ACCOUNT" />
+                <action android:name="com.pax.us.pay.action.ENTER_CARD_ALL_DIGITS" />
+                <action android:name="com.pax.us.pay.action.ENTER_CARD_LAST_4_DIGITS" />
+                <action android:name="com.pax.us.pay.action.ENTER_CVV" />
+                <action android:name="com.pax.us.pay.action.ENTER_PIN" />
                 <action android:name="com.pax.us.pay.action.ADMINISTRATOR_PASSWORD" />
 
                 <category android:name="com.pax.us.pay.ui.category.SECURITY" />
                 <category android:name="android.intent.category.DEFAULT" />
+
             </intent-filter>
+
             <intent-filter>
                 <action android:name="com.pax.us.pay.action.DISPLAY_TRANS_INFORMATION" />
 
@@ -138,32 +105,14 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="com.pax.us.pay.action.CONFIRM_SERVICE_FEE" />
-
-                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="com.pax.us.pay.action.CONFIRM_SURCHARGE_FEE" />
-
-                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW" />
 
-                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="com.pax.us.pay.action.CONFIRM_CARD_ENTRY_RETRY" />
                 <action android:name="com.pax.us.pay.action.CONFIRM_CARD_PROCESS_RESULT"/>
                 <action android:name="com.pax.us.pay.action.REVERSE_PARTIAL_APPROVAL"/>
                 <action android:name="com.pax.us.pay.action.SUPPLEMENT_PARTIAL_APPROVAL"/>
 
-                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="com.pax.us.pay.action.CONFIRM_UNIFIED_MESSAGE" />
                 <action android:name="com.pax.us.pay.action.CONFIRM_CARD_PRESENT"/>
                 <action android:name="com.pax.us.pay.action.CONFIRM_DEACTIVATE_WARN"/>
@@ -188,10 +137,6 @@
             <intent-filter>
                 <action android:name="com.pax.us.pay.action.SELECT_MERCHANT" />
 
-                <category android:name="com.pax.us.pay.ui.category.OPTION" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="com.pax.us.pay.action.SELECT_ACCOUNT_TYPE" />
                 <action android:name="com.pax.us.pay.action.SELECT_AID" />
                 <action android:name="com.pax.us.pay.action.SELECT_BATCH_TYPE" />
@@ -216,40 +161,19 @@
                 <category android:name="com.pax.us.pay.ui.category.OPTION" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="com.pax.us.pay.action.GET_SIGNATURE" />
 
-                <category android:name="com.pax.us.pay.ui.category.SIGNATURE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
             <intent-filter>
-                <action android:name="com.pax.us.pay.action.ENTER_TIP" />
+                <action android:name="com.pax.us.pay.action.SHOW_DIALOG" />
+                <action android:name="com.pax.us.pay.action.SHOW_THANK_YOU" />
+                <action android:name="com.pax.us.pay.action.INPUT_TEXT" />
+                <action android:name="com.pax.us.pay.action.SHOW_DIALOG_FORM" />
+                <action android:name="com.pax.us.pay.action.SHOW_MESSAGE" />
+                <action android:name="com.pax.us.pay.action.SHOW_ITEM" />
+                <action android:name="com.pax.us.pay.action.SHOW_TEXT_BOX" />
+                <action android:name="com.pax.us.pay.action.SHOW_SIGNATURE_BOX" />
+                <action android:name="com.pax.us.pay.action.SHOW_INPUT_TEXT_BOX" />
 
-                <category android:name="com.pax.us.pay.ui.category.TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.pax.us.pay.action.ENTER_CASH_BACK" />
-
-                <category android:name="com.pax.us.pay.ui.category.TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.pax.us.pay.action.ENTER_ORIG_DATE" />
-
-                <category android:name="com.pax.us.pay.ui.category.TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.pax.us.pay.action.ENTER_FLEET_DATA" />
-
-                <category android:name="com.pax.us.pay.ui.category.TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.pax.us.pay.action.ENTER_FSA_DATA" />
-
-                <category android:name="com.pax.us.pay.ui.category.TEXT" />
+                <category android:name="com.pax.us.pay.ui.category.POSLINK" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

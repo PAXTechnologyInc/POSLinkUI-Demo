@@ -143,8 +143,9 @@ public class EntryActivity extends AppCompatActivity {
         String action = intent.getAction();
         Logger.i("receive Status Action \"" + action + "\"");
         if(InformationStatus.TRANS_COMPLETED.equals(action)){
+            String msg = intent.getStringExtra(StatusData.PARAM_MSG); //For POSLinkEntry, msg might be empty
             long code = intent.getLongExtra(StatusData.PARAM_CODE,0L);
-            if(code == -3){//Transaction Cancelled
+            if(TextUtils.isEmpty(msg) || code == -3){//Transaction Cancelled
                 finishAndRemoveTask();
                 return;
             }
