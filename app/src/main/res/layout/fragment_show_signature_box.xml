@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/title_view"
+        android:textSize="32sp"
+        android:gravity="center"/>
+    <LinearLayout
+        android:id="@+id/text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:orientation="horizontal"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/timeout"
+        android:textColor="#2196F3"
+        android:gravity="center"/>
+
+    <com.paxus.pay.poslinkui.demo.entry.signature.ElectronicSignatureView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:id="@+id/signature_board"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_layout">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/cancel_button"
+            android:text="@string/cancel_sign"
+            android:textAllCaps="false"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@color/cancel"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/clear_button"
+            android:text="@string/clear_sign"
+            android:textAllCaps="false"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@color/clear"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/confirm_button"
+            android:text="@string/confirm"
+            android:textAllCaps="false"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@color/enter"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>
