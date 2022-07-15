@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="@android:color/black"
             android:gravity="start"
             android:text="@string/pete_tax"
             android:textSize="18sp"/>
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="@android:color/black"
             android:gravity="start"
             android:text="@string/pete_total"
             android:textSize="18sp"/>

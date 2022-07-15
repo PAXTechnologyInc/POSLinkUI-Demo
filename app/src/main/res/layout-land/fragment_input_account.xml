@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/manual_message"
             android:textSize="14sp"
-            android:textColor="@color/black" />
+            android:textColor="@android:color/black" />
         <TextView
             android:background="@drawable/border"
             android:layout_width="match_parent"
