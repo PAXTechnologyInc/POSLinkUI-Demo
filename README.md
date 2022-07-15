@@ -133,4 +133,3 @@ A simple explanation for reading log (Step by Step)
 ## TODO List:
 1. Implement PoslinkEntry
 > SHOW_TEXT_BOX
-> SHOW_INPUT_TEXT_BOX

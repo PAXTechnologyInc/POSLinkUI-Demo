@@ -24,6 +24,7 @@ import com.paxus.pay.poslinkui.demo.entry.option.OptionsDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.InputTextFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowDialogFormFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.poslink.ShowInputTextBoxFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowItemFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowMessageFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowSignatureBoxFragment;
@@ -268,6 +269,8 @@ public class UIFragmentHelper {
                         return ShowItemFragment.newInstance(intent);
                     case PoslinkEntry.ACTION_SHOW_SIGNATURE_BOX:
                         return ShowSignatureBoxFragment.newInstance(intent);
+                    case PoslinkEntry.ACTION_SHOW_INPUT_TEXT_BOX:
+                        return ShowInputTextBoxFragment.newInstance(intent);
                     default:
                         return null;
                 }
