@@ -92,7 +92,7 @@ public class ShowItemFragment  extends BaseEntryFragment {
         if(title == null || title.isEmpty()){
             titleLayout.setVisibility(View.GONE);
         }else {
-            for(TextView textView: TextShowingUtils.getTitleTextView(requireContext(),title)){
+            for(TextView textView: TextShowingUtils.getTextViewList(requireContext(),title)){
                 titleLayout.addView(textView);
             }
             titleLayout.setVisibility(View.VISIBLE);

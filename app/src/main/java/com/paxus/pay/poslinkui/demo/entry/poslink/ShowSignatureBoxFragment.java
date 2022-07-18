@@ -106,7 +106,7 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
         if(text == null || text.isEmpty()){
             textView.setVisibility(View.GONE);
         }else {
-            for(TextView tv: TextShowingUtils.getTitleTextView(requireContext(),text)){
+            for(TextView tv: TextShowingUtils.getTextViewList(requireContext(),text)){
                 textView.addView(tv);
             }
             textView.setVisibility(View.VISIBLE);

@@ -34,7 +34,7 @@ public class TextShowingUtils {
     public static final float FONT_BIG_SP = 28;
 
 
-    public static List<TextView> getTitleTextView(Context context, String line) {
+    public static List<TextView> getTextViewList(Context context, String line) {
         line = line.replaceAll(LINE_SEP, LINE);
 
         List<TextView> list = new ArrayList<>();
@@ -50,10 +50,8 @@ public class TextShowingUtils {
         line = line.replaceAll(LINE_SEP, LINE);
 
         TextView textView = new TextView(context);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, FONT_NORMAL_SP);
-        layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
-        textView.setGravity(Gravity.CENTER_HORIZONTAL);
 
         StringBuilder text = new StringBuilder(line);
         while (text.length() > 0) {
