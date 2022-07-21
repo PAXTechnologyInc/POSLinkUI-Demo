@@ -10,13 +10,12 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
-import com.pax.us.pay.ui.constant.entry.enumeration.PanStyles;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 
 /**
- * Implement security entry actions {@link SecurityEntry#ACTION_INPUT_ACCOUNT}
+ * Implement security entry actions {@link SecurityEntry#ACTION_MANAGE_INPUT_ACCOUNT}
  * <p>
  *     UI Tips:
  *     1.When input box layout ready, send secure area location (Done on ViewTreeObserver.OnGlobalLayoutListener)
@@ -28,9 +27,9 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  * </p>
  */
 
-public class InputAccountFragment extends AInputAccountFragment{
-    public static InputAccountFragment newInstance(Intent intent){
-        InputAccountFragment fragment = new InputAccountFragment();
+public class ManageInputAccountFragment extends AInputAccountFragment{
+    public static ManageInputAccountFragment newInstance(Intent intent){
+        ManageInputAccountFragment fragment = new ManageInputAccountFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
         bundle.putAll(intent.getExtras());
@@ -58,14 +57,10 @@ public class InputAccountFragment extends AInputAccountFragment{
         enableContactlessLight = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_CONTACTLESS_LIGHT);
 
         String valuePatten = "";
-        if(SecurityEntry.ACTION_INPUT_ACCOUNT.equals(action)){
+        if(SecurityEntry.ACTION_MANAGE_INPUT_ACCOUNT.equals(action)){
             valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-19");
-            String panStyle = bundle.getString(EntryExtraData.PARAM_PAN_STYLES, PanStyles.NORMAL);
-            if(PanStyles.NEW_PAN.equals(panStyle)) {
-                manualMessage = getString(R.string.enter_new_account);
-            }else {
-                manualMessage = getString(R.string.hint_enter_account);
-            }
+            manualMessage = getString(R.string.hint_enter_account);
+            amountMessage = bundle.getString(EntryExtraData.PARAM_AMOUNT_MESSAGE);
         }
 
         if(!TextUtils.isEmpty(valuePatten)){

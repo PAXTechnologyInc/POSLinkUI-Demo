@@ -9,14 +9,13 @@ import androidx.annotation.NonNull;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
-import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 
 /**
  * Implement text entry actions:<br>
- * {@value TextEntry#ACTION_ENTER_AMOUNT}<br>
+ * {@value TextEntry#ACTION_ENTER_PROD_DESC}<br>
  *
  * <p>
  *     UI Tips:
@@ -24,10 +23,9 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  * </p>
  */
 
-public class AmountFragment extends AAmountFragment {
-
-    public static AmountFragment newInstance(Intent intent){
-        AmountFragment fragment = new AmountFragment();
+public class ProdDescFragment extends ATextFragment{
+    public static ProdDescFragment newInstance(Intent intent){
+        ProdDescFragment fragment = new ProdDescFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
         bundle.putAll(intent.getExtras());
@@ -41,18 +39,14 @@ public class AmountFragment extends AAmountFragment {
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
-        currency = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
+        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         String valuePatten = "";
-        if(TextEntry.ACTION_ENTER_AMOUNT.equals(action)) {
-            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "1-12");
-            if (CurrencyType.POINT.equals(currency)) {
-                message = getString(R.string.prompt_input_point);
-            } else {
-                message = getString(R.string.prompt_input_amount);
-            }
+        if(TextEntry.ACTION_ENTER_PROD_DESC.equals(action)){
+            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-40");
+            message = getString(R.string.pls_input_proc_desc);
         }
+
         if(!TextUtils.isEmpty(valuePatten)){
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
@@ -60,14 +54,15 @@ public class AmountFragment extends AAmountFragment {
     }
 
     @Override
-    protected void sendNext(long value){
+    protected void sendNext(String value) {
         String param = "";
-        if(TextEntry.ACTION_ENTER_AMOUNT.equals(action)) {
-            param = EntryRequest.PARAM_AMOUNT;
+
+        if(TextEntry.ACTION_ENTER_PROD_DESC.equals(action)){
+            param = EntryRequest.PARAM_PROD_DESC;
         }
+
         if(!TextUtils.isEmpty(param)){
             EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
         }
     }
-
 }

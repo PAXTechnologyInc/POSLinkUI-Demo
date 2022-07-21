@@ -16,7 +16,7 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 
 /**
  * Implement text entry actions:<br>
- * {@value TextEntry#ACTION_ENTER_AMOUNT}<br>
+ * {@value TextEntry#ACTION_ENTER_TAX_AMOUNT}<br>
  *
  * <p>
  *     UI Tips:
@@ -24,34 +24,29 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  * </p>
  */
 
-public class AmountFragment extends AAmountFragment {
+public class TaxAmountFragment extends AAmountFragment{
 
-    public static AmountFragment newInstance(Intent intent){
-        AmountFragment fragment = new AmountFragment();
+    public static TaxAmountFragment newInstance(Intent intent){
+        TaxAmountFragment fragment = new TaxAmountFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
         bundle.putAll(intent.getExtras());
         fragment.setArguments(bundle);
         return fragment;
     }
-
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
-        currency = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
+        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
+        currency =  bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
 
         String valuePatten = "";
-        if(TextEntry.ACTION_ENTER_AMOUNT.equals(action)) {
-            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "1-12");
-            if (CurrencyType.POINT.equals(currency)) {
-                message = getString(R.string.prompt_input_point);
-            } else {
-                message = getString(R.string.prompt_input_amount);
-            }
+        if(TextEntry.ACTION_ENTER_TAX_AMOUNT.equals(action)) {
+            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-12");
+            message = getString(R.string.prompt_input_tax_amount);
         }
         if(!TextUtils.isEmpty(valuePatten)){
             minLength = ValuePatternUtils.getMinLength(valuePatten);
@@ -60,14 +55,13 @@ public class AmountFragment extends AAmountFragment {
     }
 
     @Override
-    protected void sendNext(long value){
+    protected void sendNext(long value) {
         String param = "";
-        if(TextEntry.ACTION_ENTER_AMOUNT.equals(action)) {
-            param = EntryRequest.PARAM_AMOUNT;
+        if(TextEntry.ACTION_ENTER_TAX_AMOUNT.equals(action)) {
+            param = EntryRequest.PARAM_TAX_AMOUNT;
         }
         if(!TextUtils.isEmpty(param)){
             EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
         }
     }
-
 }
