@@ -129,10 +129,3 @@ A simple explanation for reading log (Step by Step)
     TRANS_COMPLETED:0,CREDIT SALE SUCCESS
     ConfirmReceiptViewFragment onDestroy
     EntryActivity onDestroy
-
-## TODO List:
-1. Implement PoslinkEntry
-> SHOW_ITEM
-> SHOW_TEXT_BOX
-> SHOW_SIGNATURE_BOX
-> SHOW_INPUT_TEXT_BOX

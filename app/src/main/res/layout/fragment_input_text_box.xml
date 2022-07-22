@@ -3,30 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="@string/pls_input_address"
+        android:id="@+id/title_view"
+        android:textSize="28sp"
         android:textColor="@android:color/black"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_view"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/edit_address"
-        android:hint=""
-        android:inputType="text"
-        android:layout_margin="20dp"
-        android:gravity="center_horizontal"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pls_input_zip_code"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/edit_zip"
+        android:id="@+id/edit_text"
         android:hint=""
         android:inputType="text"
         android:layout_margin="20dp"

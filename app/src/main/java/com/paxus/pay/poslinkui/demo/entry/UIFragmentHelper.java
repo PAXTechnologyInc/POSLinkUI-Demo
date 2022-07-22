@@ -63,7 +63,11 @@ import com.paxus.pay.poslinkui.demo.entry.option.SelectTransTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.InputTextFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowDialogFormFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.poslink.ShowInputTextBoxFragment;
+import com.paxus.pay.poslinkui.demo.entry.poslink.ShowItemFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowMessageFragment;
+import com.paxus.pay.poslinkui.demo.entry.poslink.ShowSignatureBoxFragment;
+import com.paxus.pay.poslinkui.demo.entry.poslink.ShowTextBoxFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowThankYouFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterCardAllDigitsFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterCardLast4DigitsFragment;
@@ -432,6 +436,14 @@ public class UIFragmentHelper {
                         return ShowDialogFormFragment.newInstance(intent);
                     case PoslinkEntry.ACTION_SHOW_MESSAGE:
                         return ShowMessageFragment.newInstance(intent);
+                    case PoslinkEntry.ACTION_SHOW_ITEM:
+                        return ShowItemFragment.newInstance(intent);
+                    case PoslinkEntry.ACTION_SHOW_SIGNATURE_BOX:
+                        return ShowSignatureBoxFragment.newInstance(intent);
+                    case PoslinkEntry.ACTION_SHOW_INPUT_TEXT_BOX:
+                        return ShowInputTextBoxFragment.newInstance(intent);
+                    case PoslinkEntry.ACTION_SHOW_TEXT_BOX:
+                        return ShowTextBoxFragment.newInstance(intent);
                     default:
                         return null;
                 }
