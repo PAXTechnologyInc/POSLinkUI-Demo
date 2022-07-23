@@ -1,6 +1,5 @@
 package com.paxus.pay.poslinkui.demo.entry.security;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -29,14 +28,6 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class InputAccountFragment extends AInputAccountFragment{
-    public static InputAccountFragment newInstance(Intent intent){
-        InputAccountFragment fragment = new InputAccountFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-        fragment.setArguments(bundle);
-        return fragment;
-    }
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
@@ -57,24 +48,21 @@ public class InputAccountFragment extends AInputAccountFragment{
 
         enableContactlessLight = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_CONTACTLESS_LIGHT);
 
-        String valuePatten = "";
-        if(SecurityEntry.ACTION_INPUT_ACCOUNT.equals(action)){
-            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-19");
-            String panStyle = bundle.getString(EntryExtraData.PARAM_PAN_STYLES, PanStyles.NORMAL);
-            if(PanStyles.NEW_PAN.equals(panStyle)) {
-                manualMessage = getString(R.string.enter_new_account);
-            }else {
-                manualMessage = getString(R.string.hint_enter_account);
-            }
+        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-19");
+        String panStyle = bundle.getString(EntryExtraData.PARAM_PAN_STYLES, PanStyles.NORMAL);
+        if (PanStyles.NEW_PAN.equals(panStyle)) {
+            manualMessage = getString(R.string.enter_new_account);
+        } else {
+            manualMessage = getString(R.string.hint_enter_account);
         }
 
-        if(!TextUtils.isEmpty(valuePatten)){
+        if (!TextUtils.isEmpty(valuePatten)) {
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
 
         merchantName = bundle.getString(EntryExtraData.PARAM_MERCHANT_NAME);
-        if(bundle.containsKey(EntryExtraData.PARAM_TOTAL_AMOUNT)){
+        if (bundle.containsKey(EntryExtraData.PARAM_TOTAL_AMOUNT)) {
             totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
             currencyType = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
         }

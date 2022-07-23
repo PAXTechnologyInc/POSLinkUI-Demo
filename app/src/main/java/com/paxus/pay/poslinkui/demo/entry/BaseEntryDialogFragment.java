@@ -39,8 +39,7 @@ import org.greenrobot.eventbus.ThreadMode;
  * </p>
  */
 public abstract class BaseEntryDialogFragment extends DialogFragment {
-    protected String action;
-    protected String packageName;
+
     protected boolean active = false; //After entry request accepted, active will be false
 
     @Nullable
@@ -111,13 +110,18 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     /**
      * Prepare View
+     *
      * @param rootView root view
      */
     protected abstract void loadView(View rootView);
 
-    protected void sendAbort(){
+    protected abstract String getSenderPackageName();
+
+    protected abstract String getEntryAction();
+
+    protected void sendAbort() {
         dismiss();
-        EntryRequestUtils.sendAbort(requireContext(), packageName, action);
+        EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
     }
 
     /**
@@ -132,7 +136,7 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
      */
     protected void onEntryAccepted(){
         //4.2when got accepted, close dialog
-        Logger.i("receive Entry Response ACTION_ACCEPTED for action \""+action+"\"");
+        Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + getEntryAction() + "\"");
         dismiss();
     }
 
@@ -143,8 +147,8 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
      */
     protected void onEntryDeclined(long errCode, String errMessage){
         //4.1when got declined, prompt declined message
-        Logger.i("receive Entry Response ACTION_DECLINED for action \""+action+"\" ("+errCode+"-"+errMessage+")");
-        Toast.makeText(requireActivity(),errMessage,Toast.LENGTH_SHORT).show();
+        Logger.i("receive Entry Response ACTION_DECLINED for action \"" + getEntryAction() + "\" (" + errCode + "-" + errMessage + ")");
+        Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

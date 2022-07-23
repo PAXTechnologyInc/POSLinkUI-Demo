@@ -33,19 +33,11 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
  * </p>
  */
 public abstract class ASecurityFragment extends BaseEntryFragment {
-    protected String transType;
-    protected long timeOut;
-    protected int minLength;
-    protected int maxLength;
-    protected String message = "";
-    protected String transMode;
 
+    protected EditText editText;
     protected Button confirmButton;
     protected int secureLength;
     protected BroadcastReceiver receiver;
-    protected EditText editText;
-
-
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_security;
@@ -54,7 +46,7 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
     @Override
     protected void loadView(View rootView) {
         TextView textView = rootView.findViewById(R.id.message);
-        textView.setText(message);
+        textView.setText(formatMessage());
 
         editText = rootView.findViewById(R.id.edit_security);
         ViewTreeObserver observer = editText.getViewTreeObserver();
@@ -76,21 +68,23 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
         intentFilter.addAction(SecurityStatus.SECURITY_ENTERING);
         intentFilter.addAction(SecurityStatus.SECURITY_ENTER_DELETE);
 
-        requireContext().registerReceiver(receiver,intentFilter);
+        requireContext().registerReceiver(receiver, intentFilter);
     }
 
+    protected abstract String formatMessage();
+
     //1.When input box layout ready, send secure area location
-    private void onInputBoxLayoutReady(){
-        if(Build.MODEL.equals("A35")){
-            new Handler().postDelayed(()-> {
+    protected void onInputBoxLayoutReady() {
+        if (Build.MODEL.equals("A35")) {
+            new Handler().postDelayed(() -> {
                 sendSecureArea(editText);
-            },100);
-        }else{
+            }, 100);
+        } else {
             sendSecureArea(editText);
         }
     }
 
-    private void sendSecureArea(EditText editText){
+    protected void sendSecureArea(EditText editText) {
         int[] location = new int[2];
         editText.getLocationInWindow(location);
         int x = location[0];
@@ -105,17 +99,15 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
             barHeight = outRect1.top;  //statusBar's height
         }
         int fontSize = (int)editText.getTextSize();
-        EntryRequestUtils.sendSecureArea(requireContext(), packageName, action, x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize,
+        EntryRequestUtils.sendSecureArea(requireContext(), getSenderPackageName(), getEntryAction(), x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize,
                 "",
                 "FF9C27B0");
     }
 
     //2.When confirm button clicked, sendNext
-
-    protected abstract void onConfirmButtonClicked();
-//    {
-//        EntryRequestUtils.sendNext(requireContext(),packageName,action);
-//    }
+    protected void onConfirmButtonClicked() {
+        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
+    }
 
     @Override
     public void onDestroy() {
@@ -157,51 +149,4 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
     }
 }
 
-//    public static Fragment newInstance(Intent intent){
-//        SecurityFragment fragment = new SecurityFragment();
-//        Bundle bundle = new Bundle();
-//        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-//        bundle.putAll(intent.getExtras());
-//        fragment.setArguments(bundle);
-//        return fragment;
-//    }
-
-//    @Override
-//    protected void loadArgument(@NonNull Bundle bundle) {
-//        action = bundle.getString(EntryRequest.PARAM_ACTION);
-//        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-//        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-//        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-//        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
-//
-//        String valuePatten = "";
-//        if(SecurityEntry.ACTION_ENTER_VCODE.equals(action)){
-//            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"3-4");
-//            message = getString(R.string.pls_input_vcode);
-//            String vcodeName = bundle.getString(EntryExtraData.PARAM_VCODE_NAME);
-//            if(!TextUtils.isEmpty(vcodeName)) {
-//                if (VCodeName.CVV2.equals(vcodeName)) {
-//                    message = getString(R.string.pls_input_cvv2);
-//                } else if (VCodeName.CAV2.equals(vcodeName)) {
-//                    message = getString(R.string.pls_input_cav2);
-//                } else if (VCodeName.CID.equals(vcodeName)) {
-//                    message = getString(R.string.pls_input_cid);
-//                } else {
-//                    message = vcodeName;
-//                    Logger.e("unknown vcode name:"+vcodeName);
-//                }
-//            }
-//        } else if(SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS.equals(action)){
-//            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"4-4");
-//            message = getString(R.string.prompt_input_4digit);
-//        } else if(SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS.equals(action)){
-//            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-19");
-//            message = getString(R.string.prompt_input_all_digit);
-//        }
-//
-//        if(!TextUtils.isEmpty(valuePatten)){
-//            minLength = ValuePatternUtils.getMinLength(valuePatten);
-//            maxLength = ValuePatternUtils.getMaxLength(valuePatten);
-//        }
-//    }
 

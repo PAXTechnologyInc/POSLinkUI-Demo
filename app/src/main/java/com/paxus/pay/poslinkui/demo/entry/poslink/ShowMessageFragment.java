@@ -1,6 +1,5 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -43,16 +41,6 @@ public class ShowMessageFragment extends BaseEntryFragment {
     private String imgUrl;
     private String imgDesc;
     private List<MsgInfoWrapper> messages;
-
-    public static Fragment newInstance(Intent intent){
-        ShowMessageFragment fragment = new ShowMessageFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-
-        fragment.setArguments(bundle);
-        return fragment;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -116,12 +104,25 @@ public class ShowMessageFragment extends BaseEntryFragment {
     public void onResume() {
         super.onResume();
 
-        if(isActive()){
-            EntryRequestUtils.sendNext(requireContext(),packageName,action);
+        if (isActive()) {
+            EntryRequestUtils.sendNext(requireContext(), packageName, action);
         }
     }
 
-    private List<MsgInfoWrapper> parseMessageList(String jsonString){
+    protected String packageName;
+    protected String action;
+
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
+    }
+
+    private List<MsgInfoWrapper> parseMessageList(String jsonString) {
         try {
             List<MsgInfoWrapper> list = new ArrayList<>();
             JSONArray jsonArray = new JSONArray(jsonString);

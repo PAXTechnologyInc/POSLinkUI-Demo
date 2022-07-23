@@ -1,6 +1,5 @@
 package com.paxus.pay.poslinkui.demo.entry.security;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -28,14 +27,6 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class ManageInputAccountFragment extends AInputAccountFragment{
-    public static ManageInputAccountFragment newInstance(Intent intent){
-        ManageInputAccountFragment fragment = new ManageInputAccountFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-        fragment.setArguments(bundle);
-        return fragment;
-    }
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
@@ -56,12 +47,9 @@ public class ManageInputAccountFragment extends AInputAccountFragment{
 
         enableContactlessLight = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_CONTACTLESS_LIGHT);
 
-        String valuePatten = "";
-        if(SecurityEntry.ACTION_MANAGE_INPUT_ACCOUNT.equals(action)){
-            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-19");
+        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-19");
             manualMessage = getString(R.string.hint_enter_account);
             amountMessage = bundle.getString(EntryExtraData.PARAM_AMOUNT_MESSAGE);
-        }
 
         if(!TextUtils.isEmpty(valuePatten)){
             minLength = ValuePatternUtils.getMinLength(valuePatten);

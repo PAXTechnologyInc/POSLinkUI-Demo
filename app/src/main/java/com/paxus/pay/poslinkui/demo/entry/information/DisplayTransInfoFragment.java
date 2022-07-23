@@ -1,13 +1,11 @@
 package com.paxus.pay.poslinkui.demo.entry.information;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -31,15 +29,6 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
     private String[] leftColumns;
     private String[] rightColumn;
 
-    public static Fragment newInstance(Intent intent){
-        DisplayTransInfoFragment fragment = new DisplayTransInfoFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-        fragment.setArguments(bundle);
-        return fragment;
-    }
-
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_display_trans;
@@ -51,7 +40,7 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
+        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         leftColumns = bundle.getStringArray(EntryExtraData.PARAM_INFORMATION_KEY);
         rightColumn = bundle.getStringArray(EntryExtraData.PARAM_INFORMATION_VALUE);
@@ -59,15 +48,28 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
 
     }
 
+    protected String packageName;
+    protected String action;
+
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
+    }
+
     @Override
     protected void loadView(View rootView) {
-        
+
 
         TextView key = rootView.findViewById(R.id.info_key);
         TextView value = rootView.findViewById(R.id.info_value);
 
         StringBuilder left = new StringBuilder();
-        for(String s: leftColumns){
+        for (String s : leftColumns) {
             left.append(s).append("\n");
         }
 

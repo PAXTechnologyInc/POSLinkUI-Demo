@@ -1,6 +1,5 @@
 package com.paxus.pay.poslinkui.demo.entry.confirmation;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
@@ -46,14 +44,6 @@ public class ConfirmReceiptViewFragment extends BaseEntryFragment {
 
     private ImageView imageView;
     private Animation receiptOutAnim;
-    public static Fragment newInstance(Intent intent){
-        ConfirmReceiptViewFragment fragment = new ConfirmReceiptViewFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-        fragment.setArguments(bundle);
-        return fragment;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -76,15 +66,28 @@ public class ConfirmReceiptViewFragment extends BaseEntryFragment {
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
+        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         receiptUri = bundle.getString(EntryExtraData.PARAM_RECEIPT_URI);
     }
 
+    protected String packageName;
+    protected String action;
+
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
+    }
+
     @Override
     protected void loadView(View rootView) {
-        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if(actionBar != null) {
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
             actionBar.setTitle(getString(R.string.receipt_preview));
         }
 

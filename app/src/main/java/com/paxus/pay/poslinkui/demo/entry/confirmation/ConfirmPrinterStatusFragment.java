@@ -1,105 +1,92 @@
 package com.paxus.pay.poslinkui.demo.entry.confirmation;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
+import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.enumeration.ConfirmationType;
 import com.pax.us.pay.ui.constant.entry.enumeration.PrintStatusType;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
-public class ConfirmPrinterStatusFragment extends AConfirmationDialogFragment{
-    public static ConfirmPrinterStatusFragment newInstance(Intent intent){
-        ConfirmPrinterStatusFragment dialogFragment = new ConfirmPrinterStatusFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
+import java.util.Arrays;
+import java.util.List;
 
-        dialogFragment.setArguments(bundle);
-        return dialogFragment;
-    }
+/**
+ * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_PRINTER_STATUS}
+ * <p>
+ * UI Tips:
+ * 1.If click YES, sendNext(true)
+ * 2.If click NO, sendNext(false)
+ * </p>
+ */
+public class ConfirmPrinterStatusFragment extends AConfirmationDialogFragment {
+    private String action;
+    private String packageName;
+    private long timeout;
+    private String message;
+    private List<String> options;
+    private String printStatus;
 
     @Override
     protected void loadParameter(@NonNull Bundle bundle) {
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-
         timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
-
         message = bundle.getString(EntryExtraData.PARAM_MESSAGE);
-        message = formatMessage(action, message, bundle);
-
-        String[] options = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
-
-        formatOptions(options);
+        String[] array = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
+        if (array != null) {
+            options = Arrays.asList(array);
+        }
+        printStatus = bundle.getString(EntryExtraData.PARAM_PRINT_STATUS);
     }
 
     @Override
-    protected String formatMessage(String action, String message, Bundle bundle) {
-        String key = bundle.getString(EntryExtraData.PARAM_PRINT_STATUS, "");
-        if (PrintStatusType.PRINTER_OUT_OF_PAPER.equals(key)) {
+    protected String getEntryAction() {
+        return action;
+    }
+
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @NonNull
+    @Override
+    protected String getRequestedParamName() {
+        return EntryRequest.PARAM_CONFIRMED;
+    }
+
+    @Override
+    protected String getPositiveText() {
+        if (options != null && options.contains(ConfirmationType.YES)) {
+            return getString(R.string.confirm_option_yes);
+        }
+        return null;
+    }
+
+    @Override
+    protected String getNegativeText() {
+        if (options != null && options.contains(ConfirmationType.NO)) {
+            return getString(R.string.confirm_option_no);
+        }
+        return null;
+    }
+
+
+    @Override
+    protected String formatMessage() {
+        if (PrintStatusType.PRINTER_OUT_OF_PAPER.equals(printStatus)) {
             return getString(R.string.prompt_printer_out_of_paper);
-        } else if (PrintStatusType.PRINTER_HOT.equals(key)) {
+        } else if (PrintStatusType.PRINTER_HOT.equals(printStatus)) {
             return getString(R.string.confirm_printer_over_hot);
-        } else if (PrintStatusType.PRINTER_VOLTAGE_TOO_LOW.equals(key)) {
+        } else if (PrintStatusType.PRINTER_VOLTAGE_TOO_LOW.equals(printStatus)) {
             return getString(R.string.confirm_printer_voltage_low);
         } else {
             return getString(R.string.confirm_printer_status);
         }
     }
 
-    @Override
-    protected void formatOptions(String[] options) {
-        //--------------Get positive and negative option-----------------------
-        String positive = "";
-        String negative = "";
-        if(options.length == 2) {
-            for (String option : options) {
-                if (ConfirmationType.YES.equals(option)) {
-                    positive = option;
-                } else if (ConfirmationType.NO.equals(option)) {
-                    negative = option;
-                }
-            }
-            if(TextUtils.isEmpty(negative) && TextUtils.isEmpty(positive)){
-                positive = options[0];
-                negative = options[1];
-            }
-        }else if(options.length == 1){
-            positive = options[0];
-        }
-
-        //-----------------Customize option message---------------------------
-        if(ConfirmationType.YES.equals(positive)){
-            positiveText = getString(R.string.confirm_option_yes);
-        }else if("Reverse".equals(positive)){
-            positiveText = getString(R.string.confirm_option_reverse);
-        }else if("Accept".equals(positive)){
-            positiveText = getString(R.string.confirm_option_accept);
-        }else {
-            //If Option not defined, use original value
-            positiveText = positive;
-        }
-        if(ConfirmationType.NO.equals(negative)){
-            negativeText = getString(R.string.confirm_option_no);
-        }else if("Accept".equals(positive)){
-            negativeText = getString(R.string.confirm_option_accept);
-        }else if("Decline".equals(positive)){
-            negativeText = getString(R.string.confirm_option_decline);
-        }else {
-            //If Option not defined, use original value
-            negativeText = negative;
-        }
-    }
-
-    @Override
-    protected void sendNext(boolean confirm) {
-        dismiss();
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_CONFIRMED,confirm);
-    }
 }

@@ -1,9 +1,7 @@
 package com.paxus.pay.poslinkui.demo.entry.text;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -11,7 +9,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -34,16 +31,20 @@ public class ExpiryFragment extends BaseEntryFragment {
 
     private long timeOut;
     private String message = "";
+    protected String packageName;
+    protected String action;
+
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
+    }
 
     private EditText editText;
-    public static Fragment newInstance(Intent intent){
-        ExpiryFragment fragment = new ExpiryFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-        fragment.setArguments(bundle);
-        return fragment;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -128,11 +129,7 @@ public class ExpiryFragment extends BaseEntryFragment {
 
 
     private void sendNext(String value){
-
-        String param = EntryRequest.PARAM_EXPIRY_DATE;
-        if(!TextUtils.isEmpty(param)){
-            EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
-        }
+        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_EXPIRY_DATE, value);
     }
 
 }

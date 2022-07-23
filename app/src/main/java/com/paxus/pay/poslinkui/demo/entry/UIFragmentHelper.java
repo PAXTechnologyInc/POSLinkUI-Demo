@@ -1,12 +1,14 @@
 package com.paxus.pay.poslinkui.demo.entry;
 
 import android.content.Intent;
+import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
+import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.InformationEntry;
 import com.pax.us.pay.ui.constant.entry.OptionEntry;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
@@ -16,7 +18,6 @@ import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.Uncategory;
-import com.paxus.pay.poslinkui.demo.entry.confirmation.CheckCardPresentFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.CheckDeactivateWarnFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmAdjustTipFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmBatchCloseFragment;
@@ -77,158 +78,244 @@ import com.paxus.pay.poslinkui.demo.entry.security.ManageInputAccountFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.PINFragment;
 import com.paxus.pay.poslinkui.demo.entry.signature.SignatureFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.AVSFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.CashbackFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.AddressFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.AmountFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.AuthFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.CsPhoneNumberFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.ClerkIdFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.CustomerCodeFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.DestZipcodeFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.FuelAmountFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.GuestNumberFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.InvoiceNumberFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.MerchantReferenceNumberFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.MerchantTaxIdFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.OctReferenceNumberFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.OrderNumberFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.PhoneNumberFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.PoNumberFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.ProdDescFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.PromptRestrictionCodeFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.ReferenceNumberFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.ServerIdFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.TableNumberFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.TaxAmountFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.TransNumberFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.VoucherDataFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.ZipcodeFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.EnterOrigTransDateFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.ExpiryFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.FSAFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.FleetFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.TipFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.TotalAmountFragment;
-import com.paxus.pay.poslinkui.demo.status.InformationDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.amount.AmountFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.amount.CashbackFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.amount.FuelAmountFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.amount.TaxAmountFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.amount.TipFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.amount.TotalAmountFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.fleet.FleetFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.fsa.FSAFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.number.ClerkIdFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.number.CsPhoneNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.number.GuestNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.number.MerchantTaxIdFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.number.PhoneNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.number.PromptRestrictionCodeFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.number.ServerIdFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.number.TableNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.number.TransNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.numbertext.DestZipcodeFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.numbertext.InvoiceNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.numbertext.MerchantReferenceNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.numbertext.OctReferenceNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.numbertext.ReferenceNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.numbertext.VoucherDataFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.numbertext.ZipcodeFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.text.AddressFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.text.AuthFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.text.CustomerCodeFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.text.OrderNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.text.PoNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.text.ProdDescFragment;
+import com.paxus.pay.poslinkui.demo.status.StatusDialogFragment;
 import com.paxus.pay.poslinkui.demo.status.TransCompletedDialogFragment;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Created by Yanina.Yang on 5/12/2022.
  */
 public class UIFragmentHelper {
-    private UIFragmentHelper(){
+    private UIFragmentHelper() {
 
+    }
+
+    private static final Map<String, Class<? extends Fragment>> TEXT_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>() {
+        {
+            put(TextEntry.ACTION_ENTER_AMOUNT, AmountFragment.class);
+            put(TextEntry.ACTION_ENTER_FUEL_AMOUNT, FuelAmountFragment.class);
+            put(TextEntry.ACTION_ENTER_TAX_AMOUNT, TaxAmountFragment.class);
+            put(TextEntry.ACTION_ENTER_CASH_BACK, CashbackFragment.class);
+            put(TextEntry.ACTION_ENTER_TIP, TipFragment.class);
+            put(TextEntry.ACTION_ENTER_TOTAL_AMOUNT, TotalAmountFragment.class);
+            put(TextEntry.ACTION_ENTER_CLERK_ID, ClerkIdFragment.class);
+            put(TextEntry.ACTION_ENTER_SERVER_ID, ServerIdFragment.class);
+            put(TextEntry.ACTION_ENTER_TABLE_NUMBER, TableNumberFragment.class);
+            put(TextEntry.ACTION_ENTER_CS_PHONE_NUMBER, CsPhoneNumberFragment.class);
+            put(TextEntry.ACTION_ENTER_PHONE_NUMBER, PhoneNumberFragment.class);
+            put(TextEntry.ACTION_ENTER_GUEST_NUMBER, GuestNumberFragment.class);
+            put(TextEntry.ACTION_ENTER_MERCHANT_TAX_ID, MerchantTaxIdFragment.class);
+            put(TextEntry.ACTION_ENTER_PROMPT_RESTRICTION_CODE, PromptRestrictionCodeFragment.class);
+            put(TextEntry.ACTION_ENTER_TRANS_NUMBER, TransNumberFragment.class);
+            put(TextEntry.ACTION_ENTER_ADDRESS, AddressFragment.class);
+            put(TextEntry.ACTION_ENTER_AUTH, AuthFragment.class);
+            put(TextEntry.ACTION_ENTER_CUSTOMER_CODE, CustomerCodeFragment.class);
+            put(TextEntry.ACTION_ENTER_ORDER_NUMBER, OrderNumberFragment.class);
+            put(TextEntry.ACTION_ENTER_PO_NUMBER, PoNumberFragment.class);
+            put(TextEntry.ACTION_ENTER_PROD_DESC, ProdDescFragment.class);
+            put(TextEntry.ACTION_ENTER_ZIPCODE, ZipcodeFragment.class);
+            put(TextEntry.ACTION_ENTER_DEST_ZIPCODE, DestZipcodeFragment.class);
+            put(TextEntry.ACTION_ENTER_INVOICE_NUMBER, InvoiceNumberFragment.class);
+            put(TextEntry.ACTION_ENTER_VOUCHER_DATA, VoucherDataFragment.class);
+            put(TextEntry.ACTION_ENTER_REFERENCE_NUMBER, ReferenceNumberFragment.class);
+            put(TextEntry.ACTION_ENTER_MERCHANT_REFERENCE_NUMBER, MerchantReferenceNumberFragment.class);
+            put(TextEntry.ACTION_ENTER_OCT_REFERENCE_NUMBER, OctReferenceNumberFragment.class);
+            put(TextEntry.ACTION_ENTER_AVS_DATA, AVSFragment.class);
+            put(TextEntry.ACTION_ENTER_EXPIRY_DATE, ExpiryFragment.class);
+            put(TextEntry.ACTION_ENTER_FSA_DATA, FSAFragment.class);
+            put(TextEntry.ACTION_ENTER_FLEET_DATA, FleetFragment.class);
+            put(TextEntry.ACTION_ENTER_ORIG_DATE, EnterOrigTransDateFragment.class);
+
+        }
+    };
+
+    private static final Map<String, Class<? extends Fragment>> SECURE_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>() {
+        {
+            put(SecurityEntry.ACTION_INPUT_ACCOUNT, InputAccountFragment.class);
+            put(SecurityEntry.ACTION_MANAGE_INPUT_ACCOUNT, ManageInputAccountFragment.class);
+            put(SecurityEntry.ACTION_ENTER_VCODE, EnterVcodeFragment.class);
+            put(SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS, EnterCardLast4DigitsFragment.class);
+            put(SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS, EnterCardAllDigitsFragment.class);
+            put(SecurityEntry.ACTION_ENTER_PIN, PINFragment.class);
+        }
+    };
+
+    private static final Map<String, Class<? extends Fragment>> INFORMATION_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>() {
+        {
+            put(InformationEntry.ACTION_DISPLAY_TRANS_INFORMATION, DisplayTransInfoFragment.class);
+        }
+    };
+
+    private static final Map<String, Class<? extends Fragment>> SIGNATURE_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>() {
+        {
+            put(SignatureEntry.ACTION_SIGNATURE, SignatureFragment.class);
+        }
+    };
+
+    private static final Map<String, Class<? extends Fragment>> CONFIRM_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>() {
+        {
+            put(ConfirmationEntry.ACTION_CONFIRM_RECEIPT_VIEW, ConfirmReceiptViewFragment.class);
+
+            put(ConfirmationEntry.ACTION_CONFIRM_UNIFIED_MESSAGE, ConfirmUnifiedMessageFragment.class);
+            put(ConfirmationEntry.ACTION_REVERSE_PARTIAL_APPROVAL, ReversePartialApprovalFragment.class);
+            put(ConfirmationEntry.ACTION_SUPPLEMENT_PARTIAL_APPROVAL, SupplementPartialApprovalFragment.class);
+            put(ConfirmationEntry.ACTION_CHECK_DEACTIVATE_WARN, CheckDeactivateWarnFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, ConfirmBatchCloseFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_UNTIPPED, ConfirmUntippedFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_DUPLICATE_TRANS, ConfirmDuplicateTransFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_SURCHARGE_FEE, ConfirmationSurchargeFeeDialogFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_PRINTER_STATUS, ConfirmPrinterStatusFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_UPLOAD_TRANS, ConfirmUploadTransFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_PRINT_FAILED_TRANS, ConfirmPrintFailedTransFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_UPLOAD_RETRY, ConfirmUploadRetryFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_PRINT_FPS, ConfirmPrintFpsFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_DELETE_SF, ConfirmDeleteSfFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_PRINT_CUSTOMER_COPY, ConfirmPrintCustomerCopyFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_ONLINE_RETRY, ConfirmOnlineRetryFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_ADJUST_TIP, ConfirmAdjustTipFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_CARD_PROCESS_RESULT, ConfirmCardProcessResultFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_RECEIPT_SIGNATURE, ConfirmReceiptSignatureFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_MERCHANT_SCOPE, ConfirmMerchantScopeFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_CARD_ENTRY_RETRY, ConfirmCardEntryRetryFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_SIGNATURE_MATCH, ConfirmSignatureMatchFragment.class);
+        }
+    };
+
+    private static final Map<String, Class<? extends Fragment>> POSLINK_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>() {
+        {
+            put(PoslinkEntry.ACTION_INPUT_TEXT, InputTextFragment.class);
+            put(PoslinkEntry.ACTION_SHOW_THANK_YOU, ShowThankYouFragment.class);
+            put(PoslinkEntry.ACTION_SHOW_DIALOG, ShowDialogFragment.class);
+            put(PoslinkEntry.ACTION_SHOW_DIALOG_FORM, ShowDialogFormFragment.class);
+            put(PoslinkEntry.ACTION_SHOW_MESSAGE, ShowMessageFragment.class);
+            put(PoslinkEntry.ACTION_SHOW_ITEM, ShowItemFragment.class);
+            put(PoslinkEntry.ACTION_SHOW_SIGNATURE_BOX, ShowSignatureBoxFragment.class);
+            put(PoslinkEntry.ACTION_SHOW_INPUT_TEXT_BOX, ShowInputTextBoxFragment.class);
+            put(PoslinkEntry.ACTION_SHOW_TEXT_BOX, ShowTextBoxFragment.class);
+        }
+    };
+
+    private static final Map<String, Class<? extends Fragment>> OPTIONS_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>() {
+        {
+            put(OptionEntry.ACTION_SELECT_ORIG_CURRENCY, SelectOrigCurrencyFragment.class);
+            put(OptionEntry.ACTION_SELECT_MERCHANT, SelectMerchantFragment.class);
+            put(OptionEntry.ACTION_SELECT_LANGUAGE, SelectLanguageFragment.class);
+            put(OptionEntry.ACTION_SELECT_ACCOUNT_TYPE, SelectAccountTypeFragment.class);
+            put(OptionEntry.ACTION_SELECT_REPORT_TYPE, SelectReportTypeFragment.class);
+            put(OptionEntry.ACTION_SELECT_EDC_GROUP, SelectEdcGroupFragment.class);
+            put(OptionEntry.ACTION_SELECT_BATCH_TYPE, SelectBatchTypeFragment.class);
+            put(OptionEntry.ACTION_SELECT_SEARCH_CRITERIA, SelectSearchCriteriaFragment.class);
+            put(OptionEntry.ACTION_SELECT_EDC_TYPE, SelectEdcTypeFragment.class);
+            put(OptionEntry.ACTION_SELECT_TRANS_TYPE, SelectTransTypeFragment.class);
+            put(OptionEntry.ACTION_SELECT_CARD_TYPE, SelectCardTypeFragment.class);
+            put(OptionEntry.ACTION_SELECT_DUPLICATE_OVERRIDE, SelectDuplicateOverrideFragment.class);
+            put(OptionEntry.ACTION_SELECT_TAX_REASON, SelectTaxReasonFragment.class);
+            put(OptionEntry.ACTION_SELECT_MOTO_TYPE, SelectMotoTypeFragment.class);
+            put(OptionEntry.ACTION_SELECT_REFUND_REASON, SelectRefundReasonFragment.class);
+            put(OptionEntry.ACTION_SELECT_SUB_TRANS_TYPE, SelectSubTransTypeFragment.class);
+            put(OptionEntry.ACTION_SELECT_AID, SelectAidFragment.class);
+            put(OptionEntry.ACTION_SELECT_BY_PASS, SelectByPassFragment.class);
+            put(OptionEntry.ACTION_SELECT_EBT_TYPE, SelectEbtTypeFragment.class);
+        }
+    };
+
+    /**
+     * Create all entry fragments
+     *
+     * @param intent Intent
+     * @return Fragment
+     */
+    public static Fragment createFragment(Intent intent) {
+        String action = intent.getAction();
+        Set<String> categories = intent.getCategories();
+        if (action != null && categories != null) {
+            if (categories.contains(TextEntry.CATEGORY)) {
+                return createFragment(TEXT_FRAGMENT_MAP.get(action), intent);
+            } else if (categories.contains(SecurityEntry.CATEGORY)) {
+                return createFragment(SECURE_FRAGMENT_MAP.get(action), intent);
+            } else if (categories.contains(InformationEntry.CATEGORY)) {
+                return createFragment(INFORMATION_FRAGMENT_MAP.get(action), intent);
+            } else if (categories.contains(OptionEntry.CATEGORY)) {
+                return createFragment(OPTIONS_FRAGMENT_MAP.get(action), intent);
+            } else if (categories.contains(SignatureEntry.CATEGORY)) {
+                return createFragment(SIGNATURE_FRAGMENT_MAP.get(action), intent);
+            } else if (categories.contains(ConfirmationEntry.CATEGORY)) {
+                return createFragment(CONFIRM_FRAGMENT_MAP.get(action), intent);
+            } else if (categories.contains(PoslinkEntry.CATEGORY)) {
+                return createFragment(POSLINK_FRAGMENT_MAP.get(action), intent);
+            }
+        }
+        return null;
+    }
+
+    private static Fragment createFragment(Class<? extends Fragment> clz, Intent intent) {
+        if (clz == null) {
+            return null;
+        }
+        Fragment fragment = null;
+        try {
+            fragment = clz.getConstructor().newInstance();
+            Bundle bundle = new Bundle();
+            bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
+            bundle.putAll(intent.getExtras());
+            fragment.setArguments(bundle);
+            return fragment;
+        } catch (Exception e) {
+            Logger.e(e);
+        }
+        return null;
     }
 
     /**
      * Create all dialogs
+     *
      * @param intent Intent
      * @return DialogFragment
      */
-    public static DialogFragment createDialogFragment(Intent intent){
+    public static DialogFragment createStatusDialogFragment(Intent intent) {
         String action = intent.getAction();
         Set<String> categories = intent.getCategories();
-        if(action != null) {
-            if(categories != null) {
-                if (categories.contains(OptionEntry.CATEGORY)) {
-                    switch (action) {
-                        case OptionEntry.ACTION_SELECT_ORIG_CURRENCY:
-                            return SelectOrigCurrencyFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_MERCHANT:
-                            return SelectMerchantFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_LANGUAGE:
-                            return SelectLanguageFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_ACCOUNT_TYPE:
-                            return SelectAccountTypeFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_REPORT_TYPE:
-                            return SelectReportTypeFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_EDC_GROUP:
-                            return SelectEdcGroupFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_BATCH_TYPE:
-                            return SelectBatchTypeFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_SEARCH_CRITERIA:
-                            return SelectSearchCriteriaFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_EDC_TYPE:
-                            return SelectEdcTypeFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_TRANS_TYPE:
-                            return SelectTransTypeFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_CARD_TYPE:
-                            return SelectCardTypeFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_DUPLICATE_OVERRIDE:
-                            return SelectDuplicateOverrideFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_TAX_REASON:
-                            return SelectTaxReasonFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_MOTO_TYPE:
-                            return SelectMotoTypeFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_REFUND_REASON:
-                            return SelectRefundReasonFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_SUB_TRANS_TYPE:
-                            return SelectSubTransTypeFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_AID:
-                            return SelectAidFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_BY_PASS:
-                            return SelectByPassFragment.newInstance(intent);
-                        case OptionEntry.ACTION_SELECT_EBT_TYPE:
-                            return SelectEbtTypeFragment.newInstance(intent);
-                    }
-                } else if (categories.contains(ConfirmationEntry.CATEGORY)) {
-                    switch (action) {
-                        case ConfirmationEntry.ACTION_CONFIRM_UNIFIED_MESSAGE:
-                            return ConfirmUnifiedMessageFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_REVERSE_PARTIAL_APPROVAL:
-                            return ReversePartialApprovalFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_SUPPLEMENT_PARTIAL_APPROVAL:
-                            return SupplementPartialApprovalFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CHECK_CARD_PRESENT:
-                            return CheckCardPresentFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CHECK_DEACTIVATE_WARN:
-                            return CheckDeactivateWarnFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE:
-                            return ConfirmBatchCloseFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_UNTIPPED:
-                            return ConfirmUntippedFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_DUPLICATE_TRANS:
-                            return ConfirmDuplicateTransFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_SURCHARGE_FEE:
-                            return ConfirmationSurchargeFeeDialogFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_PRINTER_STATUS:
-                            return ConfirmPrinterStatusFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_UPLOAD_TRANS:
-                            return ConfirmUploadTransFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_UPLOAD_RETRY:
-                            return ConfirmUploadRetryFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_PRINT_FAILED_TRANS:
-                            return ConfirmPrintFailedTransFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_PRINT_FPS:
-                            return ConfirmPrintFpsFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_DELETE_SF:
-                            return ConfirmDeleteSfFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_PRINT_CUSTOMER_COPY:
-                            return ConfirmPrintCustomerCopyFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_ONLINE_RETRY:
-                            return ConfirmOnlineRetryFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_ADJUST_TIP:
-                            return ConfirmAdjustTipFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_CARD_PROCESS_RESULT:
-                            return ConfirmCardProcessResultFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_RECEIPT_SIGNATURE:
-                            return ConfirmReceiptSignatureFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_MERCHANT_SCOPE:
-                            return ConfirmMerchantScopeFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_CARD_ENTRY_RETRY:
-                            return ConfirmCardEntryRetryFragment.newInstance(intent);
-                        case ConfirmationEntry.ACTION_CONFIRM_SIGNATURE_MATCH:
-                            return ConfirmSignatureMatchFragment.newInstance(intent);
-                    }
-                }
-            }
-
-            switch (action){
+        if (action != null) {
+            switch (action) {
                 case InformationStatus.TRANS_COMPLETED: {
-                    if(categories == null){
-                        Logger.e("WARNING:\""+action+"\" Category is missing!");
+                    if (categories == null) {
+                        Logger.e("WARNING:\"" + action + "\" Category is missing!");
                     }
                     return TransCompletedDialogFragment.newInstance(intent);
                 }
@@ -246,7 +333,7 @@ public class UIFragmentHelper {
                     if (categories == null) {
                         Logger.e("WARNING:\"" + action + "\" Category is missing!");
                     }
-                    return InformationDialogFragment.newInstance(action);
+                    return StatusDialogFragment.newInstance(action);
                 }
                 case Uncategory.PRINT_STARTED:
                 case Uncategory.FILE_UPDATE_STARTED:
@@ -255,7 +342,7 @@ public class UIFragmentHelper {
                 case Uncategory.LOG_UPLOAD_CONNECTED:
                 case Uncategory.LOG_UPLOAD_UPLOADING:
                 case Uncategory.CAPK_UPDATE_STARTED:
-                    return InformationDialogFragment.newInstance(action);
+                    return StatusDialogFragment.newInstance(action);
             }
         }
         return null;
@@ -314,144 +401,6 @@ public class UIFragmentHelper {
         }
     }
 
-    /**
-     * Create all entry fragments which not dialog
-     * @param intent Intent
-     * @return DialogFragment
-     */
-    public static Fragment createFragment(Intent intent){
-        String action = intent.getAction();
-        Set<String> categories = intent.getCategories();
-        if(action != null && categories != null){
-            if(categories.contains(TextEntry.CATEGORY)) {
-                switch (action) {
-                    case TextEntry.ACTION_ENTER_AMOUNT:
-                        return AmountFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_FUEL_AMOUNT:
-                        return FuelAmountFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_TAX_AMOUNT:
-                        return TaxAmountFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_CASH_BACK:
-                        return CashbackFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_TIP:
-                        return TipFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_TOTAL_AMOUNT:
-                        return TotalAmountFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_CLERK_ID:
-                        return ClerkIdFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_SERVER_ID:
-                        return ServerIdFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_TABLE_NUMBER:
-                        return TableNumberFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_CS_PHONE_NUMBER:
-                        return CsPhoneNumberFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_PHONE_NUMBER:
-                        return PhoneNumberFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_GUEST_NUMBER:
-                        return GuestNumberFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_MERCHANT_TAX_ID:
-                        return MerchantTaxIdFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_PROMPT_RESTRICTION_CODE:
-                        return PromptRestrictionCodeFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_TRANS_NUMBER:
-                        return TransNumberFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_ADDRESS:
-                        return AddressFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_AUTH:
-                        return AuthFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_CUSTOMER_CODE:
-                        return CustomerCodeFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_ORDER_NUMBER:
-                        return OrderNumberFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_PO_NUMBER:
-                        return PoNumberFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_PROD_DESC:
-                        return ProdDescFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_ZIPCODE:
-                        return ZipcodeFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_DEST_ZIPCODE:
-                        return DestZipcodeFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_INVOICE_NUMBER:
-                        return InvoiceNumberFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_VOUCHER_DATA:
-                        return VoucherDataFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_REFERENCE_NUMBER:
-                        return ReferenceNumberFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_MERCHANT_REFERENCE_NUMBER:
-                        return MerchantReferenceNumberFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_OCT_REFERENCE_NUMBER:
-                        return OctReferenceNumberFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_AVS_DATA:
-                        return AVSFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_EXPIRY_DATE:
-                        return ExpiryFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_FSA_DATA:
-                        return FSAFragment.newInstance(intent);
-                    case TextEntry.ACTION_ENTER_FLEET_DATA:
-                        return FleetFragment.newInstance(intent);
-                    default:
-                        return null;
-                }
-            }
-            else if(categories.contains(SecurityEntry.CATEGORY)){
-                switch (action) {
-                    case SecurityEntry.ACTION_INPUT_ACCOUNT:
-                        return InputAccountFragment.newInstance(intent);
-                    case SecurityEntry.ACTION_MANAGE_INPUT_ACCOUNT:
-                        return ManageInputAccountFragment.newInstance(intent);
-                    case SecurityEntry.ACTION_ENTER_VCODE:
-                        return EnterVcodeFragment.newInstance(intent);
-                    case SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS:
-                        return EnterCardLast4DigitsFragment.newInstance(intent);
-                    case SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS:
-                        return EnterCardAllDigitsFragment.newInstance(intent);
-                    case SecurityEntry.ACTION_ENTER_PIN:
-                        return PINFragment.newInstance(intent);
-                    default:
-                        return null;
-                }
-            }else if(categories.contains(InformationEntry.CATEGORY)){
-                if(InformationEntry.ACTION_DISPLAY_TRANS_INFORMATION.equals(action)){
-                    return DisplayTransInfoFragment.newInstance(intent);
-                }
-
-            }else if(categories.contains(SignatureEntry.CATEGORY)){
-                if(SignatureEntry.ACTION_SIGNATURE.equals(action)){
-                    return SignatureFragment.newInstance(intent);
-                }
-
-            } else if(categories.contains(ConfirmationEntry.CATEGORY)){
-                if(ConfirmationEntry.ACTION_CONFIRM_RECEIPT_VIEW.equals(action)){
-                    return ConfirmReceiptViewFragment.newInstance(intent);
-                }
-            } else if(categories.contains(PoslinkEntry.CATEGORY)){
-                switch (action) {
-                    case PoslinkEntry.ACTION_INPUT_TEXT:
-                        return InputTextFragment.newInstance(intent);
-                    case PoslinkEntry.ACTION_SHOW_THANK_YOU:
-                        return ShowThankYouFragment.newInstance(intent);
-                    case PoslinkEntry.ACTION_SHOW_DIALOG:
-                        return ShowDialogFragment.newInstance(intent);
-                    case PoslinkEntry.ACTION_SHOW_DIALOG_FORM:
-                        return ShowDialogFormFragment.newInstance(intent);
-                    case PoslinkEntry.ACTION_SHOW_MESSAGE:
-                        return ShowMessageFragment.newInstance(intent);
-                    case PoslinkEntry.ACTION_SHOW_ITEM:
-                        return ShowItemFragment.newInstance(intent);
-                    case PoslinkEntry.ACTION_SHOW_SIGNATURE_BOX:
-                        return ShowSignatureBoxFragment.newInstance(intent);
-                    case PoslinkEntry.ACTION_SHOW_INPUT_TEXT_BOX:
-                        return ShowInputTextBoxFragment.newInstance(intent);
-                    case PoslinkEntry.ACTION_SHOW_TEXT_BOX:
-                        return ShowTextBoxFragment.newInstance(intent);
-                    default:
-                        return null;
-                }
-
-            }
-        }
-        return null;
-    }
 
     public static void showDialog(FragmentManager fragmentManager, DialogFragment dialogFragment, String tag){
         dialogFragment.show(fragmentManager, tag);

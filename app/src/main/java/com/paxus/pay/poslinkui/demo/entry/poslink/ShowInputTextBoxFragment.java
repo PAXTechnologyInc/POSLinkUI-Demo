@@ -1,6 +1,5 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -14,10 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -61,18 +58,20 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
     private final Runnable timeoutRun = new Runnable() {
         @Override
         public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(),packageName,action);
+            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
         }
     };
+    protected String packageName;
+    protected String action;
 
-    public static Fragment newInstance(Intent intent){
-        Fragment fragment = new ShowInputTextBoxFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
 
-        fragment.setArguments(bundle);
-        return fragment;
+    @Override
+    protected String getEntryAction() {
+        return action;
     }
 
     @Override
@@ -232,13 +231,7 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
             value = value.replaceAll("[^0-9]","");
         }
 
-        if(minLength == maxLength && maxLength>0){
-            Toast.makeText(requireContext(), "Must be "+minLength+" digits.", Toast.LENGTH_SHORT).show();
-        }else if(value.length() < minLength){
-            Toast.makeText(requireContext(), title, Toast.LENGTH_SHORT).show();
-        }else {
-            sendNext(value);
-        }
+        sendNext(value);
     }
 
     private void sendNext(String value){

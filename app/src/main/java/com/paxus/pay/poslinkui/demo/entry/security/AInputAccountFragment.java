@@ -257,13 +257,26 @@ public abstract class AInputAccountFragment extends BaseEntryFragment {
             barHeight = outRect1.top;  //statusBar's height
         }
         TextPaint paint = editText.getPaint();
-        int fontSize = (int)(paint.getTextSize()/paint.density);
-        EntryRequestUtils.sendSecureArea(requireContext(), packageName, action, x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize, hint,fontColor);
+        int fontSize = (int) (paint.getTextSize() / paint.density);
+        EntryRequestUtils.sendSecureArea(requireContext(), packageName, action, x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize, hint, fontColor);
     }
 
-    private void onUpdateEntryMode(Intent intent){
+    protected String packageName;
+    protected String action;
+
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
+    }
+
+    private void onUpdateEntryMode(Intent intent) {
         String action = intent.getAction();
-        if(CardStatus.CARD_TAP_REQUIRED.equals(action)){
+        if (CardStatus.CARD_TAP_REQUIRED.equals(action)) {
             updateCtlessLightStatus(ClssLightStatus.CLSS_LIGHT_READY_FOR_TXN);
         }
 
@@ -275,7 +288,7 @@ public abstract class AInputAccountFragment extends BaseEntryFragment {
 
         loadView(rootView);
 
-        DialogFragment dialogFragment = UIFragmentHelper.createDialogFragment(intent);
+        DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
         if(dialogFragment != null){
             String tag = "update_entry_mode";
             UIFragmentHelper.showDialog(getParentFragmentManager(),dialogFragment,tag);
@@ -385,58 +398,3 @@ public abstract class AInputAccountFragment extends BaseEntryFragment {
     }
 
 }
-//    public static Fragment newInstance(Intent intent){
-//        InputAccountFragment fragment = new InputAccountFragment();
-//        Bundle bundle = new Bundle();
-//        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-//        bundle.putAll(intent.getExtras());
-//        fragment.setArguments(bundle);
-//        return fragment;
-//    }
-
-//    @Override
-//    protected void loadArgument(@NonNull Bundle bundle) {
-//        action = bundle.getString(EntryRequest.PARAM_ACTION);
-//        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-//        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-//        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-//        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
-//        enableInsert = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_INSERT);
-//        enableTap = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_TAP);
-//        enableSwipe = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_SWIPE);
-//        enableManual = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_MANUAL);
-//
-//        supportApplePay = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_APPLEPAY);
-//        supportGooglePay = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_GOOGLEPAY);
-//        supportSamsungPay = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_SAMSUNGPAY);
-//        supportNFC = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_NFCPAY);
-//
-//        enableContactlessLight = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_CONTACTLESS_LIGHT);
-//
-//        String valuePatten = "";
-//        if(SecurityEntry.ACTION_INPUT_ACCOUNT.equals(action)){
-//            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-19");
-//            String panStyle = bundle.getString(EntryExtraData.PARAM_PAN_STYLES, PanStyles.NORMAL);
-//            if(PanStyles.NEW_PAN.equals(panStyle)) {
-//                manualMessage = getString(R.string.enter_new_account);
-//            }else {
-//                manualMessage = getString(R.string.hint_enter_account);
-//            }
-//        } else if(SecurityEntry.ACTION_MANAGE_INPUT_ACCOUNT.equals(action)){
-//            valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-19");
-//            manualMessage = getString(R.string.hint_enter_account);
-//            amountMessage = bundle.getString(EntryExtraData.PARAM_AMOUNT_MESSAGE);
-//        }
-//
-//        if(!TextUtils.isEmpty(valuePatten)){
-//            minLength = ValuePatternUtils.getMinLength(valuePatten);
-//            maxLength = ValuePatternUtils.getMaxLength(valuePatten);
-//        }
-//
-//        merchantName = bundle.getString(EntryExtraData.PARAM_MERCHANT_NAME);
-//        if(bundle.containsKey(EntryExtraData.PARAM_TOTAL_AMOUNT)){
-//            totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
-//            currencyType = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
-//        }
-//
-//    }

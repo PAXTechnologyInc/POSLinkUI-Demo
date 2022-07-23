@@ -1,6 +1,5 @@
 package com.paxus.pay.poslinkui.demo.entry.signature;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -41,6 +39,18 @@ public class SignatureFragment extends BaseEntryFragment {
     private String transMode;
     private long totalAmount;
     private String currency;
+    protected String packageName;
+    protected String action;
+
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
+    }
 
     private String signLine1;
     private String signLine2;
@@ -66,15 +76,6 @@ public class SignatureFragment extends BaseEntryFragment {
             }
         }
     };
-
-    public static Fragment newInstance(Intent intent){
-        SignatureFragment fragment = new SignatureFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-        fragment.setArguments(bundle);
-        return fragment;
-    }
 
     @Override
     protected int getLayoutResourceId() {

@@ -1,13 +1,11 @@
 package com.paxus.pay.poslinkui.demo.entry.confirmation;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
@@ -28,22 +26,13 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ConfirmationSurchargeFeeDialogFragment extends BaseEntryDialogFragment {
+
     private long timeout;
     private String feeName;
     private long totalAmount;
     private long feeAmount;
     private String currency;
     private boolean enableBypass;
-
-    public static DialogFragment newInstance(Intent intent){
-        ConfirmationSurchargeFeeDialogFragment dialogFragment = new ConfirmationSurchargeFeeDialogFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-
-        dialogFragment.setArguments(bundle);
-        return dialogFragment;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -80,25 +69,38 @@ public class ConfirmationSurchargeFeeDialogFragment extends BaseEntryDialogFragm
         confirm.setOnClickListener(v-> onConfirmButtonClicked());
 
         Button cancel = rootView.findViewById(R.id.cancel_button);
-        cancel.setOnClickListener(v-> onCancelButtonClicked());
+        cancel.setOnClickListener(v -> onCancelButtonClicked());
         Button bypass = rootView.findViewById(R.id.bypass_button);
-        if(enableBypass){
-            bypass.setOnClickListener(v-> onBypassButtonClicked());
+        if (enableBypass) {
+            bypass.setOnClickListener(v -> onBypassButtonClicked());
 
-        }else{
+        } else {
             bypass.setVisibility(View.GONE);
         }
     }
 
-    private void onConfirmButtonClicked(){
+    protected String packageName;
+    protected String action;
+
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
+    }
+
+    private void onConfirmButtonClicked() {
         sendNext(true);
     }
 
-    private void onCancelButtonClicked(){
+    private void onCancelButtonClicked() {
         sendAbort();
     }
 
-    private void onBypassButtonClicked(){
+    private void onBypassButtonClicked() {
         sendNext(false);
     }
 
