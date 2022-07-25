@@ -1,16 +1,13 @@
 package com.paxus.pay.poslinkui.demo.entry.text;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -37,17 +34,20 @@ public class AVSFragment extends BaseEntryFragment {
     private int maxLengthZip;
     private String transMode;
     private boolean zipText;
+    private String packageName;
+    private String action;
 
     private EditText editTextAddr;
     private EditText editTextZip;
 
-    public static Fragment newInstance(Intent intent){
-        AVSFragment fragment = new AVSFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-        fragment.setArguments(bundle);
-        return fragment;
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
     }
 
     @Override
@@ -82,10 +82,6 @@ public class AVSFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        
-
-        
-
         editTextAddr = rootView.findViewById(R.id.edit_address);
         if(maxLengthAddr > 0 ) {
             editTextAddr.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthAddr)});
@@ -110,11 +106,6 @@ public class AVSFragment extends BaseEntryFragment {
     private void onConfirmButtonClicked(){
         String addr = editTextAddr.getText().toString();
         String zip = editTextZip.getText().toString();
-
-        if(zip.length() < minLengthZip){
-            Toast.makeText(requireContext(), getString(R.string.pls_input_zip_code), Toast.LENGTH_SHORT).show();
-        }else {
-            EntryRequestUtils.sendNextAVS(requireContext(),packageName,action,addr,zip);
-        }
+        EntryRequestUtils.sendNextAVS(requireContext(), packageName, action, addr, zip);
     }
 }

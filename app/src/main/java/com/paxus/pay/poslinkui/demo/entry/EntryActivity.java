@@ -113,29 +113,28 @@ public class EntryActivity extends AppCompatActivity {
         Fragment fragment = UIFragmentHelper.createFragment(intent);
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
         if(fragment != null) {
+            if (fragment instanceof DialogFragment) {
+                if (frag == null) {
+                    //To show dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, hide tool bar.
+                    toolbar.setVisibility(View.GONE);
+                    fragmentContainer.setVisibility(View.GONE);
+                }
+                ((DialogFragment) fragment).show(getSupportFragmentManager(), "EntryDialog");
+            } else {
 
-            updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
+                updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
 
-            if(frag == null) {
-                //Show tool bar
-                toolbar.setVisibility(View.VISIBLE);
-                fragmentContainer.setVisibility(View.VISIBLE);
+                if (frag == null) {
+                    //Show tool bar
+                    toolbar.setVisibility(View.VISIBLE);
+                    fragmentContainer.setVisibility(View.VISIBLE);
+                }
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.fragment_placeholder, fragment);
+                ft.commit();
             }
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_placeholder, fragment);
-            ft.commit();
-        }else {
-            if(frag == null){
-                //To show dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, hide tool bar.
-                toolbar.setVisibility(View.GONE);
-                fragmentContainer.setVisibility(View.GONE);
-            }
-            DialogFragment dialogFragment = UIFragmentHelper.createDialogFragment(intent);
-            if(dialogFragment != null) {
-                dialogFragment.show(getSupportFragmentManager(), "EntryDialog");
-            }else {
-                Toast.makeText(this, "NOT FOUND:" + intent.getAction(), Toast.LENGTH_SHORT).show();
-            }
+        } else {
+            Toast.makeText(this, "NOT FOUND:" + intent.getAction(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -152,7 +151,7 @@ public class EntryActivity extends AppCompatActivity {
         }
         String dialogTag = UIFragmentHelper.createStatusDialogTag(action);
         if(!TextUtils.isEmpty(dialogTag)) {
-            DialogFragment dialogFragment = UIFragmentHelper.createDialogFragment(intent);
+            DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
             if (dialogFragment != null) {
                 UIFragmentHelper.showDialog(getSupportFragmentManager(), dialogFragment, dialogTag);
             } else {

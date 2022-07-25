@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -51,21 +50,24 @@ public class PINFragment extends BaseEntryFragment {
     private Long totalAmount;
     private String currencyType;
     private String pinRange;
+    private String packageName;
+    private String action;
+
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
+    }
 
     private View rootView;
     private TextView pinBox;
 
     private BroadcastReceiver receiver;
 
-    public static Fragment newInstance(Intent intent){
-        PINFragment fragment = new PINFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-        fragment.setArguments(bundle);
-        return fragment;
-    }
-    
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

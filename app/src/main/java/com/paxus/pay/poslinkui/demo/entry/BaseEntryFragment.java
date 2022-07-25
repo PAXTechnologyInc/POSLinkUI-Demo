@@ -35,9 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
  * </p>
  */
 public abstract class BaseEntryFragment extends Fragment {
-    //Common Input for every Entry Action
-    protected String packageName;
-    protected String action;
+
     private boolean active = false;
 
     @Nullable
@@ -99,19 +97,24 @@ public abstract class BaseEntryFragment extends Fragment {
 
     /**
      * Prepare View
+     *
      * @param rootView root view
      */
     protected abstract void loadView(View rootView);
 
-    protected void sendAbort(){
-        EntryRequestUtils.sendAbort(requireContext(), packageName, action);
+    protected void sendAbort() {
+        EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
     }
+
+    protected abstract String getSenderPackageName();
+
+    protected abstract String getEntryAction();
 
     /**
      * Entry Accepted means BroadPOS accepts the output from ACTION_NEXT
      */
-    protected void onEntryAccepted(){
-        Logger.i("receive Entry Response ACTION_ACCEPTED for action \""+action+"\"");
+    protected void onEntryAccepted() {
+        Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + getEntryAction() + "\"");
 
         //3.2 when got accepted, should not response AbortEvent any more.
         deactivate();
@@ -124,8 +127,8 @@ public abstract class BaseEntryFragment extends Fragment {
      */
     protected void onEntryDeclined(long errCode, String errMessage){
         //3.1 when got declined, prompt declined message
-        Logger.i("receive Entry Response ACTION_DECLINED for action \""+action+"\" ("+errCode+"-"+errMessage+")");
-        Toast.makeText(requireActivity(),errMessage,Toast.LENGTH_SHORT).show();
+        Logger.i("receive Entry Response ACTION_DECLINED for action \"" + getEntryAction() + "\" (" + errCode + "-" + errMessage + ")");
+        Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

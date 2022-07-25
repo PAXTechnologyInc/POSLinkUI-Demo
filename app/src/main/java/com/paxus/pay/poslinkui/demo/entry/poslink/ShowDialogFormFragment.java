@@ -1,6 +1,5 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -29,6 +28,8 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ShowDialogFormFragment extends BaseEntryFragment {
+    private String packageName;
+    private String action;
     private long timeOut;
     private String transMode;
     private String title;
@@ -40,18 +41,19 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
     private final Runnable timeoutRun = new Runnable() {
         @Override
         public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(),packageName,action);
+            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
         }
     };
 
-    public static Fragment newInstance(Intent intent){
-        ShowDialogFormFragment fragment = new ShowDialogFormFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
 
-        fragment.setArguments(bundle);
-        return fragment;
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
     }
 
     @Override

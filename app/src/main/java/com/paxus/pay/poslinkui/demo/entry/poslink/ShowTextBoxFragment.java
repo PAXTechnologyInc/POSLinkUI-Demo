@@ -1,6 +1,5 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -16,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -49,6 +47,9 @@ import java.util.Map;
 public class ShowTextBoxFragment extends BaseEntryFragment {
 
     private static final String BARCODE_QR_CODE = "7";
+
+    private String packageName;
+    private String action;
     private long timeOut;
     private String transMode;
     private String title;
@@ -73,23 +74,24 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
     private final Runnable timeoutRun = new Runnable() {
         @Override
         public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(),packageName,action);
+            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
         }
     };
-
-    public static Fragment newInstance(Intent intent){
-        Fragment fragment = new ShowTextBoxFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-
-        fragment.setArguments(bundle);
-        return fragment;
-    }
 
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_show_text_box;
+    }
+
+
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
     }
 
     @Override
@@ -97,7 +99,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
+        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         text = bundle.getString(EntryExtraData.PARAM_TEXT);
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
         continuousScreen = ManageUIConst.ContinuousScreen.DO_NOT_GO_TO_IDLE.equals(

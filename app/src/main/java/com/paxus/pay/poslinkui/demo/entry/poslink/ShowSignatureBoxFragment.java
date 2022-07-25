@@ -1,6 +1,5 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -35,6 +33,8 @@ import java.util.List;
  * </p>
  */
 public class ShowSignatureBoxFragment extends BaseEntryFragment {
+    private String packageName;
+    private String action;
     private String title;
     private String text;
     private long timeOut;
@@ -62,15 +62,6 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
             }
         }
     };
-
-    public static Fragment newInstance(Intent intent){
-        Fragment fragment = new ShowSignatureBoxFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-        fragment.setArguments(bundle);
-        return fragment;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -174,10 +165,21 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
         }
     }
 
-    private void sendNext(short[] signature){
+    private void sendNext(short[] signature) {
         handler.removeCallbacks(tick); //Stop Tick
 
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_SIGNATURE, signature);
+    }
+
+
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
     }
 
     @Override
@@ -187,7 +189,7 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
         handler.removeCallbacks(tick); //Stop Tick
     }
 
-    private void sendTimeout(){
+    private void sendTimeout() {
         EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
     }
 

@@ -1,9 +1,7 @@
 package com.paxus.pay.poslinkui.demo.entry.text;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
@@ -11,7 +9,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -23,8 +20,8 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_EXPIRY_DATE}<br>
  * <p>
- *     UI Tips:
- *     If confirm button clicked, sendNext
+ * UI Tips:
+ * If confirm button clicked, sendNext
  * </p>
  */
 public class ExpiryFragment extends BaseEntryFragment {
@@ -34,16 +31,10 @@ public class ExpiryFragment extends BaseEntryFragment {
 
     private long timeOut;
     private String message = "";
+    private String packageName;
+    private String action;
 
     private EditText editText;
-    public static Fragment newInstance(Intent intent){
-        ExpiryFragment fragment = new ExpiryFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
-        fragment.setArguments(bundle);
-        return fragment;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -56,7 +47,7 @@ public class ExpiryFragment extends BaseEntryFragment {
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
+        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         message = getString(R.string.pls_input_expiry_date);
 
@@ -64,9 +55,7 @@ public class ExpiryFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        
 
-        
 
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
@@ -76,7 +65,7 @@ public class ExpiryFragment extends BaseEntryFragment {
 
         editText.addTextChangedListener(new TextWatcher() {
             protected boolean mEditing;
-            protected String mPreStr;
+            private String mPreStr;
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -95,13 +84,13 @@ public class ExpiryFragment extends BaseEntryFragment {
                     mEditing = true;
                     String value = s.toString().replaceAll("[^0-9]", "");
                     StringBuilder sb = new StringBuilder(value);
-                    if(sb.length() > 4){
+                    if (sb.length() > 4) {
                         s.replace(0, s.length(), mPreStr);
-                    }else {
-                        if(sb.length() >= 2){
-                            if(sb.length() == 2 && mPreStr.equals(sb+"/")){
-                                sb.delete(sb.length()-1,sb.length());
-                            }else {
+                    } else {
+                        if (sb.length() >= 2) {
+                            if (sb.length() == 2 && mPreStr.equals(sb + "/")) {
+                                sb.delete(sb.length() - 1, sb.length());
+                            } else {
                                 sb.insert(2, "/");
                             }
                         }
@@ -113,26 +102,32 @@ public class ExpiryFragment extends BaseEntryFragment {
         });
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener( v -> onConfirmButtonClicked());
+        confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
     }
 
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
+    }
+
     //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked(){
+    private void onConfirmButtonClicked() {
         String value = editText.getText().toString();
         value = value.replaceAll("[^0-9]", "");
-        if(value.length() == 4){
+        if (value.length() == 4) {
             sendNext(value);
         }
     }
 
 
-    private void sendNext(String value){
-
-        String param = EntryRequest.PARAM_EXPIRY_DATE;
-        if(!TextUtils.isEmpty(param)){
-            EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
-        }
+    private void sendNext(String value) {
+        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_EXPIRY_DATE, value);
     }
 
 }

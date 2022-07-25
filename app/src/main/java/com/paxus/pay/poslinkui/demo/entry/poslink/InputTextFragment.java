@@ -1,6 +1,5 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -13,10 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -43,7 +40,8 @@ public class InputTextFragment extends BaseEntryFragment {
     private static final String FORMAT_TIME = "HH:MM:SS";
     private static final String FORMAT_PHONE = "(XXX)XXX-XXXX";
     private static final String FORMAT_SSN = "XXX-XX-XXXX";
-
+    private String packageName;
+    private String action;
     private long timeOut;
     private int minLength;
     private int maxLength;
@@ -58,18 +56,19 @@ public class InputTextFragment extends BaseEntryFragment {
     private final Runnable timeoutRun = new Runnable() {
         @Override
         public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(),packageName,action);
+            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
         }
     };
 
-    public static Fragment newInstance(Intent intent){
-        InputTextFragment fragment = new InputTextFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
 
-        fragment.setArguments(bundle);
-        return fragment;
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
     }
 
     @Override
@@ -210,19 +209,14 @@ public class InputTextFragment extends BaseEntryFragment {
     }
 
     //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked(){
+    private void onConfirmButtonClicked() {
         String value = editText.getText().toString();
-        if(inputType.matches("[23467]")){
-            value = value.replaceAll("[^0-9]","");
+        if (inputType.matches("[23467]")) {
+            value = value.replaceAll("[^0-9]", "");
         }
 
-        if(minLength == maxLength && maxLength>0){
-            Toast.makeText(requireContext(), "Must be "+minLength+" digits.", Toast.LENGTH_SHORT).show();
-        }else if(value.length() < minLength){
-            Toast.makeText(requireContext(), title, Toast.LENGTH_SHORT).show();
-        }else {
-            sendNext(value);
-        }
+        sendNext(value);
+
     }
 
     private void sendNext(String value){

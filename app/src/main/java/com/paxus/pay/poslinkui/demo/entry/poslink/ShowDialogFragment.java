@@ -1,6 +1,5 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -9,7 +8,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -29,6 +27,8 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ShowDialogFragment extends BaseEntryFragment {
+    private String packageName;
+    private String action;
     private long timeOut;
     private String transMode;
     private String title;
@@ -41,18 +41,19 @@ public class ShowDialogFragment extends BaseEntryFragment {
     private final Runnable timeoutRun = new Runnable() {
         @Override
         public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(),packageName,action);
+            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
         }
     };
 
-    public static Fragment newInstance(Intent intent){
-        ShowDialogFragment fragment = new ShowDialogFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-        bundle.putAll(intent.getExtras());
 
-        fragment.setArguments(bundle);
-        return fragment;
+    @Override
+    protected String getSenderPackageName() {
+        return packageName;
+    }
+
+    @Override
+    protected String getEntryAction() {
+        return action;
     }
 
     @Override
