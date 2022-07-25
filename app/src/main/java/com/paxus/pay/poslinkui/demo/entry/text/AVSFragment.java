@@ -34,8 +34,11 @@ public class AVSFragment extends BaseEntryFragment {
     private int maxLengthZip;
     private String transMode;
     private boolean zipText;
-    protected String packageName;
-    protected String action;
+    private String packageName;
+    private String action;
+
+    private EditText editTextAddr;
+    private EditText editTextZip;
 
     @Override
     protected String getSenderPackageName() {
@@ -46,9 +49,6 @@ public class AVSFragment extends BaseEntryFragment {
     protected String getEntryAction() {
         return action;
     }
-
-    private EditText editTextAddr;
-    private EditText editTextZip;
 
     @Override
     protected int getLayoutResourceId() {

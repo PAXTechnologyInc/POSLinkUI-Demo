@@ -23,15 +23,15 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class ZipcodeFragment extends ANumTextFragment {
-    protected String transType;
+    private String transType;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    protected String message = "";
-    protected String transMode;
+    private String message = "";
+    private String transMode;
     protected boolean allText;
-    protected String packageName;
-    protected String action;
+    private String packageName;
+    private String action;
 
     @Override
     protected String getSenderPackageName() {

@@ -19,7 +19,7 @@ public class AmountTextWatcher implements TextWatcher {
 
     protected boolean mEditing;
     protected String mPreStr;
-    private  int maxLength;
+    private int maxLength;
     private String currency;
     public AmountTextWatcher(int maxLength, String currency){
         this.maxLength = maxLength;

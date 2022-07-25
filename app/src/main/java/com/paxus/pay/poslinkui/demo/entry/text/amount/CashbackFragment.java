@@ -47,8 +47,8 @@ public class CashbackFragment extends BaseEntryFragment {
     private String currency = "";
     private long[] cashBackOptions;
     private boolean promptOther;
-    protected String packageName;
-    protected String action;
+    private String packageName;
+    private String action;
 
     @Override
     protected String getSenderPackageName() {

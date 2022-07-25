@@ -19,7 +19,6 @@ import com.paxus.pay.poslinkui.demo.R;
  */
 public class SelectAccountTypeFragment extends AOptionsDialogFragment {
     protected long timeout;
-    protected String message;
     private String action;
     private String packageName;
     private String[] items;

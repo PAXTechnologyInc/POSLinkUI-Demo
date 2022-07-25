@@ -30,11 +30,13 @@ import java.util.List;
  * {@value PoslinkEntry#ACTION_SHOW_MESSAGE}
  *
  * <p>
- *     UI Tips:
+ * UI Tips:
  *
  * </p>
  */
 public class ShowMessageFragment extends BaseEntryFragment {
+    private String packageName;
+    private String action;
     private String title;
     private String tax;
     private String total;
@@ -109,8 +111,6 @@ public class ShowMessageFragment extends BaseEntryFragment {
         }
     }
 
-    protected String packageName;
-    protected String action;
 
     @Override
     protected String getSenderPackageName() {

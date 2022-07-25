@@ -33,6 +33,8 @@ import java.util.List;
  * </p>
  */
 public class ShowSignatureBoxFragment extends BaseEntryFragment {
+    private String packageName;
+    private String action;
     private String title;
     private String text;
     private long timeOut;
@@ -169,8 +171,6 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_SIGNATURE, signature);
     }
 
-    protected String packageName;
-    protected String action;
 
     @Override
     protected String getSenderPackageName() {

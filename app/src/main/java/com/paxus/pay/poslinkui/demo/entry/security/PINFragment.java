@@ -50,8 +50,8 @@ public class PINFragment extends BaseEntryFragment {
     private Long totalAmount;
     private String currencyType;
     private String pinRange;
-    protected String packageName;
-    protected String action;
+    private String packageName;
+    private String action;
 
     @Override
     protected String getSenderPackageName() {

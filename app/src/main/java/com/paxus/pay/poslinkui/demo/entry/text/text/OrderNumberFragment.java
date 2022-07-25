@@ -22,14 +22,14 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class OrderNumberFragment extends ATextFragment {
-    protected String transType;
+    private String transType;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    protected String message = "";
-    protected String transMode;
-    protected String packageName;
-    protected String action;
+    private String message = "";
+    private String transMode;
+    private String packageName;
+    private String action;
 
     @Override
     protected String getSenderPackageName() {

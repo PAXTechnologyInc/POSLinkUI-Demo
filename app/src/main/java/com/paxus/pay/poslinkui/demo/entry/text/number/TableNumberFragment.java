@@ -22,13 +22,13 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class TableNumberFragment extends ANumFragment {
-    protected String packageName;
-    protected String action;
-    protected String transType;
+    private String packageName;
+    private String action;
+    private String transType;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    protected String transMode;
+    private String transMode;
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {

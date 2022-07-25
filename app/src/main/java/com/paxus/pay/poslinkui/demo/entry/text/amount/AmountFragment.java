@@ -21,14 +21,14 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class AmountFragment extends AAmountFragment {
-    protected String transType;
-    protected String transMode;
-    protected String packageName;
-    protected String action;
+    private String transType;
+    private String transMode;
+    private String packageName;
+    private String action;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    protected String currency = "";
+    private String currency = "";
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {

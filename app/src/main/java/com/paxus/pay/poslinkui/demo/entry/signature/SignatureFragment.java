@@ -39,8 +39,8 @@ public class SignatureFragment extends BaseEntryFragment {
     private String transMode;
     private long totalAmount;
     private String currency;
-    protected String packageName;
-    protected String action;
+    private String packageName;
+    private String action;
 
     @Override
     protected String getSenderPackageName() {

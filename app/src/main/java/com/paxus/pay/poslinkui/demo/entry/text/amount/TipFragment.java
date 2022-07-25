@@ -56,8 +56,8 @@ public class TipFragment extends BaseEntryFragment {
     private String tipUnit;
     private String[] enabledTipNames;
     private long[] enabledTipValues;
-    protected String packageName;
-    protected String action;
+    private String packageName;
+    private String action;
 
     @Override
     protected String getSenderPackageName() {

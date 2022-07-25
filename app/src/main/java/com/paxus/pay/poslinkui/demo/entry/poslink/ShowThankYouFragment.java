@@ -29,6 +29,8 @@ public class ShowThankYouFragment extends BaseEntryFragment {
     public static final String RIGHT_ALIGN = "\\R";
     public static final String CENTER_ALIGN = "\\C";
 
+    private String packageName;
+    private String action;
     private long timeOut;
     private String transMode;
     private String title;
@@ -42,8 +44,7 @@ public class ShowThankYouFragment extends BaseEntryFragment {
             EntryRequestUtils.sendNext(requireContext(), packageName, action);
         }
     };
-    protected String packageName;
-    protected String action;
+
 
     @Override
     protected String getSenderPackageName() {

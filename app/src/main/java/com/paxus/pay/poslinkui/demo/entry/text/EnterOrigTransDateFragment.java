@@ -28,8 +28,8 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 public class EnterOrigTransDateFragment extends BaseEntryFragment {
 
-    protected String packageName;
-    protected String action;
+    private String packageName;
+    private String action;
     private String transType;
     private String transMode;
     private long timeOut;
@@ -74,7 +74,7 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
 
         editText.addTextChangedListener(new TextWatcher() {
             protected boolean mEditing;
-            protected String mPreStr;
+            private String mPreStr;
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

@@ -27,7 +27,6 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  */
 public abstract class ATextFragment extends BaseEntryFragment {
 
-
     protected EditText editText;
 
     @Override

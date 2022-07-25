@@ -30,12 +30,14 @@ import java.io.IOException;
 /**
  * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_RECEIPT_VIEW}
  * <p>
- *     UI Tips:
- *     If print button clicked, sendNext(true)
- *     If receipt bitmap parse fail, sendAbort()
+ * UI Tips:
+ * If print button clicked, sendNext(true)
+ * If receipt bitmap parse fail, sendAbort()
  * </p>
  */
 public class ConfirmReceiptViewFragment extends BaseEntryFragment {
+    private String packageName;
+    private String action;
     private String transType;
     private long timeOut;
     private String transMode;
@@ -71,8 +73,6 @@ public class ConfirmReceiptViewFragment extends BaseEntryFragment {
         receiptUri = bundle.getString(EntryExtraData.PARAM_RECEIPT_URI);
     }
 
-    protected String packageName;
-    protected String action;
 
     @Override
     protected String getSenderPackageName() {

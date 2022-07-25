@@ -23,14 +23,14 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class EnterCardAllDigitsFragment extends ASecurityFragment {
-    protected String transType;
+    private String transType;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    protected String transMode;
+    private String transMode;
 
-    protected String packageName;
-    protected String action;
+    private String packageName;
+    private String action;
 
     @Override
     protected String getSenderPackageName() {

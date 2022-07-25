@@ -28,6 +28,8 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ShowDialogFormFragment extends BaseEntryFragment {
+    private String packageName;
+    private String action;
     private long timeOut;
     private String transMode;
     private String title;
@@ -43,8 +45,6 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
         }
     };
 
-    protected String packageName;
-    protected String action;
 
     @Override
     protected String getSenderPackageName() {

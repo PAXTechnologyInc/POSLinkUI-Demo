@@ -25,13 +25,13 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class EnterVcodeFragment extends ASecurityFragment {
-    protected String transType;
+    private String transType;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    protected String transMode;
-    protected String packageName;
-    protected String action;
+    private String transMode;
+    private String packageName;
+    private String action;
     private String vcodeName;
 
     @Override

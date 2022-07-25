@@ -38,8 +38,8 @@ public class FSAFragment extends BaseEntryFragment {
     private String currency;
     private long totalAmount;
     private List<String> fsaAmountOptions;
-    protected String packageName;
-    protected String action;
+    private String packageName;
+    private String action;
 
     @Override
     protected String getSenderPackageName() {

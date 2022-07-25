@@ -45,8 +45,8 @@ public class FleetFragment extends BaseEntryFragment {
     private String customerDataPattern;
     private String userIdPattern;
     private String vehicleIdPattern;
-    protected String packageName;
-    protected String action;
+    private String packageName;
+    private String action;
 
     @Override
     protected String getSenderPackageName() {

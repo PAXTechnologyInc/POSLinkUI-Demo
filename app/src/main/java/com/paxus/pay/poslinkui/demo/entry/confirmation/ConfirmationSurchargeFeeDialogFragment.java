@@ -26,7 +26,8 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ConfirmationSurchargeFeeDialogFragment extends BaseEntryDialogFragment {
-
+    private String packageName;
+    private String action;
     private long timeout;
     private String feeName;
     private long totalAmount;
@@ -79,8 +80,6 @@ public class ConfirmationSurchargeFeeDialogFragment extends BaseEntryDialogFragm
         }
     }
 
-    protected String packageName;
-    protected String action;
 
     @Override
     protected String getSenderPackageName() {

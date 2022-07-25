@@ -47,6 +47,9 @@ import java.util.Map;
 public class ShowTextBoxFragment extends BaseEntryFragment {
 
     private static final String BARCODE_QR_CODE = "7";
+
+    private String packageName;
+    private String action;
     private long timeOut;
     private String transMode;
     private String title;
@@ -80,8 +83,6 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         return R.layout.fragment_show_text_box;
     }
 
-    protected String packageName;
-    protected String action;
 
     @Override
     protected String getSenderPackageName() {

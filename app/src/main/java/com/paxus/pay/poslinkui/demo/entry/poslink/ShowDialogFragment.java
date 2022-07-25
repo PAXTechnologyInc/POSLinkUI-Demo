@@ -27,6 +27,8 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ShowDialogFragment extends BaseEntryFragment {
+    private String packageName;
+    private String action;
     private long timeOut;
     private String transMode;
     private String title;
@@ -42,8 +44,7 @@ public class ShowDialogFragment extends BaseEntryFragment {
             EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
         }
     };
-    protected String packageName;
-    protected String action;
+
 
     @Override
     protected String getSenderPackageName() {

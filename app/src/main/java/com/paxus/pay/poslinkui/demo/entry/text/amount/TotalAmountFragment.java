@@ -42,8 +42,8 @@ public class TotalAmountFragment extends BaseEntryFragment {
     private long baseAmount;
     private boolean noTipEnabled;
     private String tipName;
-    protected String packageName;
-    protected String action;
+    private String packageName;
+    private String action;
 
     @Override
     protected String getSenderPackageName() {

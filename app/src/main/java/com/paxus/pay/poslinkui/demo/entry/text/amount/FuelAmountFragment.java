@@ -22,15 +22,15 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class FuelAmountFragment extends AAmountFragment {
-    protected String transType;
-    protected String transMode;
-    protected String packageName;
-    protected String action;
+    private String transType;
+    private String transMode;
+    private String packageName;
+    private String action;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    protected String message = "";
-    protected String currency = "";
+    private String message = "";
+    private String currency = "";
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {

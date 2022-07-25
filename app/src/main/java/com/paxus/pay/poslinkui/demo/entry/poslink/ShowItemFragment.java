@@ -30,11 +30,12 @@ import java.util.List;
  * {@value PoslinkEntry#ACTION_SHOW_ITEM}
  *
  * <p>
- *     UI Tips:
+ * UI Tips:
  * </p>
  */
-public class ShowItemFragment  extends BaseEntryFragment {
-
+public class ShowItemFragment extends BaseEntryFragment {
+    private String packageName;
+    private String action;
     private String transMode;
     private String title;
     private String taxLine;
@@ -53,9 +54,6 @@ public class ShowItemFragment  extends BaseEntryFragment {
     protected int getLayoutResourceId() {
         return R.layout.fragment_show_item;
     }
-
-    protected String packageName;
-    protected String action;
 
     @Override
     protected String getSenderPackageName() {

@@ -40,7 +40,8 @@ public class InputTextFragment extends BaseEntryFragment {
     private static final String FORMAT_TIME = "HH:MM:SS";
     private static final String FORMAT_PHONE = "(XXX)XXX-XXXX";
     private static final String FORMAT_SSN = "XXX-XX-XXXX";
-
+    private String packageName;
+    private String action;
     private long timeOut;
     private int minLength;
     private int maxLength;
@@ -58,8 +59,7 @@ public class InputTextFragment extends BaseEntryFragment {
             EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
         }
     };
-    protected String packageName;
-    protected String action;
+
 
     @Override
     protected String getSenderPackageName() {

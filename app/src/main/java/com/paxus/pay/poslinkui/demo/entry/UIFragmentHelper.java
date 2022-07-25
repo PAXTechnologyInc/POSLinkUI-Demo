@@ -18,6 +18,7 @@ import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.Uncategory;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.CheckCardPresentFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.CheckDeactivateWarnFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmAdjustTipFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmBatchCloseFragment;
@@ -195,6 +196,7 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_CONFIRM_UNIFIED_MESSAGE, ConfirmUnifiedMessageFragment.class);
             put(ConfirmationEntry.ACTION_REVERSE_PARTIAL_APPROVAL, ReversePartialApprovalFragment.class);
             put(ConfirmationEntry.ACTION_SUPPLEMENT_PARTIAL_APPROVAL, SupplementPartialApprovalFragment.class);
+            put(ConfirmationEntry.ACTION_CHECK_CARD_PRESENT, CheckCardPresentFragment.class);
             put(ConfirmationEntry.ACTION_CHECK_DEACTIVATE_WARN, CheckDeactivateWarnFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, ConfirmBatchCloseFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_UNTIPPED, ConfirmUntippedFragment.class);
