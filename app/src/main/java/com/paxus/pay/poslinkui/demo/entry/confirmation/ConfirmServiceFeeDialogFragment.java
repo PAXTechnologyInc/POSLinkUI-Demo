@@ -16,16 +16,16 @@ import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
- * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_SURCHARGE_FEE}
+ * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_SERVICE_FEE}
  * <p>
- *     UI Tips:
- *     1.If click confirm, sendNext(true)
- *     2.If click cancel, sendAbort
- *     3.If click bypass, sendNext(false)
- *     4.If enableBypass is true, display bypass button, else hide it.
+ * UI Tips:
+ * 1.If click confirm, sendNext(true)
+ * 2.If click cancel, sendAbort
+ * 3.If click bypass, sendNext(false)
+ * 4.If enableBypass is true, display bypass button, else hide it.
  * </p>
  */
-public class ConfirmationSurchargeFeeDialogFragment extends BaseEntryDialogFragment {
+public class ConfirmServiceFeeDialogFragment extends BaseEntryDialogFragment {
     private String packageName;
     private String action;
     private long timeout;
@@ -33,11 +33,10 @@ public class ConfirmationSurchargeFeeDialogFragment extends BaseEntryDialogFragm
     private long totalAmount;
     private long feeAmount;
     private String currency;
-    private boolean enableBypass;
 
     @Override
     protected int getLayoutResourceId() {
-        return R.layout.fragment_surcharge_fee;
+        return R.layout.fragment_service_fee;
     }
 
     @Override
@@ -45,11 +44,10 @@ public class ConfirmationSurchargeFeeDialogFragment extends BaseEntryDialogFragm
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
-        feeName = bundle.getString(EntryExtraData.PARAM_SURCHARGE_FEE_NAME);
+        feeName = bundle.getString(EntryExtraData.PARAM_SERVICE_FEE_NAME);
         totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
-        feeAmount = bundle.getLong(EntryExtraData.PARAM_SURCHARGE_FEE);
+        feeAmount = bundle.getLong(EntryExtraData.PARAM_SERVICE_FEE);
         currency = bundle.getString(EntryExtraData.PARAM_CURRENCY);
-        enableBypass = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_BYPASS);
     }
 
     @Override
@@ -71,13 +69,6 @@ public class ConfirmationSurchargeFeeDialogFragment extends BaseEntryDialogFragm
 
         Button cancel = rootView.findViewById(R.id.cancel_button);
         cancel.setOnClickListener(v -> onCancelButtonClicked());
-        Button bypass = rootView.findViewById(R.id.bypass_button);
-        if (enableBypass) {
-            bypass.setOnClickListener(v -> onBypassButtonClicked());
-
-        } else {
-            bypass.setVisibility(View.GONE);
-        }
     }
 
 
@@ -97,10 +88,6 @@ public class ConfirmationSurchargeFeeDialogFragment extends BaseEntryDialogFragm
 
     private void onCancelButtonClicked() {
         sendAbort();
-    }
-
-    private void onBypassButtonClicked() {
-        sendNext(false);
     }
 
     private void sendNext(boolean confirm){

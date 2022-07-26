@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
+import android.text.TextPaint;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -98,7 +99,8 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
             requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(outRect1);
             barHeight = outRect1.top;  //statusBar's height
         }
-        int fontSize = (int)editText.getTextSize();
+        TextPaint paint = editText.getPaint();
+        int fontSize = (int) (paint.getTextSize() / paint.density);
         EntryRequestUtils.sendSecureArea(requireContext(), getSenderPackageName(), getEntryAction(), x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize,
                 "",
                 "FF9C27B0");
