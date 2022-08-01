@@ -72,6 +72,7 @@
             android:digits="0123456789 "
             android:layout_margin="5dp"
             android:gravity="center_horizontal"
+            android:textColor="#FF9C27B0"
             android:textSize="20sp"/>
         <Button
             android:layout_width="match_parent"

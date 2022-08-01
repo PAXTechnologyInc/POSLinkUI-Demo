@@ -6,16 +6,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextPaint;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.status.SecurityStatus;
+import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
@@ -27,18 +30,23 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
  * {@value SecurityEntry#ACTION_ENTER_CARD_LAST_4_DIGITS}<br>
  * {@value SecurityEntry#ACTION_ENTER_CARD_ALL_DIGITS}<br>
  * <p>
- *     UI Tips:
- *     1.When input box layout ready, send secure area location (Done on ViewTreeObserver.OnGlobalLayoutListener)
- *     2.When confirm button clicked, sendNext
- *     3.Update confirm button status when received SecurityStatus
+ * UI Tips:
+ * 1.When input box layout ready, send secure area location (Done on ViewTreeObserver.OnGlobalLayoutListener)
+ * 2.When confirm button clicked, sendNext
+ * 3.Update confirm button status when received SecurityStatus
+ * 4.Update view according keyboard location if you need
  * </p>
  */
 public abstract class ASecurityFragment extends BaseEntryFragment {
 
-    protected EditText editText;
+    protected TextView editText;
     protected Button confirmButton;
     protected int secureLength;
     protected BroadcastReceiver receiver;
+    private View mContentView;
+    private int mOrigWidth;
+    private int mOrigHeight;
+
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_security;
@@ -56,6 +64,19 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
             public void onGlobalLayout() {
                 editText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 onInputBoxLayoutReady();
+                mContentView = requireActivity().getWindow().findViewById(Window.ID_ANDROID_CONTENT);
+                if ("Q10A".equals(Build.MODEL)) {
+                    editText.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                        @Override
+                        public void onLayoutChange(View view, int left, int top, int right, int bottom,
+                                                   int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                            Logger.d("Security EditText onLayoutChange:" + left + "," + top + "," + right + "," + bottom + "," + oldLeft + "," + oldTop + "," + oldRight + "," + oldBottom);
+                            if (right != oldRight) {
+                                onInputBoxLayoutReady();
+                            }
+                        }
+                    });
+                }
             }
         });
 
@@ -68,6 +89,7 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
         intentFilter.addAction(SecurityStatus.SECURITY_ENTER_CLEARED);
         intentFilter.addAction(SecurityStatus.SECURITY_ENTERING);
         intentFilter.addAction(SecurityStatus.SECURITY_ENTER_DELETE);
+        intentFilter.addAction(SecurityStatus.SECURITY_KEYBOARD_LOCATION);
 
         requireContext().registerReceiver(receiver, intentFilter);
     }
@@ -85,7 +107,7 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
         }
     }
 
-    protected void sendSecureArea(EditText editText) {
+    protected void sendSecureArea(TextView editText) {
         int[] location = new int[2];
         editText.getLocationInWindow(location);
         int x = location[0];
@@ -103,7 +125,7 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
         int fontSize = (int) (paint.getTextSize() / paint.density);
         EntryRequestUtils.sendSecureArea(requireContext(), getSenderPackageName(), getEntryAction(), x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize,
                 "",
-                "FF9C27B0");
+                String.format("%X", editText.getCurrentTextColor()));
     }
 
     //2.When confirm button clicked, sendNext
@@ -130,13 +152,44 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
                     secureLength = 0;
                     break;
                 }
-                case SecurityStatus.SECURITY_ENTERING:{
+                case SecurityStatus.SECURITY_ENTERING: {
                     secureLength++;
                     break;
                 }
                 case SecurityStatus.SECURITY_ENTER_DELETE: {
                     secureLength--;
                     break;
+                }
+                case SecurityStatus.SECURITY_KEYBOARD_LOCATION: {
+                    if ("Q10A".equals(Build.MODEL)) {
+                        //4.Update view according keyboard location if you need
+                        Bundle extra = intent.getExtras();
+                        if (extra != null) {
+                            int x = extra.getInt(StatusData.PARAM_X);
+                            int y = extra.getInt(StatusData.PARAM_Y);
+                            int width = extra.getInt(StatusData.PARAM_WIDTH);
+                            int height = extra.getInt(StatusData.PARAM_HEIGHT);
+
+                            Logger.d("SECURITY_KEYBOARD_LOCATION:" + x + "," + y + "," + width + "," + height);
+                            if (x > 0) {
+                                ViewGroup.LayoutParams params = mContentView.getLayoutParams();
+                                mOrigWidth = mContentView.getMeasuredWidth();
+                                mOrigHeight = mContentView.getMeasuredHeight();
+
+                                params.height = mOrigHeight;
+                                params.width = mOrigWidth - width;
+                                mContentView.setLayoutParams(params);
+                                mContentView.requestLayout();
+                            } else {
+                                ViewGroup.LayoutParams params = mContentView.getLayoutParams();
+                                params.height = mOrigHeight;
+                                params.width = mOrigWidth;
+                                mContentView.setLayoutParams(params);
+                                mContentView.requestLayout();
+                            }
+                        }
+                        break;
+                    }
                 }
                 default:
                     break;

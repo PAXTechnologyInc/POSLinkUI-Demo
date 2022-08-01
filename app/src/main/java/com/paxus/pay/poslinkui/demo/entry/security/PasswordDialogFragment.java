@@ -124,7 +124,7 @@ public class PasswordDialogFragment extends BaseEntryDialogFragment {
         int fontSize = (int) (paint.getTextSize() / paint.density);
         EntryRequestUtils.sendSecureArea(requireContext(), getSenderPackageName(), getEntryAction(), x, y - barHeight, textView.getWidth(), textView.getHeight(), fontSize,
                 "",
-                String.format(Locale.US, "%08X", paint.getColor()));
+                String.format(Locale.US, "%08X", textView.getCurrentTextColor()));
     }
 
 

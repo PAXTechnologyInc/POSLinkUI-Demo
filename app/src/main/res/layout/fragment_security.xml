@@ -9,14 +9,17 @@
         android:id="@+id/message"
         android:textSize="18sp"
         android:textColor="@android:color/black"/>
-    <EditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_security"
         android:hint=""
         android:inputType="number"
         android:layout_margin="20dp"
-        android:gravity="center_horizontal"/>
+        android:background="@drawable/edit_frame"
+        android:gravity="center_horizontal"
+        android:textColor="#FF9C27B0"
+        android:textSize="20sp" />
 
     <Button
         android:layout_width="match_parent"

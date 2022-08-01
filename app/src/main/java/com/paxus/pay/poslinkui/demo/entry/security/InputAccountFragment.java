@@ -11,7 +11,9 @@ import android.os.Handler;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,13 +44,14 @@ import com.paxus.pay.poslinkui.demo.view.ClssLightsView;
 /**
  * Implement security entry actions {@link SecurityEntry#ACTION_INPUT_ACCOUNT}
  * <p>
- *     UI Tips:
- *     1.When input box layout ready, send secure area location (Done on ViewTreeObserver.OnGlobalLayoutListener)
- *     2.When confirm button clicked, sendNext
- *     3.Update contactless light when received ClssLightStatus
- *     4.Update amount when received InformationStatus.TRANS_AMOUNT_CHANGED_IN_CARD_PROCESSING
- *     5.Update confirm button status when received SecurityStatus
- *     6.Update entry mode when received CardStatus.CARD_INSERT_REQUIRED, CardStatus.CARD_TAP_REQUIRED,CardStatus.CARD_SWIPE_REQUIRED:
+ * UI Tips:
+ * 1.When input box layout ready, send secure area location (Done on ViewTreeObserver.OnGlobalLayoutListener)
+ * 2.When confirm button clicked, sendNext
+ * 3.Update contactless light when received ClssLightStatus
+ * 4.Update amount when received InformationStatus.TRANS_AMOUNT_CHANGED_IN_CARD_PROCESSING
+ * 5.Update confirm button status when received SecurityStatus
+ * 6.Update entry mode when received CardStatus.CARD_INSERT_REQUIRED, CardStatus.CARD_TAP_REQUIRED,CardStatus.CARD_SWIPE_REQUIRED:
+ * 7.Update view according keyboard location if you need
  * </p>
  */
 
@@ -84,16 +87,20 @@ public class InputAccountFragment extends BaseEntryFragment {
     protected Button confirmButton;
     protected int panLength = 0;
 
+    private View mContentView;
+    private int mOrigWidth;
+    private int mOrigHeight;
+
     //1.When input box layout ready, send secure area location
     // For A35, need delay 100ms (Ticket: BPOSANDJAX-325)
     private void onPanInputBoxLayoutReady() {
         //Change hint and font color if you want
         if (Build.MODEL.equals("A35")) {
             new Handler().postDelayed(() -> {
-                sendSecureArea(panInputBox, "Card Number", "FF9C27B0");
+                sendSecureArea(panInputBox, "Card Number");
             }, 100);
         } else {
-            sendSecureArea(panInputBox, "Card Number", "FF9C27B0");
+            sendSecureArea(panInputBox, "Card Number");
         }
     }
 
@@ -102,7 +109,7 @@ public class InputAccountFragment extends BaseEntryFragment {
         EntryRequestUtils.sendNext(requireContext(), packageName, action);
     }
 
-    private void sendSecureArea(TextView editText, String hint, String fontColor) {
+    private void sendSecureArea(TextView editText, String hint) {
         int[] location = new int[2];
         editText.getLocationInWindow(location);
         int x = location[0];
@@ -118,7 +125,7 @@ public class InputAccountFragment extends BaseEntryFragment {
         }
         TextPaint paint = editText.getPaint();
         int fontSize = (int) (paint.getTextSize() / paint.density);
-        EntryRequestUtils.sendSecureArea(requireContext(), packageName, action, x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize, hint, fontColor);
+        EntryRequestUtils.sendSecureArea(requireContext(), packageName, action, x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize, hint, String.format("%X", editText.getCurrentTextColor()));
     }
 
     private void onUpdateEntryMode(Intent intent) {
@@ -255,6 +262,25 @@ public class InputAccountFragment extends BaseEntryFragment {
                 public void onGlobalLayout() {
                     panInputBox.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     onPanInputBoxLayoutReady();
+                    mContentView = requireActivity().getWindow().findViewById(Window.ID_ANDROID_CONTENT);
+                    if ("Q10A".equals(Build.MODEL)) {
+                        panInputBox.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                            @Override
+                            public void onLayoutChange(View view, int left,
+                                                       int top,
+                                                       int right,
+                                                       int bottom,
+                                                       int oldLeft,
+                                                       int oldTop,
+                                                       int oldRight,
+                                                       int oldBottom) {
+                                Logger.d("Security EditText onLayoutChange:" + left + "," + top + "," + right + "," + bottom + "," + oldLeft + "," + oldTop + "," + oldRight + "," + oldBottom);
+                                if (right != oldRight) {
+                                    onPanInputBoxLayoutReady();
+                                }
+                            }
+                        });
+                    }
                 }
             });
         } else {
@@ -346,6 +372,7 @@ public class InputAccountFragment extends BaseEntryFragment {
             intentFilter.addAction(SecurityStatus.SECURITY_ENTER_CLEARED);
             intentFilter.addAction(SecurityStatus.SECURITY_ENTERING);
             intentFilter.addAction(SecurityStatus.SECURITY_ENTER_DELETE);
+            intentFilter.addAction(SecurityStatus.SECURITY_KEYBOARD_LOCATION);
 
             requireContext().registerReceiver(receiver, intentFilter);
         }
@@ -422,6 +449,37 @@ public class InputAccountFragment extends BaseEntryFragment {
                 case SecurityStatus.SECURITY_ENTER_DELETE: {
                     panLength--;
                     break;
+                }
+                case SecurityStatus.SECURITY_KEYBOARD_LOCATION: {
+                    if ("Q10A".equals(Build.MODEL)) {
+                        //4.Update view according keyboard location if you need
+                        Bundle extra = intent.getExtras();
+                        if (extra != null) {
+                            int x = extra.getInt(StatusData.PARAM_X);
+                            int y = extra.getInt(StatusData.PARAM_Y);
+                            int width = extra.getInt(StatusData.PARAM_WIDTH);
+                            int height = extra.getInt(StatusData.PARAM_HEIGHT);
+
+                            Logger.d("SECURITY_KEYBOARD_LOCATION:" + x + "," + y + "," + width + "," + height);
+                            if (x > 0) {
+                                ViewGroup.LayoutParams params = mContentView.getLayoutParams();
+                                mOrigWidth = mContentView.getMeasuredWidth();
+                                mOrigHeight = mContentView.getMeasuredHeight();
+
+                                params.height = mOrigHeight;
+                                params.width = mOrigWidth - width;
+                                mContentView.setLayoutParams(params);
+                                mContentView.requestLayout();
+                            } else {
+                                ViewGroup.LayoutParams params = mContentView.getLayoutParams();
+                                params.height = mOrigHeight;
+                                params.width = mOrigWidth;
+                                mContentView.setLayoutParams(params);
+                                mContentView.requestLayout();
+                            }
+                        }
+                        break;
+                    }
                 }
                 default:
                     break;
