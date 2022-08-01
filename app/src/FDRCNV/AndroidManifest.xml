@@ -150,7 +150,6 @@
                 <action android:name="com.pax.us.pay.action.SELECT_ORIG_CURRENCY" />
                 <action android:name="com.pax.us.pay.action.SELECT_REFUND_REASON" />
                 <action android:name="com.pax.us.pay.action.SELECT_TAX_REASON" />
-                <action android:name="com.pax.us.pay.action.SELECT_DUPLICATE_OVERRIDE" />
                 <action android:name="com.pax.us.pay.action.SELECT_SEARCH_CRITERIA" />
             </intent-filter>
         </activity>
