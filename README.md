@@ -18,6 +18,13 @@ Use fragment to implement all UI (Activity and Dialog).
         android:autoRemoveFromRecents="true">
 ```
 
+## UI List
+You just need focus on required actions of specific BroadPOS app and don't have to implement ALL UI actions defined in POSLinkUI.
+Specific AndroidManifest.xml for reference:
+1. [ALL](./app/src/main/AndroidManifest.xml)
+2. [Shift4](./app/src/Shift4/AndroidManifest.xml)
+3. [FDRCNV](./app/src/FDRCNV/AndroidManifest.xml)
+
 ## POSLinkUI Transaction flow
 The log below would help you understand how POSLinkUI run when do a transaction.
 
