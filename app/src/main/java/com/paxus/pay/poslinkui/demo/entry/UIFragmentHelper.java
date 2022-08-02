@@ -15,6 +15,7 @@ import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.SignatureEntry;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
+import com.pax.us.pay.ui.constant.status.BatchStatus;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.Uncategory;
@@ -340,6 +341,8 @@ public class UIFragmentHelper {
                 case CardStatus.CARD_SWIPE_REQUIRED:
                 case CardStatus.CARD_INSERT_REQUIRED:
                 case CardStatus.CARD_TAP_REQUIRED:
+                case BatchStatus.BATCH_CLOSE_UPLOADING:
+                case BatchStatus.BATCH_SF_UPLOADING:
                 case CardStatus.CARD_PROCESS_STARTED: {
                     if (categories == null) {
                         Logger.e("WARNING:\"" + action + "\" Category is missing!");
@@ -407,6 +410,12 @@ public class UIFragmentHelper {
             case Uncategory.LOG_UPLOAD_UPLOADING:
             case Uncategory.LOG_UPLOAD_COMPLETED:
                 return "log_upload";
+            case BatchStatus.BATCH_SF_UPLOADING:
+            case BatchStatus.BATCH_SF_COMPLETED:
+                return "sf_upload";
+            case BatchStatus.BATCH_CLOSE_UPLOADING:
+            case BatchStatus.BATCH_CLOSE_COMPLETED:
+                return "batch_upload";
             default:
                 return null;
         }

@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
+import com.pax.us.pay.ui.constant.status.BatchStatus;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
@@ -245,6 +246,13 @@ public class EntryActivity extends AppCompatActivity {
         filter.addAction(CardStatus.CARD_QUICK_REMOVAL_REQUIRED);
         filter.addAction(CardStatus.CARD_PROCESS_STARTED);
         filter.addAction(CardStatus.CARD_PROCESS_COMPLETED);
+
+        //----------------Batch Status-----------------
+        filter.addCategory(BatchStatus.CATEGORY);
+        filter.addAction(BatchStatus.BATCH_SF_UPLOADING);
+        filter.addAction(BatchStatus.BATCH_SF_COMPLETED);
+        filter.addAction(BatchStatus.BATCH_CLOSE_UPLOADING);
+        filter.addAction(BatchStatus.BATCH_CLOSE_COMPLETED);
 
         this.registerReceiver(receiver, filter);
     }
