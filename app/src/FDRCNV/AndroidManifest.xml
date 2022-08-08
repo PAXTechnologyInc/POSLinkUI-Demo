@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.paxus.pay.poslinkui.demo">
+
+    <!--    Add permissions for write log-->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:name=".DemoApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.POSLinkUI">
+
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/Theme.Main">
+            <!--            Add launcher then you can see the app in desktop and uninstall it easily-->
+            <intent-filter>
+
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--        1. exported should be true. Then this activity can be started by Intent.-->
+        <!--        2. launchMode is set to singleTop. If the activity is at the top of stack, it will not be created. New intent will be called.-->
+        <!--        3. To show some dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE. The theme is set to No Action Bar and transparent.-->
+        <activity
+            android:name=".entry.EntryActivity"
+            android:autoRemoveFromRecents="true"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.POSLinkUI">
+            <intent-filter>
+                <category android:name="com.pax.us.pay.ui.category.TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="com.pax.us.pay.action.ENTER_AMOUNT" />
+                <action android:name="com.pax.us.pay.action.ENTER_TIP" />
+                <action android:name="com.pax.us.pay.action.ENTER_TOTAL_AMOUNT" />
+                <action android:name="com.pax.us.pay.action.ENTER_CASH_BACK" />
+                <action android:name="com.pax.us.pay.action.ENTER_ADDRESS" />
+                <action android:name="com.pax.us.pay.action.ENTER_ZIP_CODE" />
+                <action android:name="com.pax.us.pay.action.ENTER_AVS_DATA" />
+                <action android:name="com.pax.us.pay.action.ENTER_EXPIRY_DATE" />
+                <!--Fleet-->
+                <action android:name="com.pax.us.pay.action.ENTER_FUEL_AMOUNT" />
+                <action android:name="com.pax.us.pay.action.ENTER_PROMPT_RESTRICTION_CODE" />
+                <action android:name="com.pax.us.pay.action.ENTER_FLEET_DATA" />
+                <!--MOTO-->
+                <action android:name="com.pax.us.pay.action.ENTER_ORDER_NUMBER" />
+                <action android:name="com.pax.us.pay.action.ENTER_CS_PHONE_NUMBER" />
+                <!--FSA-->
+                <action android:name="com.pax.us.pay.action.ENTER_FSA_DATA" />
+                <!--Commercial-->
+                <action android:name="com.pax.us.pay.action.ENTER_CUSTOMER_CODE" />
+                <action android:name="com.pax.us.pay.action.ENTER_PO_NUMBER" />
+                <action android:name="com.pax.us.pay.action.ENTER_MERCHANT_TAX_ID" />
+                <action android:name="com.pax.us.pay.action.ENTER_DEST_ZIP_CODE" />
+                <action android:name="com.pax.us.pay.action.ENTER_PROD_DESC" />
+                <action android:name="com.pax.us.pay.action.ENTER_TAX_AMOUNT" />
+                <!--Other-->
+                <action android:name="com.pax.us.pay.action.ENTER_INVOICE_NUMBER" />
+                <action android:name="com.pax.us.pay.action.ENTER_CLERK_ID" />
+                <action android:name="com.pax.us.pay.action.ENTER_SERVER_ID" />
+                <action android:name="com.pax.us.pay.action.ENTER_TABLE_NUMBER" />
+                <action android:name="com.pax.us.pay.action.ENTER_GUEST_NUMBER" />
+
+                <action android:name="com.pax.us.pay.action.ENTER_TRANS_NUMBER" />
+                <action android:name="com.pax.us.pay.action.ENTER_AUTH_CODE" />
+                <action android:name="com.pax.us.pay.action.ENTER_VOUCHER_DATA" />
+                <action android:name="com.pax.us.pay.action.ENTER_ORIG_DATE" />
+
+            </intent-filter>
+            <intent-filter>
+                <category android:name="com.pax.us.pay.ui.category.SECURITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="com.pax.us.pay.action.INPUT_ACCOUNT" />
+                <action android:name="com.pax.us.pay.action.MANAGE_INPUT_ACCOUNT" />
+                <action android:name="com.pax.us.pay.action.ENTER_CARD_ALL_DIGITS" />
+                <action android:name="com.pax.us.pay.action.ENTER_CARD_LAST_4_DIGITS" />
+                <action android:name="com.pax.us.pay.action.ENTER_CVV" />
+                <action android:name="com.pax.us.pay.action.ENTER_PIN" />
+                <action android:name="com.pax.us.pay.action.ADMINISTRATOR_PASSWORD" />
+            </intent-filter>
+
+            <intent-filter>
+                <category android:name="com.pax.us.pay.ui.category.DETAILS" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="com.pax.us.pay.action.DISPLAY_TRANS_INFORMATION" />
+            </intent-filter>
+            <intent-filter>
+                <category android:name="com.pax.us.pay.ui.category.SIGNATURE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="com.pax.us.pay.action.GET_SIGNATURE" />
+            </intent-filter>
+            <intent-filter>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="com.pax.us.pay.action.START_UI" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_SURCHARGE_FEE" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_CARD_PRESENT" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_CARD_PROCESS_RESULT" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_DUPLICATE_TRANS" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_ONLINE_RETRY" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_PRINT_CUSTOMER_COPY" />
+                <action android:name="com.pax.us.pay.action.DISPLAY_QR_CODE_RECEIPT" />
+                <action android:name="com.pax.us.pay.action.REVERSE_PARTIAL_APPROVAL" />
+                <action android:name="com.pax.us.pay.action.SUPPLEMENT_PARTIAL_APPROVAL" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_CARD_ENTRY_RETRY" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_MERCHANT_SCOPE" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_DEACTIVATE_WARN" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_BATCH_CLOSE" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_UNTIPPED" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_PRINTER_STATUS" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_UPLOAD_TRANS" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_UPLOAD_RETRY" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_PRINT_FAILED_TRANS" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_PRINT_FPS" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_DELETE_SF" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_ADJUST_TIP" />
+            </intent-filter>
+            <intent-filter>
+                <category android:name="com.pax.us.pay.ui.category.OPTION" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="com.pax.us.pay.action.SELECT_MERCHANT" />
+                <action android:name="com.pax.us.pay.action.SELECT_EDC_TYPE" />
+                <action android:name="com.pax.us.pay.action.SELECT_TRANS_TYPE" />
+                <action android:name="com.pax.us.pay.action.SELECT_SUB_TRANS_TYPE" />
+                <action android:name="com.pax.us.pay.action.SELECT_EBT_TYPE" />
+                <action android:name="com.pax.us.pay.action.SELECT_AID" />
+                <action android:name="com.pax.us.pay.action.SELECT_BY_PASS" />
+                <action android:name="com.pax.us.pay.action.SELECT_CARD_TYPE" />
+                <action android:name="com.pax.us.pay.action.SELECT_ORIG_CURRENCY" />
+                <action android:name="com.pax.us.pay.action.SELECT_REFUND_REASON" />
+                <action android:name="com.pax.us.pay.action.SELECT_TAX_REASON" />
+                <action android:name="com.pax.us.pay.action.SELECT_SEARCH_CRITERIA" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

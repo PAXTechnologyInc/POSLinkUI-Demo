@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/base_amount"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:paddingVertical="10dp"
+        android:gravity="center"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tip_name"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:paddingBottom="10dp"
+        android:gravity="center"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/message"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/options_layout"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_tip"
+        android:hint=""
+        android:layout_margin="20dp"
+        android:inputType="numberSigned"
+        android:digits="0123456789,.$€"
+        android:gravity="center_horizontal"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/confirm_button"
+        android:text="@string/confirm"/>
+
+    <TableLayout
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/tips_summary">
+        <TableRow>
+            <TextView
+                android:layout_height="wrap_content"
+                android:text="@string/sale"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="start"/>
+            <TextView
+                android:layout_height="wrap_content"
+                android:id="@+id/summary_sale"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="end"/>
+        </TableRow>
+        <TableRow
+            android:id="@+id/summary_tip1">
+            <TextView android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:layout_height="wrap_content"
+                android:text="@string/detail_item_tip1"
+                android:id="@+id/summary_tip1_name"/>
+            <TextView android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_height="wrap_content"
+                android:id="@+id/summary_tip1_amt"/>
+        </TableRow>
+        <TableRow
+            android:id="@+id/summary_tip2">
+            <TextView android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:layout_height="wrap_content"
+                android:text="@string/detail_item_tip2"
+                android:id="@+id/summary_tip2_name"/>
+            <TextView android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_height="wrap_content"
+                android:id="@+id/summary_tip2_amt"/>
+        </TableRow>
+        <TableRow
+            android:id="@+id/summary_tip3">
+            <TextView android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/detail_item_tip3"
+                android:id="@+id/summary_tip3_name"
+                android:gravity="start"/>
+            <TextView
+                android:layout_height="wrap_content"
+                android:id="@+id/summary_tip3_amt"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="end"/>
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

@@ -1,0 +1,17 @@
+
+def loadVersions(String propertiesFile) {
+    println("rootProject is " + rootProject.name)
+    Properties properties = new Properties()
+    def file = file(propertiesFile)
+    if (file.canRead()) {
+        properties.load(file.newDataInputStream())
+    } else {
+        throw new RuntimeException("Cannot find " + propertiesFile)
+    }
+
+    properties.each { prop -> project.ext.set(prop.key, prop.value) }
+}
+
+ext {
+    loadVersions = this.&loadVersions
+}
