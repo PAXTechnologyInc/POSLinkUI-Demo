@@ -43,7 +43,8 @@ public abstract class AConfirmationDialogFragment extends BaseEntryDialogFragmen
         Button negativeButton = rootView.findViewById(R.id.cancel_button);
         String negativeText = getNegativeText();
         if(!TextUtils.isEmpty(negativeText)) {
-            negativeButton.setOnClickListener( v -> onNegativeButtonClicked());
+            negativeButton.setText(negativeText);
+            negativeButton.setOnClickListener(v -> onNegativeButtonClicked());
         }else{
             negativeButton.setVisibility(View.GONE);
         }

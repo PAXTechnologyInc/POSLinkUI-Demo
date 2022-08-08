@@ -145,11 +145,13 @@ public class EntryActivity extends AppCompatActivity {
         Logger.i("receive Status Action \"" + action + "\"");
         if(InformationStatus.TRANS_COMPLETED.equals(action)){
             String msg = intent.getStringExtra(StatusData.PARAM_MSG); //For POSLinkEntry, msg might be empty
-            long code = intent.getLongExtra(StatusData.PARAM_CODE,0L);
-            if(TextUtils.isEmpty(msg) || code == -3){//Transaction Cancelled
+            long code = intent.getLongExtra(StatusData.PARAM_CODE, 0L);
+            if (TextUtils.isEmpty(msg) || code == -3) {//Transaction Cancelled
                 finishAndRemoveTask();
                 return;
             }
+            //Close Entry Dialog before prompt Trans Complete Dialog
+            UIFragmentHelper.closeDialog(getSupportFragmentManager(), "EntryDialog");
         }
         String dialogTag = UIFragmentHelper.createStatusDialogTag(action);
         if(!TextUtils.isEmpty(dialogTag)) {
