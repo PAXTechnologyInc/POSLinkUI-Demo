@@ -5,7 +5,7 @@ plugins {
 def releaseTime() {
     return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
 }
-def VERSION_NAME = "V1.11.00_" + releaseTime()
+def VERSION_NAME = "V1.01.00_" + releaseTime()
 def ARCHIVES_BASE_NAME = "POSLinkUI Demo_" + VERSION_NAME
 
 android {
