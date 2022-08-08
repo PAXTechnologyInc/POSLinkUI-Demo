@@ -169,3 +169,10 @@ You can login your github credential by 2 ways:
 
 About how to generate github token. Please refer [Github Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
+###2.Add dependency
+Add dependency to app/build.gradle
+```
+    dependencies {
+        implementation "com.paxus.ui:constant:1.01.00"
+    }
+```
