@@ -424,6 +424,7 @@
     <string name="please_see_phone">Please See Phone!</string>
     <string name="info_emv_trans_online">Do Not Remove Your Card Please!\nProcessing Online&#8230;</string>
     <string name="info_trans_online">Processing, Please Wait...</string>
+    <string name="start_ui">Processing, Please Wait...</string>
     <string name="download_emv_capk">Downloading EMV CAPK\nPlease Wait...</string>
     <string name="update_process">Updating...</string>
     <string name="print_process">Printing...</string>

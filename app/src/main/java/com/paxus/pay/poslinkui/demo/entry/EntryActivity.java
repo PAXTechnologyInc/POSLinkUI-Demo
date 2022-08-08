@@ -122,6 +122,7 @@ public class EntryActivity extends AppCompatActivity {
                 }
                 ((DialogFragment) fragment).show(getSupportFragmentManager(), "EntryDialog");
             } else {
+                UIFragmentHelper.closeDialog(getSupportFragmentManager(), "EntryDialog");
 
                 updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
 
