@@ -18,6 +18,8 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
+import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 import java.util.Hashtable;
@@ -26,7 +28,7 @@ import java.util.Hashtable;
  * Implement confirmation entry action {@value ConfirmationEntry#ACTION_DISPLAY_QR_CODE_RECEIPT}
  * <p>
  * UI Tips:
- * 1.If click BACK, sendNext(true)
+ * 1.If click BACK, sendNext()
  * </p>
  */
 public class DisplayQRCodeReceiptFragment extends BaseEntryFragment {
@@ -117,5 +119,12 @@ public class DisplayQRCodeReceiptFragment extends BaseEntryFragment {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
         return bitmap;
+    }
+
+    @Override
+    public void onEntryAbort(EntryAbortEvent event) {
+        //1.If click BACK, sendNext()
+
+        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
     }
 }
