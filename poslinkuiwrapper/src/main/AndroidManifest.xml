@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.paxus.poslinkui" >
+
+    <application>
+        <activity
+            android:name=".EntryActivity"
+            android:launchMode="singleTask"
+            android:exported="false"
+            android:theme="@style/EntryTheme"/>
+
+        <activity-alias
+            android:name="com.pax.us.pay.action.ENTER_AMOUNT"
+            android:targetActivity=".EntryActivity"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <category android:name="com.pax.us.pay.ui.category.TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="com.pax.us.pay.action.ENTER_AMOUNT" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.pax.us.pay.action.INPUT_ACCOUNT"
+            android:targetActivity=".EntryActivity"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <category android:name="com.pax.us.pay.ui.category.SECURITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="com.pax.us.pay.action.INPUT_ACCOUNT" />
+            </intent-filter>
+        </activity-alias>
+    </application>
+
+</manifest>

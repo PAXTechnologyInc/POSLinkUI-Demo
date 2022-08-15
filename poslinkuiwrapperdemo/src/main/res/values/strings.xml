@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">POSLinkUIWrapperDemo</string>
+    <string name="title_activity_enter_text">EnterTextActivity</string>
+
+    <string name="start_transaction">start transaction</string>
+
+    <string name="amount_message">Please enter amount</string>
+    <string name="confirm">Confirm</string>
+</resources>
