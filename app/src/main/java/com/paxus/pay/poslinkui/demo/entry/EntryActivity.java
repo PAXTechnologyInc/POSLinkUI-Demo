@@ -107,13 +107,19 @@ public class EntryActivity extends AppCompatActivity {
     }
 
     private void loadEntry(Intent intent){
-        Logger.i("start Entry Action \""+intent.getAction()+"\"");
+        Logger.i("start Entry Action \"" + intent.getAction() + "\"");
+        Bundle bundle = intent.getExtras();
+        StringBuilder extras = new StringBuilder();
+        for (String key : bundle.keySet()) {
+            extras.append(key).append(":\"").append(bundle.get(key)).append("\",");
+        }
+        Logger.i("Action Extras:{" + extras + "}");
 
         updateTransMode(intent.getStringExtra(EntryExtraData.PARAM_TRANS_MODE));
 
         Fragment fragment = UIFragmentHelper.createFragment(intent);
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
-        if(fragment != null) {
+        if (fragment != null) {
             if (fragment instanceof DialogFragment) {
                 if (frag == null) {
                     //To show dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, hide tool bar.
@@ -140,10 +146,17 @@ public class EntryActivity extends AppCompatActivity {
         }
     }
 
-    public void loadStatus(Intent intent){
+    public void loadStatus(Intent intent) {
         String action = intent.getAction();
         Logger.i("receive Status Action \"" + action + "\"");
-        if(InformationStatus.TRANS_COMPLETED.equals(action)){
+        Bundle bundle = intent.getExtras();
+        StringBuilder extras = new StringBuilder();
+        for (String key : bundle.keySet()) {
+            extras.append(key).append(":\"").append(bundle.get(key)).append("\",");
+        }
+        Logger.i("Action Extras:{" + extras + "}");
+
+        if (InformationStatus.TRANS_COMPLETED.equals(action)) {
             String msg = intent.getStringExtra(StatusData.PARAM_MSG); //For POSLinkEntry, msg might be empty
             long code = intent.getLongExtra(StatusData.PARAM_CODE, 0L);
             if (TextUtils.isEmpty(msg) || code == -3) {//Transaction Cancelled
