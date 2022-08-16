@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/edit_security"
         android:hint=""
-        android:inputType="number"
         android:layout_margin="20dp"
         android:background="@drawable/edit_frame"
         android:gravity="center_horizontal"

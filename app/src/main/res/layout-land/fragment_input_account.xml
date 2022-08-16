@@ -68,8 +68,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/edit_account"
             android:hint=""
-            android:inputType="numberSigned"
-            android:digits="0123456789 "
             android:layout_margin="5dp"
             android:gravity="center_horizontal"
             android:textColor="#FF9C27B0"
