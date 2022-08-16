@@ -432,7 +432,11 @@ public class UIFragmentHelper {
         Fragment prev = fragmentManager.findFragmentByTag(tag);
         if (prev != null) {
             DialogFragment df = (DialogFragment) prev;
-            df.dismiss();
+            try {
+                df.dismiss();
+            } catch (Exception e) {
+                //Secure Dismiss dialog
+            }
         }
     }
 }

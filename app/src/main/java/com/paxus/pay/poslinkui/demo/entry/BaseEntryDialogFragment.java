@@ -120,7 +120,11 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
     protected abstract String getEntryAction();
 
     protected void sendAbort() {
-        dismiss();
+        try {
+            dismiss();
+        } catch (Exception e) {
+            //Secure Dismiss dialog
+        }
         EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
     }
 
@@ -134,10 +138,14 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
     /**
      * Entry Accepted means BroadPOS accepts the output from ACTION_NEXT
      */
-    protected void onEntryAccepted(){
+    protected void onEntryAccepted() {
         //4.2when got accepted, close dialog
         Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + getEntryAction() + "\"");
-        dismiss();
+        try {
+            dismiss();
+        } catch (Exception e) {
+            //Secure Dismiss dialog
+        }
     }
 
     /**

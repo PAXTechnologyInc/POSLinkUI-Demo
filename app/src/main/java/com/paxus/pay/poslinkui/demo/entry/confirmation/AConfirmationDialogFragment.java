@@ -60,7 +60,11 @@ public abstract class AConfirmationDialogFragment extends BaseEntryDialogFragmen
     }
 
     protected void sendNext(boolean confirm) {
-        dismiss(); //Close Dialog
+        try {
+            dismiss();
+        } catch (Exception e) {
+            //Secure Dismiss dialog
+        }
 
         EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction(), getRequestedParamName(), confirm);
     }
