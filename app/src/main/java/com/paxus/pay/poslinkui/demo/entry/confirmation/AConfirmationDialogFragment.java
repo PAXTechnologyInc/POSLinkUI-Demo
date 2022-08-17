@@ -43,7 +43,8 @@ public abstract class AConfirmationDialogFragment extends BaseEntryDialogFragmen
         Button negativeButton = rootView.findViewById(R.id.cancel_button);
         String negativeText = getNegativeText();
         if(!TextUtils.isEmpty(negativeText)) {
-            negativeButton.setOnClickListener( v -> onNegativeButtonClicked());
+            negativeButton.setText(negativeText);
+            negativeButton.setOnClickListener(v -> onNegativeButtonClicked());
         }else{
             negativeButton.setVisibility(View.GONE);
         }
@@ -59,7 +60,11 @@ public abstract class AConfirmationDialogFragment extends BaseEntryDialogFragmen
     }
 
     protected void sendNext(boolean confirm) {
-        dismiss(); //Close Dialog
+        try {
+            dismiss();
+        } catch (Exception e) {
+            //Secure Dismiss dialog
+        }
 
         EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction(), getRequestedParamName(), confirm);
     }

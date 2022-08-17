@@ -15,6 +15,7 @@ import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.SignatureEntry;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
+import com.pax.us.pay.ui.constant.status.BatchStatus;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.Uncategory;
@@ -44,6 +45,7 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUploadRetryFragmen
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUploadTransFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.DisplayQRCodeReceiptFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ReversePartialApprovalFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.StartUIDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.SupplementPartialApprovalFragment;
 import com.paxus.pay.poslinkui.demo.entry.information.DisplayTransInfoFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectAccountTypeFragment;
@@ -224,6 +226,7 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_CONFIRM_CARD_ENTRY_RETRY, ConfirmCardEntryRetryFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_SIGNATURE_MATCH, ConfirmSignatureMatchFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_DCC, ConfirmDCCFragment.class);
+            put(ConfirmationEntry.ACTION_START_UI, StartUIDialogFragment.class);
 
         }
     };
@@ -340,6 +343,8 @@ public class UIFragmentHelper {
                 case CardStatus.CARD_SWIPE_REQUIRED:
                 case CardStatus.CARD_INSERT_REQUIRED:
                 case CardStatus.CARD_TAP_REQUIRED:
+                case BatchStatus.BATCH_CLOSE_UPLOADING:
+                case BatchStatus.BATCH_SF_UPLOADING:
                 case CardStatus.CARD_PROCESS_STARTED: {
                     if (categories == null) {
                         Logger.e("WARNING:\"" + action + "\" Category is missing!");
@@ -407,6 +412,12 @@ public class UIFragmentHelper {
             case Uncategory.LOG_UPLOAD_UPLOADING:
             case Uncategory.LOG_UPLOAD_COMPLETED:
                 return "log_upload";
+            case BatchStatus.BATCH_SF_UPLOADING:
+            case BatchStatus.BATCH_SF_COMPLETED:
+                return "sf_upload";
+            case BatchStatus.BATCH_CLOSE_UPLOADING:
+            case BatchStatus.BATCH_CLOSE_COMPLETED:
+                return "batch_upload";
             default:
                 return null;
         }
@@ -421,7 +432,11 @@ public class UIFragmentHelper {
         Fragment prev = fragmentManager.findFragmentByTag(tag);
         if (prev != null) {
             DialogFragment df = (DialogFragment) prev;
-            df.dismiss();
+            try {
+                df.dismiss();
+            } catch (Exception e) {
+                //Secure Dismiss dialog
+            }
         }
     }
 }

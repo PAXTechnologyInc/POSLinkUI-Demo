@@ -136,3 +136,43 @@ A simple explanation for reading log (Step by Step)
     TRANS_COMPLETED:0,CREDIT SALE SUCCESS
     ConfirmReceiptViewFragment onDestroy
     EntryActivity onDestroy
+
+## How to build
+
+### 1.Config Maven
+In build.gradle of root project, we add maven repository of POSLinkUI.
+```
+    allprojects {
+        repositories {
+            google()
+            mavenCentral()
+            maven {
+                url 'https://maven.pkg.github.com/PAXTechnologyInc/POSLink-UI'
+                credentials {
+                    username = GITHUB_USER_NAME
+                    password = GITHUB_USER_TOKEN
+                }
+            }
+            mavenLocal()
+        }
+
+    }
+```
+
+You can login your github credential by 2 ways:
+1. Settings->Version Control->Github->Log In using token
+2. Add github user name and token to local.properties. Example:
+```
+    gpr.key=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    gpr.user=XXXXXXXXXXX@XXXXXX
+```
+
+About how to generate github token. Please refer [Github Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+
+###2.Add dependency
+Add dependency to app/build.gradle
+```
+    dependencies {
+        implementation "com.paxus.ui:constant:1.01.00"
+    }
+```

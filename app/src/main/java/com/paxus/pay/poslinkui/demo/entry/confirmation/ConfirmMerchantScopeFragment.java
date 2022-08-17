@@ -59,16 +59,24 @@ public class ConfirmMerchantScopeFragment extends AConfirmationDialogFragment {
 
     @Override
     protected String getPositiveText() {
-        if (options != null && options.contains(MerchantScope.CURRENT)) {
-            return getString(R.string.confirm_current);
+        if (options != null) {
+            if (options.contains(MerchantScope.CURRENT)) {
+                return getString(R.string.confirm_current);
+            } else {
+                return options.get(0);
+            }
         }
         return null;
     }
 
     @Override
     protected String getNegativeText() {
-        if (options != null && options.contains(MerchantScope.ALL)) {
-            return getString(R.string.confirm_all);
+        if (options != null) {
+            if (options.contains(MerchantScope.ALL)) {
+                return getString(R.string.confirm_all);
+            } else if (options.size() >= 1) {
+                return options.get(1);
+            }
         }
         return null;
     }

@@ -14,6 +14,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
+import com.pax.us.pay.ui.constant.entry.enumeration.SFType;
+import com.pax.us.pay.ui.constant.status.BatchStatus;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
@@ -37,6 +39,8 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
  *  {@value Uncategory#LOG_UPLOAD_CONNECTED},<br>
  *  {@value Uncategory#LOG_UPLOAD_UPLOADING},<br>
  *  {@value Uncategory#CAPK_UPDATE_STARTED},<br>
+ *  {@value BatchStatus#BATCH_SF_UPLOADING},<br>
+ *  {@value BatchStatus#BATCH_CLOSE_UPLOADING},<br>
  *
  *  <br>
  *  UI Requirement:
@@ -144,12 +148,27 @@ public class StatusDialogFragment extends DialogFragment {
                 message = getString(R.string.log_connected) + " (" + uploadPercent + "%)";
                 break;
             }
-            case Uncategory.LOG_UPLOAD_UPLOADING:{
+            case Uncategory.LOG_UPLOAD_UPLOADING: {
                 long logUploadCount = bundle.getLong(StatusData.PARAM_UPLOAD_CURRENT_COUNT, 0L);
                 long logTotalCount = bundle.getLong(StatusData.PARAM_UPLOAD_TOTAL_COUNT, 0L);
                 long logUploadPercent = bundle.getLong(StatusData.PARAM_UPLOAD_CURRENT_PERCENT, 0L);
                 message = getString(R.string.update_process) + " " + logUploadCount + "/" + logTotalCount + "("
                         + logUploadPercent + "%)";
+                break;
+            }
+            case BatchStatus.BATCH_CLOSE_UPLOADING: {
+                String edcType = bundle.getString(StatusData.PARAM_EDC_TYPE);
+                long currentCount = bundle.getLong(StatusData.PARAM_UPLOAD_CURRENT_COUNT, 0);
+                long totalCount = bundle.getLong(StatusData.PARAM_UPLOAD_TOTAL_COUNT, 0);
+                message = getString(R.string.uploading_trans) + " " + edcType + "\n" + currentCount + "/" + totalCount;
+                break;
+            }
+            case BatchStatus.BATCH_SF_UPLOADING: {
+                String sfType = bundle.getString(StatusData.PARAM_SF_TYPE);
+                long sfCurrentCount = bundle.getLong(StatusData.PARAM_SF_CURRENT_COUNT, 0);
+                long sfTotalCount = bundle.getLong(StatusData.PARAM_SF_TOTAL_COUNT, 0);
+                message = SFType.FAILED.equals(sfType) ? getString(R.string.uploading_failed_trans) : getString(R.string.uploading_sf_trans) +
+                        getString(R.string.total_count) + sfTotalCount + getString(R.string.current_count) + sfCurrentCount;
                 break;
             }
             default:
