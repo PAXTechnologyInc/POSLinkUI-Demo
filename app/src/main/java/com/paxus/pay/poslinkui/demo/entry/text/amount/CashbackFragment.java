@@ -136,6 +136,7 @@ public class CashbackFragment extends BaseEntryFragment {
             editText.setVisibility(View.VISIBLE);
             editText.addTextChangedListener(new AmountTextWatcher(maxLength,currency));
         }
+        editText.requestFocusFromTouch();
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 

@@ -100,6 +100,7 @@ public class TotalAmountFragment extends BaseEntryFragment {
         editText.setSelection(editText.getEditableText().length());
 
         editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
+        editText.requestFocusFromTouch();
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());

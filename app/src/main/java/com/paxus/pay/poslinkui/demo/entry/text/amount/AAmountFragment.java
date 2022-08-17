@@ -53,19 +53,11 @@ public abstract class AAmountFragment extends BaseEntryFragment {
 
         editText.addTextChangedListener(new AmountTextWatcher(getMaxLength(), getCurrency()));
 
-        //show keyboard automatically
         editText.requestFocusFromTouch();
-        if(editText.hasFocus()){
-            showSoftKeyboard(editText);
-        }
+
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
-    }
-
-    public void showSoftKeyboard(View view){
-        Logger.d(((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)));
-        ((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
     }
 
     //1.If confirm button clicked, sendNext

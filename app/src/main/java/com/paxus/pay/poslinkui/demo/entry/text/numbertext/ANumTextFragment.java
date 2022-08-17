@@ -52,7 +52,7 @@ public abstract class ANumTextFragment extends BaseEntryFragment {
         } else {
             editText.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         }
-
+        editText.requestFocusFromTouch();
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
     }
