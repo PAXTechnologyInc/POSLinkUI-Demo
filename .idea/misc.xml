@@ -25,6 +25,23 @@
         <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_surcharge_fee.xml" value="0.1" />
         <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/fragment_total_amount.xml" value="0.1" />
         <entry key="..\:/GitHub/POSLinkUI-Demo/app/src/main/res/layout/layout_clss_light_default.xml" value="0.17395833333333333" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/drawable/border.xml" value="0.1935" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1935" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/drawable/light_red.xml" value="0.1935" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/drawable/selection_insert_card_a60.xml" value="0.1935" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/drawable/selection_swipe_card_a60.xml" value="0.1285" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/layout/activity_entry.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/layout/activity_main.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/layout/fragment_amount.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/layout/fragment_avs.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/layout/fragment_base_num.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/layout/fragment_base_num_text.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/layout/fragment_base_text.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/layout/fragment_cashback.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/layout/fragment_confirmation_dialog.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/layout/fragment_manage_input_account.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/layout/fragment_password.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Dhrubo.Paul/Downloads/Repositories/POSLinkUI-Demo/app/src/main/res/layout/layout_watermark.xml" value="0.18541666666666667" />
         <entry key="app/src/main/res/layout/activity_base_num_text.xml" value="0.14791666666666667" />
         <entry key="app/src/main/res/layout/fragment_amount.xml" value="0.14791666666666667" />
         <entry key="app/src/main/res/layout/fragment_avs.xml" value="0.14791666666666667" />

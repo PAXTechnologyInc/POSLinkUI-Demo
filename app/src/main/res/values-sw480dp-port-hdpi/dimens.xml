@@ -1,6 +1,6 @@
 <resources>
-    <!-- fallback use-->
+    <!-- For M8 use-->
     <dimen name="circle_width">3dp</dimen>
     <dimen name="paint_width">5dp</dimen>
-    <dimen name="version_name_text_size">20sp</dimen>
+    <dimen name="version_name_text_size">34sp</dimen>
 </resources>

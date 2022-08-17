@@ -39,7 +39,10 @@
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.POSLinkUI"
-            android:autoRemoveFromRecents="true">
+            android:autoRemoveFromRecents="true"
+            android:windowSoftInputMode="stateVisible"
+            android:focusableInTouchMode="true"
+            android:focusable="true">
             <intent-filter>
                 <category android:name="com.pax.us.pay.ui.category.TEXT" />
                 <category android:name="android.intent.category.DEFAULT" />

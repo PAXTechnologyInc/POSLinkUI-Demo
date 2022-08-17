@@ -5,11 +5,11 @@
     android:gravity="center"
     android:orientation="vertical">
     <TextView
-        android:layout_width="wrap_content"
+        android:gravity="center"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/version"
-        android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="16sp"
-        android:autoSizeMaxTextSize="50sp"
+        android:textSize="@dimen/version_name_text_size"
+        android:paddingHorizontal="@dimen/version_name_text_size"
          />
 </LinearLayout>
