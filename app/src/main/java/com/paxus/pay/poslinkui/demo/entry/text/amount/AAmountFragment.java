@@ -53,54 +53,19 @@ public abstract class AAmountFragment extends BaseEntryFragment {
 
         editText.addTextChangedListener(new AmountTextWatcher(getMaxLength(), getCurrency()));
 
-        //focus text entry automatically to enable keyboard
-        /*
-        new Thread() {
-            @Override
-            public void run() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Logger.d("opening up keyboard");
-                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                    }
-                });
-            }
-        }.start();
-        */
-        /*
-        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                editText.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
-                    }
-                });
-            }
-        });
-        editText.requestFocus();
-        */
-        /*
-        editText.setFocusableInTouchMode(true);
-        Logger.d(getActivity().getCurrentFocus());
+        //show keyboard automatically
         editText.requestFocusFromTouch();
-        if(editText.requestFocus()){
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        if(editText.hasFocus()){
+            showSoftKeyboard(editText);
         }
-        Logger.d(getActivity().getCurrentFocus());
-
-        ((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(editText, InputMethodManager.SHOW_FORCED);
-        Logger.d(getActivity().getCurrentFocus());
-        */
-        //((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInputFromWindow(editText.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
+    }
+
+    public void showSoftKeyboard(View view){
+        Logger.d(((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)));
+        ((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
     }
 
     //1.If confirm button clicked, sendNext

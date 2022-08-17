@@ -40,7 +40,7 @@
             android:launchMode="singleTop"
             android:theme="@style/Theme.POSLinkUI"
             android:autoRemoveFromRecents="true"
-            android:windowSoftInputMode="stateVisible"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
             android:focusableInTouchMode="true"
             android:focusable="true">
             <intent-filter>
