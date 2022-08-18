@@ -132,4 +132,10 @@ public class ExpiryFragment extends BaseEntryFragment {
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_EXPIRY_DATE, value);
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        editText.clearFocus();
+    }
+
 }
