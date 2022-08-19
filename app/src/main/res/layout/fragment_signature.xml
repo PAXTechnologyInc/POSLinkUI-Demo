@@ -58,7 +58,7 @@
             android:text="@string/cancel_sign"
             android:textAllCaps="false"
             android:layout_weight="1"
-            android:layout_marginVertical="@dimen/padding_vertical"
+            android:layout_margin="@dimen/margin_gap"
             android:backgroundTint="@color/pastel_warning"/>
         <Button
             android:layout_width="0dp"
@@ -66,18 +66,18 @@
             android:id="@+id/clear_button"
             android:text="@string/clear_sign"
             android:textAllCaps="false"
-            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@color/clear"/>
+            android:layout_margin="@dimen/margin_gap"
+            android:backgroundTint="@color/pastel_accent"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/confirm_button"
             android:text="@string/confirm"
             android:textAllCaps="false"
-            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@color/pastel_primary"/>
+            android:layout_margin="@dimen/margin_gap"
+            android:backgroundTint="@color/pastel_primary"/>
 
     </LinearLayout>
 

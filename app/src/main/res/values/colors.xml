@@ -26,8 +26,8 @@
     <color name="pastel_background">#FBF4F9</color>
     <color name="pastel_primary">#6E85B7</color>
     <color name="pastel_secondary">#A6B1E1</color>
-    <color name="pastel_accent">#FFB3B3</color>
-    <color name="pastel_warning">#FFB3B3</color>
+    <color name="pastel_accent">#89AA97</color>
+    <color name="pastel_warning">#FF7878</color>
     <color name="pastel_text_color">#222222</color>
 
 </resources>

@@ -101,7 +101,7 @@
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
-            android:background="@color/cancel"/>
+            android:background="@color/pastel_warning"/>
         <TextView
             android:id="@+id/key_4"
             android:text="4"
@@ -130,7 +130,7 @@
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
-            android:background="@color/clear"/>
+            android:background="@color/pastel_accent"/>
         <TextView
             android:id="@+id/key_7"
             android:text="7"
@@ -160,7 +160,7 @@
             app:layout_rowWeight="1"
             app:layout_rowSpan="2"
             android:gravity="center"
-            android:background="@color/enter"/>
+            android:background="@color/pastel_primary"/>
         <TextView
             android:text=""
             app:layout_columnWeight="1"
