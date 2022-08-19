@@ -1,6 +1,9 @@
 package com.paxus.pay.poslinkui.demo.entry.text.amount;
 
+import android.content.Context;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -12,6 +15,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
 /**
@@ -43,11 +47,14 @@ public abstract class AAmountFragment extends BaseEntryFragment {
         textView.setText(formatMessage());
 
         editText = rootView.findViewById(R.id.edit_amount);
-        editText.setSelected(false);
+        editText.setSelected(true);
         editText.setText(CurrencyUtils.convert(0, getCurrency()));
         editText.setSelection(editText.getEditableText().length());
 
         editText.addTextChangedListener(new AmountTextWatcher(getMaxLength(), getCurrency()));
+
+        //show keyboard automatically
+        editText.requestFocusFromTouch();
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());

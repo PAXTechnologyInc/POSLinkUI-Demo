@@ -1,5 +1,5 @@
 <resources>
-    <!-- fallback use-->
+    <!-- For A80 use-->
     <dimen name="circle_width">3dp</dimen>
     <dimen name="paint_width">5dp</dimen>
     <dimen name="version_name_text_size">20sp</dimen>
