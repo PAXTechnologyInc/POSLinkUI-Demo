@@ -24,8 +24,6 @@ public class MainActivity extends AppCompatActivity {
             String appVer = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
             TextView versionText = (TextView)findViewById(R.id.version);
             versionText.setText("Version:"+appVer);
-            //versionText.setTextSize(getResources().getDisplayMetrics().widthPixels*7/getResources().getDisplayMetrics().densityDpi);
-            //((TextView)findViewById(R.id.version)).setText("Version:"+appVer);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
