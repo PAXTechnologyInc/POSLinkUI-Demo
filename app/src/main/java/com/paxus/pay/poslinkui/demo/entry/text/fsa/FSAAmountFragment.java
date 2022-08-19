@@ -98,6 +98,7 @@ public class FSAAmountFragment extends Fragment {
 
         editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
         editText.requestFocus();
+        editText.requestFocusFromTouch();
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());

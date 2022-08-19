@@ -96,7 +96,7 @@ public class AVSFragment extends BaseEntryFragment {
         }else {
             editTextAddr.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         }
-
+        editTextAddr.requestFocusFromTouch();
         //Send Next when clicking confirm button
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener( v-> onConfirmButtonClicked());

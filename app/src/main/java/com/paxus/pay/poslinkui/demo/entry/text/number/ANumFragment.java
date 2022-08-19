@@ -49,7 +49,7 @@ public abstract class ANumFragment extends BaseEntryFragment {
         if (maxLength > 0) {
             editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
         }
-
+        editText.requestFocusFromTouch();
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
     }
