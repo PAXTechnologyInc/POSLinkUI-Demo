@@ -54,4 +54,40 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="searchHintIcon">@null</item>
     </style>
+    
+    
+    <style name="POSLinkUIPastel" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@color/pastel_background</item>
+        <item name="android:windowAnimationStyle">@style/NoAnimation</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+
+        <item name="android:statusBarColor" tools:targetApi="l">@color/pastel_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <item name="android:textColor">@color/pastel_text_color</item>
+        <item name="colorPrimary">@color/pastel_primary</item>
+        <item name="colorSecondary">@color/pastel_secondary</item>
+
+        <item name="colorError">@color/pastel_warning</item>
+        <!--overriding default widget styles-->
+        <item name="editTextStyle">@style/POSLinkUIPastelEditText</item>
+        <!--<item name="buttonStyle">@style/POSLinkUIPastelButton</item>-->
+    </style>
+
+    <style name="POSLinkUIPastelEditText" parent="android:Widget.EditText">
+        <item name="android:background">@drawable/rounded_corner_on_background</item>
+        <item name="android:textColor">@color/pastel_text_color</item>
+        <item name="android:padding">@dimen/padding_vertical</item>
+    </style>
+
+    <style name="POSLinkUIPastelButton" parent="android:Widget.Button">
+        <item name="android:background">@color/pastel_primary</item>
+        <item name="android:padding">@dimen/padding_vertical</item>
+    </style>
+
+    <style name="POSLinkUIPastelWarningButton" parent="android:Widget.Button">
+        <item name="android:background">@color/pastel_warning</item>
+    </style>
+
 </resources>

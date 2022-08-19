@@ -16,12 +16,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.POSLinkUI"
+        android:theme="@style/POSLinkUIPastel"
         android:name=".DemoApplication"
         android:requestLegacyExternalStorage="true">
 
-        <activity android:name=".MainActivity"
-            android:theme="@style/Theme.Main">
+        <activity android:name=".MainActivity">
+            <!--android:theme="@style/Theme.Main">-->
             <!--            Add launcher then you can see the app in desktop and uninstall it easily-->
             <intent-filter>
 
@@ -38,8 +38,8 @@
             android:name=".entry.EntryActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.POSLinkUI"
             android:autoRemoveFromRecents="true">
+            <!--android:theme="@style/Theme.POSLinkUI">-->
             <intent-filter>
                 <category android:name="com.pax.us.pay.ui.category.TEXT" />
                 <category android:name="android.intent.category.DEFAULT" />

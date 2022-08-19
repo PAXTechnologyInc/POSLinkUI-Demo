@@ -1,4 +1,7 @@
 <resources>
     <dimen name="circle_width">3dp</dimen>
     <dimen name="paint_width">5dp</dimen>
+    <dimen name="padding_horizontal">20dp</dimen>
+    <dimen name="padding_vertical">15dp</dimen>
+    <dimen name="corner_radius">8dp</dimen>
 </resources>

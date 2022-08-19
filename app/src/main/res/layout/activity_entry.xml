@@ -6,22 +6,26 @@
     android:orientation="vertical"
     tools:context=".entry.EntryActivity"
     android:background="@android:color/transparent">
-    <com.google.android.material.appbar.AppBarLayout
+
+    <com.google.android.material.appbar.MaterialToolbar
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Theme.AppBarOverlay">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:gravity="center"/>
-    </com.google.android.material.appbar.AppBarLayout>
+            android:gravity="bottom"
+            android:layout_marginTop="@dimen/padding_vertical" />
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
     <FrameLayout
         android:id="@+id/fragment_placeholder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white">
+        android:paddingHorizontal="@dimen/padding_horizontal"
+        android:paddingVertical="@dimen/padding_vertical">
     </FrameLayout>
 
 </LinearLayout>
