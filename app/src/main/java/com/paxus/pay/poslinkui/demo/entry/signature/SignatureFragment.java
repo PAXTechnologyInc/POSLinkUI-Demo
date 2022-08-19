@@ -149,12 +149,6 @@ public class SignatureFragment extends BaseEntryFragment {
         tickTimeout = timeOut;
         timeoutView.setText(String.valueOf(tickTimeout/1000));
         handler.postDelayed(tick,1000);
-
-        /* Not working yet. Signature shows keyboard unnecessarily.
-        Logger.d(getActivity().getCurrentFocus());
-        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        */
     }
 
     //1.When cancel button clicked, sendAbort
