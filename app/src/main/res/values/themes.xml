@@ -86,8 +86,4 @@
         <item name="android:padding">@dimen/padding_vertical</item>
     </style>
 
-    <style name="POSLinkUIPastelWarningButton" parent="android:Widget.Button">
-        <item name="android:background">@color/pastel_warning</item>
-    </style>
-
 </resources>

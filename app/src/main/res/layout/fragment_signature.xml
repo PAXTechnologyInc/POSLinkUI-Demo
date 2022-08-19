@@ -57,10 +57,9 @@
             android:id="@+id/cancel_button"
             android:text="@string/cancel_sign"
             android:textAllCaps="false"
-            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@color/pastel_warning"
-            android:buttonStyle="@style/POSLinkUIPastelWarningButton"/>
+            android:layout_marginVertical="@dimen/padding_vertical"
+            android:backgroundTint="@color/pastel_warning"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
