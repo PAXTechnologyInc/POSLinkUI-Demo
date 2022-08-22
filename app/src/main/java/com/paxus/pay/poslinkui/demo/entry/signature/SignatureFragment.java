@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
@@ -145,6 +146,12 @@ public class SignatureFragment extends BaseEntryFragment {
 
             return false;
         });
+
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (inputMethodManager.isAcceptingText() && getActivity().getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getApplicationWindowToken(), 0);
+        }
+
         timeoutView = rootView.findViewById(R.id.timeout);
         tickTimeout = timeOut;
         timeoutView.setText(String.valueOf(tickTimeout/1000));
