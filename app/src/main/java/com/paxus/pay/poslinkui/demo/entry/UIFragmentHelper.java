@@ -1,7 +1,9 @@
 package com.paxus.pay.poslinkui.demo.entry;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -437,6 +439,13 @@ public class UIFragmentHelper {
             } catch (Exception e) {
                 //Secure Dismiss dialog
             }
+        }
+    }
+
+    public static void hideKeyboardFromFragment(Fragment fragment){
+        InputMethodManager inputMethodManager = (InputMethodManager) fragment.getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (inputMethodManager.isAcceptingText() && fragment.getActivity().getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(fragment.getActivity().getCurrentFocus().getApplicationWindowToken(), 0);
         }
     }
 }

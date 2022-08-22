@@ -12,6 +12,7 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.InformationEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.entry.UIFragmentHelper;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
@@ -81,6 +82,7 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
         key.setText(left.toString());
         value.setText(right.toString());
 
+        UIFragmentHelper.hideKeyboardFromFragment(this);
         //Send Next when clicking confirm button
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener( v -> onConfirmButtonClicked());

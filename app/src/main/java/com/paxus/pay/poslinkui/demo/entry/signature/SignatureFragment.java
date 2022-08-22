@@ -21,6 +21,7 @@ import com.pax.us.pay.ui.constant.entry.SignatureEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.entry.UIFragmentHelper;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
@@ -147,10 +148,7 @@ public class SignatureFragment extends BaseEntryFragment {
             return false;
         });
 
-        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        if (inputMethodManager.isAcceptingText() && getActivity().getCurrentFocus() != null) {
-            inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getApplicationWindowToken(), 0);
-        }
+        UIFragmentHelper.hideKeyboardFromFragment(this);
 
         timeoutView = rootView.findViewById(R.id.timeout);
         tickTimeout = timeOut;
