@@ -101,6 +101,8 @@ public class ExpiryFragment extends BaseEntryFragment {
             }
         });
 
+        editText.requestFocusFromTouch();
+
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
@@ -128,6 +130,12 @@ public class ExpiryFragment extends BaseEntryFragment {
 
     private void sendNext(String value) {
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_EXPIRY_DATE, value);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        editText.clearFocus();
     }
 
 }

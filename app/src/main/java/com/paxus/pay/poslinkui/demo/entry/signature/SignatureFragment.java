@@ -1,5 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.signature;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -20,6 +22,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 import java.util.List;
 
@@ -100,10 +103,6 @@ public class SignatureFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        
-
-        
-
         Button cancelBtn = rootView.findViewById(R.id.cancel_button);
         if(enableCancel){
             cancelBtn.setOnClickListener(view1-> onCancelButtonClicked());

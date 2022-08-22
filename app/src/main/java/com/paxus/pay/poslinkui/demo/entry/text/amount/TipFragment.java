@@ -181,6 +181,7 @@ public class TipFragment extends BaseEntryFragment {
                 editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
             }
         }
+        editText.requestFocusFromTouch();
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener( v -> onConfirmButtonClicked());
 

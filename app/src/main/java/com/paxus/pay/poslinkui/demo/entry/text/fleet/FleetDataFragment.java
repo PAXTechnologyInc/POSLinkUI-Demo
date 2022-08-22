@@ -82,6 +82,7 @@ public class FleetDataFragment extends Fragment {
         editText.setInputType(inputType);
         editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
         editText.requestFocus();
+        editText.requestFocusFromTouch();
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
