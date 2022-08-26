@@ -4,11 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:padding="25dp">
 
     <LinearLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_marginTop="10dp">
+        android:layout_width="match_parent">
         <TextView
             android:id="@+id/sale_amount_name"
             android:layout_width="0dp"
@@ -62,7 +61,7 @@
             android:gravity="end"/>
     </LinearLayout>
     <LinearLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent" android:layout_marginVertical="10dp">
+        android:layout_width="match_parent" android:layout_marginTop="10dp">
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
