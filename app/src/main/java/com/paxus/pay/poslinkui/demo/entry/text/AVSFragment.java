@@ -92,9 +92,9 @@ public class AVSFragment extends BaseEntryFragment {
             editTextAddr.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthZip)});
         }
         if(zipText){
-            editTextAddr.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
-        }else {
             editTextAddr.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        }else {
+            editTextAddr.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
         }
         editTextAddr.requestFocusFromTouch();
         //Send Next when clicking confirm button
