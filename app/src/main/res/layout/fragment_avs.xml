@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/edit_address"
         android:hint=""
-        android:inputType="textMultiLine|textLongMessage"
+        android:inputType="text|textMultiLine"
         android:layout_margin="20dp"
         android:gravity="center_horizontal"/>
     <TextView
