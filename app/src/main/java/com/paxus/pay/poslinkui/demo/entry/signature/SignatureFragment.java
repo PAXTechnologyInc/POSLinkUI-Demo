@@ -211,4 +211,9 @@ public class SignatureFragment extends BaseEntryFragment {
         EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
     }
 
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
+
 }

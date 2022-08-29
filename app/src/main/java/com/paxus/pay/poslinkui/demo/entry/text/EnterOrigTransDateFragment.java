@@ -136,4 +136,9 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
     private void sendNext(String value) {
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_ORIG_DATE, value);
     }
+
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 }

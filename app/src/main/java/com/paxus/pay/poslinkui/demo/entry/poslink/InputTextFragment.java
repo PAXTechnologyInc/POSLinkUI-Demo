@@ -294,4 +294,9 @@ public class InputTextFragment extends BaseEntryFragment {
         }
     }
 
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
+
 }

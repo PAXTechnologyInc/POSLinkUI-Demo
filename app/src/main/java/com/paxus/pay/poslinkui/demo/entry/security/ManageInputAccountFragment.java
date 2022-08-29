@@ -464,4 +464,9 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
 
         }
     }
+
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 }

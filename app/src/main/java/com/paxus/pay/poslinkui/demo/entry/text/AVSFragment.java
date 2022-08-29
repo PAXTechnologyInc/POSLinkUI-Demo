@@ -108,4 +108,9 @@ public class AVSFragment extends BaseEntryFragment {
         String zip = editTextZip.getText().toString();
         EntryRequestUtils.sendNextAVS(requireContext(), packageName, action, addr, zip);
     }
+
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 }
