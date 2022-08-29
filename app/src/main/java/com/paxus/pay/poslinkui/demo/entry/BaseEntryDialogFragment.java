@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
+import com.paxus.pay.poslinkui.demo.event.EntryConfirmEvent;
 import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
@@ -169,6 +170,13 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
                 onEntryDeclined(event.code,event.message);
             }
         }
+    }
+
+    protected void implementEnterKeyEvent(){}
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEntryConfirm(EntryConfirmEvent entryConfirmEvent){
+        implementEnterKeyEvent();
     }
 
 }

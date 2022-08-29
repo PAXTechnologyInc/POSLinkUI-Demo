@@ -93,4 +93,9 @@ public class ConfirmServiceFeeDialogFragment extends BaseEntryDialogFragment {
     private void sendNext(boolean confirm){
         EntryRequestUtils.sendNext(requireContext(), packageName, action,EntryRequest.PARAM_CONFIRMED,confirm);
     }
+
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 }

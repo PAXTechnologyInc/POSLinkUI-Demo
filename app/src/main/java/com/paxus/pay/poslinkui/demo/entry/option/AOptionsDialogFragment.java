@@ -68,4 +68,8 @@ public abstract class AOptionsDialogFragment extends BaseEntryDialogFragment {
 
     protected abstract String formatTitle();
 
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 }
