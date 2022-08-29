@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.pax.us.pay.ui.constant.status.StatusData;
 import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
+import com.paxus.pay.poslinkui.demo.event.EntryConfirmEvent;
 import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
@@ -106,6 +108,14 @@ public class EntryActivity extends AppCompatActivity {
         EventBus.getDefault().post(new EntryAbortEvent());
     }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            EventBus.getDefault().post(new EntryConfirmEvent());
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
     private void loadEntry(Intent intent){
         Logger.i("start Entry Action \"" + intent.getAction() + "\"");
         Bundle bundle = intent.getExtras();
@@ -178,8 +188,6 @@ public class EntryActivity extends AppCompatActivity {
             Logger.e("unsupported receive Status Action"+action);
         }
     }
-
-
 
     //1. Display water mask according to {@link EntryExtraData#PARAM_TRANS_MODE}
     private void updateTransMode(String transMode){
