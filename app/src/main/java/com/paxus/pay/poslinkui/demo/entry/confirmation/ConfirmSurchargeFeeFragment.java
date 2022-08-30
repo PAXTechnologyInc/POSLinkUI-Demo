@@ -53,8 +53,6 @@ public class ConfirmSurchargeFeeFragment extends BaseEntryFragment {
         feeAmount = bundle.getLong(EntryExtraData.PARAM_SURCHARGE_FEE);
         currency = bundle.getString(EntryExtraData.PARAM_CURRENCY);
         enableBypass = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_BYPASS);
-
-        enableBypass = true;
     }
 
     @Override
