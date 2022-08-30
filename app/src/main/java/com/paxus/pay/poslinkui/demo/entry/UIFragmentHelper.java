@@ -40,7 +40,7 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmReceiptSignatureFr
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmReceiptViewFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmServiceFeeDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmSignatureMatchFragment;
-import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmSurchargeFeeDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmSurchargeFeeFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUnifiedMessageFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUntippedFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUploadRetryFragment;
@@ -211,7 +211,7 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, ConfirmBatchCloseFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_UNTIPPED, ConfirmUntippedFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_DUPLICATE_TRANS, ConfirmDuplicateTransFragment.class);
-            put(ConfirmationEntry.ACTION_CONFIRM_SURCHARGE_FEE, ConfirmSurchargeFeeDialogFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_SURCHARGE_FEE, ConfirmSurchargeFeeFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_SERVICE_FEE, ConfirmServiceFeeDialogFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_PRINTER_STATUS, ConfirmPrinterStatusFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_UPLOAD_TRANS, ConfirmUploadTransFragment.class);

@@ -28,7 +28,7 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
  * 4.If enableBypass is true, display bypass button, else hide it.
  * </p>
  */
-public class ConfirmSurchargeFeeDialogFragment extends BaseEntryFragment {
+public class ConfirmSurchargeFeeFragment extends BaseEntryFragment {
     private String packageName;
     private String action;
     private long timeout;
@@ -62,27 +62,21 @@ public class ConfirmSurchargeFeeDialogFragment extends BaseEntryFragment {
 
         UIFragmentHelper.hideKeyboardFromFragment(this);
 
-        TextView sale = rootView.findViewById(R.id.sale_amount);
-        sale.setText(CurrencyUtils.convert(totalAmount - feeAmount, currency));
-
         TextView feeNameTv = rootView.findViewById(R.id.fee_amount_name);
         feeNameTv.setText(feeName);
 
         TextView fee = rootView.findViewById(R.id.fee_amount);
         fee.setText(CurrencyUtils.convert(feeAmount, currency));
 
-        TextView total = rootView.findViewById(R.id.total_amount);
-        total.setText(CurrencyUtils.convert(totalAmount, currency));
-
         Button confirm = rootView.findViewById(R.id.confirm_button);
         confirm.setOnClickListener(v -> onConfirmButtonClicked());
 
         Button cancel = rootView.findViewById(R.id.cancel_button);
         cancel.setOnClickListener(v -> onCancelButtonClicked());
+
         Button bypass = rootView.findViewById(R.id.bypass_button);
         if (enableBypass) {
             bypass.setOnClickListener(v -> onBypassButtonClicked());
-
         } else {
             bypass.setVisibility(View.GONE);
         }
