@@ -12,8 +12,11 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.entry.UIFragmentHelper;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 /**
  * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_SURCHARGE_FEE}
@@ -25,7 +28,7 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * 4.If enableBypass is true, display bypass button, else hide it.
  * </p>
  */
-public class ConfirmSurchargeFeeDialogFragment extends BaseEntryDialogFragment {
+public class ConfirmSurchargeFeeDialogFragment extends BaseEntryFragment {
     private String packageName;
     private String action;
     private long timeout;
@@ -41,7 +44,7 @@ public class ConfirmSurchargeFeeDialogFragment extends BaseEntryDialogFragment {
     }
 
     @Override
-    protected void loadParameter(@NonNull Bundle bundle) {
+    protected void loadArgument(@NonNull Bundle bundle) {
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
@@ -50,10 +53,15 @@ public class ConfirmSurchargeFeeDialogFragment extends BaseEntryDialogFragment {
         feeAmount = bundle.getLong(EntryExtraData.PARAM_SURCHARGE_FEE);
         currency = bundle.getString(EntryExtraData.PARAM_CURRENCY);
         enableBypass = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_BYPASS);
+
+        enableBypass = true;
     }
 
     @Override
     protected void loadView(View rootView) {
+
+        UIFragmentHelper.hideKeyboardFromFragment(this);
+
         TextView sale = rootView.findViewById(R.id.sale_amount);
         sale.setText(CurrencyUtils.convert(totalAmount - feeAmount, currency));
 

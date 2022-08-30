@@ -44,7 +44,8 @@
             android:gravity="end" />
     </LinearLayout>
 
-    <LinearLayout android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_height="wrap_content"
         android:layout_width="match_parent" >
         <TextView
             android:id="@+id/total_amount_name"
@@ -61,30 +62,29 @@
             android:layout_height="wrap_content"
             android:gravity="end"/>
     </LinearLayout>
-    <LinearLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent" android:layout_marginVertical="10dp">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="vertical">
         <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
-            android:id="@+id/cancel_button"
-            android:text="@string/dialog_cancel"
-            android:layout_weight="1"/>
-        <Button
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
             android:id="@+id/confirm_button"
-            android:text="@string/dialog_ok"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="5dp"/>
+            android:text="@string/confirm_option_yes"/>
         <Button
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:id="@+id/cancel_button"
+            android:text="@string/confirm_option_no"/>
+        <Button
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
             android:id="@+id/bypass_button"
-            android:text="@string/bypass"
-            android:layout_weight="1"/>
+            android:text="@string/bypass"/>
     </LinearLayout>
 
 </LinearLayout>
