@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/edit_address"
         android:hint=""
-        android:inputType="text"
+        android:inputType="text|textMultiLine"
         android:layout_margin="20dp"
         android:gravity="center_horizontal"/>
     <TextView
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/edit_zip"
         android:hint=""
-        android:inputType="text"
+        android:inputType="number"
         android:layout_margin="20dp"
         android:gravity="center_horizontal"/>
     <Button
