@@ -172,8 +172,15 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
         }
     }
 
+    /**
+     * To be implemented by children if they need to do something with the hardware OK button.
+     * Not all fragments need to do that. That is why it is not abstract.
+     */
     protected void implementEnterKeyEvent(){}
 
+    /**
+     * This is to receive the EventBus post sent by EntryActivity
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEntryConfirm(EntryConfirmEvent entryConfirmEvent){
         implementEnterKeyEvent();

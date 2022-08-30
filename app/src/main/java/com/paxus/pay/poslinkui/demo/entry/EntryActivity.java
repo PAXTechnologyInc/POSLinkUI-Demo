@@ -108,10 +108,18 @@ public class EntryActivity extends AppCompatActivity {
         EventBus.getDefault().post(new EntryAbortEvent());
     }
 
+    /**
+     * This is being used to communicate with the fragments on top of this activity.
+     * BaseEntryFragment and BaseEntryDialogFragment subscribe to this.
+     * @param event
+     * @return
+     */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-            EventBus.getDefault().post(new EntryConfirmEvent());
+        if(event.getAction() == KeyEvent.ACTION_DOWN){
+            if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                EventBus.getDefault().post(new EntryConfirmEvent());
+            }
         }
         return super.dispatchKeyEvent(event);
     }
