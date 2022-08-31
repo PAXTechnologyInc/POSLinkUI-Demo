@@ -7,7 +7,7 @@
 
     <string name="reset">Reset</string>
     <string name="confirm">Confirm</string>
-    <string name="bypass">Bypass</string>
+    <string name="bypass">Bypass Fee</string>
 
     <string name="amount_default">0.00</string>
     <string name="time_default">00:00</string>
@@ -212,6 +212,7 @@
     <string name="confirm_card_entry_retry">Decline-host message /nPlease retry or /n Try another card</string>
     <string name="confirm_eula_continue">You must agree to the EULA to use this device</string>
     <string name="confirm_prompt_again">I have accepted the EULA, Don\'t prompt again</string>
+    <string name="continue_prompt">Would you like to continue?</string>
 
     <!-- signature -->
     <string name="signature_clear">Clear</string>
