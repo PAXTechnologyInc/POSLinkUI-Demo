@@ -193,4 +193,9 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
         EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
     }
 
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
+
 }

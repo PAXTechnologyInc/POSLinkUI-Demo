@@ -202,6 +202,11 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
 
         }
     }
+
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 }
 
 

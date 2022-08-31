@@ -75,5 +75,8 @@ public abstract class ANumTextFragment extends BaseEntryFragment {
         EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction(), getRequestedParamName(), value);
     }
 
-
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 }

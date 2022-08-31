@@ -138,4 +138,8 @@ public class ExpiryFragment extends BaseEntryFragment {
         editText.clearFocus();
     }
 
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 }

@@ -140,4 +140,9 @@ public class TotalAmountFragment extends BaseEntryFragment {
         sendNext(value);
     }
 
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
+
 }

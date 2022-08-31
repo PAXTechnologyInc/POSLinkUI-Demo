@@ -53,9 +53,6 @@ public abstract class AAmountFragment extends BaseEntryFragment {
 
         editText.addTextChangedListener(new AmountTextWatcher(getMaxLength(), getCurrency()));
 
-
-        //show keyboard automatically
-
         editText.requestFocusFromTouch();
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
@@ -81,5 +78,8 @@ public abstract class AAmountFragment extends BaseEntryFragment {
 
     protected abstract String getRequestedParamName();
 
-
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 }

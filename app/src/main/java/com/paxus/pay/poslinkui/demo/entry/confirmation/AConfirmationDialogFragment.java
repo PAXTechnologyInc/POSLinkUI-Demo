@@ -79,4 +79,9 @@ public abstract class AConfirmationDialogFragment extends BaseEntryDialogFragmen
     protected abstract String getNegativeText();
 
 
+    @Override
+    protected void implementEnterKeyEvent(){
+        onPositiveButtonClicked();
+    }
+
 }
