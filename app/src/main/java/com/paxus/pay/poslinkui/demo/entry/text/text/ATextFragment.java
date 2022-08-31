@@ -66,4 +66,8 @@ public abstract class ATextFragment extends BaseEntryFragment {
 
     protected abstract String getRequestedParamName();
 
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 }

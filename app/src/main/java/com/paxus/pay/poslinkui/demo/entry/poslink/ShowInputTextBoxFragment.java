@@ -310,4 +310,9 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
         }
     }
 
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
+
 }

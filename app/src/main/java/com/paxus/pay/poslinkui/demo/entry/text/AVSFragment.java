@@ -83,20 +83,13 @@ public class AVSFragment extends BaseEntryFragment {
     @Override
     protected void loadView(View rootView) {
         editTextAddr = rootView.findViewById(R.id.edit_address);
-        if(maxLengthAddr > 0 ) {
-            editTextAddr.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthAddr)});
-        }
+        if(maxLengthAddr > 0 ) editTextAddr.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthAddr)});
+        editTextAddr.requestFocusFromTouch();
 
         editTextZip = rootView.findViewById(R.id.edit_zip);
-        if(maxLengthZip > 0 ) {
-            editTextAddr.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthZip)});
-        }
-        if(zipText){
-            editTextAddr.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
-        }else {
-            editTextAddr.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
-        }
-        editTextAddr.requestFocusFromTouch();
+        if(maxLengthZip > 0 ) editTextZip.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthZip)});
+        if(zipText) editTextZip.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
+
         //Send Next when clicking confirm button
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener( v-> onConfirmButtonClicked());
@@ -107,5 +100,10 @@ public class AVSFragment extends BaseEntryFragment {
         String addr = editTextAddr.getText().toString();
         String zip = editTextZip.getText().toString();
         EntryRequestUtils.sendNextAVS(requireContext(), packageName, action, addr, zip);
+    }
+
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
     }
 }

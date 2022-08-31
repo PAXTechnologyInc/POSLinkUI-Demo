@@ -355,4 +355,9 @@ public class TipFragment extends BaseEntryFragment {
             editText = itemView.findViewById(R.id.edit_item);
         }
     }
+
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 }

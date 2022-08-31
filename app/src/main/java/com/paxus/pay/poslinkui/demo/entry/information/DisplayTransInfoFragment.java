@@ -96,4 +96,8 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
         EntryRequestUtils.sendNext(requireContext(), packageName, action);
     }
 
+    @Override
+    protected void implementEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 }
