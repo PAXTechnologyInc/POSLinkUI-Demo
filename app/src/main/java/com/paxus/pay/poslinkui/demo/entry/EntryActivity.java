@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,7 +44,7 @@ import org.greenrobot.eventbus.EventBus;
  *     2. Display {@link EntryExtraData#PARAM_TRANS_TYPE} on navigation bar
  * </p>
  */
-public class EntryActivity extends AppCompatActivity {
+public class EntryActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
     private View fragmentContainer;

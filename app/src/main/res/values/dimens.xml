@@ -8,4 +8,6 @@
     <dimen name="corner_radius">8dp</dimen>
     <dimen name="margin_gap">5dp</dimen>
     <dimen name="space_between_textview">12dp</dimen>
+
+    <dimen name="toolbar_height">56dp</dimen>
 </resources>

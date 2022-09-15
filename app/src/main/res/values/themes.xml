@@ -79,6 +79,7 @@
         <item name="android:background">@drawable/rounded_corner_on_background</item>
         <item name="android:textColor">@color/pastel_text_color</item>
         <item name="android:padding">@dimen/padding_vertical</item>
+        <item name="android:imeOptions">flagNoExtractUi</item>
     </style>
 
     <style name="POSLinkUIPastelButton" parent="android:Widget.Button">
