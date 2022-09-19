@@ -22,6 +22,8 @@ import com.pax.us.pay.ui.constant.entry.enumeration.PinStyles;
 import com.pax.us.pay.ui.constant.status.PINStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.entry.EntryActivity;
+import com.paxus.pay.poslinkui.demo.utils.BuildModelDependency;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
@@ -114,9 +116,7 @@ public class PINFragment extends BaseEntryFragment {
     protected void loadView(View rootView) {
         this.rootView = rootView;
 
-        
 
-        
 
         TextView textView = rootView.findViewById(R.id.message);
         if(PinStyles.RETRY.equals(pinStyle)){
@@ -143,7 +143,7 @@ public class PINFragment extends BaseEntryFragment {
         rootView.findViewById(R.id.bypass).setVisibility(couldBypass? View.VISIBLE:View.GONE);
 
         View customizedPinPad = rootView.findViewById(R.id.pinpad_layout);
-        if(isUsingExternalPinPad || hasPhysicalKeyboard()){
+        if(isUsingExternalPinPad || hasPhysicalKeyboard() || BuildModelDependency.noSpaceForKeyboardBelow(getContext())){
             //(2)When using external pin pad or terminal has physical pin pad, do not use customized pin pad.
             customizedPinPad.setVisibility(View.GONE);
             sendSecureArea();
