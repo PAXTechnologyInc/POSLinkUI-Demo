@@ -118,7 +118,7 @@ public class TotalAmountFragment extends BaseEntryFragment {
         }else {
             noTipButton.setVisibility(View.GONE);
         }
-
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
 

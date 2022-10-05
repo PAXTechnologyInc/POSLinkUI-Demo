@@ -230,7 +230,7 @@ public class TipFragment extends BaseEntryFragment {
             tipSummary.setVisibility(View.GONE);
         }
 
-
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
     //If confirm button clicked, sendNext

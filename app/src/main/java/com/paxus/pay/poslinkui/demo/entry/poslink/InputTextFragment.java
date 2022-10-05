@@ -186,6 +186,8 @@ public class InputTextFragment extends BaseEntryFragment {
             handler = new Handler();
             handler.postDelayed(timeoutRun, timeOut);
         }
+
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
     @Override
