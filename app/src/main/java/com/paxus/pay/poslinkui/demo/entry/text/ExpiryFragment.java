@@ -102,6 +102,7 @@ public class ExpiryFragment extends BaseEntryFragment {
         });
 
         editText.requestFocusFromTouch();
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());

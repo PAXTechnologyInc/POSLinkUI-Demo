@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
@@ -156,5 +158,19 @@ public abstract class BaseEntryFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEntryConfirm(EntryConfirmEvent entryConfirmEvent){
         implementEnterKeyEvent();
+    }
+
+    protected void prepareEditTextsForSubmissionWithSoftKeyboard(EditText... editTexts){
+        for(int i=0; i<editTexts.length-1; i++) {
+            editTexts[i].setImeOptions(editTexts[i].getImeOptions() | EditorInfo.IME_ACTION_NEXT);
+            editTexts[i].setNextFocusDownId(editTexts[i+1].getId());
+        }
+        editTexts[editTexts.length-1].setImeOptions(editTexts[editTexts.length-1].getImeOptions() | EditorInfo.IME_ACTION_DONE);
+        editTexts[editTexts.length-1].setOnEditorActionListener((textView, i, keyEvent) -> {
+            if(i == EditorInfo.IME_ACTION_DONE){
+                implementEnterKeyEvent();
+            }
+            return true;
+        });
     }
 }

@@ -93,6 +93,8 @@ public class AVSFragment extends BaseEntryFragment {
         //Send Next when clicking confirm button
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener( v-> onConfirmButtonClicked());
+
+        prepareEditTextsForSubmissionWithSoftKeyboard(editTextAddr, editTextZip);
     }
 
     //If confirm button clicked, sendNext
