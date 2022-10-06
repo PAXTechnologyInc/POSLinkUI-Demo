@@ -39,6 +39,7 @@
             android:exported="true"
             android:launchMode="singleTop"
             android:autoRemoveFromRecents="true"
+            android:clearTaskOnLaunch="true"
             android:windowSoftInputMode="stateAlwaysVisible|adjustPan">
             <intent-filter>
                 <category android:name="com.pax.us.pay.ui.category.TEXT" />
