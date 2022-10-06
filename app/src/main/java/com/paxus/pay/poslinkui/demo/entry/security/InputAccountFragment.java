@@ -1,5 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.security;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -194,6 +197,8 @@ public class InputAccountFragment extends BaseEntryFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
         if (receiver != null) {
             requireContext().unregisterReceiver(receiver);
@@ -398,6 +403,7 @@ public class InputAccountFragment extends BaseEntryFragment {
             amountTv.setVisibility(View.GONE);
         }
 
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     @Override
