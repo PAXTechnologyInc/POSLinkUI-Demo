@@ -12,6 +12,10 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
@@ -24,10 +28,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import android.view.KeyEvent;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * Created by Yanina.Yang on 5/11/2022.
  *
- * Base Dialog Fragment for most entry actions
  * <p>
  *     UI Tips:
  *     1. Load layout in onCreateView (getLayoutResourceId, loadParameter, loadView)
@@ -40,6 +48,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public abstract class BaseEntryFragment extends Fragment {
 
     private boolean active = false;
+    private BaseSharedViewModel baseSharedViewModel;
 
     @Nullable
     @Override
@@ -60,12 +69,40 @@ public abstract class BaseEntryFragment extends Fragment {
         return view;
     }
 
+    Observer<Integer> baseSharedViewModelObserver = new Observer<Integer>() {
+        @Override
+        public void onChanged(Integer input) {
+            Logger.d(input);
+            switch (input){
+                case KeyEvent.KEYCODE_ENTER:
+                    implementEnterKeyEvent();
+                    break;
+                case KeyEvent.KEYCODE_BACK:
+                    sendAbort();
+            }
+        }
+    };
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Logger.d(getClass().getSimpleName() + " onViewCreated.");
+        super.onViewCreated(view, savedInstanceState);
+
+        baseSharedViewModel = new ViewModelProvider(requireActivity()).get(BaseSharedViewModel.class);
+        baseSharedViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
+        baseSharedViewModel.getKeyCode().observe(getViewLifecycleOwner(), baseSharedViewModelObserver);
+    }
+
+    @Override
+    public void onDestroyView() {
+        Logger.d(getClass().getSimpleName() + " onDestroyView.");
+        super.onDestroyView();
+    }
 
     @Override
     public void onDestroy() {
+        Logger.d(getClass().getSimpleName() + " onDestroy.");
         super.onDestroy();
-
-        Logger.d(this.getClass().getSimpleName()+" onDestroy");
         deactivate();
     }
 

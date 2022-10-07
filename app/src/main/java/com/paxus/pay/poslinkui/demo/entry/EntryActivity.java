@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
@@ -29,7 +29,6 @@ import com.pax.us.pay.ui.constant.status.StatusData;
 import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryConfirmEvent;
 import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
@@ -53,6 +52,8 @@ public class EntryActivity extends AppCompatActivity{
     private String transType = "";
     private String transMode = "";
 
+    BaseSharedViewModel baseSharedViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +69,7 @@ public class EntryActivity extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         registerUIReceiver();
-
+        baseSharedViewModel = new ViewModelProvider(this).get(BaseSharedViewModel.class);
         loadEntry(getIntent());
     }
 
@@ -78,6 +79,8 @@ public class EntryActivity extends AppCompatActivity{
         Logger.d("EntryActivity onNewIntent");
         //If activity is at the top of stack, startActivity will trigger onNewIntent.
         //So you can load entry here
+        //getViewModelStore().clear();
+
         loadEntry(intent);
     }
 
@@ -106,7 +109,8 @@ public class EntryActivity extends AppCompatActivity{
 
         Logger.d("EntryActivity onBackPressed");
         //Click KEY_BACK, trigger user abort
-        EventBus.getDefault().post(new EntryAbortEvent());
+        //EventBus.getDefault().post(new EntryAbortEvent());
+        baseSharedViewModel.setKeyCode(KeyEvent.KEYCODE_BACK);
     }
 
     /**
@@ -117,9 +121,11 @@ public class EntryActivity extends AppCompatActivity{
      */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+
         if(event.getAction() == KeyEvent.ACTION_DOWN){
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                EventBus.getDefault().post(new EntryConfirmEvent());
+                //EventBus.getDefault().post(new EntryConfirmEvent());
+                baseSharedViewModel.setKeyCode(KeyEvent.KEYCODE_ENTER);
             }
         }
         return super.dispatchKeyEvent(event);
