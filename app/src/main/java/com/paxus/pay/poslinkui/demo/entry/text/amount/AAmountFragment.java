@@ -58,6 +58,7 @@ public abstract class AAmountFragment extends BaseEntryFragment {
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
     //1.If confirm button clicked, sendNext
@@ -82,4 +83,5 @@ public abstract class AAmountFragment extends BaseEntryFragment {
     protected void implementEnterKeyEvent(){
         onConfirmButtonClicked();
     }
+
 }

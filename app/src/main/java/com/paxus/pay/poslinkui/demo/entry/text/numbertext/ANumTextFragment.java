@@ -55,6 +55,7 @@ public abstract class ANumTextFragment extends BaseEntryFragment {
         editText.requestFocusFromTouch();
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
     private void onConfirmButtonClicked() {

@@ -127,7 +127,7 @@ public class EntryActivity extends AppCompatActivity{
 
     private void loadEntry(Intent intent){
         Logger.i("start Entry Action \"" + intent.getAction() + "\"");
-        Bundle bundle = intent.getExtras();
+        Bundle bundle = intent.getExtras() != null ? intent.getExtras() : new Bundle();
         StringBuilder extras = new StringBuilder();
         for (String key : bundle.keySet()) {
             extras.append(key).append(":\"").append(bundle.get(key)).append("\",");
@@ -168,7 +168,7 @@ public class EntryActivity extends AppCompatActivity{
     public void loadStatus(Intent intent) {
         String action = intent.getAction();
         Logger.i("receive Status Action \"" + action + "\"");
-        Bundle bundle = intent.getExtras();
+        Bundle bundle = intent.getExtras() != null ? intent.getExtras() : new Bundle();
         StringBuilder extras = new StringBuilder();
         for (String key : bundle.keySet()) {
             extras.append(key).append(":\"").append(bundle.get(key)).append("\",");
