@@ -30,6 +30,7 @@ import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
 import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.event.ResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
@@ -79,8 +80,6 @@ public class EntryActivity extends AppCompatActivity{
         Logger.d("EntryActivity onNewIntent");
         //If activity is at the top of stack, startActivity will trigger onNewIntent.
         //So you can load entry here
-        //getViewModelStore().clear();
-
         loadEntry(intent);
     }
 
@@ -108,8 +107,6 @@ public class EntryActivity extends AppCompatActivity{
         super.onBackPressed();
 
         Logger.d("EntryActivity onBackPressed");
-        //Click KEY_BACK, trigger user abort
-        //EventBus.getDefault().post(new EntryAbortEvent());
         baseSharedViewModel.setKeyCode(KeyEvent.KEYCODE_BACK);
     }
 
@@ -121,10 +118,8 @@ public class EntryActivity extends AppCompatActivity{
      */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-
         if(event.getAction() == KeyEvent.ACTION_DOWN){
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                //EventBus.getDefault().post(new EntryConfirmEvent());
                 baseSharedViewModel.setKeyCode(KeyEvent.KEYCODE_ENTER);
             }
         }
@@ -307,11 +302,13 @@ public class EntryActivity extends AppCompatActivity{
         @Override
         public void onReceive(Context context, Intent intent) {
             if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())){
-                EventBus.getDefault().post(new EntryResponseEvent(intent.getAction()));
+                baseSharedViewModel.setResponseEvent(new ResponseEvent(intent.getAction()));
+                //EventBus.getDefault().post(new EntryResponseEvent(intent.getAction()));
             }else if(EntryResponse.ACTION_DECLINED.equals(intent.getAction())){
                 long resultCode = intent.getLongExtra(EntryResponse.PARAM_CODE,0);
                 String message = intent.getStringExtra(EntryResponse.PARAM_MSG);
-                EventBus.getDefault().post(new EntryResponseEvent(intent.getAction(),resultCode,message));
+                baseSharedViewModel.setResponseEvent(new ResponseEvent(intent.getAction(), resultCode, message));
+                //EventBus.getDefault().post(new EntryResponseEvent(intent.getAction(),resultCode,message));
             }else{
                 loadStatus(intent);
             }

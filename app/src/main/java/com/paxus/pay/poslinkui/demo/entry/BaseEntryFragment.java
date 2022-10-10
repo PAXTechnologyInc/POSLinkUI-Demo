@@ -21,6 +21,7 @@ import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
 import com.paxus.pay.poslinkui.demo.event.EntryConfirmEvent;
 import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.event.ResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
@@ -69,16 +70,30 @@ public abstract class BaseEntryFragment extends Fragment {
         return view;
     }
 
-    Observer<Integer> baseSharedViewModelObserver = new Observer<Integer>() {
+    Observer<Integer> keyCodeObserver = new Observer<Integer>() {
         @Override
         public void onChanged(Integer input) {
-            Logger.d(input);
             switch (input){
                 case KeyEvent.KEYCODE_ENTER:
                     implementEnterKeyEvent();
                     break;
                 case KeyEvent.KEYCODE_BACK:
                     sendAbort();
+                    break;
+            }
+        }
+    };
+
+    Observer<ResponseEvent> responseEventObserver = new Observer<ResponseEvent>() {
+        @Override
+        public void onChanged(ResponseEvent event) {
+            switch (event.action){
+                case EntryResponse.ACTION_ACCEPTED:
+                    onEntryAccepted();
+                    break;
+                case EntryResponse.ACTION_DECLINED:{
+                    onEntryDeclined(event.code,event.message);
+                }
             }
         }
     };
@@ -90,13 +105,9 @@ public abstract class BaseEntryFragment extends Fragment {
 
         baseSharedViewModel = new ViewModelProvider(requireActivity()).get(BaseSharedViewModel.class);
         baseSharedViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
-        baseSharedViewModel.getKeyCode().observe(getViewLifecycleOwner(), baseSharedViewModelObserver);
-    }
-
-    @Override
-    public void onDestroyView() {
-        Logger.d(getClass().getSimpleName() + " onDestroyView.");
-        super.onDestroyView();
+        baseSharedViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
+        baseSharedViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
+        baseSharedViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
     }
 
     @Override
@@ -107,16 +118,10 @@ public abstract class BaseEntryFragment extends Fragment {
     }
 
     private void activate(){
-        if(!active) {
-            EventBus.getDefault().register(this);
-            active = true;
-        }
+        if(!active) active = true;
     }
     private void deactivate(){
-        if(active) {
-            active = false;
-            EventBus.getDefault().unregister(this);
-        }
+        if(active) active = false;
     }
 
     public boolean isActive() {
@@ -155,7 +160,6 @@ public abstract class BaseEntryFragment extends Fragment {
      */
     protected void onEntryAccepted() {
         Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + getEntryAction() + "\"");
-
         //3.2 when got accepted, should not response AbortEvent any more.
         deactivate();
     }
@@ -171,6 +175,7 @@ public abstract class BaseEntryFragment extends Fragment {
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 
+    /*
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGetEntryResponse(EntryResponseEvent event){
         switch (event.action){
@@ -183,19 +188,9 @@ public abstract class BaseEntryFragment extends Fragment {
         }
     }
 
-
-    //2. On KEYCODE_BACK (on navigation bar) clicked , generally abort action
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryAbort(EntryAbortEvent event) {
-        sendAbort();
-    }
+     */
 
     protected void implementEnterKeyEvent(){}
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryConfirm(EntryConfirmEvent entryConfirmEvent){
-        implementEnterKeyEvent();
-    }
 
     protected void prepareEditTextsForSubmissionWithSoftKeyboard(EditText... editTexts){
         for(int i=0; i<editTexts.length-1; i++) {
