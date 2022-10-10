@@ -47,6 +47,7 @@ public abstract class ATextFragment extends BaseEntryFragment {
         editText.requestFocusFromTouch();
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
     protected abstract int getMaxLength();

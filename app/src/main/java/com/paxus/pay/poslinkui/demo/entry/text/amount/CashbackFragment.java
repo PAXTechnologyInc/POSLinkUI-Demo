@@ -140,6 +140,7 @@ public class CashbackFragment extends BaseEntryFragment {
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
     //If confirm button clicked, sendNext

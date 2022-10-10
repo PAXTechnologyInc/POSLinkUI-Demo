@@ -126,8 +126,8 @@ public class EntryActivity extends AppCompatActivity{
         return super.dispatchKeyEvent(event);
     }
 
-    public static void logBundleFromIntent(Intent intent){
-        Bundle bundle = intent.getExtras();
+    public static void logBundleFromIntent(Intent intent) {
+        Bundle bundle = intent.getExtras() != null ? intent.getExtras() : new Bundle();
         StringBuilder extras = new StringBuilder();
         for (String key : bundle.keySet()) {
             extras.append(key).append(":\"").append(bundle.get(key)).append("\",");
