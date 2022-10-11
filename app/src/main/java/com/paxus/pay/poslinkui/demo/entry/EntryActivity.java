@@ -93,20 +93,15 @@ public class EntryActivity extends AppCompatActivity{
         unregisterUIReceiver();
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Logger.d(getClass().getSimpleName() +" onBackPressed");
-        baseSharedViewModel.setKeyCode(KeyEvent.KEYCODE_BACK);
-    }
-
+    /**
+     * Sets KeyCode in BaseSharedViewModel
+     * Fragment bases observe these updates
+     */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         Logger.d(getClass().getSimpleName() +" dispatchKeyEvent");
         if(event.getAction() == KeyEvent.ACTION_DOWN){
-            if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                baseSharedViewModel.setKeyCode(KeyEvent.KEYCODE_ENTER);
-            }
+            baseSharedViewModel.setKeyCode(event.getKeyCode());
         }
         return super.dispatchKeyEvent(event);
     }
@@ -184,23 +179,24 @@ public class EntryActivity extends AppCompatActivity{
         }
     }
 
-    //1. Display water mask according to {@link EntryExtraData#PARAM_TRANS_MODE}
+    /**
+     * Add/Remove Watermark based on Trans Mode
+     * @param transMode
+     */
     private void updateTransMode(String transMode){
         if(!TextUtils.isEmpty(transMode) && !transMode.equals(this.transMode)){
             this.transMode = transMode;
 
             String mode = null;
-            if(!TextUtils.isEmpty(transMode)){
-                if(TransMode.DEMO.equals(transMode)){
-                    mode = getString(R.string.demo_only);
-                }else if(TransMode.TEST.equals(transMode)){
-                    mode = getString(R.string.test_only);
-                }else if(TransMode.TEST_AND_DEMO.equals(transMode)){
-                    mode = getString(R.string.test_and_demo);
-                }else {
-                    mode = "";
-                }
+            switch (transMode) {
+                case TransMode.DEMO:
+                    mode = getString(R.string.demo_only); break;
+                case TransMode.TEST:
+                    mode = getString(R.string.test_only); break;
+                case TransMode.TEST_AND_DEMO:
+                    mode = getString(R.string.test_and_demo); break;
             }
+
             if(!TextUtils.isEmpty(mode)){
                 ViewUtils.addWaterMarkView(this,mode);
             }else{
@@ -209,18 +205,26 @@ public class EntryActivity extends AppCompatActivity{
         }
     }
 
-    //2. Display {@link EntryExtraData#PARAM_TRANS_TYPE} on navigation bar
+    /**
+     * Update Transaction Type on Title Bar
+     * @param transType
+     */
     private void updateTransType(String transType){
         if(transType!= null && !transType.equals(this.transType)){
             this.transType = transType;
 
             ActionBar actionBar = getSupportActionBar();
-            if(actionBar != null) {
-                actionBar.setTitle(transType);
-            }
+            if(actionBar != null) actionBar.setTitle(transType);
         }
     }
 
+
+    /**
+     * Broadcast Receiver to receive status updates from BroadPOS Manager
+     * void registerUIReceiver()
+     * void unregisterUIReceiver()
+     * class POSLinkUIReceiver
+     */
 
     private void registerUIReceiver(){
         receiver = new POSLinkUIReceiver();

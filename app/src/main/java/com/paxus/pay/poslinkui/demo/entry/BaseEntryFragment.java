@@ -65,7 +65,7 @@ public abstract class BaseEntryFragment extends Fragment {
                     implementEnterKeyEvent();
                     break;
                 case KeyEvent.KEYCODE_BACK:
-                    sendAbort();
+                    executeBackPressEvent();
                     break;
             }
         }
@@ -136,6 +136,12 @@ public abstract class BaseEntryFragment extends Fragment {
         EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
     }
 
+    protected void implementEnterKeyEvent(){}
+
+    protected void executeBackPressEvent(){
+        sendAbort();
+    }
+
     protected abstract String getSenderPackageName();
 
     protected abstract String getEntryAction();
@@ -159,8 +165,6 @@ public abstract class BaseEntryFragment extends Fragment {
         Logger.i("receive Entry Response ACTION_DECLINED for action \"" + getEntryAction() + "\" (" + errCode + "-" + errMessage + ")");
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
-
-    protected void implementEnterKeyEvent(){}
 
     protected void prepareEditTextsForSubmissionWithSoftKeyboard(EditText... editTexts){
         for(int i=0; i<editTexts.length-1; i++) {

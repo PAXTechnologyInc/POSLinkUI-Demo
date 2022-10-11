@@ -18,14 +18,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
-import com.paxus.pay.poslinkui.demo.event.EntryConfirmEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.event.ResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by Yanina.Yang on 5/12/2022.
@@ -68,7 +63,7 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
                 @Override
                 public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                     if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
-                        onBackPressed();
+                        executeBackPressEvent();
                         return true;
                     }
                     return false;
@@ -81,23 +76,16 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
-        super.onDismiss(dialog);
-
-        deactivate();
         Logger.d(this.getClass().getSimpleName()+" onDismiss");
+        super.onDismiss(dialog);
+        deactivate();
     }
 
     private void activate(){
-        if(!active) {
-            EventBus.getDefault().register(this);
-            active = true;
-        }
+        if(!active) active = true;
     }
     private void deactivate(){
-        if(active) {
-            active = false;
-            EventBus.getDefault().unregister(this);
-        }
+        if(active) active = false;
     }
 
     /**
@@ -133,13 +121,6 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
     }
 
     /**
-     * On KEYCODE_BACK (on navigation bar) clicked , generally close dialog and abort action
-     */
-    protected void onBackPressed() {
-        sendAbort();
-    }
-
-    /**
      * Entry Accepted means BroadPOS accepts the output from ACTION_NEXT
      */
     protected void onEntryAccepted() {
@@ -163,23 +144,9 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetEntryResponse(EntryResponseEvent event){
-        switch (event.action){
-            case EntryResponse.ACTION_ACCEPTED:
-                onEntryAccepted();
-                break;
-            case EntryResponse.ACTION_DECLINED:{
-                onEntryDeclined(event.code,event.message);
-            }
-        }
-    }
-
-    /**
-     * To be implemented by children if they need to do something with the hardware OK button.
-     * Not all fragments need to do that. That is why it is not abstract.
-     */
     protected void implementEnterKeyEvent(){}
+
+    protected void executeBackPressEvent(){ sendAbort(); }
 
     Observer<Integer> keyCodeObserver = new Observer<Integer>() {
         @Override
@@ -189,8 +156,22 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
                     implementEnterKeyEvent();
                     break;
                 case KeyEvent.KEYCODE_BACK:
-                    sendAbort();
+                    executeBackPressEvent();
                     break;
+            }
+        }
+    };
+
+    Observer<ResponseEvent> responseEventObserver = new Observer<ResponseEvent>() {
+        @Override
+        public void onChanged(ResponseEvent event) {
+            switch (event.action){
+                case EntryResponse.ACTION_ACCEPTED:
+                    onEntryAccepted();
+                    break;
+                case EntryResponse.ACTION_DECLINED:{
+                    onEntryDeclined(event.code,event.message);
+                }
             }
         }
     };
@@ -201,5 +182,7 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
         baseSharedViewModel = new ViewModelProvider(requireActivity()).get(BaseSharedViewModel.class);
         baseSharedViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
         baseSharedViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
+        baseSharedViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
+        baseSharedViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
     }
 }
