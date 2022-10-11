@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,7 +30,6 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
 import com.paxus.pay.poslinkui.demo.event.EntryConfirmEvent;
 import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
-import com.paxus.pay.poslinkui.demo.utils.BuildModelDependency;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
