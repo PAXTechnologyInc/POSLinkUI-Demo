@@ -1,6 +1,7 @@
 package com.paxus.pay.poslinkui.demo.entry;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,27 +13,13 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
-import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryConfirmEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
 import com.paxus.pay.poslinkui.demo.event.ResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import android.view.KeyEvent;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Yanina.Yang on 5/11/2022.
@@ -123,7 +110,6 @@ public abstract class BaseEntryFragment extends Fragment {
     private void deactivate(){
         if(active) active = false;
     }
-
     public boolean isActive() {
         return active;
     }
@@ -142,7 +128,6 @@ public abstract class BaseEntryFragment extends Fragment {
 
     /**
      * Prepare View
-     *
      * @param rootView root view
      */
     protected abstract void loadView(View rootView);
@@ -174,21 +159,6 @@ public abstract class BaseEntryFragment extends Fragment {
         Logger.i("receive Entry Response ACTION_DECLINED for action \"" + getEntryAction() + "\" (" + errCode + "-" + errMessage + ")");
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
-
-    /*
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetEntryResponse(EntryResponseEvent event){
-        switch (event.action){
-            case EntryResponse.ACTION_ACCEPTED:
-                onEntryAccepted();
-                break;
-            case EntryResponse.ACTION_DECLINED:{
-                onEntryDeclined(event.code,event.message);
-            }
-        }
-    }
-
-     */
 
     protected void implementEnterKeyEvent(){}
 

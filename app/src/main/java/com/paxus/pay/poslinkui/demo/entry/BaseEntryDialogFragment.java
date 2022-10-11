@@ -14,6 +14,8 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.paxus.pay.poslinkui.demo.event.EntryConfirmEvent;
@@ -42,6 +44,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     protected boolean active = false; //After entry request accepted, active will be false
+    private BaseSharedViewModel baseSharedViewModel;
 
     @Nullable
     @Override
@@ -178,12 +181,25 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
      */
     protected void implementEnterKeyEvent(){}
 
-    /**
-     * This is to receive the EventBus post sent by EntryActivity
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryConfirm(EntryConfirmEvent entryConfirmEvent){
-        implementEnterKeyEvent();
-    }
+    Observer<Integer> keyCodeObserver = new Observer<Integer>() {
+        @Override
+        public void onChanged(Integer input) {
+            switch (input){
+                case KeyEvent.KEYCODE_ENTER:
+                    implementEnterKeyEvent();
+                    break;
+                case KeyEvent.KEYCODE_BACK:
+                    sendAbort();
+                    break;
+            }
+        }
+    };
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        baseSharedViewModel = new ViewModelProvider(requireActivity()).get(BaseSharedViewModel.class);
+        baseSharedViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
+        baseSharedViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
+    }
 }

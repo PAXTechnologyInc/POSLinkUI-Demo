@@ -28,13 +28,9 @@ import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
 import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
 import com.paxus.pay.poslinkui.demo.event.ResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
-
-import org.greenrobot.eventbus.EventBus;
 
 /**
  * Use fragment to implement all UI (Activity and Dialog).
@@ -57,11 +53,10 @@ public class EntryActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_entry);
-
         Logger.d("EntryActivity onCreate");
+        super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_entry);
         fragmentContainer = findViewById(R.id.fragment_placeholder);
         toolbar = findViewById(R.id.toolbar);
 
@@ -77,19 +72,16 @@ public class EntryActivity extends AppCompatActivity{
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Logger.d("EntryActivity onNewIntent");
-        //If activity is at the top of stack, startActivity will trigger onNewIntent.
-        //So you can load entry here
+        Logger.d(getClass().getSimpleName() +" onNewIntent");
+        //If activity is at the top of stack, startActivity will trigger onNewIntent. So you can load entry here.
         loadEntry(intent);
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Logger.d("EntryActivity onSaveInstanceState");
-
-        //If EntryActivity is not at the top of stack, a new EntryActivity will be created.
-        //After that, the old one need kill itself.
+        Logger.d(getClass().getSimpleName() +" onSaveInstanceState");
+        //If EntryActivity is not at the top of stack, a new EntryActivity will be created. After that, the old one need kill itself.
         unregisterUIReceiver();
         this.finishAndRemoveTask();
     }
@@ -97,27 +89,20 @@ public class EntryActivity extends AppCompatActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        Logger.d("EntryActivity onDestroy");
+        Logger.d(getClass().getSimpleName() +" onDestroy");
         unregisterUIReceiver();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
-        Logger.d("EntryActivity onBackPressed");
+        Logger.d(getClass().getSimpleName() +" onBackPressed");
         baseSharedViewModel.setKeyCode(KeyEvent.KEYCODE_BACK);
     }
 
-    /**
-     * This is being used to communicate with the fragments on top of this activity.
-     * BaseEntryFragment and BaseEntryDialogFragment subscribe to this.
-     * @param event
-     * @return
-     */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        Logger.d(getClass().getSimpleName() +" dispatchKeyEvent");
         if(event.getAction() == KeyEvent.ACTION_DOWN){
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                 baseSharedViewModel.setKeyCode(KeyEvent.KEYCODE_ENTER);
@@ -126,14 +111,18 @@ public class EntryActivity extends AppCompatActivity{
         return super.dispatchKeyEvent(event);
     }
 
-    private void loadEntry(Intent intent){
-        Logger.i("start Entry Action \"" + intent.getAction() + "\"");
+    private void logIntentExtras(Intent intent){
         Bundle bundle = intent.getExtras() != null ? intent.getExtras() : new Bundle();
         StringBuilder extras = new StringBuilder();
         for (String key : bundle.keySet()) {
             extras.append(key).append(":\"").append(bundle.get(key)).append("\",");
         }
         Logger.i("Action Extras:{" + extras + "}");
+    }
+
+    private void loadEntry(Intent intent){
+        logIntentExtras(intent);
+        Logger.i("Start Entry Action \"" + intent.getAction() + "\"");
 
         updateTransMode(intent.getStringExtra(EntryExtraData.PARAM_TRANS_MODE));
 
@@ -141,6 +130,7 @@ public class EntryActivity extends AppCompatActivity{
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
         if (fragment != null) {
             if (fragment instanceof DialogFragment) {
+
                 if (frag == null) {
                     //To show dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, hide tool bar.
                     toolbar.setVisibility(View.GONE);
@@ -167,15 +157,10 @@ public class EntryActivity extends AppCompatActivity{
     }
 
     public void loadStatus(Intent intent) {
-        String action = intent.getAction();
-        Logger.i("receive Status Action \"" + action + "\"");
-        Bundle bundle = intent.getExtras() != null ? intent.getExtras() : new Bundle();
-        StringBuilder extras = new StringBuilder();
-        for (String key : bundle.keySet()) {
-            extras.append(key).append(":\"").append(bundle.get(key)).append("\",");
-        }
-        Logger.i("Action Extras:{" + extras + "}");
+        logIntentExtras(intent);
+        Logger.i("Receive Status Action \"" + intent.getAction() + "\"");
 
+        String action = intent.getAction();
         if (InformationStatus.TRANS_COMPLETED.equals(action)) {
             String msg = intent.getStringExtra(StatusData.PARAM_MSG); //For POSLinkEntry, msg might be empty
             long code = intent.getLongExtra(StatusData.PARAM_CODE, 0L);
@@ -303,12 +288,10 @@ public class EntryActivity extends AppCompatActivity{
         public void onReceive(Context context, Intent intent) {
             if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())){
                 baseSharedViewModel.setResponseEvent(new ResponseEvent(intent.getAction()));
-                //EventBus.getDefault().post(new EntryResponseEvent(intent.getAction()));
             }else if(EntryResponse.ACTION_DECLINED.equals(intent.getAction())){
                 long resultCode = intent.getLongExtra(EntryResponse.PARAM_CODE,0);
                 String message = intent.getStringExtra(EntryResponse.PARAM_MSG);
                 baseSharedViewModel.setResponseEvent(new ResponseEvent(intent.getAction(), resultCode, message));
-                //EventBus.getDefault().post(new EntryResponseEvent(intent.getAction(),resultCode,message));
             }else{
                 loadStatus(intent);
             }

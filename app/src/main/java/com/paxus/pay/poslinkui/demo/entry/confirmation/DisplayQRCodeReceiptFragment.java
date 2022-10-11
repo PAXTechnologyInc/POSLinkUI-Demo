@@ -4,10 +4,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -18,6 +22,7 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.entry.BaseSharedViewModel;
 import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
@@ -36,6 +41,7 @@ public class DisplayQRCodeReceiptFragment extends BaseEntryFragment {
     private String packageName;
     private String qrCodeContent;
     private long timeout;
+    private BaseSharedViewModel baseSharedViewModel;
 
     @Override
     protected int getLayoutResourceId() {
@@ -122,9 +128,20 @@ public class DisplayQRCodeReceiptFragment extends BaseEntryFragment {
     }
 
     @Override
-    public void onEntryAbort(EntryAbortEvent event) {
-        //1.If click BACK, sendNext()
-
-        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Logger.d(getClass().getSimpleName() + " onViewCreated.");
+        baseSharedViewModel = new ViewModelProvider(requireActivity()).get(BaseSharedViewModel.class);
+        baseSharedViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
+        baseSharedViewModel.getKeyCode().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer input) {
+                switch (input){
+                    case KeyEvent.KEYCODE_ENTER:
+                    case KeyEvent.KEYCODE_BACK:
+                        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
+                        break;
+                }
+            }
+        });
     }
 }
