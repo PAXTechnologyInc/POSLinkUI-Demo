@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -84,7 +85,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:layout_weight="5">
+        android:layout_weight="5"
+        android:padding="@dimen/padding_horizontal"
+        >
         <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -106,44 +109,61 @@
             android:id="@+id/swipe"
             android:layout_margin="5dp"
             android:scaleType="fitCenter"/>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="2"
             android:orientation="vertical"
-            android:layout_weight="1">
-            <ImageView
+            >
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:id="@+id/nfc"
-                android:layout_margin="5dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/tap"/>
-            <ImageView
+                android:orientation="horizontal"
+                >
+                <ImageView
+                    android:id="@+id/nfc"
+                    android:src="@mipmap/tap"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:padding="@dimen/margin_gap"
+                    />
+                <ImageView
+                    android:id="@+id/google"
+                    android:src="@mipmap/google_pay"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:padding="@dimen/margin_gap"
+                    />
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:id="@+id/apple"
-                android:layout_margin="5dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/apple_pay"/>
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:id="@+id/google"
-                android:layout_margin="5dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/google_pay"/>
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:id="@+id/samsung"
-                android:layout_margin="5dp"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/samsung_pay"/>
+                android:orientation="horizontal"
+                >
+                <ImageView
+                    android:id="@+id/apple"
+                    android:src="@mipmap/apple_pay"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:padding="@dimen/margin_gap"
+                    />
+                <ImageView
+                    android:id="@+id/samsung"
+                    android:src="@mipmap/samsung_pay"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:padding="@dimen/margin_gap"
+                    />
+            </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>
