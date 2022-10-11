@@ -22,8 +22,6 @@ import com.pax.us.pay.ui.constant.entry.enumeration.PinStyles;
 import com.pax.us.pay.ui.constant.status.PINStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.entry.EntryActivity;
-import com.paxus.pay.poslinkui.demo.utils.BuildModelDependency;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
@@ -143,7 +141,7 @@ public class PINFragment extends BaseEntryFragment {
         rootView.findViewById(R.id.bypass).setVisibility(couldBypass? View.VISIBLE:View.GONE);
 
         View customizedPinPad = rootView.findViewById(R.id.pinpad_layout);
-        if(isUsingExternalPinPad || hasPhysicalKeyboard() || BuildModelDependency.noSpaceForKeyboardBelow(getContext())){
+        if(isUsingExternalPinPad || hasPhysicalKeyboard()){
             //(2)When using external pin pad or terminal has physical pin pad, do not use customized pin pad.
             customizedPinPad.setVisibility(View.GONE);
             sendSecureArea();
@@ -154,7 +152,6 @@ public class PINFragment extends BaseEntryFragment {
                         @Override
                         public void onGlobalLayout() {
                             customizedPinPad.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
                             onCustomizedPinPadLayoutReady();
                         }
                     });
@@ -229,13 +226,13 @@ public class PINFragment extends BaseEntryFragment {
             Logger.i("receive Status Action \""+intent.getAction()+"\"");
             String text = pinBox.getText().toString();
 
-            //3.Update input box according PinStatus
-            if(PINStatus.PIN_ENTERING.equals(intent.getAction())){
-                pinBox.setText(text + "*");
-            }else if(PINStatus.PIN_ENTER_CLEARED.equals(intent.getAction())){
-                if(text.length() > 0){
-                    pinBox.setText(text.substring(0,text.length()-1));
-                }
+            switch (intent.getAction()) {
+                case PINStatus.PIN_ENTERING:
+                    pinBox.setText(text + "*");
+                    break;
+                case PINStatus.PIN_ENTER_CLEARED:
+                    if(text.length() > 0) pinBox.setText(text.substring(0,text.length()-1));
+                    break;
             }
         }
     }
