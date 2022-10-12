@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -125,14 +124,18 @@ public class EntryActivity extends AppCompatActivity{
         return super.dispatchKeyEvent(event);
     }
 
-    private void loadEntry(Intent intent){
-        Logger.i("start Entry Action \"" + intent.getAction() + "\"");
+    public static void logBundleFromIntent(Intent intent) {
         Bundle bundle = intent.getExtras() != null ? intent.getExtras() : new Bundle();
         StringBuilder extras = new StringBuilder();
         for (String key : bundle.keySet()) {
             extras.append(key).append(":\"").append(bundle.get(key)).append("\",");
         }
         Logger.i("Action Extras:{" + extras + "}");
+    }
+
+    private void loadEntry(Intent intent){
+        Logger.i("start Entry Action \"" + intent.getAction() + "\"");
+        logBundleFromIntent(intent);
 
         updateTransMode(intent.getStringExtra(EntryExtraData.PARAM_TRANS_MODE));
 
@@ -168,12 +171,7 @@ public class EntryActivity extends AppCompatActivity{
     public void loadStatus(Intent intent) {
         String action = intent.getAction();
         Logger.i("receive Status Action \"" + action + "\"");
-        Bundle bundle = intent.getExtras() != null ? intent.getExtras() : new Bundle();
-        StringBuilder extras = new StringBuilder();
-        for (String key : bundle.keySet()) {
-            extras.append(key).append(":\"").append(bundle.get(key)).append("\",");
-        }
-        Logger.i("Action Extras:{" + extras + "}");
+        logBundleFromIntent(intent);
 
         if (InformationStatus.TRANS_COMPLETED.equals(action)) {
             String msg = intent.getStringExtra(StatusData.PARAM_MSG); //For POSLinkEntry, msg might be empty
