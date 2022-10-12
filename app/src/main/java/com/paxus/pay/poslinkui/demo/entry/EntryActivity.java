@@ -91,6 +91,7 @@ public class EntryActivity extends AppCompatActivity{
         super.onDestroy();
         Logger.d(getClass().getSimpleName() +" onDestroy");
         unregisterUIReceiver();
+        getViewModelStore().clear();
     }
 
     /**
@@ -100,7 +101,8 @@ public class EntryActivity extends AppCompatActivity{
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         Logger.d(getClass().getSimpleName() +" dispatchKeyEvent");
-        if(event.getAction() == KeyEvent.ACTION_DOWN){
+        if(event.getAction() == KeyEvent.ACTION_DOWN &&
+                (event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK) ){
             baseSharedViewModel.setKeyCode(event.getKeyCode());
         }
         return super.dispatchKeyEvent(event);
