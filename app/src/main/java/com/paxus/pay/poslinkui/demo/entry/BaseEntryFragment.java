@@ -36,7 +36,7 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 public abstract class BaseEntryFragment extends Fragment {
 
     private boolean active = false;
-    private BaseSharedViewModel baseSharedViewModel;
+    private BaseEntryViewModel baseEntryViewModel;
 
     @Nullable
     @Override
@@ -60,6 +60,7 @@ public abstract class BaseEntryFragment extends Fragment {
     Observer<Integer> keyCodeObserver = new Observer<Integer>() {
         @Override
         public void onChanged(Integer input) {
+            Logger.d(getClass().getSimpleName() + " receives keycode " + input);
             switch (input){
                 case KeyEvent.KEYCODE_ENTER:
                     implementEnterKeyEvent();
@@ -68,12 +69,14 @@ public abstract class BaseEntryFragment extends Fragment {
                     executeBackPressEvent();
                     break;
             }
+            baseEntryViewModel.resetKeyCode();
         }
     };
 
     Observer<ResponseEvent> responseEventObserver = new Observer<ResponseEvent>() {
         @Override
         public void onChanged(ResponseEvent event) {
+            Logger.d(getClass().getSimpleName() + " receives " + event.action);
             switch (event.action){
                 case EntryResponse.ACTION_ACCEPTED:
                     onEntryAccepted();
@@ -82,6 +85,7 @@ public abstract class BaseEntryFragment extends Fragment {
                     onEntryDeclined(event.code,event.message);
                 }
             }
+            baseEntryViewModel.resetResponseEvent();
         }
     };
 
@@ -90,11 +94,11 @@ public abstract class BaseEntryFragment extends Fragment {
         Logger.d(getClass().getSimpleName() + " onViewCreated.");
         super.onViewCreated(view, savedInstanceState);
 
-        baseSharedViewModel = new ViewModelProvider(requireActivity()).get(BaseSharedViewModel.class);
-        baseSharedViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
-        baseSharedViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
-        baseSharedViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
-        baseSharedViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
+        baseEntryViewModel = new ViewModelProvider(requireActivity()).get(BaseEntryViewModel.class);
+        baseEntryViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
+        baseEntryViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
+        baseEntryViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
+        baseEntryViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
     }
 
     @Override

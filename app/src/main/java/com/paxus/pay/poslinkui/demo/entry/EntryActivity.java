@@ -17,7 +17,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
@@ -49,7 +48,7 @@ public class EntryActivity extends AppCompatActivity{
     private String transType = "";
     private String transMode = "";
 
-    BaseSharedViewModel baseSharedViewModel;
+    EntryViewModelFactory entryViewModelFactory = new EntryViewModelFactory();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +64,6 @@ public class EntryActivity extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         registerUIReceiver();
-        baseSharedViewModel = new ViewModelProvider(this).get(BaseSharedViewModel.class);
         loadEntry(getIntent());
     }
 
@@ -94,20 +92,6 @@ public class EntryActivity extends AppCompatActivity{
         getViewModelStore().clear();
     }
 
-    /**
-     * Sets KeyCode in BaseSharedViewModel
-     * Fragment bases observe these updates
-     */
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        Logger.d(getClass().getSimpleName() +" dispatchKeyEvent");
-        if(event.getAction() == KeyEvent.ACTION_DOWN &&
-                (event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK) ){
-            baseSharedViewModel.setKeyCode(event.getKeyCode());
-        }
-        return super.dispatchKeyEvent(event);
-    }
-
     private void logIntentExtras(Intent intent){
         Bundle bundle = intent.getExtras() != null ? intent.getExtras() : new Bundle();
         StringBuilder extras = new StringBuilder();
@@ -124,10 +108,11 @@ public class EntryActivity extends AppCompatActivity{
         updateTransMode(intent.getStringExtra(EntryExtraData.PARAM_TRANS_MODE));
 
         Fragment fragment = UIFragmentHelper.createFragment(intent);
+        entryViewModelFactory.createViewModel(this, fragment);
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
+
         if (fragment != null) {
             if (fragment instanceof DialogFragment) {
-
                 if (frag == null) {
                     //To show dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, hide tool bar.
                     toolbar.setVisibility(View.GONE);
@@ -136,7 +121,6 @@ public class EntryActivity extends AppCompatActivity{
                 ((DialogFragment) fragment).show(getSupportFragmentManager(), "EntryDialog");
             } else {
                 UIFragmentHelper.closeDialog(getSupportFragmentManager(), "EntryDialog");
-
                 updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
 
                 if (frag == null) {
@@ -183,7 +167,6 @@ public class EntryActivity extends AppCompatActivity{
 
     /**
      * Add/Remove Watermark based on Trans Mode
-     * @param transMode
      */
     private void updateTransMode(String transMode){
         if(!TextUtils.isEmpty(transMode) && !transMode.equals(this.transMode)){
@@ -199,17 +182,13 @@ public class EntryActivity extends AppCompatActivity{
                     mode = getString(R.string.test_and_demo); break;
             }
 
-            if(!TextUtils.isEmpty(mode)){
-                ViewUtils.addWaterMarkView(this,mode);
-            }else{
-                ViewUtils.removeWaterMarkView(this);
-            }
+            if(!TextUtils.isEmpty(mode)) ViewUtils.addWaterMarkView(this,mode);
+            else ViewUtils.removeWaterMarkView(this);
         }
     }
 
     /**
      * Update Transaction Type on Title Bar
-     * @param transType
      */
     private void updateTransType(String transType){
         if(transType!= null && !transType.equals(this.transType)){
@@ -289,15 +268,30 @@ public class EntryActivity extends AppCompatActivity{
         }
     }
 
+    /**
+     * Forwards key events to fragments
+     */
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        Logger.d(getClass().getSimpleName() +" dispatchKeyEvent " + event.getKeyCode());
+        if(event.getAction() == KeyEvent.ACTION_DOWN &&
+                (event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK) ){
+            entryViewModelFactory.setKeyCode(event.getKeyCode());
+        }
+        return super.dispatchKeyEvent(event);
+    }
+    /**
+     * Forwards Manager's broadcasts to fragments
+     */
     public class POSLinkUIReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())){
-                baseSharedViewModel.setResponseEvent(new ResponseEvent(intent.getAction()));
+                entryViewModelFactory.setResponseEvent(new ResponseEvent(intent.getAction()));
             }else if(EntryResponse.ACTION_DECLINED.equals(intent.getAction())){
                 long resultCode = intent.getLongExtra(EntryResponse.PARAM_CODE,0);
                 String message = intent.getStringExtra(EntryResponse.PARAM_MSG);
-                baseSharedViewModel.setResponseEvent(new ResponseEvent(intent.getAction(), resultCode, message));
+                entryViewModelFactory.setResponseEvent(new ResponseEvent(intent.getAction(), resultCode, message));
             }else{
                 loadStatus(intent);
             }

@@ -39,7 +39,7 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     protected boolean active = false; //After entry request accepted, active will be false
-    private BaseSharedViewModel baseSharedViewModel;
+    private BaseEntryDialogViewModel baseEntryDialogViewModel;
 
     @Nullable
     @Override
@@ -64,6 +64,9 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
                 public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                     if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
                         executeBackPressEvent();
+                        return true;
+                    } else if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN){
+                        implementEnterKeyEvent();
                         return true;
                     }
                     return false;
@@ -145,26 +148,12 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
     }
 
     protected void implementEnterKeyEvent(){}
-
     protected void executeBackPressEvent(){ sendAbort(); }
-
-    Observer<Integer> keyCodeObserver = new Observer<Integer>() {
-        @Override
-        public void onChanged(Integer input) {
-            switch (input){
-                case KeyEvent.KEYCODE_ENTER:
-                    implementEnterKeyEvent();
-                    break;
-                case KeyEvent.KEYCODE_BACK:
-                    executeBackPressEvent();
-                    break;
-            }
-        }
-    };
 
     Observer<ResponseEvent> responseEventObserver = new Observer<ResponseEvent>() {
         @Override
         public void onChanged(ResponseEvent event) {
+            Logger.d(getClass().getSimpleName() + " receives " + event.action);
             switch (event.action){
                 case EntryResponse.ACTION_ACCEPTED:
                     onEntryAccepted();
@@ -173,16 +162,16 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
                     onEntryDeclined(event.code,event.message);
                 }
             }
+            baseEntryDialogViewModel.resetResponseEvent();
         }
     };
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        baseSharedViewModel = new ViewModelProvider(requireActivity()).get(BaseSharedViewModel.class);
-        baseSharedViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
-        baseSharedViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
-        baseSharedViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
-        baseSharedViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
+
+        baseEntryDialogViewModel = new ViewModelProvider(requireActivity()).get(BaseEntryDialogViewModel.class);
+        baseEntryDialogViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
+        baseEntryDialogViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
     }
 }
