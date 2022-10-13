@@ -187,11 +187,17 @@ public abstract class BaseEntryFragment extends Fragment {
 
         //Register viewmodel with the activity scope
         baseEntryViewModel = new ViewModelProvider(requireActivity()).get(BaseEntryViewModel.class);
-        //Remove observers to prevent observables from having multiple observers
-        baseEntryViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
-        baseEntryViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
         //Set Observers
         baseEntryViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
         baseEntryViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
+    }
+
+    @Override
+    public void onDestroyView() {
+        Logger.d(getClass().getSimpleName() + " onDestroyView.");
+        super.onDestroyView();
+        //Remove observers to prevent observables from having multiple observers
+        baseEntryViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
+        baseEntryViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
     }
 }

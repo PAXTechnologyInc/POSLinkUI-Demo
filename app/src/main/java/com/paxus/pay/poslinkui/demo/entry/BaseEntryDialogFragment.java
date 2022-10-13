@@ -171,13 +171,19 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Logger.d(getClass().getSimpleName() + " onViewCreated.");
         super.onViewCreated(view, savedInstanceState);
-
         //Register viewmodel with the activity scope
         baseEntryDialogViewModel = new ViewModelProvider(requireActivity()).get(BaseEntryDialogViewModel.class);
-        //Remove observers to prevent observables from having multiple observers
-        baseEntryDialogViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
         //Set Observer
         baseEntryDialogViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
+    }
+
+    @Override
+    public void onDestroyView() {
+        Logger.d(getClass().getSimpleName() + " onDestroyView.");
+        super.onDestroyView();
+        //Remove observers to prevent observables from having multiple observers
+        baseEntryDialogViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
     }
 }
