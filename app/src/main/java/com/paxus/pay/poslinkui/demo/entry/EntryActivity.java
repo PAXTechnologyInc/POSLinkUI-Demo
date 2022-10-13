@@ -281,7 +281,7 @@ public class EntryActivity extends AppCompatActivity{
         Logger.d(getClass().getSimpleName() +" dispatchKeyEvent " + event.getKeyCode());
         if(event.getAction() == KeyEvent.ACTION_DOWN &&
                 (event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK) ){
-            entryViewModelFactory.setKeyCode(event.getKeyCode());
+            entryViewModelFactory.onKeyDown(event.getKeyCode());
         }
         return super.dispatchKeyEvent(event);
     }

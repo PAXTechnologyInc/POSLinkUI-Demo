@@ -25,7 +25,7 @@ public class EntryViewModelFactory {
         }
     }
 
-    public void setKeyCode(int keyCode){
+    public void onKeyDown(int keyCode){
         if(!isDialog) {
             baseEntryViewModel.setKeyCode(keyCode);
         }
