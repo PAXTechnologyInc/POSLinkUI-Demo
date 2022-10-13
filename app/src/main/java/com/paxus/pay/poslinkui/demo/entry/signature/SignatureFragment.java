@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -144,12 +145,18 @@ public class SignatureFragment extends BaseEntryFragment {
             return false;
         });
 
-        UIFragmentHelper.hideKeyboardFromFragment(this);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         timeoutView = rootView.findViewById(R.id.timeout);
         tickTimeout = timeOut;
         timeoutView.setText(String.valueOf(tickTimeout/1000));
         handler.postDelayed(tick,1000);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
     //1.When cancel button clicked, sendAbort

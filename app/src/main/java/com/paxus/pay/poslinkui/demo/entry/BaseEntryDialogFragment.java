@@ -114,15 +114,6 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     protected abstract String getEntryAction();
 
-    protected void sendAbort() {
-        try {
-            dismiss();
-        } catch (Exception e) {
-            //Secure Dismiss dialog
-        }
-        EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
-    }
-
     /**
      * Entry Accepted means BroadPOS accepts the output from ACTION_NEXT
      */
@@ -138,8 +129,6 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     /**
      * Entry Declined means BroadPOS declined the output from ACTION_NEXT cuz it was not valid
-     * @param errCode Error Code
-     * @param errMessage Error Message
      */
     protected void onEntryDeclined(long errCode, String errMessage){
         //4.1when got declined, prompt declined message
@@ -147,10 +136,22 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * To be overridden by subclasses who contains a confirm button. Generally initiates broadcast to Manager
+     */
     protected void onConfirmButtonClicked(){}
+    private void executeEnterKeyEvent(){ onConfirmButtonClicked(); }
 
-    protected void executeEnterKeyEvent(){ onConfirmButtonClicked(); }
-    protected void executeBackPressEvent(){ sendAbort(); }
+    protected void sendAbort() {
+        try {
+            dismiss();
+        } catch (Exception e) {
+            //Secure Dismiss dialog
+        }
+        EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
+    }
+    private void executeBackPressEvent(){ sendAbort(); }
+
 
     Observer<ResponseEvent> responseEventObserver = new Observer<ResponseEvent>() {
         @Override
@@ -172,8 +173,11 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //Register viewmodel with the activity scope
         baseEntryDialogViewModel = new ViewModelProvider(requireActivity()).get(BaseEntryDialogViewModel.class);
+        //Remove observers to prevent observables from having multiple observers
         baseEntryDialogViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
+        //Set Observer
         baseEntryDialogViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
     }
 }

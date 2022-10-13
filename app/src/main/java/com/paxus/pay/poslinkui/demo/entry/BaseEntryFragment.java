@@ -92,22 +92,17 @@ public abstract class BaseEntryFragment extends Fragment {
      */
     protected abstract void loadView(View rootView);
 
-    protected void sendAbort() {
-        EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
-    }
-
     /**
      * To be overridden by subclasses who contains a confirm button. Generally initiates broadcast to Manager
      */
     protected void onConfirmButtonClicked(){}
 
-    protected void executeEnterKeyEvent(){
-        onConfirmButtonClicked();
-    }
+    private void executeEnterKeyEvent(){ onConfirmButtonClicked(); }
 
-    protected void executeBackPressEvent(){
-        sendAbort();
+    protected void sendAbort() {
+        EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
     }
+    protected void executeBackPressEvent(){ sendAbort(); }
 
     protected abstract String getSenderPackageName();
 
@@ -133,6 +128,9 @@ public abstract class BaseEntryFragment extends Fragment {
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Changes IME_ACTION of soft keyboard. All but the last EditText will focus the next one. Last one will submit.
+     */
     protected void prepareEditTextsForSubmissionWithSoftKeyboard(EditText... editTexts){
         for(int i=0; i<editTexts.length-1; i++) {
             editTexts[i].setImeOptions(editTexts[i].getImeOptions() | EditorInfo.IME_ACTION_NEXT);
@@ -159,6 +157,7 @@ public abstract class BaseEntryFragment extends Fragment {
                     executeBackPressEvent();
                     break;
             }
+            //Set a default value to prevent the next fragment from getting stale update
             baseEntryViewModel.resetKeyCode();
         }
     };
@@ -176,6 +175,7 @@ public abstract class BaseEntryFragment extends Fragment {
                     break;
                 }
             }
+            //Set a default value to prevent the next fragment from getting stale update
             baseEntryViewModel.resetResponseEvent();
         }
     };
@@ -185,10 +185,13 @@ public abstract class BaseEntryFragment extends Fragment {
         Logger.d(getClass().getSimpleName() + " onViewCreated.");
         super.onViewCreated(view, savedInstanceState);
 
+        //Register viewmodel with the activity scope
         baseEntryViewModel = new ViewModelProvider(requireActivity()).get(BaseEntryViewModel.class);
+        //Remove observers to prevent observables from having multiple observers
         baseEntryViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
-        baseEntryViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
         baseEntryViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
+        //Set Observers
+        baseEntryViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
         baseEntryViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
     }
 }

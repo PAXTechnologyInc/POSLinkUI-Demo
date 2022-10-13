@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
@@ -42,7 +43,7 @@ import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 public class EntryActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
-    private View fragmentContainer;
+    private FragmentContainerView fragmentContainer;
     private BroadcastReceiver receiver;
 
     private String transType = "";
@@ -274,11 +275,13 @@ public class EntryActivity extends AppCompatActivity{
     }
 
     /**
-     * Forwards key events to fragments
+     * Forwards key events to fragments using ViewModel.
+     * For BaseEntryFragment and BaseEntryDialogFragment, two different view models have been used
+     * EntryViewModelFactory chooses the appropriate one
      */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        Logger.d(getClass().getSimpleName() +" dispatchKeyEvent " + event.getKeyCode());
+        Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
         if(event.getAction() == KeyEvent.ACTION_DOWN &&
                 (event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK) ){
             entryViewModelFactory.onKeyDown(event.getKeyCode());
