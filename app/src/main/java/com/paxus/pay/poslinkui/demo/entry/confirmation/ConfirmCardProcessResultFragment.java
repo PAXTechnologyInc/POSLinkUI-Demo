@@ -77,7 +77,7 @@ public class ConfirmCardProcessResultFragment extends AConfirmationDialogFragmen
 
         //if timeout, treat it as confirmed.
         new Handler().postDelayed(() -> {
-            if (active) {
+            if (isActive) {
                 sendNext(true);
             }
         }, timeout);

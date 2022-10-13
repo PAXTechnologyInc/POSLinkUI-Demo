@@ -124,8 +124,8 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
 
     }
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
         value = value.replaceAll("[^0-9]", "");
         if (value.length() == 8) {
@@ -133,13 +133,7 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
         }
     }
 
-
     private void sendNext(String value) {
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_ORIG_DATE, value);
-    }
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
     }
 }

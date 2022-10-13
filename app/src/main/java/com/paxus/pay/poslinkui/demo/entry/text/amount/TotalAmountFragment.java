@@ -134,15 +134,9 @@ public class TotalAmountFragment extends BaseEntryFragment {
         sendNext(baseAmount);
     }
 
-    //If click confirm button, send next with input amount
-    private void onConfirmButtonClicked(){
+    @Override
+    protected void onConfirmButtonClicked(){
         long value = CurrencyUtils.parse(editText.getText().toString());
         sendNext(value);
     }
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
-    }
-
 }

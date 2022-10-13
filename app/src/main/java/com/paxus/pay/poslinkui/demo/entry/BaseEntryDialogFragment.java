@@ -38,7 +38,7 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
  */
 public abstract class BaseEntryDialogFragment extends DialogFragment {
 
-    protected boolean active = false; //After entry request accepted, active will be false
+    protected boolean isActive = false; //After entry request accepted, isActive will be false
     private BaseEntryDialogViewModel baseEntryDialogViewModel;
 
     @Nullable
@@ -66,7 +66,7 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
                         executeBackPressEvent();
                         return true;
                     } else if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN){
-                        implementEnterKeyEvent();
+                        executeEnterKeyEvent();
                         return true;
                     }
                     return false;
@@ -85,10 +85,10 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
     }
 
     private void activate(){
-        if(!active) active = true;
+        isActive = true;
     }
     private void deactivate(){
-        if(active) active = false;
+        isActive = false;
     }
 
     /**
@@ -147,7 +147,9 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 
-    protected void implementEnterKeyEvent(){}
+    protected void onConfirmButtonClicked(){}
+
+    protected void executeEnterKeyEvent(){ onConfirmButtonClicked(); }
     protected void executeBackPressEvent(){ sendAbort(); }
 
     Observer<ResponseEvent> responseEventObserver = new Observer<ResponseEvent>() {

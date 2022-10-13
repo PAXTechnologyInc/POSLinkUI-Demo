@@ -182,8 +182,11 @@ public class EntryActivity extends AppCompatActivity{
                     mode = getString(R.string.test_and_demo); break;
             }
 
-            if(!TextUtils.isEmpty(mode)) ViewUtils.addWaterMarkView(this,mode);
-            else ViewUtils.removeWaterMarkView(this);
+            if(!TextUtils.isEmpty(mode)) {
+                ViewUtils.addWaterMarkView(this,mode);
+            } else {
+                ViewUtils.removeWaterMarkView(this);
+            }
         }
     }
 
@@ -195,7 +198,9 @@ public class EntryActivity extends AppCompatActivity{
             this.transType = transType;
 
             ActionBar actionBar = getSupportActionBar();
-            if(actionBar != null) actionBar.setTitle(transType);
+            if(actionBar != null) {
+                actionBar.setTitle(transType);
+            }
         }
     }
 

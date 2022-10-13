@@ -97,15 +97,10 @@ public class AVSFragment extends BaseEntryFragment {
         prepareEditTextsForSubmissionWithSoftKeyboard(editTextAddr, editTextZip);
     }
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked(){
+    @Override
+    protected void onConfirmButtonClicked(){
         String addr = editTextAddr.getText().toString();
         String zip = editTextZip.getText().toString();
         EntryRequestUtils.sendNextAVS(requireContext(), packageName, action, addr, zip);
-    }
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
     }
 }

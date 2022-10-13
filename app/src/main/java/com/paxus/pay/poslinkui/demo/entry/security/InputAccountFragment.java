@@ -105,7 +105,7 @@ public class InputAccountFragment extends BaseEntryFragment {
         }
     }
 
-    //2.When confirm button clicked, sendNext
+    @Override
     protected void onConfirmButtonClicked() {
         EntryRequestUtils.sendNext(requireContext(), packageName, action);
     }
@@ -201,7 +201,9 @@ public class InputAccountFragment extends BaseEntryFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (receiver != null) requireContext().unregisterReceiver(receiver);
+        if (receiver != null) {
+            requireContext().unregisterReceiver(receiver);
+        }
     }
 
     @Override
@@ -496,10 +498,4 @@ public class InputAccountFragment extends BaseEntryFragment {
 
         }
     }
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
-    }
-
 }

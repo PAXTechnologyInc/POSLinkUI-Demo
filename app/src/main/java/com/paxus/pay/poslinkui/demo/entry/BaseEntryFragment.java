@@ -57,50 +57,6 @@ public abstract class BaseEntryFragment extends Fragment {
         return view;
     }
 
-    Observer<Integer> keyCodeObserver = new Observer<Integer>() {
-        @Override
-        public void onChanged(Integer input) {
-            Logger.d(getClass().getSimpleName() + " receives keycode " + input);
-            switch (input){
-                case KeyEvent.KEYCODE_ENTER:
-                    implementEnterKeyEvent();
-                    break;
-                case KeyEvent.KEYCODE_BACK:
-                    executeBackPressEvent();
-                    break;
-            }
-            baseEntryViewModel.resetKeyCode();
-        }
-    };
-
-    Observer<ResponseEvent> responseEventObserver = new Observer<ResponseEvent>() {
-        @Override
-        public void onChanged(ResponseEvent event) {
-            Logger.d(getClass().getSimpleName() + " receives " + event.action);
-            switch (event.action){
-                case EntryResponse.ACTION_ACCEPTED:
-                    onEntryAccepted();
-                    break;
-                case EntryResponse.ACTION_DECLINED:{
-                    onEntryDeclined(event.code,event.message);
-                }
-            }
-            baseEntryViewModel.resetResponseEvent();
-        }
-    };
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Logger.d(getClass().getSimpleName() + " onViewCreated.");
-        super.onViewCreated(view, savedInstanceState);
-
-        baseEntryViewModel = new ViewModelProvider(requireActivity()).get(BaseEntryViewModel.class);
-        baseEntryViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
-        baseEntryViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
-        baseEntryViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
-        baseEntryViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
-    }
-
     @Override
     public void onDestroy() {
         Logger.d(getClass().getSimpleName() + " onDestroy.");
@@ -109,10 +65,10 @@ public abstract class BaseEntryFragment extends Fragment {
     }
 
     private void activate(){
-        if(!active) active = true;
+        active = true;
     }
     private void deactivate(){
-        if(active) active = false;
+        active = false;
     }
     public boolean isActive() {
         return active;
@@ -140,7 +96,14 @@ public abstract class BaseEntryFragment extends Fragment {
         EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
     }
 
-    protected void implementEnterKeyEvent(){}
+    /**
+     * To be overridden by subclasses who contains a confirm button. Generally initiates broadcast to Manager
+     */
+    protected void onConfirmButtonClicked(){}
+
+    protected void executeEnterKeyEvent(){
+        onConfirmButtonClicked();
+    }
 
     protected void executeBackPressEvent(){
         sendAbort();
@@ -178,9 +141,54 @@ public abstract class BaseEntryFragment extends Fragment {
         editTexts[editTexts.length-1].setImeOptions(editTexts[editTexts.length-1].getImeOptions() | EditorInfo.IME_ACTION_DONE);
         editTexts[editTexts.length-1].setOnEditorActionListener((textView, i, keyEvent) -> {
             if(i == EditorInfo.IME_ACTION_DONE){
-                implementEnterKeyEvent();
+                executeEnterKeyEvent();
             }
             return true;
         });
+    }
+
+    Observer<Integer> keyCodeObserver = new Observer<Integer>() {
+        @Override
+        public void onChanged(Integer input) {
+            Logger.d(getClass().getSimpleName() + " receives keycode " + input);
+            switch (input){
+                case KeyEvent.KEYCODE_ENTER:
+                    executeEnterKeyEvent();
+                    break;
+                case KeyEvent.KEYCODE_BACK:
+                    executeBackPressEvent();
+                    break;
+            }
+            baseEntryViewModel.resetKeyCode();
+        }
+    };
+
+    Observer<ResponseEvent> responseEventObserver = new Observer<ResponseEvent>() {
+        @Override
+        public void onChanged(ResponseEvent event) {
+            Logger.d(getClass().getSimpleName() + " receives " + event.action);
+            switch (event.action){
+                case EntryResponse.ACTION_ACCEPTED:
+                    onEntryAccepted();
+                    break;
+                case EntryResponse.ACTION_DECLINED:{
+                    onEntryDeclined(event.code,event.message);
+                    break;
+                }
+            }
+            baseEntryViewModel.resetResponseEvent();
+        }
+    };
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Logger.d(getClass().getSimpleName() + " onViewCreated.");
+        super.onViewCreated(view, savedInstanceState);
+
+        baseEntryViewModel = new ViewModelProvider(requireActivity()).get(BaseEntryViewModel.class);
+        baseEntryViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
+        baseEntryViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
+        baseEntryViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
+        baseEntryViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
     }
 }

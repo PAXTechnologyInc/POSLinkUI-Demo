@@ -59,8 +59,8 @@ public abstract class ANumFragment extends BaseEntryFragment {
 
     protected abstract int getMaxLength();
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
         sendNext(value);
     }
@@ -70,10 +70,5 @@ public abstract class ANumFragment extends BaseEntryFragment {
     }
 
     protected abstract String getRequestedParamName();
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
-    }
 }
 

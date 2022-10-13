@@ -88,16 +88,12 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
         confirmBtn.setOnClickListener( v -> onConfirmButtonClicked());
     }
 
-    private void onConfirmButtonClicked(){
+    @Override
+    protected void onConfirmButtonClicked(){
         sendNext();
     }
 
     private void sendNext(){
         EntryRequestUtils.sendNext(requireContext(), packageName, action);
-    }
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
     }
 }

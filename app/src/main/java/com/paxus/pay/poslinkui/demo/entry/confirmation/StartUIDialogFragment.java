@@ -67,7 +67,9 @@ public class StartUIDialogFragment extends BaseEntryDialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (active) EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
+        if (isActive) {
+            EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
+        }
     }
 
 }

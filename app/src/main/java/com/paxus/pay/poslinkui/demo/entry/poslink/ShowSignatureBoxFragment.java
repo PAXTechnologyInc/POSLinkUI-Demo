@@ -138,8 +138,8 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
         tickTimeout = timeOut;
     }
 
-    //3.When confirm button clicked, sendNext
-    private void onConfirmButtonClicked(){
+    @Override
+    protected void onConfirmButtonClicked(){
         if (!mSignatureView.getTouched()) {
             return;
         }
@@ -171,7 +171,6 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_SIGNATURE, signature);
     }
 
-
     @Override
     protected String getSenderPackageName() {
         return packageName;
@@ -185,17 +184,10 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
     @Override
     protected void sendAbort() {
         super.sendAbort();
-
         handler.removeCallbacks(tick); //Stop Tick
     }
 
     private void sendTimeout() {
         EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
     }
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
-    }
-
 }
