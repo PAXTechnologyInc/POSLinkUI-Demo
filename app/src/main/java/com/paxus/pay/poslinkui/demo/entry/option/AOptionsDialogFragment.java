@@ -51,7 +51,8 @@ public abstract class AOptionsDialogFragment extends BaseEntryDialogFragment {
         sendAbort();
     }
 
-    private void onConfirmButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         if (listView.getCheckedItemPosition() >= 0) {
             sendNext(listView.getCheckedItemPosition());
         }
@@ -68,8 +69,4 @@ public abstract class AOptionsDialogFragment extends BaseEntryDialogFragment {
 
     protected abstract String formatTitle();
 
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
-    }
 }

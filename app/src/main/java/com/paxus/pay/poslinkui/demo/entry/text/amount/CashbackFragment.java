@@ -143,8 +143,8 @@ public class CashbackFragment extends BaseEntryFragment {
         prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked(){
+    @Override
+    protected void onConfirmButtonClicked(){
         if(editText.getVisibility() == View.VISIBLE) {
             long value = CurrencyUtils.parse(editText.getText().toString());
             sendNext(value);
@@ -155,9 +155,7 @@ public class CashbackFragment extends BaseEntryFragment {
         }
     }
 
-
     private void sendNext(long value){
-
         String param = EntryRequest.PARAM_CASHBACK_AMOUNT;
         EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
     }
@@ -237,10 +235,5 @@ public class CashbackFragment extends BaseEntryFragment {
             optionButton = itemView.findViewById(R.id.option_item);
             editText = itemView.findViewById(R.id.edit_item);
         }
-    }
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
     }
 }

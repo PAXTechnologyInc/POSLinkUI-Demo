@@ -233,8 +233,8 @@ public class TipFragment extends BaseEntryFragment {
         prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked(){
+    @Override
+    protected void onConfirmButtonClicked(){
         if(editText.getVisibility() == View.VISIBLE) {
             String text = editText.getText().toString();
             long value = CurrencyUtils.parse(text);
@@ -354,10 +354,5 @@ public class TipFragment extends BaseEntryFragment {
             optionButton = itemView.findViewById(R.id.option_item);
             editText = itemView.findViewById(R.id.edit_item);
         }
-    }
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
     }
 }

@@ -61,8 +61,8 @@ public abstract class AAmountFragment extends BaseEntryFragment {
         prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
-    //1.If confirm button clicked, sendNext
-    private void onConfirmButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         long value = CurrencyUtils.parse(editText.getText().toString());
         sendNext(value);
     }
@@ -78,10 +78,5 @@ public abstract class AAmountFragment extends BaseEntryFragment {
     }
 
     protected abstract String getRequestedParamName();
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
-    }
 
 }

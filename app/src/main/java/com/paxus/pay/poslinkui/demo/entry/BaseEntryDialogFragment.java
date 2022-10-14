@@ -14,16 +14,13 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
-import com.paxus.pay.poslinkui.demo.event.EntryConfirmEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.event.ResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by Yanina.Yang on 5/12/2022.
@@ -41,7 +38,8 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 public abstract class BaseEntryDialogFragment extends DialogFragment {
 
-    protected boolean active = false; //After entry request accepted, active will be false
+    protected boolean isActive = false; //After entry request accepted, isActive will be false
+    private BaseEntryDialogViewModel baseEntryDialogViewModel;
 
     @Nullable
     @Override
@@ -65,7 +63,10 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
                 @Override
                 public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                     if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
-                        onBackPressed();
+                        executeBackPressEvent();
+                        return true;
+                    } else if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN){
+                        executeEnterKeyEvent();
                         return true;
                     }
                     return false;
@@ -78,23 +79,16 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
-        super.onDismiss(dialog);
-
-        deactivate();
         Logger.d(this.getClass().getSimpleName()+" onDismiss");
+        super.onDismiss(dialog);
+        deactivate();
     }
 
     private void activate(){
-        if(!active) {
-            EventBus.getDefault().register(this);
-            active = true;
-        }
+        isActive = true;
     }
     private void deactivate(){
-        if(active) {
-            active = false;
-            EventBus.getDefault().unregister(this);
-        }
+        isActive = false;
     }
 
     /**
@@ -120,22 +114,6 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     protected abstract String getEntryAction();
 
-    protected void sendAbort() {
-        try {
-            dismiss();
-        } catch (Exception e) {
-            //Secure Dismiss dialog
-        }
-        EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
-    }
-
-    /**
-     * On KEYCODE_BACK (on navigation bar) clicked , generally close dialog and abort action
-     */
-    protected void onBackPressed() {
-        sendAbort();
-    }
-
     /**
      * Entry Accepted means BroadPOS accepts the output from ACTION_NEXT
      */
@@ -151,8 +129,6 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     /**
      * Entry Declined means BroadPOS declined the output from ACTION_NEXT cuz it was not valid
-     * @param errCode Error Code
-     * @param errMessage Error Message
      */
     protected void onEntryDeclined(long errCode, String errMessage){
         //4.1when got declined, prompt declined message
@@ -160,30 +136,54 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetEntryResponse(EntryResponseEvent event){
-        switch (event.action){
-            case EntryResponse.ACTION_ACCEPTED:
-                onEntryAccepted();
-                break;
-            case EntryResponse.ACTION_DECLINED:{
-                onEntryDeclined(event.code,event.message);
-            }
+    /**
+     * To be overridden by subclasses who contains a confirm button. Generally initiates broadcast to Manager
+     */
+    protected void onConfirmButtonClicked(){}
+    private void executeEnterKeyEvent(){ onConfirmButtonClicked(); }
+
+    protected void sendAbort() {
+        try {
+            dismiss();
+        } catch (Exception e) {
+            //Secure Dismiss dialog
         }
+        EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
+    }
+    private void executeBackPressEvent(){ sendAbort(); }
+
+
+    Observer<ResponseEvent> responseEventObserver = new Observer<ResponseEvent>() {
+        @Override
+        public void onChanged(ResponseEvent event) {
+            Logger.d(getClass().getSimpleName() + " receives " + event.action);
+            switch (event.action){
+                case EntryResponse.ACTION_ACCEPTED:
+                    onEntryAccepted();
+                    break;
+                case EntryResponse.ACTION_DECLINED:{
+                    onEntryDeclined(event.code,event.message);
+                }
+            }
+            baseEntryDialogViewModel.resetResponseEvent();
+        }
+    };
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Logger.d(getClass().getSimpleName() + " onViewCreated.");
+        super.onViewCreated(view, savedInstanceState);
+        //Register viewmodel with the activity scope
+        baseEntryDialogViewModel = new ViewModelProvider(requireActivity()).get(BaseEntryDialogViewModel.class);
+        //Set Observer
+        baseEntryDialogViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
     }
 
-    /**
-     * To be implemented by children if they need to do something with the hardware OK button.
-     * Not all fragments need to do that. That is why it is not abstract.
-     */
-    protected void implementEnterKeyEvent(){}
-
-    /**
-     * This is to receive the EventBus post sent by EntryActivity
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryConfirm(EntryConfirmEvent entryConfirmEvent){
-        implementEnterKeyEvent();
+    @Override
+    public void onDestroyView() {
+        Logger.d(getClass().getSimpleName() + " onDestroyView.");
+        super.onDestroyView();
+        //Remove observers to prevent observables from having multiple observers
+        baseEntryDialogViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
     }
-
 }

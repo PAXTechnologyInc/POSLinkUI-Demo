@@ -227,13 +227,12 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
         }
     }
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked(){
+    @Override
+    protected void onConfirmButtonClicked(){
         String value = editText.getText().toString();
         if(inputType.matches("[23467]")){
             value = value.replaceAll("[^0-9]","");
         }
-
         sendNext(value);
     }
 
@@ -311,10 +310,4 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
             }
         }
     }
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
-    }
-
 }

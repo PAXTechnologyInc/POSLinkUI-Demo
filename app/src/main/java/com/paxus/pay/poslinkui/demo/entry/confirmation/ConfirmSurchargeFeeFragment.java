@@ -91,7 +91,8 @@ public class ConfirmSurchargeFeeFragment extends BaseEntryFragment {
         return action;
     }
 
-    private void onConfirmButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         sendNext(true);
     }
 
@@ -105,10 +106,5 @@ public class ConfirmSurchargeFeeFragment extends BaseEntryFragment {
 
     private void sendNext(boolean confirm) {
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_CONFIRMED, confirm);
-    }
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
     }
 }

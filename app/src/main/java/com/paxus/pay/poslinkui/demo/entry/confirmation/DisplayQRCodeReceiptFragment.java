@@ -18,7 +18,6 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
@@ -122,9 +121,7 @@ public class DisplayQRCodeReceiptFragment extends BaseEntryFragment {
     }
 
     @Override
-    public void onEntryAbort(EntryAbortEvent event) {
-        //1.If click BACK, sendNext()
-
+    protected void executeBackPressEvent() {
         EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
     }
 }

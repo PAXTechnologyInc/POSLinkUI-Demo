@@ -1,6 +1,7 @@
 package com.paxus.pay.poslinkui.demo.entry;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,22 +13,17 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
-import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryConfirmEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.event.ResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by Yanina.Yang on 5/11/2022.
  *
- * Base Dialog Fragment for most entry actions
  * <p>
  *     UI Tips:
  *     1. Load layout in onCreateView (getLayoutResourceId, loadParameter, loadView)
@@ -40,6 +36,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public abstract class BaseEntryFragment extends Fragment {
 
     private boolean active = false;
+    private BaseEntryViewModel baseEntryViewModel;
 
     @Nullable
     @Override
@@ -60,28 +57,19 @@ public abstract class BaseEntryFragment extends Fragment {
         return view;
     }
 
-
     @Override
     public void onDestroy() {
+        Logger.d(getClass().getSimpleName() + " onDestroy.");
         super.onDestroy();
-
-        Logger.d(this.getClass().getSimpleName()+" onDestroy");
         deactivate();
     }
 
     private void activate(){
-        if(!active) {
-            EventBus.getDefault().register(this);
-            active = true;
-        }
+        active = true;
     }
     private void deactivate(){
-        if(active) {
-            active = false;
-            EventBus.getDefault().unregister(this);
-        }
+        active = false;
     }
-
     public boolean isActive() {
         return active;
     }
@@ -100,14 +88,21 @@ public abstract class BaseEntryFragment extends Fragment {
 
     /**
      * Prepare View
-     *
      * @param rootView root view
      */
     protected abstract void loadView(View rootView);
 
+    /**
+     * To be overridden by subclasses who contains a confirm button. Generally initiates broadcast to Manager
+     */
+    protected void onConfirmButtonClicked(){}
+
+    private void executeEnterKeyEvent(){ onConfirmButtonClicked(); }
+
     protected void sendAbort() {
         EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
     }
+    protected void executeBackPressEvent(){ sendAbort(); }
 
     protected abstract String getSenderPackageName();
 
@@ -118,7 +113,6 @@ public abstract class BaseEntryFragment extends Fragment {
      */
     protected void onEntryAccepted() {
         Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + getEntryAction() + "\"");
-
         //3.2 when got accepted, should not response AbortEvent any more.
         deactivate();
     }
@@ -134,32 +128,9 @@ public abstract class BaseEntryFragment extends Fragment {
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGetEntryResponse(EntryResponseEvent event){
-        switch (event.action){
-            case EntryResponse.ACTION_ACCEPTED:
-                onEntryAccepted();
-                break;
-            case EntryResponse.ACTION_DECLINED:{
-                onEntryDeclined(event.code,event.message);
-            }
-        }
-    }
-
-
-    //2. On KEYCODE_BACK (on navigation bar) clicked , generally abort action
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryAbort(EntryAbortEvent event) {
-        sendAbort();
-    }
-
-    protected void implementEnterKeyEvent(){}
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEntryConfirm(EntryConfirmEvent entryConfirmEvent){
-        implementEnterKeyEvent();
-    }
-
+    /**
+     * Changes IME_ACTION of soft keyboard. All but the last EditText will focus the next one. Last one will submit.
+     */
     protected void prepareEditTextsForSubmissionWithSoftKeyboard(EditText... editTexts){
         for(int i=0; i<editTexts.length-1; i++) {
             editTexts[i].setImeOptions(editTexts[i].getImeOptions() | EditorInfo.IME_ACTION_NEXT);
@@ -168,9 +139,65 @@ public abstract class BaseEntryFragment extends Fragment {
         editTexts[editTexts.length-1].setImeOptions(editTexts[editTexts.length-1].getImeOptions() | EditorInfo.IME_ACTION_DONE);
         editTexts[editTexts.length-1].setOnEditorActionListener((textView, i, keyEvent) -> {
             if(i == EditorInfo.IME_ACTION_DONE){
-                implementEnterKeyEvent();
+                executeEnterKeyEvent();
             }
             return true;
         });
+    }
+
+    Observer<Integer> keyCodeObserver = new Observer<Integer>() {
+        @Override
+        public void onChanged(Integer input) {
+            Logger.d(getClass().getSimpleName() + " receives keycode " + input);
+            switch (input){
+                case KeyEvent.KEYCODE_ENTER:
+                    executeEnterKeyEvent();
+                    break;
+                case KeyEvent.KEYCODE_BACK:
+                    executeBackPressEvent();
+                    break;
+            }
+            //Set a default value to prevent the next fragment from getting stale update
+            baseEntryViewModel.resetKeyCode();
+        }
+    };
+
+    Observer<ResponseEvent> responseEventObserver = new Observer<ResponseEvent>() {
+        @Override
+        public void onChanged(ResponseEvent event) {
+            Logger.d(getClass().getSimpleName() + " receives " + event.action);
+            switch (event.action){
+                case EntryResponse.ACTION_ACCEPTED:
+                    onEntryAccepted();
+                    break;
+                case EntryResponse.ACTION_DECLINED:{
+                    onEntryDeclined(event.code,event.message);
+                    break;
+                }
+            }
+            //Set a default value to prevent the next fragment from getting stale update
+            baseEntryViewModel.resetResponseEvent();
+        }
+    };
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Logger.d(getClass().getSimpleName() + " onViewCreated.");
+        super.onViewCreated(view, savedInstanceState);
+
+        //Register viewmodel with the activity scope
+        baseEntryViewModel = new ViewModelProvider(requireActivity()).get(BaseEntryViewModel.class);
+        //Set Observers
+        baseEntryViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
+        baseEntryViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
+    }
+
+    @Override
+    public void onDestroyView() {
+        Logger.d(getClass().getSimpleName() + " onDestroyView.");
+        super.onDestroyView();
+        //Remove observers to prevent observables from having multiple observers
+        baseEntryViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
+        baseEntryViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
     }
 }

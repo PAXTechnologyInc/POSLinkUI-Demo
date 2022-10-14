@@ -58,10 +58,10 @@ public abstract class ANumTextFragment extends BaseEntryFragment {
         prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
-    private void onConfirmButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
         sendNext(value);
-
     }
 
     protected abstract int getMaxLength();
@@ -74,10 +74,5 @@ public abstract class ANumTextFragment extends BaseEntryFragment {
 
     protected void sendNext(String value) {
         EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction(), getRequestedParamName(), value);
-    }
-
-    @Override
-    protected void implementEnterKeyEvent(){
-        onConfirmButtonClicked();
     }
 }
