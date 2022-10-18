@@ -43,6 +43,7 @@ public abstract class ANumTextFragment extends BaseEntryFragment {
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_number_text);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         int maxLength = getMaxLength();
         if (maxLength > 0) {
             editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
@@ -52,10 +53,9 @@ public abstract class ANumTextFragment extends BaseEntryFragment {
         } else {
             editText.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         }
-        editText.requestFocusFromTouch();
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+
     }
 
     @Override

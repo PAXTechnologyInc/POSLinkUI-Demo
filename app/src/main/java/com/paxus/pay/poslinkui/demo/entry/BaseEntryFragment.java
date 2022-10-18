@@ -1,11 +1,16 @@
 package com.paxus.pay.poslinkui.demo.entry;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -47,7 +52,7 @@ public abstract class BaseEntryFragment extends Fragment {
         Bundle bundle = getArguments();
         if(bundle != null) {
             loadArgument(bundle);
-        }else {
+        } else {
             Logger.e(this.getClass().getSimpleName()+" arguments missing!!!");
         }
 
@@ -143,6 +148,10 @@ public abstract class BaseEntryFragment extends Fragment {
             }
             return true;
         });
+        ((Activity)(editTexts[0].getContext())).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        InputMethodManager inputMethodManager = (InputMethodManager)(((Activity)(editTexts[0].getContext())).getSystemService(Context.INPUT_METHOD_SERVICE));
+        inputMethodManager.showSoftInput(editTexts[0], InputMethodManager.SHOW_FORCED);
+        editTexts[0].requestFocusFromTouch();
     }
 
     Observer<Integer> keyCodeObserver = new Observer<Integer>() {

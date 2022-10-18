@@ -47,18 +47,16 @@ public abstract class AAmountFragment extends BaseEntryFragment {
         textView.setText(formatMessage());
 
         editText = rootView.findViewById(R.id.edit_amount);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         editText.setSelected(true);
         editText.setText(CurrencyUtils.convert(0, getCurrency()));
         editText.setSelection(editText.getEditableText().length());
-
         editText.addTextChangedListener(new AmountTextWatcher(getMaxLength(), getCurrency()));
-
-        editText.requestFocusFromTouch();
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+
     }
 
     @Override

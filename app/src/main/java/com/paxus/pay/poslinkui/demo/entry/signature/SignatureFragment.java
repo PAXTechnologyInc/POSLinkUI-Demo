@@ -144,9 +144,6 @@ public class SignatureFragment extends BaseEntryFragment {
 
             return false;
         });
-
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
         timeoutView = rootView.findViewById(R.id.timeout);
         tickTimeout = timeOut;
         timeoutView.setText(String.valueOf(tickTimeout/1000));
@@ -156,7 +153,6 @@ public class SignatureFragment extends BaseEntryFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
     //1.When cancel button clicked, sendAbort

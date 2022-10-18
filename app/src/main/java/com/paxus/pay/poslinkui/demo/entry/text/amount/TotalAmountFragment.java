@@ -87,20 +87,15 @@ public class TotalAmountFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        
-
-        
-
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_amount);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         editText.setSelected(false);
         editText.setText(CurrencyUtils.convert(0,currency));
         editText.setSelection(editText.getEditableText().length());
-
         editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
-        editText.requestFocusFromTouch();
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
@@ -118,7 +113,6 @@ public class TotalAmountFragment extends BaseEntryFragment {
         }else {
             noTipButton.setVisibility(View.GONE);
         }
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
 

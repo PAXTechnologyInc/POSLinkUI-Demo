@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -55,14 +56,12 @@ public class ExpiryFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-
-
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_expiry);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         editText.setSelection(editText.getEditableText().length());
-
         editText.addTextChangedListener(new TextWatcher() {
             protected boolean mEditing;
             private String mPreStr;
@@ -100,9 +99,6 @@ public class ExpiryFragment extends BaseEntryFragment {
                 }
             }
         });
-
-        editText.requestFocusFromTouch();
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());

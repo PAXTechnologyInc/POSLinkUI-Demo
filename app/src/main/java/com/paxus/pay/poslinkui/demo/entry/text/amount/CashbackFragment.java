@@ -134,13 +134,12 @@ public class CashbackFragment extends BaseEntryFragment {
             editText.setVisibility(View.GONE);
         }else {
             editText.setVisibility(View.VISIBLE);
+            prepareEditTextsForSubmissionWithSoftKeyboard(editText);
             editText.addTextChangedListener(new AmountTextWatcher(maxLength,currency));
         }
-        editText.requestFocusFromTouch();
+
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
-
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
     @Override

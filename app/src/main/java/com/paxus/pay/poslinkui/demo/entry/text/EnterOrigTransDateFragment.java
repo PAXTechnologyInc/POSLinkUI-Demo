@@ -70,8 +70,8 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_expiry);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         editText.setSelection(editText.getEditableText().length());
-
         editText.addTextChangedListener(new TextWatcher() {
             protected boolean mEditing;
             private String mPreStr;
@@ -117,11 +117,9 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
                 }
             }
         });
-        editText.requestFocusFromTouch();
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
-
     }
 
     @Override

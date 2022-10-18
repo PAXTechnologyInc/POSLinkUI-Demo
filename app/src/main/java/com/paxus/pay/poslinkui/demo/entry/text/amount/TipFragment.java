@@ -128,10 +128,6 @@ public class TipFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        
-
-        
-
         TextView tvBaseAmount = rootView.findViewById(R.id.base_amount);
         if(baseAmount > 0){
             tvBaseAmount.setText(CurrencyUtils.convert(baseAmount, currency));
@@ -177,11 +173,12 @@ public class TipFragment extends BaseEntryFragment {
             editText.setVisibility(View.GONE);
         }else {
             editText.setVisibility(View.VISIBLE);
+            prepareEditTextsForSubmissionWithSoftKeyboard(editText);
             if(UnitType.CENT.equals(tipUnit)) {
                 editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
             }
         }
-        editText.requestFocusFromTouch();
+
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener( v -> onConfirmButtonClicked());
 
@@ -229,8 +226,6 @@ public class TipFragment extends BaseEntryFragment {
         }else {
             tipSummary.setVisibility(View.GONE);
         }
-
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
     @Override

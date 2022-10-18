@@ -45,14 +45,14 @@ public abstract class ANumFragment extends BaseEntryFragment {
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_number);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         int maxLength = getMaxLength();
         if (maxLength > 0) {
             editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
         }
-        editText.requestFocusFromTouch();
+
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
     protected abstract String formatMessage();

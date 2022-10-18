@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -123,7 +124,6 @@ public class EntryActivity extends AppCompatActivity{
             } else {
                 UIFragmentHelper.closeDialog(getSupportFragmentManager(), "EntryDialog");
                 updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
-
                 if (frag == null) {
                     //Show tool bar
                     toolbar.setVisibility(View.VISIBLE);
@@ -281,9 +281,9 @@ public class EntryActivity extends AppCompatActivity{
      */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
         if(event.getAction() == KeyEvent.ACTION_DOWN &&
                 (event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK) ){
+            Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
             entryViewModelFactory.onKeyDown(event.getKeyCode());
         }
         return super.dispatchKeyEvent(event);

@@ -132,8 +132,8 @@
     <string name="pls_input_again_date">Please Enter Date again</string>
     <string name="please_enter_voucher_number">Please Enter Voucher Number</string>
     <string name="please_enter_auth_code">Please Enter Auth Code</string>
-    <string name="pls_input_address">Please Enter Address</string>
-    <string name="pls_input_zip_code">Please Enter Zip Code</string>
+    <string name="pls_input_address">Address</string>
+    <string name="pls_input_zip_code">Zip Code</string>
     <string name="pls_input_expiry_date">Please Enter Expiry Date</string>
     <string name="pls_input_transaction_number">Please Enter Transaction Number</string>
     <string name="pls_input_reference_number">Please Enter Reference Number</string>
