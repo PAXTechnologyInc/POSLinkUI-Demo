@@ -101,6 +101,12 @@ public class AVSFragment extends BaseEntryFragment {
     protected void onConfirmButtonClicked(){
         String addr = editTextAddr.getText().toString();
         String zip = editTextZip.getText().toString();
+
+        if(editTextAddr.hasFocus()) {
+            (getActivity().findViewById(editTextAddr.getNextFocusDownId())).requestFocusFromTouch();
+            return;
+        }
+
         EntryRequestUtils.sendNextAVS(requireContext(), packageName, action, addr, zip);
     }
 }
