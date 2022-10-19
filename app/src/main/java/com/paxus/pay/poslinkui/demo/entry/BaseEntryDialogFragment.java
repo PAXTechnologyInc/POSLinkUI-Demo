@@ -2,7 +2,10 @@ package com.paxus.pay.poslinkui.demo.entry;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Layout;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,6 +79,7 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
         activate();
         return view;
     }
+
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {

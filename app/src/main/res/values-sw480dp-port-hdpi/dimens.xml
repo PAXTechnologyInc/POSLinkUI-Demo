@@ -1,11 +1,8 @@
 <resources>
     <!-- For M8 use-->
-    <dimen name="circle_width">3dp</dimen>
-    <dimen name="paint_width">5dp</dimen>
     <dimen name="version_name_text_size">34sp</dimen>
 
     <dimen name="padding_horizontal">20dp</dimen>
     <dimen name="padding_vertical">15dp</dimen>
-    <dimen name="corner_radius">8dp</dimen>
     <dimen name="margin_gap">5dp</dimen>
 </resources>

@@ -82,7 +82,6 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
         key.setText(left.toString());
         value.setText(right.toString());
 
-        UIFragmentHelper.hideKeyboardFromFragment(this);
         //Send Next when clicking confirm button
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener( v -> onConfirmButtonClicked());

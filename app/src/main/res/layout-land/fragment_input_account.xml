@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
     <com.paxus.pay.poslinkui.demo.view.ClssLightsView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:id="@+id/clss_light"
-        android:layout_margin="5dp"/>
+        android:gravity="center_vertical"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_margin="5dp"
+        android:gravity="center_vertical"
         android:id="@+id/ly_merchant">
         <TextView
             android:layout_width="wrap_content"
@@ -35,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_margin="8dp">
+        android:gravity="center_vertical">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,28 +54,35 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4"
+        android:layout_weight="5"
+        android:gravity="center"
+        android:layout_gravity="center"
         android:orientation="vertical"
+        android:weightSum="3.5"
         android:id="@+id/layout_manual">
+
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/manual_message"
-            android:textSize="14sp"
-            android:textColor="@android:color/black" />
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
         <TextView
             android:background="@drawable/border"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:id="@+id/edit_account"
-            android:hint=""
             android:layout_margin="5dp"
             android:gravity="center_horizontal"
             android:textColor="#FF9C27B0"
             android:textSize="20sp"/>
         <Button
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1.5"
             android:text="@string/confirm"
             android:textAllCaps="false"
             android:id="@+id/confirm_button"/>
@@ -84,9 +91,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="4"
+        android:paddingHorizontal="@dimen/padding_horizontal"
+        android:weightSum="5"
         android:orientation="horizontal"
-        android:layout_weight="5"
-        android:padding="@dimen/padding_horizontal"
         >
         <ImageView
             android:layout_width="0dp"
@@ -94,7 +102,7 @@
             android:layout_weight="1"
             android:id="@+id/insert"
             android:layout_margin="5dp"
-            android:scaleType="fitCenter"/>
+            android:scaleType= "fitCenter"/>
         <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -115,6 +123,7 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:orientation="vertical"
+            android:weightSum="2"
             >
             <LinearLayout
                 android:layout_width="match_parent"

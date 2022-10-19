@@ -102,6 +102,7 @@ public class InputTextFragment extends BaseEntryFragment {
         textView.setText(title);
 
         editText = rootView.findViewById(R.id.edit_text);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         if ("1".equals(inputType)) {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             if(maxLength > 0 ) {
@@ -186,8 +187,6 @@ public class InputTextFragment extends BaseEntryFragment {
             handler = new Handler();
             handler.postDelayed(timeoutRun, timeOut);
         }
-
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
     }
 
     @Override

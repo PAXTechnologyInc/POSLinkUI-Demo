@@ -1,13 +1,14 @@
 <resources>
-    <!-- fallback use-->
+    <!-- constant dimensions -->
     <dimen name="circle_width">3dp</dimen>
     <dimen name="paint_width">5dp</dimen>
+    <dimen name="corner_radius">8dp</dimen>
+    <dimen name="space_between_textview">12dp</dimen>
+
+    <!-- display dependent dimensions. fallback use.-->
     <dimen name="version_name_text_size">20sp</dimen>
     <dimen name="padding_horizontal">20dp</dimen>
     <dimen name="padding_vertical">15dp</dimen>
-    <dimen name="corner_radius">8dp</dimen>
     <dimen name="margin_gap">5dp</dimen>
-    <dimen name="space_between_textview">12dp</dimen>
-
-    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="toolbar_height">48dp</dimen>
 </resources>

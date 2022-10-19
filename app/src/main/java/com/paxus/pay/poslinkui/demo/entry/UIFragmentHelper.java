@@ -441,11 +441,4 @@ public class UIFragmentHelper {
             }
         }
     }
-
-    public static void hideKeyboardFromFragment(Fragment fragment){
-        InputMethodManager inputMethodManager = (InputMethodManager) fragment.getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        if (inputMethodManager.isAcceptingText() && fragment.getActivity().getCurrentFocus() != null) {
-            inputMethodManager.hideSoftInputFromWindow(fragment.getActivity().getCurrentFocus().getApplicationWindowToken(), 0);
-        }
-    }
 }

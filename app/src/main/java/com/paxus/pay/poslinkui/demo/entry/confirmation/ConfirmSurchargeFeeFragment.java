@@ -57,9 +57,6 @@ public class ConfirmSurchargeFeeFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-
-        UIFragmentHelper.hideKeyboardFromFragment(this);
-
         TextView feeNameTv = rootView.findViewById(R.id.fee_amount_name);
         feeNameTv.setText(feeName);
 
