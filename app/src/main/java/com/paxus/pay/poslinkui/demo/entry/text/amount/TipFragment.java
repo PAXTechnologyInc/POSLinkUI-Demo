@@ -61,6 +61,7 @@ public class TipFragment extends BaseEntryFragment {
     private String packageName;
     private String action;
     private boolean isEditingOngoing = false;
+    private boolean isSelectTipEnabled = false;
 
     @Override
     protected String getSenderPackageName() {
@@ -108,6 +109,7 @@ public class TipFragment extends BaseEntryFragment {
                 }
             }
         }
+        isSelectTipEnabled = tipOptions != null && tipOptions.length>0 || noTip;
 
         percentages = bundle.getStringArray(EntryExtraData.PARAM_TIP_RATE_OPTIONS);
         noTip = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_NO_TIP_SELECTION);
@@ -132,22 +134,41 @@ public class TipFragment extends BaseEntryFragment {
     @Override
     protected void loadView(View rootView) {
 
-
-
-        TextView tvBaseAmount = rootView.findViewById(R.id.base_amount);
         if(baseAmount > 0){
-            tvBaseAmount.setText(CurrencyUtils.convert(baseAmount, currency));
-        }else {
-            tvBaseAmount.setVisibility(View.INVISIBLE);
+            rootView.findViewById(R.id.base_amount_layout).setVisibility(View.VISIBLE);
+            ((TextView)rootView.findViewById(R.id.base_amount)).setText(CurrencyUtils.convert(baseAmount, currency));
+        }
+
+        if(enabledTipNames != null && enabledTipNames.length> 1){
+            rootView.findViewById(R.id.tips_summary).setVisibility(View.VISIBLE);
+
+            if(enabledTipValues != null){
+                if(enabledTipValues.length >= 1 && enabledTipValues[0]!=0){
+                    rootView.findViewById(R.id.summary_tip1).setVisibility(View.VISIBLE);
+                    ((TextView)rootView.findViewById(R.id.summary_tip1_name)).setText(enabledTipNames[0]);
+                    TextView tip1 = rootView.findViewById(R.id.summary_tip1_amt);
+                    tip1.setText(CurrencyUtils.convert(enabledTipValues.length >= 1 ? enabledTipValues[0] : 0, currency));
+                }
+                if(enabledTipValues.length >= 2 && enabledTipValues[1]!=0){
+                    rootView.findViewById(R.id.summary_tip2).setVisibility(View.VISIBLE);
+                    ((TextView)rootView.findViewById(R.id.summary_tip2_name)).setText(enabledTipNames[1]);
+                    TextView tip2 = rootView.findViewById(R.id.summary_tip2_amt);
+                    tip2.setText(CurrencyUtils.convert(enabledTipValues.length >= 2 ? enabledTipValues[1] : 0, currency));
+                }
+                if(enabledTipValues.length >= 3 && enabledTipValues[2]!=0){
+                    rootView.findViewById(R.id.summary_tip3).setVisibility(View.VISIBLE);
+                    ((TextView)rootView.findViewById(R.id.summary_tip3_name)).setText(enabledTipNames[2]);
+                    TextView tip3 = rootView.findViewById(R.id.summary_tip3_amt);
+                    tip3.setText(CurrencyUtils.convert(enabledTipValues.length >= 3 ? enabledTipValues[2] : 0, currency));
+                }
+            }
         }
 
         TextView tvTipName = rootView.findViewById(R.id.tip_name);
-        tvTipName.setText(tipName);
-
-        boolean haveOptions = tipOptions != null && tipOptions.length>0 || noTip;
+        tvTipName.setText((isSelectTipEnabled ? "Select " : "Enter ") + tipName);
 
         RecyclerView optionView = rootView.findViewById(R.id.options_layout);
-        if(haveOptions) {
+        if(isSelectTipEnabled) {
             List<TipOption> options = new ArrayList<>();
             for(long amt: tipOptions){
                 options.add(new TipOption(amt));
@@ -168,14 +189,14 @@ public class TipFragment extends BaseEntryFragment {
             optionView.setAdapter(new Adapter(options));
         }
         TextView textView = rootView.findViewById(R.id.message);
-        if(haveOptions){
+        if(isSelectTipEnabled){
             textView.setVisibility(View.GONE);
         }else {
             textView.setText(getString(R.string.prompt_input_tip));
         }
 
         editText = rootView.findViewById(R.id.edit_tip);
-        if(haveOptions){
+        if(isSelectTipEnabled){
             editText.setVisibility(View.GONE);
         }else {
             editText.setVisibility(View.VISIBLE);
@@ -188,50 +209,7 @@ public class TipFragment extends BaseEntryFragment {
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener( v -> onConfirmButtonClicked());
 
-        View tipSummary = rootView.findViewById(R.id.tips_summary);
-        if(enabledTipNames != null && enabledTipNames.length> 1){
-            TextView sale = rootView.findViewById(R.id.summary_sale);
 
-            sale.setText(CurrencyUtils.convert(baseAmount,currency));
-            sale.setTextColor(Color.BLUE);
-
-            ((TextView)rootView.findViewById(R.id.summary_tip1_name)).setText(enabledTipNames[0]);
-            ((TextView)rootView.findViewById(R.id.summary_tip2_name)).setText(enabledTipNames[1]);
-            if(enabledTipNames.length >= 3){
-                ((TextView)rootView.findViewById(R.id.summary_tip3_name)).setText(enabledTipNames[2]);
-            }else {
-                rootView.findViewById(R.id.summary_tip3).setVisibility(View.GONE);
-            }
-
-            if(enabledTipValues != null){
-                TextView tip1 = rootView.findViewById(R.id.summary_tip1_amt);
-                TextView tip2 = rootView.findViewById(R.id.summary_tip2_amt);
-                TextView tip3 = rootView.findViewById(R.id.summary_tip3_amt);
-
-                if(enabledTipValues.length >= 1){
-                    tip1.setText(CurrencyUtils.convert(enabledTipValues[0],currency));
-                    tip1.setTextColor(Color.BLUE);
-                }else {
-                    tip1.setText(CurrencyUtils.convert(0,currency));
-                }
-
-                if(enabledTipValues.length >= 2){
-                    tip2.setText(CurrencyUtils.convert(enabledTipValues[1],currency));
-                    tip2.setTextColor(Color.BLUE);
-                }else {
-                    tip2.setText(CurrencyUtils.convert(0,currency));
-                }
-
-                if(enabledTipValues.length >= 3){
-                    tip3.setText(CurrencyUtils.convert(enabledTipValues[2],currency));
-                    tip3.setTextColor(Color.BLUE);
-                }else {
-                    tip3.setText(CurrencyUtils.convert(0,currency));
-                }
-            }
-        }else {
-            tipSummary.setVisibility(View.GONE);
-        }
     }
 
     @Override
