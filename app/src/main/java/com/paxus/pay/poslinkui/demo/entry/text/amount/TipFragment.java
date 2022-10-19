@@ -1,5 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.text.amount;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -8,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -58,6 +60,7 @@ public class TipFragment extends BaseEntryFragment {
     private long[] enabledTipValues;
     private String packageName;
     private String action;
+    private boolean isEditingOngoing = false;
 
     @Override
     protected String getSenderPackageName() {
@@ -128,6 +131,9 @@ public class TipFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
+
+
+
         TextView tvBaseAmount = rootView.findViewById(R.id.base_amount);
         if(baseAmount > 0){
             tvBaseAmount.setText(CurrencyUtils.convert(baseAmount, currency));
@@ -259,8 +265,7 @@ public class TipFragment extends BaseEntryFragment {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_cashback_option, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cashback_option, parent, false);
             return new ViewHolder(view);
         }
 
@@ -277,13 +282,19 @@ public class TipFragment extends BaseEntryFragment {
                     }
                     option.selected = true;
                     selectedItem = option;
-
                     notifyDataSetChanged();
+
+                    ((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
             });
+
             if(option.editStyle){
+                holder.optionButton.setText("");
+
                 holder.editText.setVisibility(View.VISIBLE);
                 holder.editText.setHint(getString(R.string.other));
+
                 if(UnitType.CENT.equals(tipUnit)) {
                     holder.editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency) {
                         @Override
@@ -295,29 +306,25 @@ public class TipFragment extends BaseEntryFragment {
                 }else {
                     holder.editText.addTextChangedListener(new TextWatcher() {
                         @Override
-                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
                         @Override
-                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                        }
-
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
                         @Override
                         public void afterTextChanged(Editable editable) {
+                            if(isEditingOngoing) return;
+                            isEditingOngoing = true;
                             option.tipAmt = CurrencyUtils.parse(editable.toString()) * 100;
+                            isEditingOngoing = false;
                         }
                     });
                 }
-                holder.optionButton.setText("");
             }else {
                 holder.editText.setVisibility(View.GONE);
                 if(option.tipAmt == 0){
                     holder.optionButton.setText(getString(R.string.no_tip));
                 }else {
                     if(!TextUtils.isEmpty(option.percentage)) {
-                        holder.optionButton.setText(CurrencyUtils.convert(option.tipAmt, currency) + "(" + option.percentage + ")");
+                        holder.optionButton.setText(CurrencyUtils.convert(option.tipAmt, currency) + " (" + option.percentage + ")");
                     }else {
                         holder.optionButton.setText(CurrencyUtils.convert(option.tipAmt, currency));
                     }
