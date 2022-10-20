@@ -75,7 +75,6 @@
             android:layout_weight="1"
             android:id="@+id/edit_account"
             android:padding="@dimen/padding_vertical"
-            android:layout_margin="@dimen/margin_gap"
             android:gravity="center_horizontal"
             android:textColor="#FF9C27B0"
             android:textSize="20sp"/>

@@ -18,24 +18,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/total_amount"
-            android:gravity="end"
-            android:layout_gravity="end"/>
+            android:gravity="end"/>
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/message"
         android:textSize="18sp"
+        android:layout_marginVertical="@dimen/space_between_textview"
         />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_amount"
-        android:hint=""
         android:layout_margin="20dp"
         android:inputType="numberSigned"
-        android:digits="0123456789,.$€"
-        android:gravity="center_horizontal"/>
+        android:digits="0123456789,.$€"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="18sp"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginVertical="@dimen/space_between_textview"/>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="0dp"

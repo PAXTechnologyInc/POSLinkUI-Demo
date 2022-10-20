@@ -7,14 +7,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/message"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:layout_marginVertical="@dimen/space_between_textview"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_number_text"
-        android:hint=""
-        android:layout_margin="20dp"
-        android:gravity="center_horizontal"/>
+        />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

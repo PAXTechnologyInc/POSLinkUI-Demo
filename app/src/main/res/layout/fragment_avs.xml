@@ -9,22 +9,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:text="@string/pls_input_address"/>
+        android:text="@string/pls_input_address"
+        android:layout_marginVertical="@dimen/space_between_textview"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_address"
         android:inputType="text"/>
 
-    <androidx.legacy.widget.Space
-        android:layout_height="@dimen/padding_vertical"
-        android:layout_width="wrap_content"/>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/pls_input_zip_code"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:layout_marginVertical="@dimen/space_between_textview"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

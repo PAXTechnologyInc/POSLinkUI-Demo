@@ -7,13 +7,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/message"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:layout_marginVertical="@dimen/space_between_textview"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_security"
         android:padding="@dimen/padding_vertical"
-        android:layout_marginTop="@dimen/margin_gap"
+        android:layout_margin="@dimen/margin_gap"
         android:background="@drawable/rounded_corner_on_background"
         android:textColor="#FF9C27B0"
         android:textSize="20sp" />

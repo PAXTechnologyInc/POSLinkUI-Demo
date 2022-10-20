@@ -56,7 +56,7 @@
     </style>
     
     
-    <style name="POSLinkUIPastel" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="POSLinkUIPastel" parent="Theme.MaterialComponents.DayNight">
         <item name="android:windowBackground">@color/pastel_background</item>
         <item name="android:windowAnimationStyle">@style/NoAnimation</item>
         <item name="windowNoTitle">true</item>
@@ -74,12 +74,7 @@
         <item name="editTextStyle">@style/POSLinkUIPastelEditText</item>
         <item name="radioButtonStyle">@style/POSLinkUIPastelRadioButton</item>
         <item name="checkedTextViewStyle">@style/POSLinkUIPastelRadioButton</item>
-        <item name="android:textViewStyle">@style/POSLinkUIPastelTextView</item>
 
-    </style>
-
-    <style name="POSLinkUIPastelTextView" parent="android:Widget.Material.TextView">
-        <item name="android:layout_margin">@dimen/margin_gap</item>
     </style>
 
     <style name="POSLinkUIPastelEditText" parent="android:Widget.Material.EditText">

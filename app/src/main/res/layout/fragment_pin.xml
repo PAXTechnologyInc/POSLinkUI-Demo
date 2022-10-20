@@ -15,7 +15,7 @@
             android:id="@+id/ll_amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="10dp">
+            android:layout_marginVertical="@dimen/space_between_textview">
 
             <TextView
                 android:id="@+id/amount_name"
@@ -39,14 +39,14 @@
             android:id="@+id/message"
             android:textSize="18sp"
             android:lines="3"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:layout_marginVertical="@dimen/space_between_textview"/>
         <TextView
-            android:background="@drawable/border"
+            android:background="@drawable/rounded_corner_on_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edit_pin"
-            android:hint=""
-            android:layout_margin="5dp"
+            android:layout_margin="@dimen/margin_gap"
             android:gravity="center_horizontal"
             android:padding="10dp"
             android:textSize="20sp"
