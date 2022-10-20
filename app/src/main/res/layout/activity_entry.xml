@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".entry.EntryActivity"
     android:background="@android:color/transparent"
     android:orientation="vertical"
@@ -18,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
+            app:titleTextColor="@color/pastel_text_color"
             />
     </com.google.android.material.appbar.MaterialToolbar>
 

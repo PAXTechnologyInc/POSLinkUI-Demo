@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_gravity="center">
 
     <LinearLayout
         android:id="@+id/qrcode_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:gravity="center_horizontal|center_vertical"
         android:orientation="vertical">
 
         <TextView
@@ -16,16 +17,16 @@
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="@string/pls_scan_receipt"
-            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <ImageView
             android:id="@+id/qrcode_view"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/image_desc"
             android:padding="10dp"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            android:background="@color/white"/>
     </LinearLayout>
 
 </RelativeLayout>

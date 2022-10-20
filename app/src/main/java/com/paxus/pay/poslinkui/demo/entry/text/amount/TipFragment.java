@@ -1,7 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.text.amount;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -187,12 +186,6 @@ public class TipFragment extends BaseEntryFragment {
             linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             optionView.setLayoutManager(linearLayoutManager);
             optionView.setAdapter(new Adapter(options));
-        }
-        TextView textView = rootView.findViewById(R.id.message);
-        if(isSelectTipEnabled){
-            textView.setVisibility(View.GONE);
-        }else {
-            textView.setText(getString(R.string.prompt_input_tip));
         }
 
         editText = rootView.findViewById(R.id.edit_tip);

@@ -4,5 +4,4 @@
 
     <dimen name="padding_horizontal">15dp</dimen>
     <dimen name="padding_vertical">8dp</dimen>
-    <dimen name="margin_gap">5dp</dimen>
 </resources>

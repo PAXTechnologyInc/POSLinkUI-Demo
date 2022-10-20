@@ -60,15 +60,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/manual_message"
-            android:textSize="14sp"
-            android:textColor="@android:color/black" />
+            android:textSize="14sp"/>
         <TextView
-            android:background="@drawable/border"
+            android:background="@drawable/rounded_corner_on_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edit_account"
-            android:hint=""
-            android:layout_margin="5dp"
+            android:padding="@dimen/padding_vertical"
+            android:layout_margin="@dimen/margin_gap"
             android:gravity="center_horizontal"
             android:textColor="#FF9C27B0"
             android:textSize="20sp"/>
@@ -111,7 +110,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="@drawable/rounded_corner_on_background">
         <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"

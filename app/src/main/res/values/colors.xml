@@ -22,11 +22,12 @@
     <color name="fail">#FB3A3A</color>
 
     <color name="pastel_on_background">#DBD4D9</color>
-    <color name="pastel_background">#FBF4F9</color>
+    <color name="pastel_background">#142D4C</color>
     <color name="pastel_primary">#6E85B7</color>
     <color name="pastel_secondary">#A6B1E1</color>
     <color name="pastel_accent">#89AA97</color>
     <color name="pastel_warning">#FF7878</color>
-    <color name="pastel_text_color">#222222</color>
+    <color name="pastel_text_color">#ECECEC</color>
+    <color name="pastel_text_color_on_light">#222222</color>
 
 </resources>
