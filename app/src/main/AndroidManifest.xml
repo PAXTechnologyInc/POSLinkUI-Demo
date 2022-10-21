@@ -11,22 +11,22 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".DemoApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/POSLinkUIPastel"
-        android:name=".DemoApplication"
-        android:requestLegacyExternalStorage="true">
+        android:theme="@style/POSLinkUIPastel">
 
         <activity android:name=".MainActivity">
-            <!--android:theme="@style/Theme.Main">-->
             <!--            Add launcher then you can see the app in desktop and uninstall it easily-->
             <intent-filter>
 
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -85,6 +85,7 @@
                 <action android:name="com.pax.us.pay.action.ENTER_PHONE_NUMBER" />
                 <action android:name="com.pax.us.pay.action.ENTER_MERCHANT_REFERENCE_NUMBER" />
                 <action android:name="com.pax.us.pay.action.ENTER_OCT_REFERENCE_NUMBER" />
+                <action android:name="com.pax.us.pay.action.ENTER_ORIGINAL_TRANSACTION_IDENTIFIER" />
             </intent-filter>
             <intent-filter>
                 <category android:name="com.pax.us.pay.ui.category.SECURITY" />

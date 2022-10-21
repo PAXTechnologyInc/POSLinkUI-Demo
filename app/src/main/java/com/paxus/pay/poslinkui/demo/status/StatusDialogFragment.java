@@ -48,15 +48,6 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
  */
 public class StatusDialogFragment extends DialogFragment {
 
-    public static DialogFragment newInstance(String action) {
-        StatusDialogFragment dialogFragment = new StatusDialogFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, action);
-
-        dialogFragment.setArguments(bundle);
-        return dialogFragment;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

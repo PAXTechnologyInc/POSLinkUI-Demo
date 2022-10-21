@@ -350,7 +350,7 @@ public class UIFragmentHelper {
                     if (categories == null) {
                         Logger.e("WARNING:\"" + action + "\" Category is missing!");
                     }
-                    return StatusDialogFragment.newInstance(action);
+                    return (DialogFragment) createFragment(StatusDialogFragment.class, intent);
                 }
                 case Uncategory.PRINT_STARTED:
                 case Uncategory.FILE_UPDATE_STARTED:
@@ -359,7 +359,7 @@ public class UIFragmentHelper {
                 case Uncategory.LOG_UPLOAD_CONNECTED:
                 case Uncategory.LOG_UPLOAD_UPLOADING:
                 case Uncategory.CAPK_UPDATE_STARTED:
-                    return StatusDialogFragment.newInstance(action);
+                    return (DialogFragment) createFragment(StatusDialogFragment.class, intent);
             }
         }
         return null;

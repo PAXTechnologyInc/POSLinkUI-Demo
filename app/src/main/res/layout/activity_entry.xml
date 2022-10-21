@@ -10,22 +10,18 @@
 
     <com.google.android.material.appbar.MaterialToolbar
         android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_height">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            app:titleTextColor="@color/pastel_text_color"
-            />
-    </com.google.android.material.appbar.MaterialToolbar>
+        android:id="@+id/toolbar"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/pastel_background"
+        android:gravity="center_vertical"
+        app:titleTextColor="@color/pastel_text_color"></com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_placeholder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="@dimen/padding_horizontal"
+        android:background="@color/pastel_background"
         android:paddingVertical="@dimen/padding_vertical">
     </androidx.fragment.app.FragmentContainerView>
 
