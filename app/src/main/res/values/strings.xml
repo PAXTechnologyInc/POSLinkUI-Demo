@@ -140,6 +140,7 @@
     <string name="pls_input_invoice_number">Please Enter Invoice Number</string>
     <string name="pls_input_merchant_reference_number">Please Enter Merchant Reference Number</string>
     <string name="pls_input_oct_reference_number">Please Enter OCT Reference Number</string>
+    <string name="pls_input_orig_trans_identifier">Please Enter Orig. Trans. Identifier</string>
     <string name="pls_input_pin">Please Enter PIN</string>
     <string name="pls_input_vcode">Please Enter V-Code</string>
     <string name="pls_input_cvv2">Please Enter CVV2</string>

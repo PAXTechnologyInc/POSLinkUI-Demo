@@ -1,9 +1,7 @@
 package com.paxus.pay.poslinkui.demo.entry;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.inputmethod.InputMethodManager;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -117,6 +115,7 @@ import com.paxus.pay.poslinkui.demo.entry.text.text.AddressFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.AuthFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.CustomerCodeFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.OrderNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.text.OrigTransIdentifierFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.PoNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.ProdDescFragment;
 import com.paxus.pay.poslinkui.demo.status.StatusDialogFragment;
@@ -170,7 +169,7 @@ public class UIFragmentHelper {
             put(TextEntry.ACTION_ENTER_FSA_DATA, FSAFragment.class);
             put(TextEntry.ACTION_ENTER_FLEET_DATA, FleetFragment.class);
             put(TextEntry.ACTION_ENTER_ORIG_DATE, EnterOrigTransDateFragment.class);
-
+            put(TextEntry.ACTION_ENTER_ORIGINAL_TRANSACTION_IDENTIFIER, OrigTransIdentifierFragment.class);
         }
     };
 
