@@ -21,27 +21,22 @@
             android:visibility="gone">
             <TextView
                 android:text="Amount"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 />
             <TextView
                 android:id="@+id/base_amount"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
                 />
         </LinearLayout>
 
-        <androidx.legacy.widget.Space
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
-
         <LinearLayout
             android:id="@+id/tips_summary"
             android:layout_width="0dp"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:orientation="horizontal"
@@ -52,13 +47,14 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:gravity="right"
+                android:textAlignment="textEnd"
+                android:gravity="end"
                 android:visibility="gone">
-                <TextView android:layout_width="wrap_content"
+                <TextView android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/detail_item_tip1"
                     android:id="@+id/summary_tip1_name"/>
-                <TextView android:layout_width="wrap_content"
+                <TextView android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/summary_tip1_amt"/>
             </LinearLayout>
@@ -68,13 +64,14 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:gravity="right"
+                android:textAlignment="textEnd"
+                android:gravity="end"
                 android:visibility="gone">
-                <TextView android:layout_width="wrap_content"
+                <TextView android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/detail_item_tip2"
                     android:id="@+id/summary_tip2_name"/>
-                <TextView android:layout_width="wrap_content"
+                <TextView android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/summary_tip2_amt"/>
             </LinearLayout>
@@ -86,11 +83,11 @@
                 android:orientation="vertical"
                 android:gravity="right"
                 android:visibility="gone">
-                <TextView android:layout_width="wrap_content"
+                <TextView android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/detail_item_tip2"
                     android:id="@+id/summary_tip3_name"/>
-                <TextView android:layout_width="wrap_content"
+                <TextView android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/summary_tip3_amt"/>
             </LinearLayout>

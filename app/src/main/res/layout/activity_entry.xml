@@ -21,6 +21,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="@dimen/padding_horizontal"
-        android:background="@color/pastel_background"></androidx.fragment.app.FragmentContainerView>
+        android:background="@color/pastel_background" />
 
 </LinearLayout>

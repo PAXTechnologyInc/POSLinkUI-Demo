@@ -31,7 +31,10 @@
 
         <item name="android:textColor">@color/pastel_text_color</item>
         <item name="colorPrimary">@color/pastel_primary</item>
+        <item name="colorPrimaryDark">@color/pastel_background</item>
         <item name="colorSecondary">@color/pastel_secondary</item>
+        <item name="colorAccent">@color/pastel_accent</item>
+        <item name="android:statusBarColor">@color/pastel_background</item>
 
         <item name="colorError">@color/pastel_warning</item>
         <!--overriding default widget styles-->
