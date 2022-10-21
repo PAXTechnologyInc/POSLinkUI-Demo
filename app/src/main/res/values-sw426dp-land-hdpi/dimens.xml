@@ -2,6 +2,12 @@
     <!-- For Aries6, Aries8 use-->
     <dimen name="version_name_text_size">34sp</dimen>
 
-    <dimen name="padding_horizontal">20dp</dimen>
-    <dimen name="padding_vertical">15dp</dimen>
+    <dimen name="padding_horizontal">25dp</dimen>
+    <dimen name="padding_vertical">20dp</dimen>
+
+    <dimen name="margin_gap">10dp</dimen>
+    <dimen name="toolbar_height">70dp</dimen>
+    <dimen name="space_between_textview">15dp</dimen>
+
+
 </resources>
