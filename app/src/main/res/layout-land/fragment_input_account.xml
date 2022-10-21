@@ -66,16 +66,15 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:textColor="@android:color/black"
             android:textSize="14sp" />
 
         <TextView
-            android:background="@drawable/border"
+            android:background="@drawable/rounded_corner_on_background"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:id="@+id/edit_account"
-            android:layout_margin="5dp"
+            android:padding="@dimen/padding_vertical"
             android:gravity="center_horizontal"
             android:textColor="#FF9C27B0"
             android:textSize="20sp"/>
@@ -124,6 +123,7 @@
             android:layout_weight="2"
             android:orientation="vertical"
             android:weightSum="2"
+            android:background="@drawable/rounded_corner_on_background"
             >
             <LinearLayout
                 android:layout_width="match_parent"

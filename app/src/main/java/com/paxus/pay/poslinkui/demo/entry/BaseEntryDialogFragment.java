@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
+import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.ResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
@@ -43,6 +44,12 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     protected boolean isActive = false; //After entry request accepted, isActive will be false
     private BaseEntryDialogViewModel baseEntryDialogViewModel;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.POSLinkUIPastelDialog);
+    }
 
     @Nullable
     @Override

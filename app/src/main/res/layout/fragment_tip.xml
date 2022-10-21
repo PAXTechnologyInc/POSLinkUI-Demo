@@ -106,24 +106,16 @@
         android:layout_marginVertical="@dimen/space_between_textview"
         android:textSize="18sp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/message"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
-        />
-
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/options_layout"/>
+        android:id="@+id/options_layout"
+        style="@style/POSLinkUIPastel"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_tip"
-        android:layout_margin="20dp"
         android:inputType="numberSigned"
         android:digits="0123456789,.$€"
         android:gravity="center_horizontal"/>

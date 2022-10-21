@@ -56,14 +56,14 @@
     </style>
     
     
-    <style name="POSLinkUIPastel" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="POSLinkUIPastel" parent="Theme.MaterialComponents.DayNight">
         <item name="android:windowBackground">@color/pastel_background</item>
         <item name="android:windowAnimationStyle">@style/NoAnimation</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
 
-        <item name="android:statusBarColor" tools:targetApi="l">@color/pastel_background</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/pastel_background</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
 
         <item name="android:textColor">@color/pastel_text_color</item>
         <item name="colorPrimary">@color/pastel_primary</item>
@@ -72,19 +72,35 @@
         <item name="colorError">@color/pastel_warning</item>
         <!--overriding default widget styles-->
         <item name="editTextStyle">@style/POSLinkUIPastelEditText</item>
-        <!--<item name="buttonStyle">@style/POSLinkUIPastelButton</item>-->
+        <item name="radioButtonStyle">@style/POSLinkUIPastelRadioButton</item>
+        <item name="checkedTextViewStyle">@style/POSLinkUIPastelRadioButton</item>
+
     </style>
 
-    <style name="POSLinkUIPastelEditText" parent="android:Widget.EditText">
+    <style name="POSLinkUIPastelEditText" parent="android:Widget.Material.EditText">
         <item name="android:background">@drawable/rounded_corner_on_background</item>
-        <item name="android:textColor">@color/pastel_text_color</item>
+        <item name="android:textColor">@color/pastel_text_color_on_light</item>
         <item name="android:padding">@dimen/padding_vertical</item>
         <item name="android:imeOptions">flagNoExtractUi</item>
+        <item name="android:gravity">center</item>
     </style>
 
-    <style name="POSLinkUIPastelButton" parent="android:Widget.Button">
-        <item name="android:background">@color/pastel_primary</item>
-        <item name="android:padding">@dimen/padding_vertical</item>
+    <style name="POSLinkUIPastelRadioButton" parent="android:Widget.CompoundButton.RadioButton">
+        <item name="android:buttonTint">@color/pastel_text_color</item>
+        <item name="android:textColor">@color/pastel_text_color</item>
+    </style>
+
+    <style name="POSLinkUIPastelDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:windowBackground">@color/pastel_background</item>
+        <item name="android:background">@color/pastel_background</item>
+        <item name="backgroundTint">@color/pastel_background</item>
+        <item name="android:textColor">@color/pastel_text_color</item>
+        <item name="colorPrimary">@color/pastel_primary</item>
+        <item name="colorSecondary">@color/pastel_secondary</item>
+        <item name="colorError">@color/pastel_warning</item>
+        <item name="cornerRadius">@dimen/corner_radius</item>
+        <item name="android:padding">@dimen/margin_gap</item>
+        <item name="android:backgroundDimAmount">.8</item>
     </style>
 
 </resources>

@@ -8,20 +8,16 @@
         android:layout_height="wrap_content"
         android:id="@+id/message"
         android:textSize="18sp"
-        android:textColor="@android:color/black"/>
+        android:layout_marginVertical="@dimen/space_between_textview"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_text"
         android:hint=""
-        android:inputType="text"
-        android:layout_margin="20dp"
-        android:gravity="center_horizontal"/>
+        android:inputType="text"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/confirm_button"
         android:text="@string/confirm"/>
-
-
 </LinearLayout>
