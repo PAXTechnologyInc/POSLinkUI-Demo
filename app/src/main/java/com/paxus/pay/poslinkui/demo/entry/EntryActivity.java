@@ -281,10 +281,12 @@ public class EntryActivity extends AppCompatActivity{
      */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if(event.getAction() == KeyEvent.ACTION_DOWN &&
-                (event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK) ){
-            Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
-            entryViewModelFactory.onKeyDown(event.getKeyCode());
+        Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
+        if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK){
+            if(event.getAction() == KeyEvent.ACTION_DOWN){
+                entryViewModelFactory.onKeyDown(event.getKeyCode());
+            }
+            return true;
         }
         return super.dispatchKeyEvent(event);
     }
