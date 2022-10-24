@@ -352,6 +352,8 @@ public class InputAccountFragment extends BaseEntryFragment {
         apple.setVisibility(supportApplePay ? View.VISIBLE : View.GONE);
         google.setVisibility(supportGooglePay ? View.VISIBLE : View.GONE);
         samsung.setVisibility(supportSamsungPay ? View.VISIBLE : View.GONE);
+        rootView.findViewById(R.id.contactless_logo_container)
+                .setVisibility((supportNFC || supportApplePay || supportGooglePay || supportSamsungPay) ? View.VISIBLE : View.GONE);
 
         receiver = new InputAccountFragment.Receiver();
         IntentFilter intentFilter = new IntentFilter();
