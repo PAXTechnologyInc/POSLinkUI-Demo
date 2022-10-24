@@ -103,7 +103,7 @@ public class AVSFragment extends BaseEntryFragment {
         String zip = editTextZip.getText().toString();
 
         if(editTextAddr.hasFocus()) {
-            (getActivity().findViewById(editTextAddr.getNextFocusDownId())).requestFocusFromTouch();
+            (getActivity().findViewById(editTextAddr.getNextFocusDownId())).requestFocus();
             return;
         }
 

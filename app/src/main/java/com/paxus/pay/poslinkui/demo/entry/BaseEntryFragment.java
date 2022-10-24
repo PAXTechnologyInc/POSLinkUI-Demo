@@ -151,7 +151,7 @@ public abstract class BaseEntryFragment extends Fragment {
         ((Activity)(editTexts[0].getContext())).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         InputMethodManager inputMethodManager = (InputMethodManager)(((Activity)(editTexts[0].getContext())).getSystemService(Context.INPUT_METHOD_SERVICE));
         inputMethodManager.showSoftInput(editTexts[0], InputMethodManager.SHOW_FORCED);
-        editTexts[0].requestFocusFromTouch();
+        editTexts[0].requestFocus();
     }
 
     Observer<Integer> keyCodeObserver = new Observer<Integer>() {
