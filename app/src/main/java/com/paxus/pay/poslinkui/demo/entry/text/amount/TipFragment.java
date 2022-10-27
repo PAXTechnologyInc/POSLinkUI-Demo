@@ -194,6 +194,7 @@ public class TipFragment extends BaseEntryFragment {
         }else {
             editText.setVisibility(View.VISIBLE);
             prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+            editText.setText(CurrencyUtils.convert(0, currency));
             if(UnitType.CENT.equals(tipUnit)) {
                 editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
             }
