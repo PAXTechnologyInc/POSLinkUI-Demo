@@ -363,6 +363,11 @@ public class InputAccountFragment extends BaseEntryFragment {
         intentFilter.addAction(SecurityStatus.SECURITY_ENTER_DELETE);
         intentFilter.addAction(SecurityStatus.SECURITY_KEYBOARD_LOCATION);
 
+        intentFilter.addCategory(CardStatus.CATEGORY);
+        intentFilter.addAction(CardStatus.CARD_INSERT_REQUIRED);
+        intentFilter.addAction(CardStatus.CARD_TAP_REQUIRED);
+        intentFilter.addAction(CardStatus.CARD_SWIPE_REQUIRED);
+
         if (enableTap) {
             intentFilter.addCategory(ClssLightStatus.CATEGORY);
             intentFilter.addAction(ClssLightStatus.CLSS_LIGHT_IDLE);
