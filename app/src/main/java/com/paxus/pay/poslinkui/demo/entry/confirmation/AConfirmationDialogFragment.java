@@ -35,7 +35,7 @@ public abstract class AConfirmationDialogFragment extends BaseEntryDialogFragmen
         String positiveText = getPositiveText();
         if(!TextUtils.isEmpty(positiveText)) {
             positiveButton.setText(positiveText);
-            positiveButton.setOnClickListener( v-> onPositiveButtonClicked());
+            positiveButton.setOnClickListener( v-> onConfirmButtonClicked());
         }else{
             positiveButton.setVisibility(View.GONE);
         }
@@ -55,13 +55,17 @@ public abstract class AConfirmationDialogFragment extends BaseEntryDialogFragmen
         sendNext(false);
     }
 
-    private void onPositiveButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         sendNext(true);
     }
 
     protected void sendNext(boolean confirm) {
-        dismiss(); //Close Dialog
-
+        try {
+            dismiss();
+        } catch (Exception e) {
+            //Secure Dismiss dialog
+        }
         EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction(), getRequestedParamName(), confirm);
     }
 
@@ -73,6 +77,5 @@ public abstract class AConfirmationDialogFragment extends BaseEntryDialogFragmen
     protected abstract String getPositiveText();
 
     protected abstract String getNegativeText();
-
 
 }

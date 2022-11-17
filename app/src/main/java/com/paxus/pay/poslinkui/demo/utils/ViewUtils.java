@@ -49,8 +49,8 @@ public class ViewUtils {
 
     public static BitmapDrawable genWaterMark(String content) {
         TextPaint paint = new TextPaint();
-        paint.setColor(Color.GRAY);
-        paint.setAlpha(75);
+        paint.setColor(Color.YELLOW);
+        paint.setAlpha(100);
         paint.setAntiAlias(true);
         paint.setTextAlign(Paint.Align.LEFT);
         paint.setTextSize(50);
@@ -60,7 +60,7 @@ public class ViewUtils {
         //new height, anticlockwise
         //[x0,y0] = [0,contentH], [x1, y1]=[contentW, contentH], [x2,y2]=[newW,newH]
         //y2 = (y1 - y0) * cos(a) + (x1 - x0) * sin(a) + y0
-        float degrees = 30;
+        float degrees = 45;
         int contentW = contentLayout.getWidth();
         int contentH = contentLayout.getHeight();
 
@@ -72,7 +72,7 @@ public class ViewUtils {
 
         canvas.save();
         canvas.translate(0, newH - contentH); // move to the start point to the old position
-        canvas.rotate(-30); //anticlockwise rotation
+        canvas.rotate(-45); //anticlockwise rotation
         contentLayout.draw(canvas);
         canvas.restore();
 

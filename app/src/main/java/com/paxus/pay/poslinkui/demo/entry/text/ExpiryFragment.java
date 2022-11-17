@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -55,14 +56,12 @@ public class ExpiryFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-
-
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_expiry);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         editText.setSelection(editText.getEditableText().length());
-
         editText.addTextChangedListener(new TextWatcher() {
             protected boolean mEditing;
             private String mPreStr;
@@ -103,7 +102,6 @@ public class ExpiryFragment extends BaseEntryFragment {
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
-
     }
 
     @Override
@@ -116,8 +114,8 @@ public class ExpiryFragment extends BaseEntryFragment {
         return action;
     }
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
         value = value.replaceAll("[^0-9]", "");
         if (value.length() == 4) {
@@ -125,9 +123,13 @@ public class ExpiryFragment extends BaseEntryFragment {
         }
     }
 
-
     private void sendNext(String value) {
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_EXPIRY_DATE, value);
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        editText.clearFocus();
+    }
 }

@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
@@ -26,12 +29,9 @@ import com.pax.us.pay.ui.constant.status.InformationStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
 import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.event.EntryAbortEvent;
-import com.paxus.pay.poslinkui.demo.event.EntryResponseEvent;
+import com.paxus.pay.poslinkui.demo.event.ResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
-
-import org.greenrobot.eventbus.EventBus;
 
 /**
  * Use fragment to implement all UI (Activity and Dialog).
@@ -41,22 +41,23 @@ import org.greenrobot.eventbus.EventBus;
  *     2. Display {@link EntryExtraData#PARAM_TRANS_TYPE} on navigation bar
  * </p>
  */
-public class EntryActivity extends AppCompatActivity {
+public class EntryActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
-    private View fragmentContainer;
+    private FragmentContainerView fragmentContainer;
     private BroadcastReceiver receiver;
 
     private String transType = "";
     private String transMode = "";
 
+    EntryViewModelFactory entryViewModelFactory = new EntryViewModelFactory();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_entry);
-
         Logger.d("EntryActivity onCreate");
+        super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_entry);
         fragmentContainer = findViewById(R.id.fragment_placeholder);
         toolbar = findViewById(R.id.toolbar);
 
@@ -65,26 +66,22 @@ public class EntryActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         registerUIReceiver();
-
         loadEntry(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Logger.d("EntryActivity onNewIntent");
-        //If activity is at the top of stack, startActivity will trigger onNewIntent.
-        //So you can load entry here
+        Logger.d(getClass().getSimpleName() +" onNewIntent");
+        //If activity is at the top of stack, startActivity will trigger onNewIntent. So you can load entry here.
         loadEntry(intent);
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Logger.d("EntryActivity onSaveInstanceState");
-
-        //If EntryActivity is not at the top of stack, a new EntryActivity will be created.
-        //After that, the old one need kill itself.
+        Logger.d(getClass().getSimpleName() +" onSaveInstanceState");
+        //If EntryActivity is not at the top of stack, a new EntryActivity will be created. After that, the old one need kill itself.
         unregisterUIReceiver();
         this.finishAndRemoveTask();
     }
@@ -92,28 +89,31 @@ public class EntryActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        Logger.d("EntryActivity onDestroy");
+        Logger.d(getClass().getSimpleName() +" onDestroy");
         unregisterUIReceiver();
+        getViewModelStore().clear();
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        Logger.d("EntryActivity onBackPressed");
-        //Click KEY_BACK, trigger user abort
-        EventBus.getDefault().post(new EntryAbortEvent());
+    private void logIntentExtras(Intent intent){
+        Bundle bundle = intent.getExtras() != null ? intent.getExtras() : new Bundle();
+        StringBuilder extras = new StringBuilder();
+        for (String key : bundle.keySet()) {
+            extras.append(key).append(":\"").append(bundle.get(key)).append("\",");
+        }
+        Logger.i("Action Extras:{" + extras + "}");
     }
 
     private void loadEntry(Intent intent){
-        Logger.i("start Entry Action \""+intent.getAction()+"\"");
+        logIntentExtras(intent);
+        Logger.i("Start Entry Action \"" + intent.getAction() + "\"");
 
         updateTransMode(intent.getStringExtra(EntryExtraData.PARAM_TRANS_MODE));
 
         Fragment fragment = UIFragmentHelper.createFragment(intent);
+        entryViewModelFactory.createViewModel(this, fragment);
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
-        if(fragment != null) {
+
+        if (fragment != null) {
             if (fragment instanceof DialogFragment) {
                 if (frag == null) {
                     //To show dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, hide tool bar.
@@ -123,9 +123,7 @@ public class EntryActivity extends AppCompatActivity {
                 ((DialogFragment) fragment).show(getSupportFragmentManager(), "EntryDialog");
             } else {
                 UIFragmentHelper.closeDialog(getSupportFragmentManager(), "EntryDialog");
-
                 updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
-
                 if (frag == null) {
                     //Show tool bar
                     toolbar.setVisibility(View.VISIBLE);
@@ -140,10 +138,12 @@ public class EntryActivity extends AppCompatActivity {
         }
     }
 
-    public void loadStatus(Intent intent){
+    public void loadStatus(Intent intent) {
+        logIntentExtras(intent);
+        Logger.i("Receive Status Action \"" + intent.getAction() + "\"");
+
         String action = intent.getAction();
-        Logger.i("receive Status Action \"" + action + "\"");
-        if(InformationStatus.TRANS_COMPLETED.equals(action)){
+        if (InformationStatus.TRANS_COMPLETED.equals(action)) {
             String msg = intent.getStringExtra(StatusData.PARAM_MSG); //For POSLinkEntry, msg might be empty
             long code = intent.getLongExtra(StatusData.PARAM_CODE, 0L);
             if (TextUtils.isEmpty(msg) || code == -3) {//Transaction Cancelled
@@ -166,34 +166,34 @@ public class EntryActivity extends AppCompatActivity {
         }
     }
 
-
-
-    //1. Display water mask according to {@link EntryExtraData#PARAM_TRANS_MODE}
+    /**
+     * Add/Remove Watermark based on Trans Mode
+     */
     private void updateTransMode(String transMode){
         if(!TextUtils.isEmpty(transMode) && !transMode.equals(this.transMode)){
             this.transMode = transMode;
 
             String mode = null;
-            if(!TextUtils.isEmpty(transMode)){
-                if(TransMode.DEMO.equals(transMode)){
-                    mode = getString(R.string.demo_only);
-                }else if(TransMode.TEST.equals(transMode)){
-                    mode = getString(R.string.test_only);
-                }else if(TransMode.TEST_AND_DEMO.equals(transMode)){
-                    mode = getString(R.string.test_and_demo);
-                }else {
-                    mode = "";
-                }
+            switch (transMode) {
+                case TransMode.DEMO:
+                    mode = getString(R.string.demo_only); break;
+                case TransMode.TEST:
+                    mode = getString(R.string.test_only); break;
+                case TransMode.TEST_AND_DEMO:
+                    mode = getString(R.string.test_and_demo); break;
             }
-            if(!TextUtils.isEmpty(mode)){
+
+            if(!TextUtils.isEmpty(mode)) {
                 ViewUtils.addWaterMarkView(this,mode);
-            }else{
+            } else {
                 ViewUtils.removeWaterMarkView(this);
             }
         }
     }
 
-    //2. Display {@link EntryExtraData#PARAM_TRANS_TYPE} on navigation bar
+    /**
+     * Update Transaction Type on Title Bar
+     */
     private void updateTransType(String transType){
         if(transType!= null && !transType.equals(this.transType)){
             this.transType = transType;
@@ -205,6 +205,13 @@ public class EntryActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Broadcast Receiver to receive status updates from BroadPOS Manager
+     * void registerUIReceiver()
+     * void unregisterUIReceiver()
+     * class POSLinkUIReceiver
+     */
 
     private void registerUIReceiver(){
         receiver = new POSLinkUIReceiver();
@@ -267,15 +274,34 @@ public class EntryActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Forwards key events to fragments using ViewModel.
+     * For BaseEntryFragment and BaseEntryDialogFragment, two different view models have been used
+     * EntryViewModelFactory chooses the appropriate one
+     */
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
+        if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK){
+            if(event.getAction() == KeyEvent.ACTION_DOWN){
+                entryViewModelFactory.onKeyDown(event.getKeyCode());
+            }
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+    /**
+     * Forwards Manager's broadcasts to fragments
+     */
     public class POSLinkUIReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())){
-                EventBus.getDefault().post(new EntryResponseEvent(intent.getAction()));
+                entryViewModelFactory.setResponseEvent(new ResponseEvent(intent.getAction()));
             }else if(EntryResponse.ACTION_DECLINED.equals(intent.getAction())){
                 long resultCode = intent.getLongExtra(EntryResponse.PARAM_CODE,0);
                 String message = intent.getStringExtra(EntryResponse.PARAM_MSG);
-                EventBus.getDefault().post(new EntryResponseEvent(intent.getAction(),resultCode,message));
+                entryViewModelFactory.setResponseEvent(new ResponseEvent(intent.getAction(), resultCode, message));
             }else{
                 loadStatus(intent);
             }

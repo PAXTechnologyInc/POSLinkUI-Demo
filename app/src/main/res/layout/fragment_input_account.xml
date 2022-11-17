@@ -6,35 +6,33 @@
     <com.paxus.pay.poslinkui.demo.view.ClssLightsView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight=".5"
         android:id="@+id/clss_light"
         android:layout_margin="5dp"/>
 
     <RelativeLayout
+        android:id="@+id/ly_merchant"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_margin="5dp"
-        android:id="@+id/ly_merchant">
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space_between_textview">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/merchant"
-            android:gravity="start"
-            android:text="@string/prompt_merchant"
-            android:layout_alignParentStart="true"/>
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:gravity="start"
+            android:text="@string/prompt_merchant" />
+        <TextView
             android:id="@+id/merchantName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:gravity="end"/>
+            android:gravity="end" />
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_margin="8dp">
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space_between_textview">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,22 +59,19 @@
             android:layout_height="wrap_content"
             android:id="@+id/manual_message"
             android:textSize="14sp"
-            android:textColor="@android:color/black" />
+            android:layout_marginVertical="@dimen/space_between_textview"/>
         <TextView
-            android:background="@drawable/border"
+            android:background="@drawable/rounded_corner_on_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edit_account"
-            android:hint=""
-            android:inputType="numberSigned"
-            android:digits="0123456789 "
-            android:layout_margin="5dp"
+            android:padding="@dimen/padding_vertical"
             android:gravity="center_horizontal"
             android:textColor="#FF9C27B0"
             android:textSize="20sp"/>
         <Button
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/button_height"
             android:text="@string/confirm"
             android:textAllCaps="false"
             android:id="@+id/confirm_button"/>
@@ -85,7 +80,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_weight="4"
         android:orientation="horizontal">
         <ImageView
             android:layout_width="0dp"
@@ -109,11 +104,14 @@
             android:layout_margin="5dp"
             android:scaleType="fitCenter"/>
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/contactless_logo_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="@drawable/rounded_corner_on_background">
         <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"

@@ -97,7 +97,7 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
         }
     }
 
-    //2.When confirm button clicked, sendNext
+    @Override
     protected void onConfirmButtonClicked() {
         EntryRequestUtils.sendNext(requireContext(), packageName, action);
     }

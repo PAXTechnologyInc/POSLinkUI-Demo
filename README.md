@@ -137,7 +137,8 @@ A simple explanation for reading log (Step by Step)
     ConfirmReceiptViewFragment onDestroy
     EntryActivity onDestroy
 
-## How to build
+## How to integrate POSLinkUI library
+POSLinkUI library is published on Github Maven. You can integrate it as this DEMO app does.
 
 ### 1.Config Maven
 In build.gradle of root project, we add maven repository of POSLinkUI.
@@ -167,12 +168,23 @@ You can login your github credential by 2 ways:
     gpr.user=XXXXXXXXXXX@XXXXXX
 ```
 
+NOTED: please select **read:packages** permission when you create your token.
+
 About how to generate github token. Please refer [Github Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
-###2.Add dependency
+### 2.Add dependency
 Add dependency to app/build.gradle
 ```
     dependencies {
         implementation "com.paxus.ui:constant:1.01.00"
     }
 ```
+
+
+## Build Q&A
+
+### Q1: Build fail by ArtifactResolveException
+Caused by: org.gradle.api.internal.artifacts.ivyservice.DefaultLenientConfiguration&ArtifactResolveException: Could not resolve all files for configuration ':app:debugRuntimeClasspath'.
+
+Solution:
+Please login with your github token and make sure your token has **read:packages** permission

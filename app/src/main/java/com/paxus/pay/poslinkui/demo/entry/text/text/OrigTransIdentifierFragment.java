@@ -1,4 +1,4 @@
-package com.paxus.pay.poslinkui.demo.entry.text.number;
+package com.paxus.pay.poslinkui.demo.entry.text.text;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -12,8 +12,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 
 /**
- * Implement text entry actions:<br>
- * {@value TextEntry#ACTION_ENTER_SERVER_ID}<br>
+ * Implement text entry action {@value TextEntry#ACTION_ENTER_ORIGINAL_TRANSACTION_IDENTIFIER}<br>
  *
  * <p>
  * UI Tips:
@@ -21,14 +20,30 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  * </p>
  */
 
-public class ServerIdFragment extends ANumFragment {
-    private String packageName;
-    private String action;
-    private String transType;
+public class OrigTransIdentifierFragment extends ATextFragment {
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
+    private String transType;
+    private String message = "";
     private String transMode;
+    private String packageName;
+    private String action;
+
+    @Override
+    public int getMaxLength() {
+        return maxLength;
+    }
+
+    @Override
+    protected String formatMessage() {
+        return getString(R.string.pls_input_orig_trans_identifier);
+    }
+
+    @Override
+    protected String getRequestedParamName() {
+        return EntryRequest.PARAM_ORIGINAL_TRANSACTION_IDENTIFIER;
+    }
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
@@ -38,14 +53,12 @@ public class ServerIdFragment extends ANumFragment {
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
-        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-4");
-
+        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "1-20");
         if (!TextUtils.isEmpty(valuePatten)) {
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
     }
-
 
     @Override
     protected String getSenderPackageName() {
@@ -55,20 +68,5 @@ public class ServerIdFragment extends ANumFragment {
     @Override
     protected String getEntryAction() {
         return action;
-    }
-
-    @Override
-    protected int getMaxLength() {
-        return maxLength;
-    }
-
-    @Override
-    protected String formatMessage() {
-        return getString(R.string.pls_input_server_id);
-    }
-
-    @Override
-    protected String getRequestedParamName() {
-        return EntryRequest.PARAM_SERVER_ID;
     }
 }

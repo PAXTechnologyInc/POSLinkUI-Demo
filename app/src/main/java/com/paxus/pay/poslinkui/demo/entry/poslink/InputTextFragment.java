@@ -102,6 +102,7 @@ public class InputTextFragment extends BaseEntryFragment {
         textView.setText(title);
 
         editText = rootView.findViewById(R.id.edit_text);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         if ("1".equals(inputType)) {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             if(maxLength > 0 ) {
@@ -208,8 +209,8 @@ public class InputTextFragment extends BaseEntryFragment {
         }
     }
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
         if (inputType.matches("[23467]")) {
             value = value.replaceAll("[^0-9]", "");
@@ -293,5 +294,4 @@ public class InputTextFragment extends BaseEntryFragment {
             }
         }
     }
-
 }

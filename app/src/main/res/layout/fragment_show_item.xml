@@ -45,7 +45,6 @@
             android:paddingRight="24dp"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black"
             tools:text="total line"/>
 
         <TextView
@@ -58,7 +57,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textColor="@android:color/black"
             android:textSize="20sp"
             tools:text="tax line"/>
 
@@ -71,7 +69,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:textStyle="bold"
             android:text="@string/pete_total"
-            android:textColor="@android:color/black"
             android:textSize="20sp"
             android:visibility="gone"/>
 

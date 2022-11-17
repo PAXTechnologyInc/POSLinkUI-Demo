@@ -2,56 +2,59 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp">
-        <TextView
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/title"
-            android:textSize="28sp"
-            android:textColor="@color/purple_700"
-            android:autoSizeTextType="uniform"
-            android:maxLines="1"
-            android:gravity="center"/>
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <RadioButton
+            android:orientation="vertical"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp">
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:id="@+id/button1"
-                android:layout_margin="5dp"/>
-            <RadioButton
+                android:id="@+id/title"
+                android:textSize="28sp"
+                android:textColor="@color/purple_700"
+                android:autoSizeTextType="uniform"
+                android:maxLines="1"
+                android:gravity="center"/>
+            <RadioGroup
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:id="@+id/button2"
-                android:layout_margin="5dp"/>
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:id="@+id/button3"
-                android:layout_margin="5dp"/>
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:id="@+id/button4"
-                android:layout_margin="5dp"/>
-        </RadioGroup>
-		<Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/confirm_button"
-                android:text="@string/confirm"
-                android:textAllCaps="false"
-				android:layout_margin="10dp"/>
-    </LinearLayout>
-
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="false"
+                    android:id="@+id/button1"
+                    android:layout_margin="5dp"/>
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="false"
+                    android:id="@+id/button2"
+                    android:layout_margin="5dp"/>
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="false"
+                    android:id="@+id/button3"
+                    android:layout_margin="5dp"/>
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="false"
+                    android:id="@+id/button4"
+                    android:layout_margin="5dp"/>
+            </RadioGroup>
+            <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/confirm_button"
+                    android:text="@string/confirm"
+                    android:textAllCaps="false"
+                    android:layout_margin="10dp"/>
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

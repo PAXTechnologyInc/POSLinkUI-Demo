@@ -12,6 +12,7 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.InformationEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.entry.UIFragmentHelper;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
@@ -86,12 +87,12 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
         confirmBtn.setOnClickListener( v -> onConfirmButtonClicked());
     }
 
-    private void onConfirmButtonClicked(){
+    @Override
+    protected void onConfirmButtonClicked(){
         sendNext();
     }
 
     private void sendNext(){
         EntryRequestUtils.sendNext(requireContext(), packageName, action);
     }
-
 }

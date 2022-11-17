@@ -82,7 +82,8 @@ public class ConfirmServiceFeeDialogFragment extends BaseEntryDialogFragment {
         return action;
     }
 
-    private void onConfirmButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         sendNext(true);
     }
 

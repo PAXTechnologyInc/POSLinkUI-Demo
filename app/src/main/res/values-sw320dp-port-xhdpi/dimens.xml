@@ -1,0 +1,9 @@
+<resources>
+    <!-- For A920, A60, A930, A77, A920Pro, M50, M8 use-->
+    <dimen name="version_name_text_size">20sp</dimen>
+
+    <dimen name="padding_horizontal">20dp</dimen>
+    <dimen name="padding_vertical">12dp</dimen>
+
+    <dimen name="toolbar_height">60dp</dimen>
+</resources>

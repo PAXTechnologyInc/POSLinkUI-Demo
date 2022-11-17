@@ -134,15 +134,16 @@ public class CashbackFragment extends BaseEntryFragment {
             editText.setVisibility(View.GONE);
         }else {
             editText.setVisibility(View.VISIBLE);
+            prepareEditTextsForSubmissionWithSoftKeyboard(editText);
             editText.addTextChangedListener(new AmountTextWatcher(maxLength,currency));
         }
+
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
-
     }
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked(){
+    @Override
+    protected void onConfirmButtonClicked(){
         if(editText.getVisibility() == View.VISIBLE) {
             long value = CurrencyUtils.parse(editText.getText().toString());
             sendNext(value);
@@ -153,9 +154,7 @@ public class CashbackFragment extends BaseEntryFragment {
         }
     }
 
-
     private void sendNext(long value){
-
         String param = EntryRequest.PARAM_CASHBACK_AMOUNT;
         EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
     }

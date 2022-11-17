@@ -1,4 +1,4 @@
-package com.paxus.pay.poslinkui.demo.entry.text.number;
+package com.paxus.pay.poslinkui.demo.entry.text.numbertext;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
+import com.pax.us.pay.ui.constant.entry.enumeration.InputType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 
@@ -21,7 +22,7 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  * </p>
  */
 
-public class ClerkIdFragment extends ANumFragment {
+public class ClerkIdFragment extends ANumTextFragment {
     private String packageName;
     private String action;
     private String transType;
@@ -29,6 +30,7 @@ public class ClerkIdFragment extends ANumFragment {
     protected int minLength;
     protected int maxLength;
     private String transMode;
+    protected boolean allText;
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
@@ -42,6 +44,8 @@ public class ClerkIdFragment extends ANumFragment {
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
+        allText = InputType.ALLTEXT.equals(bundle.getString(EntryExtraData.PARAM_EINPUT_TYPE));
+
     }
 
     @Override
@@ -57,6 +61,11 @@ public class ClerkIdFragment extends ANumFragment {
     @Override
     protected int getMaxLength() {
         return maxLength;
+    }
+
+    @Override
+    protected boolean allowText() {
+        return allText;
     }
 
     @Override

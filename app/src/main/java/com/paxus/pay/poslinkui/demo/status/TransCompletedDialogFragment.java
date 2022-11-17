@@ -57,17 +57,23 @@ public class TransCompletedDialogFragment extends DialogFragment {
             //Display transaction result by dialog.
             long code = bundle.getLong(StatusData.PARAM_CODE);
             String msg = bundle.getString(StatusData.PARAM_MSG);
-            long time = bundle.getLong(StatusData.PARAM_HOST_RESP_TIMEOUT,2000);
-            Logger.i("TRANS_COMPLETED:"+code+","+msg);
+            long time = bundle.getLong(StatusData.PARAM_HOST_RESP_TIMEOUT, 2000);
+            Logger.i("TRANS_COMPLETED:" + code + "," + msg);
             if (code != 0) {
                 textView.setTextColor(getResources().getColor(R.color.fail));
-            }else {
+            } else {
                 textView.setTextColor(getResources().getColor(R.color.success));
             }
             textView.setText(msg);
 
             //Close dialog after timeout.
-            new Handler().postDelayed(this::dismiss, time);
+            new Handler().postDelayed(() -> {
+                try {
+                    dismiss();
+                } catch (Exception e) {
+                    //Secure Dismiss dialog
+                }
+            }, time);
         }
 
         builder.setView(view);

@@ -13,10 +13,11 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="18sp"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginVertical="@dimen/space_between_textview"/>
 
-    <LinearLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent" android:layout_marginVertical="10dp">
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -24,14 +25,16 @@
             android:id="@+id/cancel_button"
             android:text="@string/dialog_cancel"
             android:layout_weight="1"/>
+        <androidx.legacy.widget.Space
+            android:layout_width="@dimen/margin_gap"
+            android:layout_height="wrap_content"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
             android:id="@+id/confirm_button"
             android:text="@string/dialog_ok"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="5dp"/>
+            android:layout_weight="1"/>
     </LinearLayout>
 
 </LinearLayout>

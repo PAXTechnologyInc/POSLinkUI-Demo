@@ -15,7 +15,7 @@
             android:id="@+id/ll_amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="10dp">
+            android:layout_marginVertical="@dimen/space_between_textview">
 
             <TextView
                 android:id="@+id/amount_name"
@@ -40,14 +40,13 @@
             android:textSize="18sp"
             android:lines="3"
             android:gravity="center"
-            android:textColor="@android:color/black"/>
+            android:layout_marginVertical="@dimen/space_between_textview"/>
         <TextView
-            android:background="@drawable/border"
+            android:background="@drawable/rounded_corner_on_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edit_pin"
-            android:hint=""
-            android:layout_margin="5dp"
+            android:layout_margin="@dimen/margin_gap"
             android:gravity="center_horizontal"
             android:padding="10dp"
             android:textSize="20sp"
@@ -57,8 +56,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/bypass"
             android:gravity="center"
-            android:text="@string/prompt_no_pin"
-            android:textColor="@android:color/black"/>
+            android:text="@string/prompt_no_pin"/>
     </LinearLayout>
 
     <androidx.gridlayout.widget.GridLayout

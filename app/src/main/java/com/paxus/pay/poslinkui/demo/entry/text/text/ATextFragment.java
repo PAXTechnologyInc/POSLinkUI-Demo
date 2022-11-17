@@ -40,6 +40,7 @@ public abstract class ATextFragment extends BaseEntryFragment {
         textView.setText(formatMessage());
 
         editText = rootView.findViewById(R.id.edit_text);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         int maxLength = getMaxLength();
         if (maxLength > 0) {
             editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
@@ -53,11 +54,10 @@ public abstract class ATextFragment extends BaseEntryFragment {
 
     protected abstract String formatMessage();
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
         sendNext(value);
-
     }
 
     protected void sendNext(String value) {
@@ -65,5 +65,4 @@ public abstract class ATextFragment extends BaseEntryFragment {
     }
 
     protected abstract String getRequestedParamName();
-
 }

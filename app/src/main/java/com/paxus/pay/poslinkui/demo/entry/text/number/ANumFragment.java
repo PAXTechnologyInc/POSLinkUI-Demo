@@ -45,6 +45,7 @@ public abstract class ANumFragment extends BaseEntryFragment {
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_number);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         int maxLength = getMaxLength();
         if (maxLength > 0) {
             editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
@@ -58,8 +59,8 @@ public abstract class ANumFragment extends BaseEntryFragment {
 
     protected abstract int getMaxLength();
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
         sendNext(value);
     }

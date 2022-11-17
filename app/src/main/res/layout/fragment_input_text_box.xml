@@ -3,15 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/title_view"
         android:textSize="28sp"
-        android:textColor="@android:color/black"/>
-
+        android:layout_marginVertical="@dimen/space_between_textview"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,10 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_text"
-        android:hint=""
-        android:inputType="text"
-        android:layout_margin="20dp"
-        android:gravity="center_horizontal"/>
+        android:inputType="text" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
