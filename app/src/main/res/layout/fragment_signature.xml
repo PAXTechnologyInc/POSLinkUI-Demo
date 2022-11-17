@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/timeout"
         android:textColor="#2196F3"
-        android:gravity="center"/>
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"/>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/amount_layout"
+        app:layout_constraintTop_toBottomOf="@id/timeout"
+        >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/total_amount"
-            android:layout_alignParentStart="true"/>
+            android:layout_alignParentStart="true"
+            android:text="@string/total_amount" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,7 +33,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/sign_line_layout"
+        app:layout_constraintTop_toBottomOf="@id/amount_layout">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,41 +51,42 @@
     <com.paxus.pay.poslinkui.demo.entry.signature.ElectronicSignatureView
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:id="@+id/signature_board"/>
+        android:id="@+id/signature_board"
+        app:layout_constraintTop_toBottomOf="@id/sign_line_layout"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button_layout">
-
+        android:id="@+id/button_layout"
+        app:layout_constraintBottom_toBottomOf="parent">
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/cancel_button"
             android:text="@string/cancel_sign"
             android:textAllCaps="false"
-            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@color/cancel"/>
+            android:layout_margin="@dimen/margin_gap"
+            android:backgroundTint="@color/pastel_warning"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/clear_button"
             android:text="@string/clear_sign"
             android:textAllCaps="false"
-            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@color/clear"/>
+            android:layout_margin="@dimen/margin_gap"
+            android:backgroundTint="@color/pastel_accent"/>
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/confirm_button"
             android:text="@string/confirm"
             android:textAllCaps="false"
-            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@color/enter"/>
-
+            android:layout_margin="@dimen/margin_gap"
+            android:backgroundTint="@color/pastel_primary"/>
     </LinearLayout>
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

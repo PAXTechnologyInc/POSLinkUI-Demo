@@ -104,7 +104,7 @@ public class InputAccountFragment extends BaseEntryFragment {
         }
     }
 
-    //2.When confirm button clicked, sendNext
+    @Override
     protected void onConfirmButtonClicked() {
         EntryRequestUtils.sendNext(requireContext(), packageName, action);
     }
@@ -194,10 +194,10 @@ public class InputAccountFragment extends BaseEntryFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         if (receiver != null) {
             requireContext().unregisterReceiver(receiver);
         }
+        //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
     @Override
@@ -352,10 +352,18 @@ public class InputAccountFragment extends BaseEntryFragment {
         apple.setVisibility(supportApplePay ? View.VISIBLE : View.GONE);
         google.setVisibility(supportGooglePay ? View.VISIBLE : View.GONE);
         samsung.setVisibility(supportSamsungPay ? View.VISIBLE : View.GONE);
+        rootView.findViewById(R.id.contactless_logo_container)
+                .setVisibility((supportNFC || supportApplePay || supportGooglePay || supportSamsungPay) ? View.VISIBLE : View.GONE);
+
+        receiver = new InputAccountFragment.Receiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addCategory(SecurityStatus.CATEGORY);
+        intentFilter.addAction(SecurityStatus.SECURITY_ENTER_CLEARED);
+        intentFilter.addAction(SecurityStatus.SECURITY_ENTERING);
+        intentFilter.addAction(SecurityStatus.SECURITY_ENTER_DELETE);
+        intentFilter.addAction(SecurityStatus.SECURITY_KEYBOARD_LOCATION);
 
         if (enableTap) {
-            receiver = new InputAccountFragment.Receiver();
-            IntentFilter intentFilter = new IntentFilter();
             intentFilter.addCategory(ClssLightStatus.CATEGORY);
             intentFilter.addAction(ClssLightStatus.CLSS_LIGHT_IDLE);
             intentFilter.addAction(ClssLightStatus.CLSS_LIGHT_COMPLETED);
@@ -367,15 +375,8 @@ public class InputAccountFragment extends BaseEntryFragment {
 
             intentFilter.addCategory(InformationStatus.CATEGORY);
             intentFilter.addAction(InformationStatus.TRANS_AMOUNT_CHANGED_IN_CARD_PROCESSING);
-
-            intentFilter.addCategory(SecurityStatus.CATEGORY);
-            intentFilter.addAction(SecurityStatus.SECURITY_ENTER_CLEARED);
-            intentFilter.addAction(SecurityStatus.SECURITY_ENTERING);
-            intentFilter.addAction(SecurityStatus.SECURITY_ENTER_DELETE);
-            intentFilter.addAction(SecurityStatus.SECURITY_KEYBOARD_LOCATION);
-
-            requireContext().registerReceiver(receiver, intentFilter);
         }
+        requireContext().registerReceiver(receiver, intentFilter);
 
         TextView merchantNameTv = rootView.findViewById(R.id.merchantName);
 
@@ -399,6 +400,7 @@ public class InputAccountFragment extends BaseEntryFragment {
             amountTv.setVisibility(View.GONE);
         }
 
+        //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     @Override
@@ -492,5 +494,4 @@ public class InputAccountFragment extends BaseEntryFragment {
 
         }
     }
-
 }

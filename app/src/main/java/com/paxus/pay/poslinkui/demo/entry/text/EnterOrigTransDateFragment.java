@@ -70,8 +70,8 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_expiry);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         editText.setSelection(editText.getEditableText().length());
-
         editText.addTextChangedListener(new TextWatcher() {
             protected boolean mEditing;
             private String mPreStr;
@@ -120,18 +120,16 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
-
     }
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked() {
+    @Override
+    protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
         value = value.replaceAll("[^0-9]", "");
         if (value.length() == 8) {
             sendNext(value);
         }
     }
-
 
     private void sendNext(String value) {
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_ORIG_DATE, value);

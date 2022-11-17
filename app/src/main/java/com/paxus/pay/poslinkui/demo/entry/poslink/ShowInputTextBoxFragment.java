@@ -119,6 +119,7 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
         }
 
         editText = rootView.findViewById(R.id.edit_text);
+        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         if ("1".equals(inputType)) {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             if(maxLength > 0 ) {
@@ -203,6 +204,8 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
             handler = new Handler();
             handler.postDelayed(timeoutRun, timeOut);
         }
+
+
     }
 
     @Override
@@ -225,13 +228,12 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
         }
     }
 
-    //If confirm button clicked, sendNext
-    private void onConfirmButtonClicked(){
+    @Override
+    protected void onConfirmButtonClicked(){
         String value = editText.getText().toString();
         if(inputType.matches("[23467]")){
             value = value.replaceAll("[^0-9]","");
         }
-
         sendNext(value);
     }
 
@@ -309,5 +311,4 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
             }
         }
     }
-
 }

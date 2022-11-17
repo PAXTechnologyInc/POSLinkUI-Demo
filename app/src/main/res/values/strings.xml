@@ -7,7 +7,7 @@
 
     <string name="reset">Reset</string>
     <string name="confirm">Confirm</string>
-    <string name="bypass">Bypass</string>
+    <string name="bypass">Bypass Fee</string>
 
     <string name="amount_default">0.00</string>
     <string name="time_default">00:00</string>
@@ -132,14 +132,15 @@
     <string name="pls_input_again_date">Please Enter Date again</string>
     <string name="please_enter_voucher_number">Please Enter Voucher Number</string>
     <string name="please_enter_auth_code">Please Enter Auth Code</string>
-    <string name="pls_input_address">Please Enter Address</string>
-    <string name="pls_input_zip_code">Please Enter Zip Code</string>
+    <string name="pls_input_address">Address</string>
+    <string name="pls_input_zip_code">Zip Code</string>
     <string name="pls_input_expiry_date">Please Enter Expiry Date</string>
     <string name="pls_input_transaction_number">Please Enter Transaction Number</string>
     <string name="pls_input_reference_number">Please Enter Reference Number</string>
     <string name="pls_input_invoice_number">Please Enter Invoice Number</string>
     <string name="pls_input_merchant_reference_number">Please Enter Merchant Reference Number</string>
     <string name="pls_input_oct_reference_number">Please Enter OCT Reference Number</string>
+    <string name="pls_input_orig_trans_identifier">Please Enter Orig. Trans. Identifier</string>
     <string name="pls_input_pin">Please Enter PIN</string>
     <string name="pls_input_vcode">Please Enter V-Code</string>
     <string name="pls_input_cvv2">Please Enter CVV2</string>
@@ -212,6 +213,7 @@
     <string name="confirm_card_entry_retry">Decline-host message /nPlease retry or /n Try another card</string>
     <string name="confirm_eula_continue">You must agree to the EULA to use this device</string>
     <string name="confirm_prompt_again">I have accepted the EULA, Don\'t prompt again</string>
+    <string name="continue_prompt">Would you like to continue?</string>
 
     <!-- signature -->
     <string name="signature_clear">Clear</string>

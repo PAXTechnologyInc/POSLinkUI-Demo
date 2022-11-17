@@ -1,0 +1,7 @@
+<resources>
+    <!-- For A35 use-->
+    <dimen name="version_name_text_size">34sp</dimen>
+
+    <dimen name="padding_horizontal">20dp</dimen>
+    <dimen name="padding_vertical">15dp</dimen>
+</resources>

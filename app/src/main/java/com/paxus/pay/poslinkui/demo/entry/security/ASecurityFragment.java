@@ -128,7 +128,7 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
                 String.format("%X", editText.getCurrentTextColor()));
     }
 
-    //2.When confirm button clicked, sendNext
+    @Override
     protected void onConfirmButtonClicked() {
         EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
     }

@@ -1,0 +1,7 @@
+<resources>
+    <!-- For A30 use-->
+    <dimen name="version_name_text_size">32sp</dimen>
+
+    <dimen name="padding_horizontal">20dp</dimen>
+    <dimen name="padding_vertical">15dp</dimen>
+</resources>

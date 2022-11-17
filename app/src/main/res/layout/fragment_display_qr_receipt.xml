@@ -16,7 +16,6 @@
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="@string/pls_scan_receipt"
-            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <ImageView
@@ -25,7 +24,8 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/image_desc"
             android:padding="10dp"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            android:background="@color/white"/>
     </LinearLayout>
 
 </RelativeLayout>

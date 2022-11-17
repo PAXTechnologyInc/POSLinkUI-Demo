@@ -65,19 +65,9 @@ public class StartUIDialogFragment extends BaseEntryDialogFragment {
     }
 
     @Override
-    protected void onBackPressed() {
-//        super.onBackPressed();
-    }
-
-    @Override
-    protected void onEntryAccepted() {
-//        super.onEntryAccepted();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        if (active) {
+        if (isActive) {
             EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
         }
     }

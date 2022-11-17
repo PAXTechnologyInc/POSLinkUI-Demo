@@ -6,36 +6,41 @@
     android:orientation="vertical"
     android:padding="5dp">
 
-
     <TextView
         android:id="@+id/title_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="18sp"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginVertical="@dimen/space_between_textview"/>
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/list_view"/>
+        android:layout_height="0dp"
+        android:id="@+id/list_view"
+        android:layout_weight=".5" />
 
-    <LinearLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent" android:layout_marginVertical="10dp">
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginTop="6dp">
+
         <Button
+            android:background="@drawable/rounded_corner_on_background"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
             android:id="@+id/cancel_button"
             android:text="@string/dialog_cancel"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:layout_marginEnd="2dp"/>
         <Button
+            android:background="@drawable/rounded_corner_on_background"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
             android:id="@+id/confirm_button"
             android:text="@string/confirm"
             android:layout_weight="1"
-            android:layout_marginHorizontal="5dp"/>
+            android:layout_marginStart="2dp"/>
     </LinearLayout>
-
 </LinearLayout>

@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/message"
         android:textSize="18sp"
-        android:textColor="@android:color/black"
+        android:layout_marginVertical="@dimen/space_between_textview"
         />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -19,11 +19,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edit_cashback"
-        android:hint=""
         android:layout_margin="20dp"
         android:inputType="numberSigned"
-        android:digits="0123456789,.$€"
-        android:gravity="center_horizontal"/>
+        android:digits="0123456789,.$€"/>
 
     <Button
         android:layout_width="match_parent"

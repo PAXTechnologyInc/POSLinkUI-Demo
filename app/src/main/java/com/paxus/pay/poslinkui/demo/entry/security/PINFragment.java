@@ -114,9 +114,7 @@ public class PINFragment extends BaseEntryFragment {
     protected void loadView(View rootView) {
         this.rootView = rootView;
 
-        
 
-        
 
         TextView textView = rootView.findViewById(R.id.message);
         if(PinStyles.RETRY.equals(pinStyle)){
@@ -154,7 +152,6 @@ public class PINFragment extends BaseEntryFragment {
                         @Override
                         public void onGlobalLayout() {
                             customizedPinPad.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
                             onCustomizedPinPadLayoutReady();
                         }
                     });
@@ -229,13 +226,13 @@ public class PINFragment extends BaseEntryFragment {
             Logger.i("receive Status Action \""+intent.getAction()+"\"");
             String text = pinBox.getText().toString();
 
-            //3.Update input box according PinStatus
-            if(PINStatus.PIN_ENTERING.equals(intent.getAction())){
-                pinBox.setText(text + "*");
-            }else if(PINStatus.PIN_ENTER_CLEARED.equals(intent.getAction())){
-                if(text.length() > 0){
-                    pinBox.setText(text.substring(0,text.length()-1));
-                }
+            switch (intent.getAction()) {
+                case PINStatus.PIN_ENTERING:
+                    pinBox.setText(text + "*");
+                    break;
+                case PINStatus.PIN_ENTER_CLEARED:
+                    if(text.length() > 0) pinBox.setText(text.substring(0,text.length()-1));
+                    break;
             }
         }
     }

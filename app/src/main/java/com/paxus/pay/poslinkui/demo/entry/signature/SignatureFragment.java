@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import com.pax.us.pay.ui.constant.entry.SignatureEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.entry.UIFragmentHelper;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
@@ -100,10 +102,6 @@ public class SignatureFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        
-
-        
-
         Button cancelBtn = rootView.findViewById(R.id.cancel_button);
         if(enableCancel){
             cancelBtn.setOnClickListener(view1-> onCancelButtonClicked());
@@ -152,6 +150,11 @@ public class SignatureFragment extends BaseEntryFragment {
         handler.postDelayed(tick,1000);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
     //1.When cancel button clicked, sendAbort
     private void onCancelButtonClicked(){
         sendAbort();
@@ -163,8 +166,8 @@ public class SignatureFragment extends BaseEntryFragment {
         tickTimeout = timeOut;
     }
 
-    //3.When confirm button clicked, sendNext
-    private void onConfirmButtonClicked(){
+    @Override
+    protected void onConfirmButtonClicked(){
         if (!mSignatureView.getTouched()) {
             return;
         }
@@ -192,19 +195,16 @@ public class SignatureFragment extends BaseEntryFragment {
 
     private void sendNext(short[] signature){
         handler.removeCallbacks(tick); //Stop Tick
-
         EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_SIGNATURE, signature);
     }
 
     @Override
     protected void sendAbort() {
         super.sendAbort();
-
         handler.removeCallbacks(tick); //Stop Tick
     }
 
     private void sendTimeout(){
         EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
     }
-
 }

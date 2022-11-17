@@ -38,7 +38,7 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmReceiptSignatureFr
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmReceiptViewFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmServiceFeeDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmSignatureMatchFragment;
-import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmSurchargeFeeDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmSurchargeFeeFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUnifiedMessageFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUntippedFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUploadRetryFragment;
@@ -95,26 +95,27 @@ import com.paxus.pay.poslinkui.demo.entry.text.amount.TipFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.amount.TotalAmountFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.fleet.FleetFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.fsa.FSAFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.number.ClerkIdFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.CsPhoneNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.GuestNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.MerchantTaxIdFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.PhoneNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.PromptRestrictionCodeFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.number.ServerIdFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.TableNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.TransNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.numbertext.ClerkIdFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.numbertext.DestZipcodeFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.numbertext.InvoiceNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.numbertext.MerchantReferenceNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.numbertext.OctReferenceNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.numbertext.ReferenceNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.numbertext.ServerIdFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.numbertext.VoucherDataFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.numbertext.ZipcodeFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.AddressFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.AuthFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.CustomerCodeFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.OrderNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.text.OrigTransIdentifierFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.PoNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.ProdDescFragment;
 import com.paxus.pay.poslinkui.demo.status.StatusDialogFragment;
@@ -168,7 +169,7 @@ public class UIFragmentHelper {
             put(TextEntry.ACTION_ENTER_FSA_DATA, FSAFragment.class);
             put(TextEntry.ACTION_ENTER_FLEET_DATA, FleetFragment.class);
             put(TextEntry.ACTION_ENTER_ORIG_DATE, EnterOrigTransDateFragment.class);
-
+            put(TextEntry.ACTION_ENTER_ORIGINAL_TRANSACTION_IDENTIFIER, OrigTransIdentifierFragment.class);
         }
     };
 
@@ -209,7 +210,7 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, ConfirmBatchCloseFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_UNTIPPED, ConfirmUntippedFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_DUPLICATE_TRANS, ConfirmDuplicateTransFragment.class);
-            put(ConfirmationEntry.ACTION_CONFIRM_SURCHARGE_FEE, ConfirmSurchargeFeeDialogFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_SURCHARGE_FEE, ConfirmSurchargeFeeFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_SERVICE_FEE, ConfirmServiceFeeDialogFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_PRINTER_STATUS, ConfirmPrinterStatusFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_UPLOAD_TRANS, ConfirmUploadTransFragment.class);
@@ -349,7 +350,7 @@ public class UIFragmentHelper {
                     if (categories == null) {
                         Logger.e("WARNING:\"" + action + "\" Category is missing!");
                     }
-                    return StatusDialogFragment.newInstance(action);
+                    return (DialogFragment) createFragment(StatusDialogFragment.class, intent);
                 }
                 case Uncategory.PRINT_STARTED:
                 case Uncategory.FILE_UPDATE_STARTED:
@@ -358,7 +359,7 @@ public class UIFragmentHelper {
                 case Uncategory.LOG_UPLOAD_CONNECTED:
                 case Uncategory.LOG_UPLOAD_UPLOADING:
                 case Uncategory.CAPK_UPDATE_STARTED:
-                    return StatusDialogFragment.newInstance(action);
+                    return (DialogFragment) createFragment(StatusDialogFragment.class, intent);
             }
         }
         return null;
@@ -432,7 +433,11 @@ public class UIFragmentHelper {
         Fragment prev = fragmentManager.findFragmentByTag(tag);
         if (prev != null) {
             DialogFragment df = (DialogFragment) prev;
-            df.dismiss();
+            try {
+                df.dismiss();
+            } catch (Exception e) {
+                //Secure Dismiss dialog
+            }
         }
     }
 }

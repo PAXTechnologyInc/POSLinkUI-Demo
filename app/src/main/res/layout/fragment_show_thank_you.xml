@@ -19,7 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/message1"
-            android:textColor="@android:color/black"
             android:autoSizeTextType="uniform"
             android:textSize="20sp"
             android:maxLines="1"/>
@@ -27,7 +26,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/message2"
-            android:textColor="@android:color/black"
             android:textSize="20sp"
             android:autoSizeTextType="uniform"
             android:maxLines="1"/>
