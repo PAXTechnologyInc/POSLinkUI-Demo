@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -157,6 +158,8 @@ public class EntryActivity extends AppCompatActivity{
         if(!TextUtils.isEmpty(dialogTag)) {
             DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
             if (dialogFragment != null) {
+                InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                 UIFragmentHelper.showDialog(getSupportFragmentManager(), dialogFragment, dialogTag);
             } else {
                 UIFragmentHelper.closeDialog(getSupportFragmentManager(),dialogTag);
