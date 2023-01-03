@@ -257,7 +257,7 @@ public class TipFragment extends BaseEntryFragment {
                     notifyDataSetChanged();
 
                     ((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                            .hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                            .hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                 }
             });
 
