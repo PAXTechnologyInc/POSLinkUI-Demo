@@ -51,19 +51,17 @@
                 android:layout_marginTop="20dp">
                 <Button
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/button_height"
                     android:layout_weight="1"
                     android:id="@+id/reset_button"
                     android:text="@string/reset"
-                    android:textAllCaps="false"
                     android:layout_margin="5dp"/>
                 <Button
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/button_height"
                     android:layout_weight="1"
                     android:id="@+id/confirm_button"
                     android:text="@string/confirm"
-                    android:textAllCaps="false"
                     android:layout_margin="5dp"/>
             </LinearLayout>
         </LinearLayout>

@@ -36,7 +36,7 @@
         android:gravity="center_horizontal"/>
     <Button
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/button_height"
         android:id="@+id/no_tip_button"
         android:text="@string/no_tip"
         android:background="@drawable/tip_select_style"
@@ -44,7 +44,7 @@
 
     <Button
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/button_height"
         android:id="@+id/confirm_button"
         android:text="@string/confirm"/>
 
