@@ -36,7 +36,7 @@
         android:digits="0123456789,.$€"/>
     <Button
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/button_height"
         android:id="@+id/confirm_button"
         android:text="@string/confirm"/>
 

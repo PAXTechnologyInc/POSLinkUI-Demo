@@ -49,20 +49,17 @@
         android:layout_marginVertical="@dimen/padding_vertical">
         <Button
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
+            android:layout_height="@dimen/button_height"
             android:id="@+id/confirm_button"
             android:text="@string/confirm_option_yes"/>
         <Button
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
+            android:layout_height="@dimen/button_height"
             android:id="@+id/cancel_button"
             android:text="@string/confirm_option_no"/>
         <Button
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
+            android:layout_height="@dimen/button_height"
             android:id="@+id/bypass_button"
             android:text="@string/bypass"/>
     </LinearLayout>

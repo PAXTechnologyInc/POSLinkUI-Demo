@@ -74,19 +74,17 @@
         <Button
             android:id="@+id/cancel_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/button_height"
             android:layout_weight="1"
-            android:text="@string/dialog_cancel"
-            android:textAllCaps="false" />
+            android:text="@string/dialog_cancel"/>
 
         <Button
             android:id="@+id/confirm_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/button_height"
             android:layout_marginHorizontal="5dp"
             android:layout_weight="1"
-            android:text="@string/dialog_ok"
-            android:textAllCaps="false" />
+            android:text="@string/dialog_ok"/>
     </LinearLayout>
 
 </LinearLayout>

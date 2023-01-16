@@ -20,8 +20,7 @@
         android:layout_width="match_parent">
         <Button
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
+            android:layout_height="@dimen/button_height"
             android:id="@+id/cancel_button"
             android:text="@string/dialog_cancel"
             android:layout_weight="1"/>
@@ -30,8 +29,7 @@
             android:layout_height="wrap_content"/>
         <Button
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
+            android:layout_height="@dimen/button_height"
             android:id="@+id/confirm_button"
             android:text="@string/dialog_ok"
             android:layout_weight="1"/>
