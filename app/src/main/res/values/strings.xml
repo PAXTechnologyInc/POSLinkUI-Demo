@@ -417,6 +417,7 @@
     <string name="confirm_amount">Confirm Amount</string>
     <string name="reversal_process">Reversal...</string>
     <string name="emv_process_start">EMV Process Start...</string>
+    <string name="please_flip_over">Please Flip Over!</string>
     <string name="card_error">Card Error!</string>
     <string name="please_remove_card">Please Remove Card!</string>
     <string name="please_remove_card_quickly">Please Remove Card Quickly!</string>
