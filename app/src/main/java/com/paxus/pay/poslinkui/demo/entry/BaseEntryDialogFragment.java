@@ -69,18 +69,15 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
             //-------2. Dialog should not be canceled by touch outside-------
             dialog.setCanceledOnTouchOutside(false);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-                @Override
-                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                    if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
-                        executeBackPressEvent();
-                        return true;
-                    } else if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN){
-                        executeEnterKeyEvent();
-                        return true;
-                    }
-                    return false;
+            dialog.setOnKeyListener((dialog1, keyCode, event) -> {
+                if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
+                    executeBackPressEvent();
+                    return true;
+                } else if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN){
+                    executeEnterKeyEvent();
+                    return true;
                 }
+                return false;
             });
         }
         activate();
@@ -173,16 +170,6 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
                         break;
                 }
                 break;
-            case "keyCode":
-                switch (result.getInt("keyCode")){
-                    case KeyEvent.KEYCODE_ENTER:
-                        executeEnterKeyEvent();
-                        break;
-                    case KeyEvent.KEYCODE_BACK:
-                        executeBackPressEvent();
-                        break;
-                }
-                break;
         }
     };
 
@@ -192,6 +179,5 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         getParentFragmentManager().setFragmentResultListener("response", this, fragmentResultListener);
-        getParentFragmentManager().setFragmentResultListener("keyCode", this, fragmentResultListener);
     }
 }
