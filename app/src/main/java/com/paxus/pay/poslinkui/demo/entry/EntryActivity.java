@@ -251,6 +251,7 @@ public class EntryActivity extends AppCompatActivity{
         filter.addAction(InformationStatus.PINPAD_CONNECTION_FINISHED);
         filter.addAction(InformationStatus.TRANS_COMPLETED);
         filter.addAction(InformationStatus.ERROR);
+        filter.addAction(InformationStatus.ENTER_PIN_STARTED);
 
         //----------------Card Status-----------------
         filter.addCategory(CardStatus.CATEGORY);

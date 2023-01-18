@@ -107,6 +107,9 @@ public class StatusDialogFragment extends DialogFragment {
             case InformationStatus.RKI_STARTED:
                 message = getString(R.string.info_rki_start);
                 break;
+            case InformationStatus.ENTER_PIN_STARTED://Device with pinpad on the back
+                message = getString(R.string.please_flip_over);
+                break;
             case CardStatus.CARD_REMOVAL_REQUIRED:
                 message = getString(R.string.please_remove_card);
                 break;

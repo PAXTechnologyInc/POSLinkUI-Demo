@@ -339,6 +339,7 @@ public class UIFragmentHelper {
                 case InformationStatus.RKI_STARTED:
                 case InformationStatus.DCC_ONLINE_STARTED:
                 case InformationStatus.PINPAD_CONNECTION_STARTED:
+                case InformationStatus.ENTER_PIN_STARTED:
                 case CardStatus.CARD_REMOVAL_REQUIRED:
                 case CardStatus.CARD_QUICK_REMOVAL_REQUIRED:
                 case CardStatus.CARD_SWIPE_REQUIRED:
@@ -419,6 +420,8 @@ public class UIFragmentHelper {
             case BatchStatus.BATCH_CLOSE_UPLOADING:
             case BatchStatus.BATCH_CLOSE_COMPLETED:
                 return "batch_upload";
+            case InformationStatus.ENTER_PIN_STARTED:
+                return "enter-pin-started";
             default:
                 return null;
         }
