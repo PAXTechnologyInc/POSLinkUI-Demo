@@ -421,7 +421,7 @@ public class UIFragmentHelper {
             case BatchStatus.BATCH_CLOSE_COMPLETED:
                 return "batch_upload";
             case InformationStatus.ENTER_PIN_STARTED:
-                return "easylink-enter-pin";
+                return "enter-pin-started";
             default:
                 return null;
         }
