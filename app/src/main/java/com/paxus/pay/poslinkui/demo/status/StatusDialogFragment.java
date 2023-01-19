@@ -3,6 +3,8 @@ package com.paxus.pay.poslinkui.demo.status;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +54,12 @@ public class StatusDialogFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE, R.style.POSLinkUIPastelDialog);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        new Handler(Looper.getMainLooper()).postDelayed(()-> dismiss(), 2000);
     }
 
     @NonNull

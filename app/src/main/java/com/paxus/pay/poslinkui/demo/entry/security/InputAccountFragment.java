@@ -146,7 +146,6 @@ public class InputAccountFragment extends BaseEntryFragment {
         if (dialogFragment != null) {
             String tag = "update_entry_mode";
             UIFragmentHelper.showDialog(getParentFragmentManager(), dialogFragment, tag);
-            new Handler().postDelayed(() -> UIFragmentHelper.closeDialog(getParentFragmentManager(), tag), 2000);
         }
     }
 
