@@ -17,6 +17,7 @@ import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_EXPIRY_DATE}<br>
@@ -60,7 +61,7 @@ public class ExpiryFragment extends BaseEntryFragment {
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_expiry);
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+
         editText.setSelection(editText.getEditableText().length());
         editText.addTextChangedListener(new TextWatcher() {
             protected boolean mEditing;
@@ -102,6 +103,8 @@ public class ExpiryFragment extends BaseEntryFragment {
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
+
+        focusableEditTexts = new EditText[]{editText};
     }
 
     @Override

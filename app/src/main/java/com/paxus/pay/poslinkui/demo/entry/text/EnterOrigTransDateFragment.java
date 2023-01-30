@@ -70,7 +70,7 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_expiry);
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+        focusableEditTexts = new EditText[]{editText};
         editText.setSelection(editText.getEditableText().length());
         editText.addTextChangedListener(new TextWatcher() {
             protected boolean mEditing;

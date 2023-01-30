@@ -134,7 +134,7 @@ public class CashbackFragment extends BaseEntryFragment {
             editText.setVisibility(View.GONE);
         }else {
             editText.setVisibility(View.VISIBLE);
-            prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+            focusableEditTexts = new EditText[]{editText};
             editText.addTextChangedListener(new AmountTextWatcher(maxLength,currency));
         }
 

@@ -45,7 +45,7 @@ public abstract class ANumFragment extends BaseEntryFragment {
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_number);
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+        focusableEditTexts = new EditText[]{editText};
         int maxLength = getMaxLength();
         if (maxLength > 0) {
             editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});

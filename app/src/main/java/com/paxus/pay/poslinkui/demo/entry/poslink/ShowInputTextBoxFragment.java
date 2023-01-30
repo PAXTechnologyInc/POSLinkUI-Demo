@@ -119,7 +119,7 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
         }
 
         editText = rootView.findViewById(R.id.edit_text);
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+        focusableEditTexts = new EditText[]{editText};
         if ("1".equals(inputType)) {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             if(maxLength > 0 ) {

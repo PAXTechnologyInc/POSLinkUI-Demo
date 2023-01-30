@@ -193,7 +193,7 @@ public class TipFragment extends BaseEntryFragment {
             editText.setVisibility(View.GONE);
         }else {
             editText.setVisibility(View.VISIBLE);
-            prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+            focusableEditTexts = new EditText[]{editText};
             editText.setText(CurrencyUtils.convert(0, currency));
             if(UnitType.CENT.equals(tipUnit)) {
                 editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
