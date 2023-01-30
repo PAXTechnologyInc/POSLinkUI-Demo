@@ -84,7 +84,7 @@ public class AVSFragment extends BaseEntryFragment {
     protected void loadView(View rootView) {
         editTextAddr = rootView.findViewById(R.id.edit_address);
         editTextZip = rootView.findViewById(R.id.edit_zip);
-        prepareEditTextsForSubmissionWithSoftKeyboard(editTextAddr, editTextZip);
+        focusableEditTexts = new EditText[]{editTextAddr, editTextZip};
 
         if(maxLengthAddr > 0 ) editTextAddr.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthAddr)});
         if(maxLengthZip > 0 ) editTextZip.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthZip)});

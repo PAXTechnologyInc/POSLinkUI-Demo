@@ -130,9 +130,8 @@ public class EntryActivity extends AppCompatActivity{
                     toolbar.setVisibility(View.VISIBLE);
                     fragmentContainer.setVisibility(View.VISIBLE);
                 }
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_placeholder, fragment);
-                ft.commit();
+                getSupportFragmentManager().executePendingTransactions();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragment).commit();
             }
         } else {
             Toast.makeText(this, "NOT FOUND:" + intent.getAction(), Toast.LENGTH_SHORT).show();
@@ -158,8 +157,6 @@ public class EntryActivity extends AppCompatActivity{
         if(!TextUtils.isEmpty(dialogTag)) {
             DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
             if (dialogFragment != null) {
-                InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
                 UIFragmentHelper.showDialog(getSupportFragmentManager(), dialogFragment, dialogTag);
             } else {
                 UIFragmentHelper.closeDialog(getSupportFragmentManager(),dialogTag);

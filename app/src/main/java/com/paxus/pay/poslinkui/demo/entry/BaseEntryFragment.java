@@ -3,6 +3,8 @@ package com.paxus.pay.poslinkui.demo.entry;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +45,8 @@ public abstract class BaseEntryFragment extends Fragment {
     private boolean active = false;
     private BaseEntryViewModel baseEntryViewModel;
 
+    protected EditText[] focusableEditTexts = null;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,10 +60,19 @@ public abstract class BaseEntryFragment extends Fragment {
             Logger.e(this.getClass().getSimpleName()+" arguments missing!!!");
         }
 
+        focusableEditTexts = null;
+
         View view = inflater.inflate(getLayoutResourceId(), container, false);
         loadView(view);
         activate();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Logger.d("onResume " + getClass().getSimpleName() + " " + (focusableEditTexts==null ? "null" : focusableEditTexts.length));
+        prepareEditTextsForSubmissionWithSoftKeyboard(focusableEditTexts);
     }
 
     @Override
@@ -136,7 +149,14 @@ public abstract class BaseEntryFragment extends Fragment {
     /**
      * Changes IME_ACTION of soft keyboard. All but the last EditText will focus the next one. Last one will submit.
      */
-    protected void prepareEditTextsForSubmissionWithSoftKeyboard(EditText... editTexts){
+    private void prepareEditTextsForSubmissionWithSoftKeyboard(EditText... editTexts){
+        if(editTexts == null || editTexts.length == 0){
+            //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+            return;
+        }
+
         for(int i=0; i<editTexts.length-1; i++) {
             editTexts[i].setImeOptions(editTexts[i].getImeOptions() | EditorInfo.IME_ACTION_NEXT);
             editTexts[i].setNextFocusDownId(editTexts[i+1].getId());
@@ -148,10 +168,10 @@ public abstract class BaseEntryFragment extends Fragment {
             }
             return true;
         });
-        ((Activity)(editTexts[0].getContext())).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        ((Activity)(editTexts[0].getContext())).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        editTexts[0].requestFocus();
         InputMethodManager inputMethodManager = (InputMethodManager)(((Activity)(editTexts[0].getContext())).getSystemService(Context.INPUT_METHOD_SERVICE));
         inputMethodManager.showSoftInput(editTexts[0], InputMethodManager.SHOW_IMPLICIT);
-        editTexts[0].requestFocus();
     }
 
     Observer<Integer> keyCodeObserver = new Observer<Integer>() {

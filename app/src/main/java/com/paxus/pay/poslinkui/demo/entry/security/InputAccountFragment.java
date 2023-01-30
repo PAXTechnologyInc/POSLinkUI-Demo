@@ -404,8 +404,6 @@ public class InputAccountFragment extends BaseEntryFragment {
             totalAmountTv.setVisibility(View.GONE);
             amountTv.setVisibility(View.GONE);
         }
-
-        //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     @Override

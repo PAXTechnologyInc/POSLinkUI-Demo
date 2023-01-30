@@ -91,7 +91,7 @@ public class TotalAmountFragment extends BaseEntryFragment {
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_amount);
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+        focusableEditTexts = new EditText[]{editText};
         editText.setSelected(false);
         editText.setText(CurrencyUtils.convert(0,currency));
         editText.setSelection(editText.getEditableText().length());
