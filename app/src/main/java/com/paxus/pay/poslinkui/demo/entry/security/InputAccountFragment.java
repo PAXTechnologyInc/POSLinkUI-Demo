@@ -139,7 +139,9 @@ public class InputAccountFragment extends BaseEntryFragment {
         enableSwipe = CardStatus.CARD_SWIPE_REQUIRED.equals(action);
         enableTap = CardStatus.CARD_TAP_REQUIRED.equals(action);
         enableContactlessLight = enableContactlessLight && enableTap;
-
+        if (receiver != null) {
+            requireContext().unregisterReceiver(receiver);
+        }
         loadView(rootView);
 
         DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
@@ -197,7 +199,6 @@ public class InputAccountFragment extends BaseEntryFragment {
         if (receiver != null) {
             requireContext().unregisterReceiver(receiver);
         }
-        //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
     @Override
@@ -404,6 +405,7 @@ public class InputAccountFragment extends BaseEntryFragment {
             totalAmountTv.setVisibility(View.GONE);
             amountTv.setVisibility(View.GONE);
         }
+        onResume();
     }
 
     @Override
