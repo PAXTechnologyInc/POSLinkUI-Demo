@@ -24,6 +24,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
+import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.ResponseEvent;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
@@ -133,6 +134,9 @@ public abstract class BaseEntryFragment extends Fragment {
         Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + getEntryAction() + "\"");
         //3.2 when got accepted, should not response AbortEvent any more.
         deactivate();
+        getParentFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                .remove(this).commit();
     }
 
     /**

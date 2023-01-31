@@ -197,7 +197,11 @@ public class InputAccountFragment extends BaseEntryFragment {
     public void onDestroy() {
         super.onDestroy();
         if (receiver != null) {
-            requireContext().unregisterReceiver(receiver);
+            try{
+                requireContext().unregisterReceiver(receiver);
+            } catch (Exception e){
+                Logger.e(e);
+            }
         }
     }
 

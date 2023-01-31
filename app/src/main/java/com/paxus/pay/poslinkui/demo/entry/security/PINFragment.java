@@ -82,8 +82,11 @@ public class PINFragment extends BaseEntryFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        requireContext().unregisterReceiver(receiver);
+        try{
+            requireContext().unregisterReceiver(receiver);
+        } catch (Exception e){
+            Logger.e(e);
+        }
     }
     
     @Override
