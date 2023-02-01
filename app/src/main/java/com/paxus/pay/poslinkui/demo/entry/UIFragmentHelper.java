@@ -39,6 +39,7 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmReceiptViewFragmen
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmServiceFeeDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmSignatureMatchFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmSurchargeFeeFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmTotalAmountFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUnifiedMessageFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUntippedFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUploadRetryFragment;
@@ -228,7 +229,7 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_CONFIRM_SIGNATURE_MATCH, ConfirmSignatureMatchFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_DCC, ConfirmDCCFragment.class);
             put(ConfirmationEntry.ACTION_START_UI, StartUIDialogFragment.class);
-
+            put(ConfirmationEntry.ACTION_CONFIRM_TOTAL_AMOUNT, ConfirmTotalAmountFragment.class);
         }
     };
 
