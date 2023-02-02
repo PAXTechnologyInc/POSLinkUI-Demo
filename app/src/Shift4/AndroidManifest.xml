@@ -82,7 +82,7 @@
 
                 <action android:name="com.pax.us.pay.action.INPUT_ACCOUNT" />
                 <action android:name="com.pax.us.pay.action.MANAGE_INPUT_ACCOUNT" />
-                <action android:name="com.pax.us.pay.action.ADMINISTRATOR_PASSWORD" />
+                <action android:name="com.pax.us.pay.action.ENTER_ADMINISTRATOR_PASSWORD" />
                 <action android:name="com.pax.us.pay.action.ENTER_CARD_ALL_DIGITS" />
                 <action android:name="com.pax.us.pay.action.ENTER_CARD_LAST_4_DIGITS" />
                 <action android:name="com.pax.us.pay.action.ENTER_CVV" />
