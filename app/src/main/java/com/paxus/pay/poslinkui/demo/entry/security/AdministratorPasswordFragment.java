@@ -17,7 +17,7 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.AdminPasswordType;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.entry.BaseEntryDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 import java.util.Locale;
@@ -28,7 +28,7 @@ import java.util.Locale;
  * UI Tips:
  * </p>
  */
-public class PasswordDialogFragment extends BaseEntryDialogFragment {
+public class AdministratorPasswordFragment extends BaseEntryFragment {
     private String action;
     private String packageName;
     private String merchantName;
@@ -44,7 +44,7 @@ public class PasswordDialogFragment extends BaseEntryDialogFragment {
     }
 
     @Override
-    protected void loadParameter(@NonNull Bundle bundle) {
+    protected void loadArgument(@NonNull Bundle bundle) {
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         merchantName = bundle.getString(EntryExtraData.PARAM_MERCHANT_NAME);

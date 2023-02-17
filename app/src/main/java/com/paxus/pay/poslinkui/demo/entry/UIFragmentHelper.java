@@ -77,13 +77,13 @@ import com.paxus.pay.poslinkui.demo.entry.poslink.ShowMessageFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowSignatureBoxFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowTextBoxFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowThankYouFragment;
+import com.paxus.pay.poslinkui.demo.entry.security.AdministratorPasswordFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterCardAllDigitsFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterCardLast4DigitsFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterVcodeFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.InputAccountFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.ManageInputAccountFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.PINFragment;
-import com.paxus.pay.poslinkui.demo.entry.security.PasswordDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.signature.SignatureFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.AVSFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.EnterOrigTransDateFragment;
@@ -182,7 +182,7 @@ public class UIFragmentHelper {
             put(SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS, EnterCardLast4DigitsFragment.class);
             put(SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS, EnterCardAllDigitsFragment.class);
             put(SecurityEntry.ACTION_ENTER_PIN, PINFragment.class);
-            put(SecurityEntry.ACTION_ENTER_ADMINISTRATION_PASSWORD, PasswordDialogFragment.class);
+            put(SecurityEntry.ACTION_ENTER_ADMINISTRATION_PASSWORD, AdministratorPasswordFragment.class);
         }
     };
 
@@ -369,10 +369,11 @@ public class UIFragmentHelper {
 
     /**
      * Create dialog tag cuz we use it to close dialog
+     *
      * @param action action
      * @return tag
      */
-    public static String createStatusDialogTag(String action){
+    public static String createStatusDialogTag(String action) {
         switch (action) {
             case InformationStatus.TRANS_COMPLETED:
                 return "trans_completed";
@@ -429,11 +430,11 @@ public class UIFragmentHelper {
     }
 
 
-    public static void showDialog(FragmentManager fragmentManager, DialogFragment dialogFragment, String tag){
+    public static void showDialog(FragmentManager fragmentManager, DialogFragment dialogFragment, String tag) {
         dialogFragment.show(fragmentManager, tag);
     }
 
-    public static void closeDialog(FragmentManager fragmentManager, String tag){
+    public static void closeDialog(FragmentManager fragmentManager, String tag) {
         Fragment prev = fragmentManager.findFragmentByTag(tag);
         if (prev != null) {
             DialogFragment df = (DialogFragment) prev;

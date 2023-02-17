@@ -20,6 +20,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -43,7 +44,6 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 public abstract class BaseEntryFragment extends Fragment {
 
     private boolean active = false;
-    private BaseEntryViewModel baseEntryViewModel;
 
     protected EditText[] focusableEditTexts = null;
 
@@ -131,7 +131,6 @@ public abstract class BaseEntryFragment extends Fragment {
      */
     protected void onEntryAccepted() {
         Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + getEntryAction() + "\"");
-        //3.2 when got accepted, should not response AbortEvent any more.
         deactivate();
     }
 
@@ -141,7 +140,6 @@ public abstract class BaseEntryFragment extends Fragment {
      * @param errMessage Error Message
      */
     protected void onEntryDeclined(long errCode, String errMessage){
-        //3.1 when got declined, prompt declined message
         Logger.i("receive Entry Response ACTION_DECLINED for action \"" + getEntryAction() + "\" (" + errCode + "-" + errMessage + ")");
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
@@ -174,38 +172,30 @@ public abstract class BaseEntryFragment extends Fragment {
         inputMethodManager.showSoftInput(editTexts[0], InputMethodManager.SHOW_IMPLICIT);
     }
 
-    Observer<Integer> keyCodeObserver = new Observer<Integer>() {
-        @Override
-        public void onChanged(Integer input) {
-            Logger.d(getClass().getSimpleName() + " receives keycode " + input);
-            switch (input){
-                case KeyEvent.KEYCODE_ENTER:
-                    executeEnterKeyEvent();
-                    break;
-                case KeyEvent.KEYCODE_BACK:
-                    executeBackPressEvent();
-                    break;
-            }
-            //Set a default value to prevent the next fragment from getting stale update
-            baseEntryViewModel.resetKeyCode();
-        }
-    };
-
-    Observer<ResponseEvent> responseEventObserver = new Observer<ResponseEvent>() {
-        @Override
-        public void onChanged(ResponseEvent event) {
-            Logger.d(getClass().getSimpleName() + " receives " + event.action);
-            switch (event.action){
-                case EntryResponse.ACTION_ACCEPTED:
-                    onEntryAccepted();
-                    break;
-                case EntryResponse.ACTION_DECLINED:{
-                    onEntryDeclined(event.code,event.message);
-                    break;
+    //Used to get information from activity
+    FragmentResultListener fragmentResultListener = (requestKey, result) -> {
+        Logger.i(getClass().getSimpleName() + " receives " + requestKey + "\n" + result.toString());
+        switch(requestKey) {
+            case "response":
+                switch(result.getString("action")) {
+                    case EntryResponse.ACTION_ACCEPTED:
+                        onEntryAccepted();
+                        break;
+                    case EntryResponse.ACTION_DECLINED:
+                        onEntryDeclined(result.getLong("code"), result.getString("message"));
+                        break;
                 }
-            }
-            //Set a default value to prevent the next fragment from getting stale update
-            baseEntryViewModel.resetResponseEvent();
+                break;
+            case "keyCode":
+                switch (result.getInt("keyCode")){
+                    case KeyEvent.KEYCODE_ENTER:
+                        executeEnterKeyEvent();
+                        break;
+                    case KeyEvent.KEYCODE_BACK:
+                        executeBackPressEvent();
+                        break;
+                }
+                break;
         }
     };
 
@@ -214,19 +204,7 @@ public abstract class BaseEntryFragment extends Fragment {
         Logger.d(getClass().getSimpleName() + " onViewCreated.");
         super.onViewCreated(view, savedInstanceState);
 
-        //Register viewmodel with the activity scope
-        baseEntryViewModel = new ViewModelProvider(requireActivity()).get(BaseEntryViewModel.class);
-        //Set Observers
-        baseEntryViewModel.getKeyCode().observe(getViewLifecycleOwner(), keyCodeObserver);
-        baseEntryViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
-    }
-
-    @Override
-    public void onDestroyView() {
-        Logger.d(getClass().getSimpleName() + " onDestroyView.");
-        super.onDestroyView();
-        //Remove observers to prevent observables from having multiple observers
-        baseEntryViewModel.getKeyCode().removeObservers(getViewLifecycleOwner());
-        baseEntryViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
+        getParentFragmentManager().setFragmentResultListener("response", this, fragmentResultListener);
+        getParentFragmentManager().setFragmentResultListener("keyCode", this, fragmentResultListener);
     }
 }

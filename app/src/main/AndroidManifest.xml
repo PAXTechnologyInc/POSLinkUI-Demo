@@ -97,7 +97,7 @@
                 <action android:name="com.pax.us.pay.action.ENTER_CARD_LAST_4_DIGITS" />
                 <action android:name="com.pax.us.pay.action.ENTER_CVV" />
                 <action android:name="com.pax.us.pay.action.ENTER_PIN" />
-                <action android:name="com.pax.us.pay.action.ADMINISTRATOR_PASSWORD" />
+                <action android:name="com.pax.us.pay.action.ENTER_ADMINISTRATOR_PASSWORD" />
             </intent-filter>
 
             <intent-filter>
