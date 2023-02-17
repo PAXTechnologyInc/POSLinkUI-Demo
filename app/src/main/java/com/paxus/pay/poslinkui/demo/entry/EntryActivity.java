@@ -51,8 +51,6 @@ public class EntryActivity extends AppCompatActivity{
     private String transType = "";
     private String transMode = "";
 
-    EntryViewModelFactory entryViewModelFactory = new EntryViewModelFactory();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Logger.d("EntryActivity onCreate");
@@ -67,13 +65,14 @@ public class EntryActivity extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         registerUIReceiver();
+
+        Logger.i(getClass().getSimpleName() + " receives " + getIntent().getAction() + "\n" + getIntent().getExtras().toString());
         loadEntry(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Logger.d(getClass().getSimpleName() +" onNewIntent");
         //If activity is at the top of stack, startActivity will trigger onNewIntent. So you can load entry here.
         loadEntry(intent);
     }
@@ -92,26 +91,14 @@ public class EntryActivity extends AppCompatActivity{
         super.onDestroy();
         Logger.d(getClass().getSimpleName() +" onDestroy");
         unregisterUIReceiver();
-        getViewModelStore().clear();
-    }
-
-    private void logIntentExtras(Intent intent){
-        Bundle bundle = intent.getExtras() != null ? intent.getExtras() : new Bundle();
-        StringBuilder extras = new StringBuilder();
-        for (String key : bundle.keySet()) {
-            extras.append(key).append(":\"").append(bundle.get(key)).append("\",");
-        }
-        Logger.i("Action Extras:{" + extras + "}");
     }
 
     private void loadEntry(Intent intent){
-        logIntentExtras(intent);
-        Logger.i("Start Entry Action \"" + intent.getAction() + "\"");
+        Logger.i(getClass().getSimpleName() + " receives " + intent.getAction() + "\n" + intent.getExtras().toString());
 
         updateTransMode(intent.getStringExtra(EntryExtraData.PARAM_TRANS_MODE));
 
         Fragment fragment = UIFragmentHelper.createFragment(intent);
-        entryViewModelFactory.createViewModel(this, fragment);
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
 
         if (fragment != null) {
@@ -139,9 +126,6 @@ public class EntryActivity extends AppCompatActivity{
     }
 
     public void loadStatus(Intent intent) {
-        logIntentExtras(intent);
-        Logger.i("Receive Status Action \"" + intent.getAction() + "\"");
-
         String action = intent.getAction();
         if (InformationStatus.TRANS_COMPLETED.equals(action)) {
             String msg = intent.getStringExtra(StatusData.PARAM_MSG); //For POSLinkEntry, msg might be empty
@@ -283,10 +267,11 @@ public class EntryActivity extends AppCompatActivity{
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
-        if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK){
-            if(event.getAction() == KeyEvent.ACTION_DOWN){
-                entryViewModelFactory.onKeyDown(event.getKeyCode());
-            }
+        if((event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)
+                || (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) ){
+            Bundle response = new Bundle();
+            response.putInt("keyCode", event.getKeyCode());
+            getSupportFragmentManager().setFragmentResult("keyCode", response);
             return true;
         }
         return super.dispatchKeyEvent(event);
@@ -297,12 +282,18 @@ public class EntryActivity extends AppCompatActivity{
     public class POSLinkUIReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Logger.i(getClass().getSimpleName() + " receives " + intent.getAction() + "\n" + intent.getExtras().toString());
+
             if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())){
-                entryViewModelFactory.setResponseEvent(new ResponseEvent(intent.getAction()));
+                Bundle response = new Bundle();
+                response.putString("action", EntryResponse.ACTION_ACCEPTED);
+                getSupportFragmentManager().setFragmentResult("response", response);
             }else if(EntryResponse.ACTION_DECLINED.equals(intent.getAction())){
-                long resultCode = intent.getLongExtra(EntryResponse.PARAM_CODE,0);
-                String message = intent.getStringExtra(EntryResponse.PARAM_MSG);
-                entryViewModelFactory.setResponseEvent(new ResponseEvent(intent.getAction(), resultCode, message));
+                Bundle response = new Bundle();
+                response.putString("action", EntryResponse.ACTION_DECLINED);
+                response.putLong("code", intent.getLongExtra(EntryResponse.PARAM_CODE,0));
+                response.putString("message", intent.getStringExtra(EntryResponse.PARAM_MSG));
+                getSupportFragmentManager().setFragmentResult("response", response);
             }else{
                 loadStatus(intent);
             }

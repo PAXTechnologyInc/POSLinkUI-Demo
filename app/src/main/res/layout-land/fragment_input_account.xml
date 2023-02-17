@@ -56,23 +56,20 @@
         android:layout_height="0dp"
         android:layout_weight="5"
         android:gravity="center"
-        android:layout_gravity="center"
+        android:layout_gravity="top"
         android:orientation="vertical"
-        android:weightSum="3.5"
         android:id="@+id/layout_manual">
 
         <TextView
             android:id="@+id/manual_message"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:textSize="14sp" />
 
         <TextView
             android:background="@drawable/rounded_corner_on_background"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="@dimen/button_height"
             android:id="@+id/edit_account"
             android:padding="@dimen/padding_vertical"
             android:gravity="center_horizontal"
@@ -81,7 +78,6 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
-            android:layout_weight="1.5"
             android:text="@string/confirm"
             android:id="@+id/confirm_button"/>
     </LinearLayout>

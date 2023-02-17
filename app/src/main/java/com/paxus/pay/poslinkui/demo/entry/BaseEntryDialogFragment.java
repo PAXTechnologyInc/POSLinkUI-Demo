@@ -19,6 +19,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -45,7 +46,6 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     protected boolean isActive = false; //After entry request accepted, isActive will be false
-    private BaseEntryDialogViewModel baseEntryDialogViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,18 +71,15 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
             //-------2. Dialog should not be canceled by touch outside-------
             dialog.setCanceledOnTouchOutside(false);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-                @Override
-                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                    if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
-                        executeBackPressEvent();
-                        return true;
-                    } else if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN){
-                        executeEnterKeyEvent();
-                        return true;
-                    }
-                    return false;
+            dialog.setOnKeyListener((dialog1, keyCode, event) -> {
+                if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
+                    executeBackPressEvent();
+                    return true;
+                } else if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN){
+                    executeEnterKeyEvent();
+                    return true;
                 }
+                return false;
             });
         }
         activate();
@@ -137,12 +134,10 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
      * Entry Accepted means BroadPOS accepts the output from ACTION_NEXT
      */
     protected void onEntryAccepted() {
-        //4.2when got accepted, close dialog
         Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + getEntryAction() + "\"");
         try {
             dismiss();
         } catch (Exception e) {
-            //Secure Dismiss dialog
         }
     }
 
@@ -150,7 +145,6 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
      * Entry Declined means BroadPOS declined the output from ACTION_NEXT cuz it was not valid
      */
     protected void onEntryDeclined(long errCode, String errMessage){
-        //4.1when got declined, prompt declined message
         Logger.i("receive Entry Response ACTION_DECLINED for action \"" + getEntryAction() + "\" (" + errCode + "-" + errMessage + ")");
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
@@ -165,26 +159,25 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
         try {
             dismiss();
         } catch (Exception e) {
-            //Secure Dismiss dialog
         }
         EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
     }
     private void executeBackPressEvent(){ sendAbort(); }
 
-
-    Observer<ResponseEvent> responseEventObserver = new Observer<ResponseEvent>() {
-        @Override
-        public void onChanged(ResponseEvent event) {
-            Logger.d(getClass().getSimpleName() + " receives " + event.action);
-            switch (event.action){
-                case EntryResponse.ACTION_ACCEPTED:
-                    onEntryAccepted();
-                    break;
-                case EntryResponse.ACTION_DECLINED:{
-                    onEntryDeclined(event.code,event.message);
+    //Used to get information from activity
+    FragmentResultListener fragmentResultListener = (requestKey, result) -> {
+        Logger.i(getClass().getSimpleName() + " receives " + requestKey + "\n" + result.toString());
+        switch(requestKey) {
+            case "response":
+                switch(result.getString("action")) {
+                    case EntryResponse.ACTION_ACCEPTED:
+                        onEntryAccepted();
+                        break;
+                    case EntryResponse.ACTION_DECLINED:
+                        onEntryDeclined(result.getLong("code"), result.getString("message"));
+                        break;
                 }
-            }
-            baseEntryDialogViewModel.resetResponseEvent();
+                break;
         }
     };
 
@@ -192,17 +185,7 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Logger.d(getClass().getSimpleName() + " onViewCreated.");
         super.onViewCreated(view, savedInstanceState);
-        //Register viewmodel with the activity scope
-        baseEntryDialogViewModel = new ViewModelProvider(requireActivity()).get(BaseEntryDialogViewModel.class);
-        //Set Observer
-        baseEntryDialogViewModel.getResponseEvent().observe(getViewLifecycleOwner(), responseEventObserver);
-    }
 
-    @Override
-    public void onDestroyView() {
-        Logger.d(getClass().getSimpleName() + " onDestroyView.");
-        super.onDestroyView();
-        //Remove observers to prevent observables from having multiple observers
-        baseEntryDialogViewModel.getResponseEvent().removeObservers(getViewLifecycleOwner());
+        getParentFragmentManager().setFragmentResultListener("response", this, fragmentResultListener);
     }
 }
