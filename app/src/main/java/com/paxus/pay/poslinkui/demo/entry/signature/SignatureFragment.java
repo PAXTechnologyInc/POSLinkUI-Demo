@@ -205,6 +205,6 @@ public class SignatureFragment extends BaseEntryFragment {
     }
 
     private void sendTimeout(){
-        EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
+        EntryRequestUtils.sendTimeout(requireActivity(), packageName, action);
     }
 }
