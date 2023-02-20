@@ -1,0 +1,129 @@
+name: Release App
+
+on:
+  # manual trigger
+  workflow_dispatch:
+  # push is enough cuz PR will push a merge commit
+  push:
+    branches: [main]
+    paths:
+      - "version.properties"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      tag_name: ${{ steps.get_tag_name.outputs.tag_name }}
+      release_title: POSLinkUIDemo_${{ steps.get_tag_name.outputs.tag_name }}
+#    strategy:
+#      matrix:
+#        include:
+#          # TODO add more productFlavors versionNameKeys(property name)
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # - name: Decrypt release secret
+      #   if: ${{ success() }}
+      #   run: |
+      #     chmod +x ./.github/scripts/decrypt_secret.sh
+      #     ./.github/scripts/decrypt_secret.sh
+      #   env:
+      #     RELEASE_PASSPHRASE: ${{ secrets.BROADPOS_RELEASE_PASSPHRASE }}
+
+      - name: set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Get tag name
+        id: get_tag_name
+        run: |
+          export isProductFlavorTag=false
+          export versionNameKey=VERSION_NAME
+          chmod +x ./gen_tag_name.sh
+          ./gen_tag_name.sh
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build with Gradle
+        if: ${{ success() }}
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleRelease -DVERSION_NAME=${{ steps.get_tag_name.outputs.version_name }} --warning-mode all --stacktrace
+        env:
+          USERNAME: paxusactionbot
+          TOKEN: ${{ secrets.CI_TOKEN }}
+
+      - name: Cleanup Gradle cache
+        # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
+        # Restoring these files from a GitHub Actions cache might cause problems for future builds.
+        run: |
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock
+          rm -f ~/.gradle/caches/modules-2/gc.properties
+
+      - name: Create ZIP archive
+        id: create_zip_archive
+        if: ${{ success() }}
+        run: |
+          FOLDER=${{ steps.get_tag_name.outputs.asset_name }}
+          FILE=release/$FOLDER.zip
+          cd ./apks
+          ls
+          cd ..
+          mkdir -p $FOLDER release
+          cp -v ./apks/${{ steps.get_tag_name.outputs.asset_name }}.apk $FOLDER/
+          cp -v ReleaseNote.txt $FOLDER/ReleaseNote.txt
+          
+          md5sum $FOLDER/${{ steps.get_tag_name.outputs.asset_name }}.apk $FOLDER/ReleaseNote.txt > $FOLDER/release.md5
+          
+          grep -r -l '${ci_release_title}' $FOLDER/ReleaseNote.txt | xargs sed -i 's,${ci_release_title},'"${{ steps.get_tag_name.outputs.asset_name }}"',g'
+          
+          zip -vr $FILE $FOLDER
+          
+          # DGST=$FILE.dgst
+          # openssl dgst -md5    $FILE | sed 's/([^)]*)//g' >>$DGST
+          # openssl dgst -sha1   $FILE | sed 's/([^)]*)//g' >>$DGST
+          # openssl dgst -sha256 $FILE | sed 's/([^)]*)//g' >>$DGST
+          # openssl dgst -sha512 $FILE | sed 's/([^)]*)//g' >>$DGST
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: release-artifact-${{ steps.get_tag_name.outputs.tag_name }}
+          path: ./release/*.zip
+          retention-days: 1
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@master
+        with:
+          name: release-artifact-${{ needs.build.outputs.tag_name }}
+          path: ./release
+
+      - name: Update Release Note
+        if: ${{ success() }}
+        run: |
+          grep -r -l '${ci_release_title}' ReleaseNote.txt | xargs sed -i 's,${ci_release_title},'"${{ needs.build.outputs.release_title }}"',g'
+      - name: Create relase page
+        if: ${{ success() }}
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ needs.build.outputs.release_title }} Release
+          bodyFile: ./ReleaseNote.txt
+          tag: ${{ needs.build.outputs.tag_name }}
+          prerelease: true
+          commit: main
+          artifacts: ./release/*.zip
