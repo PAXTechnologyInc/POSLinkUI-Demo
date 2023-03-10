@@ -82,6 +82,13 @@ public class AdministratorPasswordFragment extends BaseEntryFragment {
             }
         });
 
+        rootView.findViewById(R.id.pwd_confirm_button)
+                .setOnClickListener(view -> onConfirmButtonClicked());
+    }
+
+    @Override
+    protected void onConfirmButtonClicked() {
+        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
     }
 
     @Override
