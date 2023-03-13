@@ -282,7 +282,7 @@ public class EntryActivity extends AppCompatActivity{
     public class POSLinkUIReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.i(getClass().getSimpleName() + " receives " + intent.getAction() + "\n" + intent.getExtras().toString());
+            Logger.i(getClass().getSimpleName() + " receives " + intent.getAction() + "\n" + (intent.getExtras()!=null?intent.getExtras().toString():"Empty Extras"));
 
             if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())){
                 Bundle response = new Bundle();

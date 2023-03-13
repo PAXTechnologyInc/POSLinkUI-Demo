@@ -1,11 +1,13 @@
 package com.paxus.pay.poslinkui.demo.status;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,27 +26,27 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 /**
- *  Implement dialog actions:<br>
- *  {@value InformationStatus#TRANS_ONLINE_STARTED},<br>
- *  {@value InformationStatus#EMV_TRANS_ONLINE_STARTED},<br>
- *  {@value InformationStatus#RKI_STARTED},<br>
- *  {@value InformationStatus#DCC_ONLINE_STARTED},<br>
- *  {@value InformationStatus#PINPAD_CONNECTION_STARTED},<br>
- *  {@value CardStatus#CARD_REMOVAL_REQUIRED},<br>
- *  {@value CardStatus#CARD_PROCESS_STARTED},<br>
- *  {@value Uncategory#PRINT_STARTED},<br>
- *  {@value Uncategory#FILE_UPDATE_STARTED},<br>
- *  {@value Uncategory#FCP_FILE_UPDATE_STARTED},<br>
- *  {@value Uncategory#LOG_UPLOAD_STARTED},<br>
- *  {@value Uncategory#LOG_UPLOAD_CONNECTED},<br>
- *  {@value Uncategory#LOG_UPLOAD_UPLOADING},<br>
- *  {@value Uncategory#CAPK_UPDATE_STARTED},<br>
- *  {@value BatchStatus#BATCH_SF_UPLOADING},<br>
- *  {@value BatchStatus#BATCH_CLOSE_UPLOADING},<br>
+ * Implement dialog actions:<br>
+ * {@value InformationStatus#TRANS_ONLINE_STARTED},<br>
+ * {@value InformationStatus#EMV_TRANS_ONLINE_STARTED},<br>
+ * {@value InformationStatus#RKI_STARTED},<br>
+ * {@value InformationStatus#DCC_ONLINE_STARTED},<br>
+ * {@value InformationStatus#PINPAD_CONNECTION_STARTED},<br>
+ * {@value CardStatus#CARD_REMOVAL_REQUIRED},<br>
+ * {@value CardStatus#CARD_PROCESS_STARTED},<br>
+ * {@value Uncategory#PRINT_STARTED},<br>
+ * {@value Uncategory#FILE_UPDATE_STARTED},<br>
+ * {@value Uncategory#FCP_FILE_UPDATE_STARTED},<br>
+ * {@value Uncategory#LOG_UPLOAD_STARTED},<br>
+ * {@value Uncategory#LOG_UPLOAD_CONNECTED},<br>
+ * {@value Uncategory#LOG_UPLOAD_UPLOADING},<br>
+ * {@value Uncategory#CAPK_UPDATE_STARTED},<br>
+ * {@value BatchStatus#BATCH_SF_UPLOADING},<br>
+ * {@value BatchStatus#BATCH_CLOSE_UPLOADING},<br>
  *
- *  <br>
- *  UI Requirement:
- *       Display status by dialog. Do not close dialog by press KEY_BACK <br>
+ * <br>
+ * UI Requirement:
+ * Display status by dialog. Do not close dialog by press KEY_BACK <br>
  */
 public class StatusDialogFragment extends DialogFragment {
 
@@ -66,7 +68,7 @@ public class StatusDialogFragment extends DialogFragment {
         TextView textView = view.findViewById(R.id.message);
 
         Bundle bundle = getArguments();
-        if(bundle != null) {
+        if (bundle != null) {
             //Display status by dialog
             textView.setText(formatStatusMessage(bundle));
         }
@@ -78,7 +80,7 @@ public class StatusDialogFragment extends DialogFragment {
         dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP){
+                if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                     //Do not close dialog by press KEY_BACK
                     return true;
                 }
@@ -88,8 +90,16 @@ public class StatusDialogFragment extends DialogFragment {
         return dialog;
     }
 
-    private String formatStatusMessage(Bundle bundle){
-        String action  = bundle.getString(EntryRequest.PARAM_ACTION);
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Hide Keyboard
+        ((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+    }
+
+    private String formatStatusMessage(Bundle bundle) {
+        String action = bundle.getString(EntryRequest.PARAM_ACTION);
         String message = "";
         switch (action) {
             case InformationStatus.TRANS_ONLINE_STARTED:
@@ -143,7 +153,7 @@ public class StatusDialogFragment extends DialogFragment {
             case Uncategory.LOG_UPLOAD_STARTED:
                 message = getString(R.string.log_uploading_start);
                 break;
-            case Uncategory.LOG_UPLOAD_CONNECTED:{
+            case Uncategory.LOG_UPLOAD_CONNECTED: {
                 long uploadPercent = bundle.getLong(StatusData.PARAM_UPLOAD_CURRENT_PERCENT, 0L);
                 message = getString(R.string.log_connected) + " (" + uploadPercent + "%)";
                 break;
