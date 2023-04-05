@@ -86,6 +86,17 @@ public class EntryRequestUtils {
         context.sendBroadcast(intent);
     }
 
+    public static void sendNext(Context context, String packageName, String action, Bundle bundle){
+        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
+
+        bundle.putString(EntryRequest.PARAM_ACTION, action);
+
+        Intent intent = new Intent(EntryRequest.ACTION_NEXT)
+                .setPackage(packageName)
+                .putExtras(bundle);
+        context.sendBroadcast(intent);
+    }
+
     public static void sendNextAVS(Context context, String packageName, String action, String address, String zip){
         Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
 

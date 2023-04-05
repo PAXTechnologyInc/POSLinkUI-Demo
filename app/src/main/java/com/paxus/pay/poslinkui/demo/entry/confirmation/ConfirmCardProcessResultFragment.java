@@ -24,16 +24,12 @@ import java.util.List;
  * </p>
  */
 public class ConfirmCardProcessResultFragment extends AConfirmationDialogFragment {
-    private String action;
-    private String packageName;
     private long timeout;
     private String message;
     private List<String> options;
 
     @Override
     protected void loadParameter(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         message = bundle.getString(EntryExtraData.PARAM_MESSAGE);
         String[] array = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
@@ -42,17 +38,6 @@ public class ConfirmCardProcessResultFragment extends AConfirmationDialogFragmen
         }
     }
 
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @NonNull
     @Override
     protected String getRequestedParamName() {
         return EntryRequest.PARAM_CONFIRMED;
@@ -78,7 +63,7 @@ public class ConfirmCardProcessResultFragment extends AConfirmationDialogFragmen
         //if timeout, treat it as confirmed.
         new Handler().postDelayed(() -> {
             if (isActive) {
-                sendNext(true);
+                submit(true);
             }
         }, timeout);
     }

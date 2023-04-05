@@ -23,8 +23,6 @@ import java.util.List;
  * </p>
  */
 public class CheckCardPresentFragment extends AConfirmationDialogFragment {
-    private String action;
-    private String packageName;
     private long timeout;
     private String message;
     private List<String> options;
@@ -39,16 +37,6 @@ public class CheckCardPresentFragment extends AConfirmationDialogFragment {
         if (array != null) {
             options = Arrays.asList(array);
         }
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
     }
 
     @NonNull

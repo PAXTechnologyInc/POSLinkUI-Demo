@@ -23,6 +23,8 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.pax.us.pay.ui.constant.entry.EntryExtraData;
+import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.event.ResponseEvent;
@@ -46,7 +48,7 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 public abstract class BaseEntryDialogFragment extends DialogFragment {
 
     protected boolean isActive = false; //After entry request accepted, isActive will be false
-
+    private String senderPackage, action;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +63,11 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
         View view = inflater.inflate(getLayoutResourceId(), container, false);
         Bundle bundle = getArguments();
         if(bundle!= null) {
+            action = bundle.getString(EntryRequest.PARAM_ACTION);
+            senderPackage = bundle.getString(EntryExtraData.PARAM_PACKAGE);
+            bundle.remove(EntryRequest.PARAM_ACTION);
+            bundle.remove(EntryExtraData.PARAM_PACKAGE);
+
             loadParameter(bundle);
         }
 
@@ -126,15 +133,11 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
      */
     protected abstract void loadView(View rootView);
 
-    protected abstract String getSenderPackageName();
-
-    protected abstract String getEntryAction();
-
     /**
      * Entry Accepted means BroadPOS accepts the output from ACTION_NEXT
      */
     protected void onEntryAccepted() {
-        Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + getEntryAction() + "\"");
+        Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + action + "\"");
         try {
             dismiss();
         } catch (Exception e) {
@@ -145,7 +148,7 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
      * Entry Declined means BroadPOS declined the output from ACTION_NEXT cuz it was not valid
      */
     protected void onEntryDeclined(long errCode, String errMessage){
-        Logger.i("receive Entry Response ACTION_DECLINED for action \"" + getEntryAction() + "\" (" + errCode + "-" + errMessage + ")");
+        Logger.i("receive Entry Response ACTION_DECLINED for action \"" + action + "\" (" + errCode + "-" + errMessage + ")");
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 
@@ -155,12 +158,16 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
     protected void onConfirmButtonClicked(){}
     private void executeEnterKeyEvent(){ onConfirmButtonClicked(); }
 
+    protected void sendNext(Bundle bundle){
+        EntryRequestUtils.sendNext(requireContext(), senderPackage, action, bundle);
+    }
+
     protected void sendAbort() {
         try {
             dismiss();
         } catch (Exception e) {
         }
-        EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
+        EntryRequestUtils.sendAbort(requireContext(), senderPackage, action);
     }
     private void executeBackPressEvent(){ sendAbort(); }
 

@@ -52,16 +52,18 @@ public abstract class AConfirmationDialogFragment extends BaseEntryDialogFragmen
     }
 
     private void onNegativeButtonClicked() {
-        sendNext(false);
+        submit(false);
     }
 
     @Override
     protected void onConfirmButtonClicked() {
-        sendNext(true);
+        submit(true);
     }
 
-    protected void sendNext(boolean confirm) {
-        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction(), getRequestedParamName(), confirm);
+    protected void submit(boolean confirm) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(getRequestedParamName(), confirm);
+        sendNext(bundle);
     }
 
     protected abstract @NonNull

@@ -19,6 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 
+import com.pax.us.pay.ui.constant.entry.EntryExtraData;
+import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
@@ -39,6 +41,7 @@ public abstract class BaseEntryFragment extends Fragment {
 
     private boolean active = false;
 
+    private String senderPackage, action;
     protected EditText[] focusableEditTexts = null;
 
     @Nullable
@@ -49,6 +52,11 @@ public abstract class BaseEntryFragment extends Fragment {
         //1. Load layout in onCreateView (getLayoutResourceId, loadParameter, loadView)
         Bundle bundle = getArguments();
         if (bundle != null) {
+            action = bundle.getString(EntryRequest.PARAM_ACTION);
+            senderPackage = bundle.getString(EntryExtraData.PARAM_PACKAGE);
+            bundle.remove(EntryRequest.PARAM_ACTION);
+            bundle.remove(EntryExtraData.PARAM_PACKAGE);
+
             loadArgument(bundle);
         } else {
             Logger.e(this.getClass().getSimpleName() + " arguments missing!!!");
@@ -126,23 +134,22 @@ public abstract class BaseEntryFragment extends Fragment {
         onConfirmButtonClicked();
     }
 
+    protected void sendNext(Bundle bundle){
+        EntryRequestUtils.sendNext(requireContext(), senderPackage, action, bundle);
+    }
     protected void sendAbort() {
-        EntryRequestUtils.sendAbort(requireContext(), getSenderPackageName(), getEntryAction());
+        EntryRequestUtils.sendAbort(requireContext(), senderPackage, action);
     }
 
     protected void executeBackPressEvent() {
         sendAbort();
     }
 
-    protected abstract String getSenderPackageName();
-
-    protected abstract String getEntryAction();
-
     /**
      * Entry Accepted means BroadPOS accepts the output from ACTION_NEXT
      */
     protected void onEntryAccepted() {
-        Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + getEntryAction() + "\"");
+        Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + action + "\"");
         deactivate();
     }
 
@@ -153,7 +160,7 @@ public abstract class BaseEntryFragment extends Fragment {
      * @param errMessage Error Message
      */
     protected void onEntryDeclined(long errCode, String errMessage) {
-        Logger.i("receive Entry Response ACTION_DECLINED for action \"" + getEntryAction() + "\" (" + errCode + "-" + errMessage + ")");
+        Logger.i("receive Entry Response ACTION_DECLINED for action \"" + action + "\" (" + errCode + "-" + errMessage + ")");
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 
