@@ -1,9 +1,7 @@
 package com.paxus.pay.poslinkui.demo.entry.text.amount;
 
-import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,8 +12,6 @@ import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
-import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
 /**
@@ -31,7 +27,6 @@ import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
  */
 
 public abstract class AAmountFragment extends BaseEntryFragment {
-
 
     private EditText editText;
 
@@ -55,26 +50,21 @@ public abstract class AAmountFragment extends BaseEntryFragment {
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
-
-
     }
 
     @Override
     protected void onConfirmButtonClicked() {
-        long value = CurrencyUtils.parse(editText.getText().toString());
-        sendNext(value);
+        submit(CurrencyUtils.parse(editText.getText().toString()));
     }
 
-    protected abstract String formatMessage();
-
-    protected abstract int getMaxLength();
-
-    protected abstract String getCurrency();
-
-    protected void sendNext(long value) {
-        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction(), getRequestedParamName(), value);
+    protected void submit(long value) {
+        Bundle bundle = new Bundle();
+        bundle.putLong(getRequestedParamName(), value);
+        sendNext(bundle);
     }
 
     protected abstract String getRequestedParamName();
-
+    protected abstract String formatMessage();
+    protected abstract int getMaxLength();
+    protected abstract String getCurrency();
 }

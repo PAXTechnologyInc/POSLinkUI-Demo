@@ -33,8 +33,6 @@ import java.util.List;
  * </p>
  */
 public class ShowSignatureBoxFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
     private String title;
     private String text;
     private long timeOut;
@@ -70,8 +68,6 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle){
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
         text = bundle.getString(EntryExtraData.PARAM_TEXT);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
@@ -167,27 +163,14 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
 
     private void sendNext(short[] signature) {
         handler.removeCallbacks(tick); //Stop Tick
-
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_SIGNATURE, signature);
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
+        Bundle bundle = new Bundle();
+        bundle.putShortArray(EntryRequest.PARAM_SIGNATURE, signature);
+        sendNext(bundle);
     }
 
     @Override
     protected void sendAbort() {
         super.sendAbort();
         handler.removeCallbacks(tick); //Stop Tick
-    }
-
-    private void sendTimeout() {
-        EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
     }
 }

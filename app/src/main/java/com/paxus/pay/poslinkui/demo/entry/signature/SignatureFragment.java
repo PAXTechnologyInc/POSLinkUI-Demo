@@ -41,18 +41,6 @@ public class SignatureFragment extends BaseEntryFragment {
     private String transMode;
     private long totalAmount;
     private String currency;
-    private String packageName;
-    private String action;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     private String signLine1;
     private String signLine2;
@@ -86,8 +74,6 @@ public class SignatureFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle){
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
@@ -195,7 +181,9 @@ public class SignatureFragment extends BaseEntryFragment {
 
     private void sendNext(short[] signature){
         handler.removeCallbacks(tick); //Stop Tick
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_SIGNATURE, signature);
+        Bundle bundle = new Bundle();
+        bundle.putShortArray(EntryRequest.PARAM_SIGNATURE, signature);
+        sendNext(bundle);
     }
 
     @Override
@@ -204,7 +192,4 @@ public class SignatureFragment extends BaseEntryFragment {
         handler.removeCallbacks(tick); //Stop Tick
     }
 
-    private void sendTimeout(){
-        EntryRequestUtils.sendTimeout(requireActivity(), packageName, action);
-    }
 }

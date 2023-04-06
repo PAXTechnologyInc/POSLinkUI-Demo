@@ -23,32 +23,18 @@ import java.util.List;
  * </p>
  */
 public class ConfirmDuplicateTransFragment extends AConfirmationDialogFragment {
-    private String action;
-    private String packageName;
     private long timeout;
     private String message;
     private List<String> options;
 
     @Override
     protected void loadParameter(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         message = bundle.getString(EntryExtraData.PARAM_MESSAGE);
         String[] array = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
         if (array != null) {
             options = Arrays.asList(array);
         }
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
     }
 
     @NonNull

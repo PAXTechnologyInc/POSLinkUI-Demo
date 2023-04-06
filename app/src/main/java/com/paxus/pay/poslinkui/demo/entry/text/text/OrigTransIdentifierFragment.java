@@ -27,8 +27,6 @@ public class OrigTransIdentifierFragment extends ATextFragment {
     private String transType;
     private String message = "";
     private String transMode;
-    private String packageName;
-    private String action;
 
     @Override
     public int getMaxLength() {
@@ -47,8 +45,6 @@ public class OrigTransIdentifierFragment extends ATextFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
@@ -58,15 +54,5 @@ public class OrigTransIdentifierFragment extends ATextFragment {
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
     }
 }

@@ -2,7 +2,9 @@ package com.paxus.pay.poslinkui.demo.entry;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.text.TextPaint;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
@@ -136,6 +139,35 @@ public abstract class BaseEntryFragment extends Fragment {
 
     protected void sendNext(Bundle bundle){
         EntryRequestUtils.sendNext(requireContext(), senderPackage, action, bundle);
+    }
+    protected void sendSecurityArea(TextView view, String... hint){
+        if(view == null) {
+            EntryRequestUtils.sendSecureArea(requireContext(), senderPackage, action);
+            return;
+        }
+
+        int[] location = new int[2];
+        view.getLocationInWindow(location);
+
+        int barHeight = 0;
+        boolean immersiveSticky = (requireActivity().getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) > 0;
+        if (!immersiveSticky) {
+            Rect rect = new Rect();
+            requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+            barHeight = rect.top;
+        }
+
+        int fontSize = (int) (view.getPaint().getTextSize() / view.getPaint().density);
+        EntryRequestUtils.sendSecureArea(requireContext(), senderPackage, action, location[0], location[1] - barHeight,
+                view.getWidth(), view.getHeight(), fontSize,
+                (hint!=null && hint.length>0) ? hint[0] : "",
+                String.format("%X", view.getCurrentTextColor()));
+    }
+    protected void sendSetPinKeyLayout(Bundle keyLocations){
+        EntryRequestUtils.sendSetPinKeyLayout(requireContext(), senderPackage, action, keyLocations);
+    }
+    protected void sendTimeout(){
+        EntryRequestUtils.sendTimeout(requireContext(), senderPackage, action);
     }
     protected void sendAbort() {
         EntryRequestUtils.sendAbort(requireContext(), senderPackage, action);

@@ -48,8 +48,6 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
 
     private static final String BARCODE_QR_CODE = "7";
 
-    private String packageName;
-    private String action;
     private long timeOut;
     private String transMode;
     private String title;
@@ -71,33 +69,15 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
 
 
     private Handler handler;
-    private final Runnable timeoutRun = new Runnable() {
-        @Override
-        public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
-        }
-    };
+    private final Runnable timeoutRun = () -> sendTimeout();
 
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_show_text_box;
     }
 
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         text = bundle.getString(EntryExtraData.PARAM_TEXT);
@@ -255,7 +235,9 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
     }
 
     private void sendNext(String index){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_BUTTON_NUMBER, index);
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_BUTTON_NUMBER, index);
+        sendNext(bundle);
     }
 
     private Bitmap createQRCode(String content, int qrCodeSize, Bitmap logo){

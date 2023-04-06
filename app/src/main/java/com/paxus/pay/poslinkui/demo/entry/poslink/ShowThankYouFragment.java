@@ -29,8 +29,6 @@ public class ShowThankYouFragment extends BaseEntryFragment {
     public static final String RIGHT_ALIGN = "\\R";
     public static final String CENTER_ALIGN = "\\C";
 
-    private String packageName;
-    private String action;
     private long timeOut;
     private String transMode;
     private String title;
@@ -38,23 +36,7 @@ public class ShowThankYouFragment extends BaseEntryFragment {
     private String message2;
 
     private Handler handler;
-    private final Runnable timeoutRun = new Runnable() {
-        @Override
-        public void run() {
-            EntryRequestUtils.sendNext(requireContext(), packageName, action);
-        }
-    };
-
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
+    private final Runnable timeoutRun = () -> sendTimeout();
 
     @Override
     protected int getLayoutResourceId() {
@@ -63,8 +45,6 @@ public class ShowThankYouFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 

@@ -29,18 +29,6 @@ public class ReferenceNumberFragment extends ANumTextFragment {
     private String message = "";
     private String transMode;
     protected boolean allText;
-    private String packageName;
-    private String action;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     @Override
     protected int getMaxLength() {
@@ -54,8 +42,6 @@ public class ReferenceNumberFragment extends ANumTextFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);

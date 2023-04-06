@@ -29,23 +29,8 @@ public class EnterCardAllDigitsFragment extends ASecurityFragment {
     protected int maxLength;
     private String transMode;
 
-    private String packageName;
-    private String action;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
@@ -62,13 +47,4 @@ public class EnterCardAllDigitsFragment extends ASecurityFragment {
         return getString(R.string.prompt_input_all_digit);
     }
 
-    @Override
-    protected void onInputBoxLayoutReady() {
-        super.onInputBoxLayoutReady();
-    }
-
-    @Override
-    protected void onConfirmButtonClicked() {
-        super.onConfirmButtonClicked();
-    }
 }

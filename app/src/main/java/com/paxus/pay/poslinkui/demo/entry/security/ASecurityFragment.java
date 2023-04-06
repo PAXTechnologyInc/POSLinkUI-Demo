@@ -100,37 +100,16 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
     protected void onInputBoxLayoutReady() {
         if (Build.MODEL.equals("A35")) {
             new Handler().postDelayed(() -> {
-                sendSecureArea(editText);
+                sendSecurityArea(editText);
             }, 100);
         } else {
-            sendSecureArea(editText);
+            sendSecurityArea(editText);
         }
-    }
-
-    protected void sendSecureArea(TextView editText) {
-        int[] location = new int[2];
-        editText.getLocationInWindow(location);
-        int x = location[0];
-        int y = location[1];
-        int barHeight = 0;
-        boolean immersiveSticky = (requireActivity().getWindow().getDecorView().getSystemUiVisibility() &
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) > 0;
-        if (!immersiveSticky) {
-            //area of application
-            Rect outRect1 = new Rect();
-            requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(outRect1);
-            barHeight = outRect1.top;  //statusBar's height
-        }
-        TextPaint paint = editText.getPaint();
-        int fontSize = (int) (paint.getTextSize() / paint.density);
-        EntryRequestUtils.sendSecureArea(requireContext(), getSenderPackageName(), getEntryAction(), x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize,
-                "",
-                String.format("%X", editText.getCurrentTextColor()));
     }
 
     @Override
     protected void onConfirmButtonClicked() {
-        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
+        sendNext(null);
     }
 
     @Override

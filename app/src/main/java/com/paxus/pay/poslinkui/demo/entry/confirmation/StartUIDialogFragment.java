@@ -28,8 +28,6 @@ public class StartUIDialogFragment extends BaseEntryDialogFragment {
     public static DialogFragment newInstance(String action) {
         StartUIDialogFragment dialogFragment = new StartUIDialogFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, action);
-
         dialogFragment.setArguments(bundle);
         return dialogFragment;
     }
@@ -40,35 +38,18 @@ public class StartUIDialogFragment extends BaseEntryDialogFragment {
     }
 
     @Override
-    protected void loadParameter(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-    }
+    protected void loadParameter(@NonNull Bundle bundle) {}
 
     @Override
     protected void loadView(View rootView) {
-        TextView textView = rootView.findViewById(R.id.message);
-
-        //Display status by dialog
-        textView.setText(R.string.start_ui);
-
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
+        rootView.findViewById(R.id.message).setVisibility(View.GONE);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if (isActive) {
-            EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
+            sendNext(null);
         }
     }
 

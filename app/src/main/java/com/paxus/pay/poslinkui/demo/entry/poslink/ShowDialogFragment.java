@@ -36,7 +36,7 @@ public class ShowDialogFragment extends BaseEntryFragment {
     private String button4;
 
     private Handler handler;
-    private final Runnable timeoutRun = () -> EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
+    private final Runnable timeoutRun = () -> sendTimeout();
 
     @Override
     protected int getLayoutResourceId() {
@@ -45,8 +45,6 @@ public class ShowDialogFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
@@ -98,7 +96,7 @@ public class ShowDialogFragment extends BaseEntryFragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    sendNext(index);
+                    submit(index);
                 }
             });
         }else{
@@ -126,8 +124,10 @@ public class ShowDialogFragment extends BaseEntryFragment {
         }
     }
 
-    private void sendNext(int index){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_INDEX, index);
+    private void submit(int index){
+        Bundle bundle = new Bundle();
+        bundle.putInt(EntryRequest.PARAM_INDEX, index);
+        sendNext(bundle);
     }
 
 }

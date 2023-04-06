@@ -30,24 +30,10 @@ public class EnterVcodeFragment extends ASecurityFragment {
     protected int minLength;
     protected int maxLength;
     private String transMode;
-    private String packageName;
-    private String action;
     private String vcodeName;
 
     @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
-    @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
@@ -79,13 +65,4 @@ public class EnterVcodeFragment extends ASecurityFragment {
         return message;
     }
 
-    @Override
-    protected void onInputBoxLayoutReady() {
-        super.onInputBoxLayoutReady();
-    }
-
-    @Override
-    protected void onConfirmButtonClicked() {
-        super.onConfirmButtonClicked();
-    }
 }

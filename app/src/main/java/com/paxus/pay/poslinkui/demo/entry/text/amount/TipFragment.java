@@ -26,7 +26,6 @@ import com.pax.us.pay.ui.constant.entry.enumeration.UnitType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
@@ -57,20 +56,8 @@ public class TipFragment extends BaseEntryFragment {
     private String tipUnit;
     private String[] enabledTipNames;
     private long[] enabledTipValues;
-    private String packageName;
-    private String action;
     private boolean isEditingOngoing = false;
     private boolean isSelectTipEnabled = false;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     private TipOption selectedItem;
 
@@ -83,8 +70,6 @@ public class TipFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
@@ -214,18 +199,18 @@ public class TipFragment extends BaseEntryFragment {
             if(UnitType.DOLLAR.equals(tipUnit)){
                 value = value*100;
             }
-            sendNext(value);
+            submit(value);
         }else {
             if(selectedItem != null){
-                sendNext(selectedItem.tipAmt);
+                submit(selectedItem.tipAmt);
             }
         }
     }
 
-    private void sendNext(long value){
-
-        String param = EntryRequest.PARAM_TIP;
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
+    private void submit(long value){
+        Bundle bundle = new Bundle();
+        bundle.putLong(EntryRequest.PARAM_TIP, value);
+        sendNext(bundle);
     }
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder>{

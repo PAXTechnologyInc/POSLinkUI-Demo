@@ -34,21 +34,9 @@ public class AVSFragment extends BaseEntryFragment {
     private int maxLengthZip;
     private String transMode;
     private boolean zipText;
-    private String packageName;
-    private String action;
 
     private EditText editTextAddr;
     private EditText editTextZip;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -57,8 +45,6 @@ public class AVSFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
@@ -93,8 +79,6 @@ public class AVSFragment extends BaseEntryFragment {
         //Send Next when clicking confirm button
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener( v-> onConfirmButtonClicked());
-
-
     }
 
     @Override
@@ -107,6 +91,9 @@ public class AVSFragment extends BaseEntryFragment {
             return;
         }
 
-        EntryRequestUtils.sendNextAVS(requireContext(), packageName, action, addr, zip);
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_ADDRESS, addr);
+        bundle.putString(EntryRequest.PARAM_ZIP_CODE, zip);
+        sendNext(bundle);
     }
 }

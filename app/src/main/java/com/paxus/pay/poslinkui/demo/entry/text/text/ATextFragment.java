@@ -1,5 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.text.text;
 
+import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.View;
 import android.widget.Button;
@@ -9,7 +10,6 @@ import android.widget.TextView;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
  * Implement text entry actions:<br>
@@ -57,11 +57,13 @@ public abstract class ATextFragment extends BaseEntryFragment {
     @Override
     protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
-        sendNext(value);
+        submit(value);
     }
 
-    protected void sendNext(String value) {
-        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction(), getRequestedParamName(), value);
+    protected void submit(String value) {
+        Bundle bundle = new Bundle();
+        bundle.putString(getRequestedParamName(), value);
+        sendNext(bundle);
     }
 
     protected abstract String getRequestedParamName();

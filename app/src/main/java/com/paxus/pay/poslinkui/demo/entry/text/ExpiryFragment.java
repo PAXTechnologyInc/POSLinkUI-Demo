@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,7 +16,6 @@ import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
-import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_EXPIRY_DATE}<br>
@@ -33,8 +31,6 @@ public class ExpiryFragment extends BaseEntryFragment {
 
     private long timeOut;
     private String message = "";
-    private String packageName;
-    private String action;
 
     private EditText editText;
 
@@ -45,8 +41,6 @@ public class ExpiryFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
@@ -108,26 +102,18 @@ public class ExpiryFragment extends BaseEntryFragment {
     }
 
     @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
-    @Override
     protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
         value = value.replaceAll("[^0-9]", "");
         if (value.length() == 4) {
-            sendNext(value);
+            submit(value);
         }
     }
 
-    private void sendNext(String value) {
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_EXPIRY_DATE, value);
+    private void submit(String value) {
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_EXPIRY_DATE, value);
+        sendNext(bundle);
     }
 
     @Override

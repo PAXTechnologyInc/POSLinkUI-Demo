@@ -20,25 +20,11 @@ import com.paxus.pay.poslinkui.demo.R;
 public class SelectTransTypeFragment extends AOptionsDialogFragment {
 
     protected long timeout;
-    private String action;
-    private String packageName;
     private String[] items;
 
     @Override
     protected void loadParameter(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         items = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
     }
 
     @NonNull

@@ -23,8 +23,6 @@ import java.util.List;
  * </p>
  */
 public class ConfirmPrinterStatusFragment extends AConfirmationDialogFragment {
-    private String action;
-    private String packageName;
     private long timeout;
     private String message;
     private List<String> options;
@@ -32,8 +30,6 @@ public class ConfirmPrinterStatusFragment extends AConfirmationDialogFragment {
 
     @Override
     protected void loadParameter(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         message = bundle.getString(EntryExtraData.PARAM_MESSAGE);
         String[] array = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
@@ -41,16 +37,6 @@ public class ConfirmPrinterStatusFragment extends AConfirmationDialogFragment {
             options = Arrays.asList(array);
         }
         printStatus = bundle.getString(EntryExtraData.PARAM_PRINT_STATUS);
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
     }
 
     @NonNull

@@ -47,18 +47,6 @@ public class CashbackFragment extends BaseEntryFragment {
     private String currency = "";
     private long[] cashBackOptions;
     private boolean promptOther;
-    private String packageName;
-    private String action;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     private CashbackOption selectedItem;
 
@@ -71,9 +59,6 @@ public class CashbackFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
@@ -146,17 +131,18 @@ public class CashbackFragment extends BaseEntryFragment {
     protected void onConfirmButtonClicked(){
         if(editText.getVisibility() == View.VISIBLE) {
             long value = CurrencyUtils.parse(editText.getText().toString());
-            sendNext(value);
+            submit(value);
         }else {
             if(selectedItem != null){
-                sendNext(selectedItem.cashbackAmt);
+                submit(selectedItem.cashbackAmt);
             }
         }
     }
 
-    private void sendNext(long value){
-        String param = EntryRequest.PARAM_CASHBACK_AMOUNT;
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
+    private void submit(long value){
+        Bundle bundle = new Bundle();
+        bundle.putLong(EntryRequest.PARAM_CASHBACK_AMOUNT, value);
+        sendNext(bundle);
     }
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder>{

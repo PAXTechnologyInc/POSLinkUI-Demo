@@ -88,26 +88,12 @@ public class EntryRequestUtils {
 
     public static void sendNext(Context context, String packageName, String action, Bundle bundle){
         Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
-
+        if(bundle == null) bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
 
         Intent intent = new Intent(EntryRequest.ACTION_NEXT)
                 .setPackage(packageName)
                 .putExtras(bundle);
-        context.sendBroadcast(intent);
-    }
-
-    public static void sendNextAVS(Context context, String packageName, String action, String address, String zip){
-        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
-
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, action);
-        bundle.putString(EntryRequest.PARAM_ADDRESS,address);
-        bundle.putString(EntryRequest.PARAM_ZIP_CODE,zip);
-
-        Intent intent = new Intent(EntryRequest.ACTION_NEXT);
-        intent.putExtras(bundle);
-        intent.setPackage(packageName);
         context.sendBroadcast(intent);
     }
 
@@ -141,6 +127,7 @@ public class EntryRequestUtils {
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
+
         bundle.putInt(EntryRequest.PARAM_X, x);
         bundle.putInt(EntryRequest.PARAM_Y, y);
         bundle.putInt(EntryRequest.PARAM_WIDTH, width);
@@ -172,6 +159,19 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_SECURITY_AREA);
         intent.putExtras(bundle);
         intent.setPackage(packageName);
+        context.sendBroadcast(intent);
+    }
+
+    public static void sendSetPinKeyLayout(Context context, String packageName, String action, Bundle keyLocations){
+        Logger.i("send Entry Request ACTION_SET_PIN_KEY_LAYOUT for action \""+action+"\"");
+
+        Bundle bundle = new Bundle(keyLocations);
+        bundle.putString(EntryRequest.PARAM_ACTION, action);
+
+        Intent intent = new Intent(EntryRequest.ACTION_SET_PIN_KEY_LAYOUT)
+                .setPackage(packageName)
+                .putExtras(bundle);
+
         context.sendBroadcast(intent);
     }
 }

@@ -40,8 +40,6 @@ public class InputTextFragment extends BaseEntryFragment {
     private static final String FORMAT_TIME = "HH:MM:SS";
     private static final String FORMAT_PHONE = "(XXX)XXX-XXXX";
     private static final String FORMAT_SSN = "XXX-XX-XXXX";
-    private String packageName;
-    private String action;
     private long timeOut;
     private int minLength;
     private int maxLength;
@@ -53,23 +51,7 @@ public class InputTextFragment extends BaseEntryFragment {
 
     private EditText editText;
     private Handler handler;
-    private final Runnable timeoutRun = new Runnable() {
-        @Override
-        public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
-        }
-    };
-
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
+    private final Runnable timeoutRun = () -> sendTimeout();
 
     @Override
     protected int getLayoutResourceId() {
@@ -78,8 +60,6 @@ public class InputTextFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
@@ -216,12 +196,14 @@ public class InputTextFragment extends BaseEntryFragment {
             value = value.replaceAll("[^0-9]", "");
         }
 
-        sendNext(value);
+        submit(value);
 
     }
 
-    private void sendNext(String value){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_INPUT_VALUE, value);
+    private void submit(String value){
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_INPUT_VALUE, value);
+        sendNext(bundle);
     }
 
     private static class FormatTextWatcher implements TextWatcher{

@@ -57,8 +57,6 @@ import com.paxus.pay.poslinkui.demo.view.ClssLightsView;
 
 public class InputAccountFragment extends BaseEntryFragment {
 
-    protected String packageName;
-    protected String action;
     protected String transType;
     protected long timeOut;
     protected int minLength;
@@ -97,35 +95,16 @@ public class InputAccountFragment extends BaseEntryFragment {
         //Change hint and font color if you want
         if (Build.MODEL.equals("A35")) {
             new Handler().postDelayed(() -> {
-                sendSecureArea(panInputBox, "Card Number");
+                sendSecurityArea(panInputBox, "Card Number");
             }, 100);
         } else {
-            sendSecureArea(panInputBox, "Card Number");
+            sendSecurityArea(panInputBox, "Card Number");
         }
     }
 
     @Override
     protected void onConfirmButtonClicked() {
-        EntryRequestUtils.sendNext(requireContext(), packageName, action);
-    }
-
-    private void sendSecureArea(TextView editText, String hint) {
-        int[] location = new int[2];
-        editText.getLocationInWindow(location);
-        int x = location[0];
-        int y = location[1];
-        int barHeight = 0;
-        boolean immersiveSticky = (requireActivity().getWindow().getDecorView().getSystemUiVisibility() &
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) > 0;
-        if (!immersiveSticky) {
-            //area of application
-            Rect outRect1 = new Rect();
-            requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(outRect1);
-            barHeight = outRect1.top;  //statusBar's height
-        }
-        TextPaint paint = editText.getPaint();
-        int fontSize = (int) (paint.getTextSize() / paint.density);
-        EntryRequestUtils.sendSecureArea(requireContext(), packageName, action, x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize, hint, String.format("%X", editText.getCurrentTextColor()));
+        sendNext(null);
     }
 
     private void onUpdateEntryMode(Intent intent) {
@@ -208,8 +187,6 @@ public class InputAccountFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
         transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
@@ -406,16 +383,6 @@ public class InputAccountFragment extends BaseEntryFragment {
             amountTv.setVisibility(View.GONE);
         }
         onResume();
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
     }
 
     private class Receiver extends BroadcastReceiver {

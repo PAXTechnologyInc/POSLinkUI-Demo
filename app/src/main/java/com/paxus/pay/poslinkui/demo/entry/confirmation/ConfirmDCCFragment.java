@@ -22,8 +22,6 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
  * </p>
  */
 public class ConfirmDCCFragment extends AConfirmationDialogFragment {
-    private String action;
-    private String packageName;
     private long timeout;
     private String amountMessage;
     private String exchangeRate;
@@ -34,8 +32,6 @@ public class ConfirmDCCFragment extends AConfirmationDialogFragment {
 
     @Override
     protected void loadParameter(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         amountMessage = bundle.getString(EntryExtraData.PARAM_AMOUNT_MESSAGE);
         exchangeRate = bundle.getString(EntryExtraData.PARAM_EXCHANGE_RATE);
@@ -86,15 +82,5 @@ public class ConfirmDCCFragment extends AConfirmationDialogFragment {
         } else {
             return "Cancel";
         }
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
     }
 }

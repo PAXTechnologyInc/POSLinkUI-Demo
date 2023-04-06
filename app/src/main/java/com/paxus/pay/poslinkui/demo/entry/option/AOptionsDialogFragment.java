@@ -1,5 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.option;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -11,7 +12,6 @@ import androidx.annotation.NonNull;
 import com.pax.us.pay.ui.constant.entry.OptionEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryDialogFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
  * Abstract class for all option entry actions defined in {@link OptionEntry}
@@ -54,12 +54,14 @@ public abstract class AOptionsDialogFragment extends BaseEntryDialogFragment {
     @Override
     protected void onConfirmButtonClicked() {
         if (listView.getCheckedItemPosition() >= 0) {
-            sendNext(listView.getCheckedItemPosition());
+            submit(listView.getCheckedItemPosition());
         }
     }
 
-    protected void sendNext(int index) {
-        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction(), getRequestedParamName(), index);
+    protected void submit(int index) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(getRequestedParamName(), index);
+        sendNext(bundle);
     }
 
     protected abstract String getRequestedParamName();
