@@ -36,9 +36,7 @@ import java.util.List;
  * </p>
  */
 public class SignatureFragment extends BaseEntryFragment {
-    private String transType;
     private long timeOut;
-    private String transMode;
     private long totalAmount;
     private String currency;
 
@@ -74,8 +72,6 @@ public class SignatureFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle){
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         signLine1 = bundle.getString(EntryExtraData.PARAM_SIGNLINE1);

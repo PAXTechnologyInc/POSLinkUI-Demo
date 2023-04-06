@@ -22,12 +22,10 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class ReferenceNumberFragment extends ANumTextFragment {
-    private String transType;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
     private String message = "";
-    private String transMode;
     protected boolean allText;
 
     @Override
@@ -42,8 +40,6 @@ public class ReferenceNumberFragment extends ANumTextFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-16");

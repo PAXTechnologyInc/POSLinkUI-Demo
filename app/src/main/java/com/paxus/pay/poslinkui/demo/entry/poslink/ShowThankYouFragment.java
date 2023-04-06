@@ -30,7 +30,6 @@ public class ShowThankYouFragment extends BaseEntryFragment {
     public static final String CENTER_ALIGN = "\\C";
 
     private long timeOut;
-    private String transMode;
     private String title;
     private String message1;
     private String message2;
@@ -45,7 +44,6 @@ public class ShowThankYouFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         title = bundle.getString(EntryExtraData.PARAM_TITLE);

@@ -32,7 +32,6 @@ public class AdministratorPasswordFragment extends BaseEntryFragment {
     private String merchantName;
     private String passwordType;
     private long timeout;
-    private String transType;
 
     private TextView inputTextView;
 
@@ -46,7 +45,6 @@ public class AdministratorPasswordFragment extends BaseEntryFragment {
         merchantName = bundle.getString(EntryExtraData.PARAM_MERCHANT_NAME);
         passwordType = bundle.getString(EntryExtraData.PARAM_ADMIN_PASSWORD_TYPE);
         timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
     }
 
     @Override

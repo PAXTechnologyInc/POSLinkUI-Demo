@@ -25,10 +25,6 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ExpiryFragment extends BaseEntryFragment {
-
-    private String transType;
-    private String transMode;
-
     private long timeOut;
     private String message = "";
 
@@ -41,8 +37,6 @@ public class ExpiryFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         message = getString(R.string.pls_input_expiry_date);

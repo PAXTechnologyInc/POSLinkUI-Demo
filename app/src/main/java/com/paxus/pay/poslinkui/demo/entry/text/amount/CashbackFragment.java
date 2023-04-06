@@ -37,9 +37,6 @@ import java.util.List;
  * </p>
  */
 public class CashbackFragment extends BaseEntryFragment {
-    private String transType;
-    private String transMode;
-
     private long timeOut;
     private int minLength;
     private int maxLength;
@@ -59,8 +56,6 @@ public class CashbackFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
         currency =  bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
 

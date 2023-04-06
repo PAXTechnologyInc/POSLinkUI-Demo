@@ -41,11 +41,9 @@ import java.util.Map;
  * </p>
  */
 public class PINFragment extends BaseEntryFragment {
-    private String transType;
     private long timeOut;
     private String pinStyle;
     private boolean isOnlinePin;
-    private String transMode;
     private boolean isUsingExternalPinPad;
     private Long totalAmount;
     private String currencyType;
@@ -81,8 +79,6 @@ public class PINFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         if(bundle.containsKey(EntryExtraData.PARAM_TOTAL_AMOUNT)) {

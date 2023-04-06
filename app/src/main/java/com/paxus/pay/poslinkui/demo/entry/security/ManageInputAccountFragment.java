@@ -51,12 +51,10 @@ import com.paxus.pay.poslinkui.demo.view.ClssLightsView;
 
 public class ManageInputAccountFragment extends BaseEntryFragment {
 
-    protected String transType;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
     protected String manualMessage = "";
-    protected String transMode;
     protected boolean enableInsert;
     protected boolean enableTap;
     protected boolean enableSwipe;
@@ -175,8 +173,6 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         enableInsert = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_INSERT);
         enableTap = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_TAP);

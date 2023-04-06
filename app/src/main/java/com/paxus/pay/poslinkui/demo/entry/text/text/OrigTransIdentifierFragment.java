@@ -24,9 +24,7 @@ public class OrigTransIdentifierFragment extends ATextFragment {
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    private String transType;
     private String message = "";
-    private String transMode;
 
     @Override
     public int getMaxLength() {
@@ -45,8 +43,6 @@ public class OrigTransIdentifierFragment extends ATextFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "1-20");

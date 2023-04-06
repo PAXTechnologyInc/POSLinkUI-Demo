@@ -43,7 +43,6 @@ public class InputTextFragment extends BaseEntryFragment {
     private long timeOut;
     private int minLength;
     private int maxLength;
-    private String transMode;
     private String title;
     private boolean continuousScreen;
     private String inputType;
@@ -60,7 +59,6 @@ public class InputTextFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         title = bundle.getString(EntryExtraData.PARAM_TITLE);

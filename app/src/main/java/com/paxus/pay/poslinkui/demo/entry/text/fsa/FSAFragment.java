@@ -31,8 +31,6 @@ import java.util.List;
  * </p>
  */
 public class FSAFragment extends BaseEntryFragment {
-    private String transType;
-    private String transMode;
     private long timeOut;
     private String currency;
     private long totalAmount;
@@ -57,8 +55,6 @@ public class FSAFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
         currency =  bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
         totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);

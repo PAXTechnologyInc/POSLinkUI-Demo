@@ -34,7 +34,6 @@ import java.util.List;
  * </p>
  */
 public class ShowItemFragment extends BaseEntryFragment {
-    private String transMode;
     private String title;
     private String taxLine;
     private String totalLine;
@@ -55,8 +54,6 @@ public class ShowItemFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
         taxLine = bundle.getString(EntryExtraData.PARAM_TAX_LINE);
         totalLine = bundle.getString(EntryExtraData.PARAM_TOTAL_LINE);

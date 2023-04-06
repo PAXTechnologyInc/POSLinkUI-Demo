@@ -25,17 +25,13 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class EnterVcodeFragment extends ASecurityFragment {
-    private String transType;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    private String transMode;
     private String vcodeName;
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         vcodeName = bundle.getString(EntryExtraData.PARAM_VCODE_NAME);

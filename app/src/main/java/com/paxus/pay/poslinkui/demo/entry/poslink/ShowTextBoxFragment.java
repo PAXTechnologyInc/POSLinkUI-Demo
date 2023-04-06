@@ -49,7 +49,6 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
     private static final String BARCODE_QR_CODE = "7";
 
     private long timeOut;
-    private String transMode;
     private String title;
     private String text;
     private boolean continuousScreen;
@@ -78,7 +77,6 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         text = bundle.getString(EntryExtraData.PARAM_TEXT);
         title = bundle.getString(EntryExtraData.PARAM_TITLE);

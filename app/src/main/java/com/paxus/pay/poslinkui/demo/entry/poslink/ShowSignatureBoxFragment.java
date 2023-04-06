@@ -36,7 +36,6 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
     private String title;
     private String text;
     private long timeOut;
-    private String transMode;
     private long signBox;
 
     private Button confirmBtn;
@@ -70,7 +69,6 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
     protected void loadArgument(@NonNull Bundle bundle){
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
         text = bundle.getString(EntryExtraData.PARAM_TEXT);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
         signBox = bundle.getLong(EntryExtraData.PARAM_SIGN_BOX);
 

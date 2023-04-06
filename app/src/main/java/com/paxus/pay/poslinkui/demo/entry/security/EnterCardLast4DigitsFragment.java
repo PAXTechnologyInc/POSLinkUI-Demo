@@ -23,16 +23,12 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class EnterCardLast4DigitsFragment extends ASecurityFragment {
-    private String transType;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    private String transMode;
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "4-4");

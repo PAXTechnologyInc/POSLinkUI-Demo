@@ -23,9 +23,7 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class DisplayTransInfoFragment extends BaseEntryFragment {
-    private String transType;
     private long timeOut;
-    private String transMode;
 
     private String[] leftColumns;
     private String[] rightColumn;
@@ -37,8 +35,6 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         leftColumns = bundle.getStringArray(EntryExtraData.PARAM_INFORMATION_KEY);

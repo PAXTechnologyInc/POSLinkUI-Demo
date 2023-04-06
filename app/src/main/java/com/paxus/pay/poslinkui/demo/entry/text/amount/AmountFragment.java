@@ -21,8 +21,6 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  */
 
 public class AmountFragment extends AAmountFragment {
-    private String transType;
-    private String transMode;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
@@ -30,8 +28,6 @@ public class AmountFragment extends AAmountFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         currency = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
 

@@ -26,13 +26,11 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
  * </p>
  */
 public class AVSFragment extends BaseEntryFragment {
-    private String transType;
     private long timeOut;
     private int minLengthAddr;
     private int maxLengthAddr;
     private int minLengthZip;
     private int maxLengthZip;
-    private String transMode;
     private boolean zipText;
 
     private EditText editTextAddr;
@@ -45,8 +43,6 @@ public class AVSFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         String valuePattenAddr = bundle.getString(EntryExtraData.PARAM_ADDRESS_PATTERN,"0-30");

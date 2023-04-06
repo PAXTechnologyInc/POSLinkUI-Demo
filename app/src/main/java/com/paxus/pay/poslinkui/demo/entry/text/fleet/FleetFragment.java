@@ -32,8 +32,6 @@ import java.util.List;
  * </p>
  */
 public class FleetFragment extends BaseEntryFragment {
-    private String transType;
-    private String transMode;
     private long timeOut;
 
     private String driverIdPattern;
@@ -58,8 +56,6 @@ public class FleetFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
         driverIdPattern = bundle.getString(EntryExtraData.PARAM_FLEET_DRIVER_ID_PATTERN);
         odometerPattern = bundle.getString(EntryExtraData.PARAM_FLEET_ODOMETER_PATTERN);
