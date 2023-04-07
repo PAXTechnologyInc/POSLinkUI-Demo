@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -19,9 +18,7 @@ import com.pax.us.pay.ui.constant.entry.SignatureEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.entry.UIFragmentHelper;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 import java.util.List;
 
@@ -169,13 +166,13 @@ public class SignatureFragment extends BaseEntryFragment {
                 }
             }
 
-            sendNext(total);
+            submit(total);
         } finally {
             confirmBtn.setClickable(true);
         }
     }
 
-    private void sendNext(short[] signature){
+    private void submit(short[] signature){
         handler.removeCallbacks(tick); //Stop Tick
         Bundle bundle = new Bundle();
         bundle.putShortArray(EntryRequest.PARAM_SIGNATURE, signature);

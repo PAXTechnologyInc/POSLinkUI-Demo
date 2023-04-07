@@ -20,11 +20,6 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
  * {@value TextEntry#ACTION_ENTER_REFERENCE_NUMBER}<br>
  * {@value TextEntry#ACTION_ENTER_MERCHANT_REFERENCE_NUMBER}<br>
  * {@value TextEntry#ACTION_ENTER_OCT_REFERENCE_NUMBER}<br>
- *
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 public abstract class ANumTextFragment extends BaseEntryFragment {
 

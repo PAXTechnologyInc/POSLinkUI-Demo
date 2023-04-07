@@ -13,11 +13,6 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_ORIGINAL_TRANSACTION_IDENTIFIER}<br>
- *
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 
 public class OrigTransIdentifierFragment extends ATextFragment {

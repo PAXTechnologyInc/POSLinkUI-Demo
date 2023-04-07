@@ -34,10 +34,6 @@ import java.util.List;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_TIP}<br>
- * <p>
- *     UI Tips:
- *     If confirm button clicked, sendNext
- * </p>
  */
 public class TipFragment extends BaseEntryFragment {
     private long timeOut;

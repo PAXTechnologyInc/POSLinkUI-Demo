@@ -31,10 +31,6 @@ import java.util.List;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_CASH_BACK}<br>
- * <p>
- *     UI Tips:
- *     If confirm button clicked, sendNext
- * </p>
  */
 public class CashbackFragment extends BaseEntryFragment {
     private long timeOut;

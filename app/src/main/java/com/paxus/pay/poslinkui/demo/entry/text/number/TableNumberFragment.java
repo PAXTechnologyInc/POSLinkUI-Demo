@@ -14,11 +14,6 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 /**
  * Implement text entry actions:<br>
  * {@value TextEntry#ACTION_ENTER_TABLE_NUMBER}<br>
- *
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 
 public class TableNumberFragment extends ANumFragment {

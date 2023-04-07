@@ -19,11 +19,6 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
  * {@value TextEntry#ACTION_ENTER_ORDER_NUMBER}<br>
  * {@value TextEntry#ACTION_ENTER_PO_NUMBER}<br>
  * {@value TextEntry#ACTION_ENTER_PROD_DESC}<br>
- *
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 public abstract class ATextFragment extends BaseEntryFragment {
 

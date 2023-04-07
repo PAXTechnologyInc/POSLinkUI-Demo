@@ -19,11 +19,6 @@ import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
  * {@value TextEntry#'ACTION_ENTER_AMOUNT}<br>
  * {@value TextEntry#ACTION_ENTER_FUEL_AMOUNT}<br>
  * {@value TextEntry#ACTION_ENTER_TAX_AMOUNT}<br>
- *
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 
 public abstract class AAmountFragment extends BaseEntryFragment {

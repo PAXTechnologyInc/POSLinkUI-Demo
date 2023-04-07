@@ -19,10 +19,6 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_EXPIRY_DATE}<br>
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 public class ExpiryFragment extends BaseEntryFragment {
     private long timeOut;

@@ -17,10 +17,6 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
  * Implement information entry action {@value InformationEntry#ACTION_DISPLAY_TRANS_INFORMATION}
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext()
- * </p>
  */
 public class DisplayTransInfoFragment extends BaseEntryFragment {
     private long timeOut;

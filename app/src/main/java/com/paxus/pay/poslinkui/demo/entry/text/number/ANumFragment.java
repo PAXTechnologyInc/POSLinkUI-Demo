@@ -22,11 +22,6 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
  * {@value TextEntry#ACTION_ENTER_MERCHANT_TAX_ID}<br>
  * {@value TextEntry#ACTION_ENTER_PROMPT_RESTRICTION_CODE}<br>
  * {@value TextEntry#ACTION_ENTER_TRANS_NUMBER}<br>
- *
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 public abstract class ANumFragment extends BaseEntryFragment {
 

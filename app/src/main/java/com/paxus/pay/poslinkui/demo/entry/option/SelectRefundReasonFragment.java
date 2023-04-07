@@ -11,11 +11,6 @@ import com.paxus.pay.poslinkui.demo.R;
 
 /**
  * Implement option entry action {@link OptionEntry#ACTION_SELECT_REFUND_REASON} <br>
- * <p>
- * UI Tips:
- * 1.If confirm button clicked, sendNext(index)
- * 2.index start from 0
- * </p>
  */
 public class SelectRefundReasonFragment extends AOptionsDialogFragment {
 

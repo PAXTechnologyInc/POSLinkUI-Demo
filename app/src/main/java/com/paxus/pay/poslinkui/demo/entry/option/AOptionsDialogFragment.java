@@ -15,10 +15,6 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryDialogFragment;
 
 /**
  * Abstract class for all option entry actions defined in {@link OptionEntry}
- * <p>
- * UI Tips:
- * 1.If confirm button clicked, sendNext
- * </p>
  */
 public abstract class AOptionsDialogFragment extends BaseEntryDialogFragment {
 

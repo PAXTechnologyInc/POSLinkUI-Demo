@@ -89,7 +89,6 @@ public class FleetDataFragment extends Fragment {
 
     }
 
-    //1.If confirm button clicked, sendNext
     private void onConfirmButtonClicked(){
         String value = editText.getText().toString();
         if(value.length() < minLength){

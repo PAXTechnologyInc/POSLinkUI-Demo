@@ -38,11 +38,6 @@ import java.util.Map;
 /**
  * Implement text entry actions:<br>
  * {@value PoslinkEntry#ACTION_SHOW_TEXT_BOX}
- *
- * <p>
- *     UI Tips:
- *     If confirm button clicked, sendNext
- * </p>
  */
 public class ShowTextBoxFragment extends BaseEntryFragment {
 

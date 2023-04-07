@@ -29,11 +29,6 @@ import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 /**
  * Implement text entry actions:<br>
  * {@value PoslinkEntry#ACTION_INPUT_TEXT}
- *
- * <p>
- *     UI Tips:
- *     If confirm button clicked, sendNext
- * </p>
  */
 public class InputTextFragment extends BaseEntryFragment {
     private static final String FORMAT_DATE = "MM/DD/YYYY";

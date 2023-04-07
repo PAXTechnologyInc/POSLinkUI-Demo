@@ -20,10 +20,6 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_AVS_DATA}<br>
- * <p>
- *     UI Tips:
- *     If confirm button clicked, sendNext
- * </p>
  */
 public class AVSFragment extends BaseEntryFragment {
     private long timeOut;
