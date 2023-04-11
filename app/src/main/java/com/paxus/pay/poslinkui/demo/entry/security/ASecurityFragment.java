@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
+import com.pax.us.pay.ui.constant.status.PINStatus;
 import com.pax.us.pay.ui.constant.status.SecurityStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
@@ -90,6 +91,9 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
         intentFilter.addAction(SecurityStatus.SECURITY_ENTERING);
         intentFilter.addAction(SecurityStatus.SECURITY_ENTER_DELETE);
         intentFilter.addAction(SecurityStatus.SECURITY_KEYBOARD_LOCATION);
+        intentFilter.addCategory(PINStatus.CATEGORY);
+        intentFilter.addAction(PINStatus.PIN_ENTER_CLEARED);
+        intentFilter.addAction(PINStatus.PIN_ENTERING);
 
         requireContext().registerReceiver(receiver, intentFilter);
     }
@@ -148,10 +152,12 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
         public void onReceive(Context context, Intent intent) {
             Logger.i("receive Status Action \""+intent.getAction()+"\"");
             switch (intent.getAction()) {
+                case PINStatus.PIN_ENTER_CLEARED:
                 case SecurityStatus.SECURITY_ENTER_CLEARED:{
                     secureLength = 0;
                     break;
                 }
+                case PINStatus.PIN_ENTERING:
                 case SecurityStatus.SECURITY_ENTERING: {
                     secureLength++;
                     break;

@@ -80,6 +80,7 @@ import com.paxus.pay.poslinkui.demo.entry.poslink.ShowThankYouFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.AdministratorPasswordFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterCardAllDigitsFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterCardLast4DigitsFragment;
+import com.paxus.pay.poslinkui.demo.entry.security.EnterPinFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterVcodeFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.InputAccountFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.ManageInputAccountFragment;
@@ -181,7 +182,7 @@ public class UIFragmentHelper {
             put(SecurityEntry.ACTION_ENTER_VCODE, EnterVcodeFragment.class);
             put(SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS, EnterCardLast4DigitsFragment.class);
             put(SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS, EnterCardAllDigitsFragment.class);
-            put(SecurityEntry.ACTION_ENTER_PIN, PINFragment.class);
+            put(SecurityEntry.ACTION_ENTER_PIN, EnterPinFragment.class);
             put(SecurityEntry.ACTION_ENTER_ADMINISTRATION_PASSWORD, AdministratorPasswordFragment.class);
         }
     };
