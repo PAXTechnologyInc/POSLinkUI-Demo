@@ -1,78 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/info_layout"
-        android:paddingHorizontal="@dimen/padding_horizontal">
-
-        <LinearLayout
-            android:id="@+id/ll_amount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="10dp">
-
-            <TextView
-                android:id="@+id/amount_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/total_amount"
-                android:gravity="bottom"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/total_amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/amount_default"
-                android:gravity="bottom|end"
-                android:textSize="18sp"/>
-        </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/message"
-            android:textSize="18sp"
-            android:lines="3"
-            android:gravity="center"/>
-        <TextView
-            android:background="@drawable/border"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/edit_pin"
-            android:hint=""
-            android:layout_margin="5dp"
-            android:gravity="center_horizontal"
-            android:padding="10dp"
-            android:textSize="20sp"
-            android:layout_marginVertical="10dp"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bypass"
-            android:gravity="center"
-            android:text="@string/prompt_no_pin"/>
-    </LinearLayout>
+    android:layout_height="match_parent">
 
     <androidx.gridlayout.widget.GridLayout
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/pinpad_layout"
         app:rowCount="4"
         app:columnCount="4"
         app:alignmentMode="alignBounds"
         app:useDefaultMargins="true"
-        android:background="#ece7e7"
-        android:layout_marginTop="20dp"
-        android:visibility="invisible"
-        >
+        android:background="#00FFFFFF">
         <TextView
             android:id="@+id/key_1"
             android:text="1"
@@ -80,6 +20,7 @@
             app:layout_rowWeight="1"
             app:layout_columnWeight="1"
             android:background="#FFFFFF"
+            android:textColor="@color/pastel_text_color_on_light"
             />
         <TextView
             android:id="@+id/key_2"
@@ -87,14 +28,16 @@
             android:gravity="center"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
-            android:background="#FFFFFF"/>
+            android:background="#FFFFFF"
+            android:textColor="@color/pastel_text_color_on_light"/>
         <TextView
             android:id="@+id/key_3"
             android:text="3"
             android:gravity="center"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
-            android:background="#FFFFFF"/>
+            android:background="#FFFFFF"
+            android:textColor="@color/pastel_text_color_on_light"/>
         <TextView
             android:id="@+id/key_cancel"
             android:text="Cancel"
@@ -109,6 +52,7 @@
             app:layout_rowWeight="1"
             android:gravity="center"
             android:background="#FFFFFF"
+            android:textColor="@color/pastel_text_color_on_light"
             />
         <TextView
             android:id="@+id/key_5"
@@ -116,14 +60,16 @@
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
-            android:background="#FFFFFF"/>
+            android:background="#FFFFFF"
+            android:textColor="@color/pastel_text_color_on_light"/>
         <TextView
             android:id="@+id/key_6"
             android:text="6"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
-            android:background="#FFFFFF"/>
+            android:background="#FFFFFF"
+            android:textColor="@color/pastel_text_color_on_light"/>
         <TextView
             android:id="@+id/key_clear"
             android:text="Clear"
@@ -138,6 +84,7 @@
             app:layout_rowWeight="1"
             android:gravity="center"
             android:background="#FFFFFF"
+            android:textColor="@color/pastel_text_color_on_light"
             />
         <TextView
             android:id="@+id/key_8"
@@ -145,14 +92,16 @@
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
-            android:background="#FFFFFF"/>
+            android:background="#FFFFFF"
+            android:textColor="@color/pastel_text_color_on_light"/>
         <TextView
             android:id="@+id/key_9"
             android:text="9"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
-            android:background="#FFFFFF"/>
+            android:background="#FFFFFF"
+            android:textColor="@color/pastel_text_color_on_light"/>
         <TextView
             android:id="@+id/key_enter"
             android:text="Enter"
@@ -172,7 +121,7 @@
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
-            android:background="#FFFFFF"/>
+            android:background="#FFFFFF"
+            android:textColor="@color/pastel_text_color_on_light"/>
     </androidx.gridlayout.widget.GridLayout>
-
 </LinearLayout>
