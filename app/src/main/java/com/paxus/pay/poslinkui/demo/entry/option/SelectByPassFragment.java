@@ -11,34 +11,15 @@ import com.paxus.pay.poslinkui.demo.R;
 
 /**
  * Implement option entry action {@link OptionEntry#ACTION_SELECT_BY_PASS} <br>
- * <p>
- * UI Tips:
- * 1.If confirm button clicked, sendNext(index)
- * 2.index start from 0
- * </p>
  */
 public class SelectByPassFragment extends AOptionsDialogFragment {
 
     protected long timeout;
-    private String action;
-    private String packageName;
     private String[] items;
 
     @Override
     protected void loadParameter(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         items = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
     }
 
     @NonNull

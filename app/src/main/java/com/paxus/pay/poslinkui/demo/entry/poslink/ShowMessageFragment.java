@@ -35,8 +35,6 @@ import java.util.List;
  * </p>
  */
 public class ShowMessageFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
     private String title;
     private String tax;
     private String total;
@@ -51,9 +49,6 @@ public class ShowMessageFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-
         title = bundle.getString(EntryExtraData.PARAM_TITLE,"");
         tax = bundle.getString(EntryExtraData.PARAM_TAX_LINE,"");
         total = bundle.getString(EntryExtraData.PARAM_TOTAL_LINE,"");
@@ -107,19 +102,8 @@ public class ShowMessageFragment extends BaseEntryFragment {
         super.onResume();
 
         if (isActive()) {
-            EntryRequestUtils.sendNext(requireContext(), packageName, action);
+            sendNext(null);
         }
-    }
-
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
     }
 
     private List<MsgInfoWrapper> parseMessageList(String jsonString) {

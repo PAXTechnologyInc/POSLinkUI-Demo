@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,27 +27,19 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.UnitType;
-import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
+import com.paxus.pay.poslinkui.demo.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_TIP}<br>
- * <p>
- *     UI Tips:
- *     If confirm button clicked, sendNext
- * </p>
  */
 public class TipFragment extends BaseEntryFragment {
-    private String transType;
-    private String transMode;
-
     private long timeOut;
     private int minLength;
     private int maxLength;
@@ -57,8 +48,7 @@ public class TipFragment extends BaseEntryFragment {
     private String tipName;
     private long baseAmount;
     private String tipUnit;
-    private String packageName;
-    private String action;
+
     private boolean isSelectTipEnabled = false;
     private boolean isNoTipSelectionAllowed;
 
@@ -68,24 +58,12 @@ public class TipFragment extends BaseEntryFragment {
     long tip = 0;
 
     @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
-    @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_tip;
     }
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         currency =  bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
@@ -318,11 +296,12 @@ public class TipFragment extends BaseEntryFragment {
 
     @Override
     protected void onConfirmButtonClicked(){
-        sendNext(tip);
+        submit(tip);
     }
 
-    private void sendNext(long value){
-        String param = EntryRequest.PARAM_TIP;
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
+    private void submit(long value) {
+        Bundle bundle = new Bundle();
+        bundle.putLong(EntryRequest.PARAM_TIP, value);
+        sendNext(bundle);
     }
 }

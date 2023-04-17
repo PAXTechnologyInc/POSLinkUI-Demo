@@ -32,8 +32,6 @@ import java.util.List;
  * </p>
  */
 public class FleetFragment extends BaseEntryFragment {
-    private String transType;
-    private String transMode;
     private long timeOut;
 
     private String driverIdPattern;
@@ -45,18 +43,6 @@ public class FleetFragment extends BaseEntryFragment {
     private String customerDataPattern;
     private String userIdPattern;
     private String vehicleIdPattern;
-    private String packageName;
-    private String action;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     private final List<String> requestList = new ArrayList<>();
     private int requestIndex = 0;
@@ -70,10 +56,6 @@ public class FleetFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
         driverIdPattern = bundle.getString(EntryExtraData.PARAM_FLEET_DRIVER_ID_PATTERN);
         odometerPattern = bundle.getString(EntryExtraData.PARAM_FLEET_ODOMETER_PATTERN);
@@ -86,7 +68,6 @@ public class FleetFragment extends BaseEntryFragment {
         vehicleIdPattern = bundle.getString(EntryExtraData.PARAM_FLEET_VEHICLE_ID_PATTERN);
 
         nextBundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, action);
 
         requestList.clear();
         if(!TextUtils.isEmpty(driverIdPattern)){
@@ -147,7 +128,7 @@ public class FleetFragment extends BaseEntryFragment {
                     });
             return;
         }
-        sendNext();
+        sendNext(nextBundle);
     }
 
     private void onGetEnterValue(String requestKey, String value){
@@ -195,10 +176,4 @@ public class FleetFragment extends BaseEntryFragment {
         }
     }
 
-    private void sendNext(){
-        Intent intent = new Intent(EntryRequest.ACTION_NEXT);
-        intent.putExtras(nextBundle);
-        intent.setPackage(packageName);
-        requireContext().sendBroadcast(intent);
-    }
 }

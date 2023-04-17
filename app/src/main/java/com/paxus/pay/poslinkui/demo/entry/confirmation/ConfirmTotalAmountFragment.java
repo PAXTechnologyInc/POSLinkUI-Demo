@@ -16,32 +16,18 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ConfirmTotalAmountFragment extends AConfirmationDialogFragment {
-    private String action;
-    private String senderPackage;
     private String currency;
     private long totalAmount;
     private String[] options;
 
     @Override
     protected void loadParameter(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        senderPackage = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         currency = bundle.getString(EntryExtraData.PARAM_CURRENCY, "USD");
         totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT, 0L);
         options = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
         if(options.length != 2){
             options = ConfirmationType.values();
         }
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return senderPackage;
     }
 
     @NonNull

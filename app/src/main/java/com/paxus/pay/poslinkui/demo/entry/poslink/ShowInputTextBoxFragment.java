@@ -30,11 +30,6 @@ import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 /**
  * Implement text entry actions:<br>
  * {@value PoslinkEntry#ACTION_SHOW_INPUT_TEXT_BOX}
- *
- * <p>
- *     UI Tips:
- *     If confirm button clicked, sendNext
- * </p>
  */
 public class ShowInputTextBoxFragment extends BaseEntryFragment {
     private static final String FORMAT_DATE = "MM/DD/YYYY";
@@ -42,12 +37,9 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
     private static final String FORMAT_PHONE = "(XXX)XXX-XXXX";
     private static final String FORMAT_SSN = "XXX-XX-XXXX";
 
-    private String packageName;
-    private String action;
     private long timeOut;
     private int minLength;
     private int maxLength;
-    private String transMode;
     private String title;
     private String inputTextTitle;
     private String text;
@@ -57,23 +49,7 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
 
     private EditText editText;
     private Handler handler;
-    private final Runnable timeoutRun = new Runnable() {
-        @Override
-        public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
-        }
-    };
-
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
+    private final Runnable timeoutRun = () -> sendTimeout();
 
     @Override
     protected int getLayoutResourceId() {
@@ -82,9 +58,6 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
         text = bundle.getString(EntryExtraData.PARAM_TEXT);
 
@@ -234,11 +207,13 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
         if(inputType.matches("[23467]")){
             value = value.replaceAll("[^0-9]","");
         }
-        sendNext(value);
+        submit(value);
     }
 
-    private void sendNext(String value){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_INPUT_VALUE, value);
+    private void submit(String value){
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_INPUT_VALUE, value);
+        sendNext(bundle);
     }
 
     private static class FormatTextWatcher implements TextWatcher {

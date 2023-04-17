@@ -31,8 +31,6 @@ import java.util.Hashtable;
  * </p>
  */
 public class DisplayQRCodeReceiptFragment extends BaseEntryFragment {
-    private String action;
-    private String packageName;
     private String qrCodeContent;
     private long timeout;
 
@@ -43,8 +41,6 @@ public class DisplayQRCodeReceiptFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT);
         qrCodeContent = bundle.getString(EntryExtraData.PARAM_QR_CODE_CONTENT);
     }
@@ -65,16 +61,6 @@ public class DisplayQRCodeReceiptFragment extends BaseEntryFragment {
             Logger.e("NO QR Code Content.");
             sendAbort();
         }
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
     }
 
     private Bitmap createQRCode(String content, int qrCodeSize, Bitmap logo) {
@@ -122,6 +108,6 @@ public class DisplayQRCodeReceiptFragment extends BaseEntryFragment {
 
     @Override
     protected void executeBackPressEvent() {
-        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction());
+        sendNext(null);
     }
 }

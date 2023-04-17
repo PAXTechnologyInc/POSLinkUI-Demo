@@ -28,33 +28,14 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ShowDialogFormFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
     private long timeOut;
-    private String transMode;
     private String title;
     private String[] labels;
     private String[] labelProps;
     private String buttonType;
 
     private Handler handler;
-    private final Runnable timeoutRun = new Runnable() {
-        @Override
-        public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
-        }
-    };
-
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
+    private final Runnable timeoutRun = () -> sendTimeout();
 
     @Override
     protected int getLayoutResourceId() {
@@ -63,9 +44,6 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
@@ -96,7 +74,7 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
         getChildFragmentManager().setFragmentResultListener(ShowDialogFormRadioFragment.RESULT, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                sendNext(String.valueOf(bundle.getInt(ShowDialogFormRadioFragment.INDEX)));
+                submit(String.valueOf(bundle.getInt(ShowDialogFormRadioFragment.INDEX)));
             }
         });
     }
@@ -108,7 +86,7 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
         getChildFragmentManager().setFragmentResultListener(ShowDialogFormCheckBoxFragment.RESULT, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                sendNext(bundle.getString(ShowDialogFormCheckBoxFragment.CHECKED_INDEX));
+                submit(bundle.getString(ShowDialogFormCheckBoxFragment.CHECKED_INDEX));
             }
         });
     }
@@ -133,8 +111,10 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
         }
     }
 
-    private void sendNext(String selectLabel){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_LABEL_SELECTED, selectLabel);
+    private void submit(String selectLabel){
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_LABEL_SELECTED, selectLabel);
+        sendNext(bundle);
     }
 
 }

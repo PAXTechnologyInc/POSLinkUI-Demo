@@ -14,33 +14,14 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_REFERENCE_NUMBER}<br>
- *
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 
 public class ReferenceNumberFragment extends ANumTextFragment {
-    private String transType;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
     private String message = "";
-    private String transMode;
     protected boolean allText;
-    private String packageName;
-    private String action;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     @Override
     protected int getMaxLength() {
@@ -54,10 +35,6 @@ public class ReferenceNumberFragment extends ANumTextFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-16");

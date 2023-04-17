@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -19,9 +18,7 @@ import com.pax.us.pay.ui.constant.entry.SignatureEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.entry.UIFragmentHelper;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 import java.util.List;
 
@@ -36,23 +33,9 @@ import java.util.List;
  * </p>
  */
 public class SignatureFragment extends BaseEntryFragment {
-    private String transType;
     private long timeOut;
-    private String transMode;
     private long totalAmount;
     private String currency;
-    private String packageName;
-    private String action;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     private String signLine1;
     private String signLine2;
@@ -86,10 +69,6 @@ public class SignatureFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle){
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         signLine1 = bundle.getString(EntryExtraData.PARAM_SIGNLINE1);
@@ -187,15 +166,17 @@ public class SignatureFragment extends BaseEntryFragment {
                 }
             }
 
-            sendNext(total);
+            submit(total);
         } finally {
             confirmBtn.setClickable(true);
         }
     }
 
-    private void sendNext(short[] signature){
+    private void submit(short[] signature){
         handler.removeCallbacks(tick); //Stop Tick
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_SIGNATURE, signature);
+        Bundle bundle = new Bundle();
+        bundle.putShortArray(EntryRequest.PARAM_SIGNATURE, signature);
+        sendNext(bundle);
     }
 
     @Override
@@ -204,7 +185,4 @@ public class SignatureFragment extends BaseEntryFragment {
         handler.removeCallbacks(tick); //Stop Tick
     }
 
-    private void sendTimeout(){
-        EntryRequestUtils.sendTimeout(requireActivity(), packageName, action);
-    }
 }

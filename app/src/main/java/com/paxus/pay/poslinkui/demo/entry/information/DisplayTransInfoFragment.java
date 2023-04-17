@@ -17,17 +17,9 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
  * Implement information entry action {@value InformationEntry#ACTION_DISPLAY_TRANS_INFORMATION}
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext()
- * </p>
  */
 public class DisplayTransInfoFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
-    private String transType;
     private long timeOut;
-    private String transMode;
 
     private String[] leftColumns;
     private String[] rightColumn;
@@ -39,27 +31,12 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         leftColumns = bundle.getStringArray(EntryExtraData.PARAM_INFORMATION_KEY);
         rightColumn = bundle.getStringArray(EntryExtraData.PARAM_INFORMATION_VALUE);
 
 
-    }
-
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
     }
 
     @Override
@@ -89,10 +66,6 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
 
     @Override
     protected void onConfirmButtonClicked(){
-        sendNext();
-    }
-
-    private void sendNext(){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action);
+        sendNext(null);
     }
 }

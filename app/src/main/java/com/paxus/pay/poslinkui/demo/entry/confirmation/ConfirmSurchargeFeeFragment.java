@@ -11,12 +11,8 @@ import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.entry.BaseEntryDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.entry.UIFragmentHelper;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
-import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 /**
  * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_SURCHARGE_FEE}
@@ -29,8 +25,6 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
  * </p>
  */
 public class ConfirmSurchargeFeeFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
     private long timeout;
     private String feeName;
     private long totalAmount;
@@ -45,8 +39,6 @@ public class ConfirmSurchargeFeeFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         feeName = bundle.getString(EntryExtraData.PARAM_SURCHARGE_FEE_NAME);
         totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
@@ -77,20 +69,9 @@ public class ConfirmSurchargeFeeFragment extends BaseEntryFragment {
         }
     }
 
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
     @Override
     protected void onConfirmButtonClicked() {
-        sendNext(true);
+        submit(true);
     }
 
     private void onCancelButtonClicked() {
@@ -98,10 +79,12 @@ public class ConfirmSurchargeFeeFragment extends BaseEntryFragment {
     }
 
     private void onBypassButtonClicked() {
-        sendNext(false);
+        submit(false);
     }
 
-    private void sendNext(boolean confirm) {
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_CONFIRMED, confirm);
+    private void submit(boolean confirm) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(EntryRequest.PARAM_CONFIRMED, confirm);
+        sendNext(bundle);
     }
 }

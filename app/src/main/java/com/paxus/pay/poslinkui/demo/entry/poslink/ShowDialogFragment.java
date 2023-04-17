@@ -27,10 +27,7 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ShowDialogFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
     private long timeOut;
-    private String transMode;
     private String title;
     private String button1;
     private String button2;
@@ -38,23 +35,7 @@ public class ShowDialogFragment extends BaseEntryFragment {
     private String button4;
 
     private Handler handler;
-    private final Runnable timeoutRun = new Runnable() {
-        @Override
-        public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
-        }
-    };
-
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
+    private final Runnable timeoutRun = () -> sendTimeout();
 
     @Override
     protected int getLayoutResourceId() {
@@ -63,9 +44,6 @@ public class ShowDialogFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
@@ -116,7 +94,7 @@ public class ShowDialogFragment extends BaseEntryFragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    sendNext(index);
+                    submit(index);
                 }
             });
         }else{
@@ -144,8 +122,10 @@ public class ShowDialogFragment extends BaseEntryFragment {
         }
     }
 
-    private void sendNext(int index){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_INDEX, index);
+    private void submit(int index){
+        Bundle bundle = new Bundle();
+        bundle.putInt(EntryRequest.PARAM_INDEX, index);
+        sendNext(bundle);
     }
 
 }

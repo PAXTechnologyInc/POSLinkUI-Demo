@@ -34,9 +34,6 @@ import java.util.List;
  * </p>
  */
 public class ShowItemFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
-    private String transMode;
     private String title;
     private String taxLine;
     private String totalLine;
@@ -56,21 +53,7 @@ public class ShowItemFragment extends BaseEntryFragment {
     }
 
     @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
-    @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
         taxLine = bundle.getString(EntryExtraData.PARAM_TAX_LINE);
         totalLine = bundle.getString(EntryExtraData.PARAM_TOTAL_LINE);
@@ -108,11 +91,7 @@ public class ShowItemFragment extends BaseEntryFragment {
             recyclerViewShowItem.setAdapter(itemListAdapter);
         }
 
-        sendNext();
-    }
-
-    private void sendNext() {
-        EntryRequestUtils.sendNext(requireContext(), packageName, action);
+        sendNext(null);
     }
 
     private List<ItemDetailWrapper> parseItemList(String jsonString){

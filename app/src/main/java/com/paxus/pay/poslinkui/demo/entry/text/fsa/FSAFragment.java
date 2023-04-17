@@ -1,6 +1,5 @@
 package com.paxus.pay.poslinkui.demo.entry.text.fsa;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -28,28 +27,14 @@ import java.util.List;
  *
  * <p>
  *     UI Tips:
- *     This action is a complex action. Please see implementation details on {@link #loadFsaAmountOptions()} and {@link #sendNext()}
+ *     This action is a complex action. Please see implementation details on {@link #loadFsaAmountOptions()} and {@link #submit()}
  * </p>
  */
 public class FSAFragment extends BaseEntryFragment {
-    private String transType;
-    private String transMode;
     private long timeOut;
     private String currency;
     private long totalAmount;
     private List<String> fsaAmountOptions;
-    private String packageName;
-    private String action;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     private String fsaOption = "";
     private long healthAmt = 0;
@@ -70,10 +55,6 @@ public class FSAFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
         currency =  bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
         totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
@@ -145,7 +126,7 @@ public class FSAFragment extends BaseEntryFragment {
                     @Override
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                         transitAmt = bundle.getLong(FSAAmountFragment.VALUE);
-                        sendNext();
+                        submit();
                     }
                 });
     }
@@ -184,7 +165,7 @@ public class FSAFragment extends BaseEntryFragment {
                     @Override
                     public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                         healthAmt = bundle.getLong(FSAAmountFragment.VALUE);
-                        sendNext();
+                        submit();
                     }
                 });
     }
@@ -210,7 +191,7 @@ public class FSAFragment extends BaseEntryFragment {
             enterSubHealthCareAmount();
             return;
         }
-        sendNext();
+        submit();
     }
 
     private String getSubHealthCareAmountTitle(String amtOption){
@@ -271,9 +252,8 @@ public class FSAFragment extends BaseEntryFragment {
         return healthAmt>0 ? healthAmt : clinicAmt + prescriptionAmt + dentalAmt + visionAmt + copayAmt + otcAmt;
     }
 
-    private void sendNext(){
+    private void submit(){
         Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, action);
         bundle.putString(EntryRequest.PARAM_FSA_OPTION, fsaOption);
         if(fsaAmountOptions.contains(EntryRequest.PARAM_HEALTH_CARE_AMOUNT)){
             bundle.putLong(EntryRequest.PARAM_HEALTH_CARE_AMOUNT, getHealthCareAmount());
@@ -303,9 +283,6 @@ public class FSAFragment extends BaseEntryFragment {
         if(fsaAmountOptions.contains(EntryRequest.PARAM_TRANSIT_AMOUNT)){
             bundle.putLong(EntryRequest.PARAM_TRANSIT_AMOUNT, transitAmt);
         }
-        Intent intent = new Intent(EntryRequest.ACTION_NEXT);
-        intent.putExtras(bundle);
-        intent.setPackage(packageName);
-        requireContext().sendBroadcast(intent);
+        sendNext(bundle);
     }
 }

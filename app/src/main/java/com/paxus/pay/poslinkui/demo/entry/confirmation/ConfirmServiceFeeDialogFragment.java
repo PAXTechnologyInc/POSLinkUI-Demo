@@ -26,8 +26,6 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ConfirmServiceFeeDialogFragment extends BaseEntryDialogFragment {
-    private String packageName;
-    private String action;
     private long timeout;
     private String feeName;
     private long totalAmount;
@@ -41,8 +39,6 @@ public class ConfirmServiceFeeDialogFragment extends BaseEntryDialogFragment {
 
     @Override
     protected void loadParameter(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
         timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         feeName = bundle.getString(EntryExtraData.PARAM_SERVICE_FEE_NAME);
         totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
@@ -71,27 +67,14 @@ public class ConfirmServiceFeeDialogFragment extends BaseEntryDialogFragment {
         cancel.setOnClickListener(v -> onCancelButtonClicked());
     }
 
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
     @Override
     protected void onConfirmButtonClicked() {
-        sendNext(true);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(EntryRequest.PARAM_CONFIRMED, true);
+        sendNext(bundle);
     }
 
     private void onCancelButtonClicked() {
         sendAbort();
-    }
-
-    private void sendNext(boolean confirm){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action,EntryRequest.PARAM_CONFIRMED,confirm);
     }
 }

@@ -19,32 +19,12 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_ORIG_DATE}<br>
- *
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 
 public class EnterOrigTransDateFragment extends BaseEntryFragment {
-
-    private String packageName;
-    private String action;
-    private String transType;
-    private String transMode;
     private long timeOut;
     private String message = "";
     private EditText editText;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -53,10 +33,6 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         message = getString(R.string.pls_input_orig_trans_date);
@@ -127,11 +103,13 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
         String value = editText.getText().toString();
         value = value.replaceAll("[^0-9]", "");
         if (value.length() == 8) {
-            sendNext(value);
+            submit(value);
         }
     }
 
-    private void sendNext(String value) {
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_ORIG_DATE, value);
+    private void submit(String value) {
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_ORIG_DATE, value);
+        sendNext(bundle);
     }
 }
