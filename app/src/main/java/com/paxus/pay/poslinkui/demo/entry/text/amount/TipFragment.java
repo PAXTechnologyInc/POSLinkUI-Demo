@@ -1,23 +1,28 @@
 package com.paxus.pay.poslinkui.demo.entry.text.amount;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatRadioButton;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
@@ -49,18 +54,18 @@ public class TipFragment extends BaseEntryFragment {
     private int maxLength;
 
     private String currency = "";
-    private long[] tipOptions;
-    private String[] percentages;
-    private boolean noTip;
     private String tipName;
     private long baseAmount;
     private String tipUnit;
-    private String[] enabledTipNames;
-    private long[] enabledTipValues;
     private String packageName;
     private String action;
-    private boolean isEditingOngoing = false;
     private boolean isSelectTipEnabled = false;
+    private boolean isNoTipSelectionAllowed;
+
+    private List<TipOption> tipOptionList = new ArrayList<>();
+    private List<TipInfo> tipInfoList = new ArrayList<>();
+
+    long tip = 0;
 
     @Override
     protected String getSenderPackageName() {
@@ -72,10 +77,6 @@ public class TipFragment extends BaseEntryFragment {
         return action;
     }
 
-    private TipOption selectedItem;
-
-    private EditText editText;
-
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_tip;
@@ -85,248 +86,243 @@ public class TipFragment extends BaseEntryFragment {
     protected void loadArgument(@NonNull Bundle bundle) {
         action = bundle.getString(EntryRequest.PARAM_ACTION);
         packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
+
         currency =  bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
 
         String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-12");
-
         if(!TextUtils.isEmpty(valuePatten)){
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
-
-        String[] options = bundle.getStringArray(EntryExtraData.PARAM_TIP_OPTIONS);
-        if(options != null){
-            tipOptions = new long[options.length];
-            for(int i = 0;i< options.length;i++){
-                try {
-                    tipOptions[i] = Long.parseLong(options[i]);
-                }catch (Exception e){
-                    tipOptions[i] = 0;
-                }
-            }
-        }
-        isSelectTipEnabled = tipOptions != null && tipOptions.length>0 || noTip;
-
-        percentages = bundle.getStringArray(EntryExtraData.PARAM_TIP_RATE_OPTIONS);
-        noTip = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_NO_TIP_SELECTION);
-        tipName = bundle.getString(EntryExtraData.PARAM_TIP_NAME);
         baseAmount = bundle.getLong(EntryExtraData.PARAM_BASE_AMOUNT, -1);
+
+        tipName = bundle.getString(EntryExtraData.PARAM_TIP_NAME);
         tipUnit = bundle.getString(EntryExtraData.PARAM_TIP_UNIT, UnitType.CENT);
-        enabledTipNames = bundle.getStringArray(EntryExtraData.PARAM_TIP_NAMES);
 
-        String[] amounts = bundle.getStringArray(EntryExtraData.PARAM_TIP_AMOUNTS);
-        if(amounts != null){
-            enabledTipValues = new long[amounts.length];
-            for(int i = 0;i< amounts.length;i++){
-                try {
-                    enabledTipValues[i] = Long.parseLong(amounts[i]);
-                }catch (Exception e){
-                    enabledTipValues[i] = 0;
+        //Tip Summary
+        String[] previousTipNames = bundle.getStringArray(EntryExtraData.PARAM_TIP_NAMES);
+        String[] previousTipAmounts = bundle.getStringArray(EntryExtraData.PARAM_TIP_AMOUNTS);
+        if(previousTipNames != null){
+            for(int i=0; i<previousTipNames.length; i++){
+                String name = previousTipNames[i];
+                long amount = 0;
+                try{
+                    amount = Long.parseLong(previousTipAmounts[i]);
+                } catch (NumberFormatException e){
                 }
+                if(amount>0) tipInfoList.add(new TipInfo(name, CurrencyUtils.convert(amount, currency)));
             }
         }
+
+        //Select Tip Options
+        String[] tipOptions = bundle.getStringArray(EntryExtraData.PARAM_TIP_OPTIONS);
+        String[] tipRateOptions = bundle.getStringArray(EntryExtraData.PARAM_TIP_RATE_OPTIONS);
+        if(tipOptions != null){
+            for(int i=0; i<tipOptions.length; i++){
+                long tipAmount = 0;
+                String tipRate = null;
+                try{
+                    tipAmount = Long.parseLong(tipOptions[i]);
+                    tipRate = tipRateOptions[i];
+                } catch (NumberFormatException | IndexOutOfBoundsException e){
+                }
+                tipOptionList.add(new TipOption(tipAmount, tipRate));
+            }
+        }
+        isSelectTipEnabled = !tipOptionList.isEmpty();
+        isNoTipSelectionAllowed = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_NO_TIP_SELECTION);
     }
 
-    @Override
+
+    @Override @SuppressLint("SetTextI18n")
     protected void loadView(View rootView) {
+        //Base Amount
+        ConstraintLayout baseAmountLayout = rootView.findViewById(R.id.layout_tip_base_amount);
+        View baseAmountView = getLayoutInflater().inflate(R.layout.fragment_double_line_key_value, null);
+        ((TextView)baseAmountView.findViewById(R.id.key)).setText("Amount");
+        ((TextView)baseAmountView.findViewById(R.id.value)).setText(CurrencyUtils.convert(baseAmount, currency));
+        ((TextView)baseAmountView.findViewById(R.id.value)).setTextSize(24);
+        baseAmountLayout.addView(baseAmountView);
 
-        if(baseAmount > 0){
-            rootView.findViewById(R.id.base_amount_layout).setVisibility(View.VISIBLE);
-            ((TextView)rootView.findViewById(R.id.base_amount)).setText(CurrencyUtils.convert(baseAmount, currency));
+        //Tip Summary
+        if(!tipInfoList.isEmpty()){
+            RecyclerView tipSummaryView = rootView.findViewById(R.id.recycler_view_tip_summary);
+            tipSummaryView.setLayoutManager(new GridLayoutManager(getContext(), tipInfoList.size()));
+            tipSummaryView.setAdapter(new TipInfoAdapter(getContext(), tipInfoList));
         }
 
-        if(enabledTipNames != null && enabledTipNames.length> 1){
-            rootView.findViewById(R.id.tips_summary).setVisibility(View.VISIBLE);
+        //Tip Name
+        ((TextView)rootView.findViewById(R.id.textview_tip_name)).setText((isSelectTipEnabled? "Select " : "Enter ") + tipName);
 
-            if(enabledTipValues != null){
-                if(enabledTipValues.length >= 1 && enabledTipValues[0]!=0){
-                    rootView.findViewById(R.id.summary_tip1).setVisibility(View.VISIBLE);
-                    ((TextView)rootView.findViewById(R.id.summary_tip1_name)).setText(enabledTipNames[0]);
-                    TextView tip1 = rootView.findViewById(R.id.summary_tip1_amt);
-                    tip1.setText(CurrencyUtils.convert(enabledTipValues.length >= 1 ? enabledTipValues[0] : 0, currency));
-                }
-                if(enabledTipValues.length >= 2 && enabledTipValues[1]!=0){
-                    rootView.findViewById(R.id.summary_tip2).setVisibility(View.VISIBLE);
-                    ((TextView)rootView.findViewById(R.id.summary_tip2_name)).setText(enabledTipNames[1]);
-                    TextView tip2 = rootView.findViewById(R.id.summary_tip2_amt);
-                    tip2.setText(CurrencyUtils.convert(enabledTipValues.length >= 2 ? enabledTipValues[1] : 0, currency));
-                }
-                if(enabledTipValues.length >= 3 && enabledTipValues[2]!=0){
-                    rootView.findViewById(R.id.summary_tip3).setVisibility(View.VISIBLE);
-                    ((TextView)rootView.findViewById(R.id.summary_tip3_name)).setText(enabledTipNames[2]);
-                    TextView tip3 = rootView.findViewById(R.id.summary_tip3_amt);
-                    tip3.setText(CurrencyUtils.convert(enabledTipValues.length >= 3 ? enabledTipValues[2] : 0, currency));
-                }
-            }
-        }
-
-        TextView tvTipName = rootView.findViewById(R.id.tip_name);
-        tvTipName.setText((isSelectTipEnabled ? "Select " : "Enter ") + tipName);
-
-        RecyclerView optionView = rootView.findViewById(R.id.options_layout);
-        if(isSelectTipEnabled) {
-            List<TipOption> options = new ArrayList<>();
-            for(long amt: tipOptions){
-                options.add(new TipOption(amt));
-            }
-            for(int i = 0;i<percentages.length;i++){
-                options.get(i).percentage = percentages[i];
-            }
-            if(noTip){
-                options.add(new TipOption(0));
-            }
-            TipOption op = new TipOption(0);
-            op.editStyle = true;
-            options.add(op);
-
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireActivity());
-            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            optionView.setLayoutManager(linearLayoutManager);
-            optionView.setAdapter(new Adapter(options));
-        }
-
-        editText = rootView.findViewById(R.id.edit_tip);
+        //Select and Enter Tip
         if(isSelectTipEnabled){
-            editText.setVisibility(View.GONE);
-        }else {
-            editText.setVisibility(View.VISIBLE);
-            focusableEditTexts = new EditText[]{editText};
-            editText.setText(CurrencyUtils.convert(0, currency));
-            if(UnitType.CENT.equals(tipUnit)) {
-                editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
-            }
+            RecyclerView tipOptionsView = rootView.findViewById(R.id.recycler_view_tip_options);
+            tipOptionsView.setVisibility(View.VISIBLE);
+            tipOptionsView.setLayoutManager(new GridLayoutManager(getContext(), tipOptionList.size()));
+            TipOptionAdapter tipOptionAdapter = new TipOptionAdapter(getContext(), tipOptionList, tipOption -> {
+                ((TextInputEditText) rootView.findViewById(R.id.edit_text_tip_entry)).setText("0");
+                tip = tipOption.tipAmount;
+                InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            });
+            tipOptionsView.setAdapter(tipOptionAdapter);
+
+            ((TextInputLayout)rootView.findViewById(R.id.text_input_layout)).setHint(R.string.other);
+
+            //Soft Keyboard Submission
+            TextInputEditText tipInputEditText = rootView.findViewById(R.id.edit_text_tip_entry);
+            tipInputEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            tipInputEditText.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_DONE)  onConfirmButtonClicked();
+                return true;
+            });
+        } else {
+            focusableEditTexts = new EditText[]{rootView.findViewById(R.id.edit_text_tip_entry)};
+            ((TextInputLayout)rootView.findViewById(R.id.text_input_layout)).setHint(null);
         }
 
-        Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener( v -> onConfirmButtonClicked());
+        //Enter Tip or Enter Other Tip
+        TextInputEditText tipInputEditText = rootView.findViewById(R.id.edit_text_tip_entry);
+        tipInputEditText.addTextChangedListener(new AmountTextWatcher(maxLength, currency){
+            @Override public void afterTextChanged(Editable s) {
+                super.afterTextChanged(s);
+                tip = CurrencyUtils.parse(s.toString());
+                clearCheckedText(rootView.findViewById(R.id.recycler_view_tip_options));
+            }
+        });
+        tipInputEditText.setText("0");
 
 
+        //No Tip
+        Button noTipButton = rootView.findViewById(R.id.button_no_tip);
+        noTipButton.setOnClickListener( v -> {
+            tip = 0;
+            onConfirmButtonClicked();
+        });
+
+        //Confirm
+        Button confirmButton = rootView.findViewById(R.id.button_confirm);
+        confirmButton.setOnClickListener( v -> onConfirmButtonClicked());
     }
 
-    @Override
-    protected void onConfirmButtonClicked(){
-        if(editText.getVisibility() == View.VISIBLE) {
-            String text = editText.getText().toString();
-            long value = CurrencyUtils.parse(text);
-            if(UnitType.DOLLAR.equals(tipUnit)){
-                value = value*100;
-            }
-            sendNext(value);
-        }else {
-            if(selectedItem != null){
-                sendNext(selectedItem.tipAmt);
-            }
+    private void clearCheckedText(ViewGroup parent){
+        for(int i=0; i<parent.getChildCount(); i++){
+            if(parent.getChildAt(i) instanceof CheckedTextView) ((CheckedTextView) parent.getChildAt(i)).setChecked(false);
+            else if(parent.getChildAt(i) instanceof ViewGroup) clearCheckedText((ViewGroup) parent.getChildAt(i));
         }
     }
 
-    private void sendNext(long value){
-
-        String param = EntryRequest.PARAM_TIP;
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
+    public class TipInfo{
+        String name, amount;
+        TipInfo(String name, String amount) {
+            this.name = name;
+            this.amount = amount;
+        }
     }
+    public class TipInfoAdapter extends RecyclerView.Adapter<TipInfoAdapter.TipInfoHolder> {
+        private List<TipInfo> data;
+        private LayoutInflater layoutInflater;
 
-    private class Adapter extends RecyclerView.Adapter<ViewHolder>{
-
-        private final List<TipOption> list;
-        public Adapter(List<TipOption> list){
-            this.list = list;
+        TipInfoAdapter(Context context, List<TipInfo> tipInfoList){
+            this.data = tipInfoList;
+            this.layoutInflater = LayoutInflater.from(context);
         }
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cashback_option, parent, false);
-            return new ViewHolder(view);
+        public TipInfoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = layoutInflater.inflate(R.layout.fragment_double_line_key_value, parent, false);
+            return new TipInfoHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            TipOption option = list.get(position);
-
-            holder.optionButton.setChecked(option.selected);
-            holder.optionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    for(TipOption option: list){
-                        option.selected = false;
-                    }
-                    option.selected = true;
-                    selectedItem = option;
-                    notifyDataSetChanged();
-
-                    ((InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                            .hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-                }
-            });
-
-            if(option.editStyle){
-                holder.optionButton.setText("");
-
-                holder.editText.setVisibility(View.VISIBLE);
-                holder.editText.setHint(getString(R.string.other));
-
-                if(UnitType.CENT.equals(tipUnit)) {
-                    holder.editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency) {
-                        @Override
-                        public void afterTextChanged(Editable s) {
-                            super.afterTextChanged(s);
-                            option.tipAmt = CurrencyUtils.parse(s.toString());
-                        }
-                    });
-                }else {
-                    holder.editText.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-                        @Override
-                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-                        @Override
-                        public void afterTextChanged(Editable editable) {
-                            if(isEditingOngoing) return;
-                            isEditingOngoing = true;
-                            option.tipAmt = CurrencyUtils.parse(editable.toString()) * 100;
-                            isEditingOngoing = false;
-                        }
-                    });
-                }
-            }else {
-                holder.editText.setVisibility(View.GONE);
-                if(option.tipAmt == 0){
-                    holder.optionButton.setText(getString(R.string.no_tip));
-                }else {
-                    if(!TextUtils.isEmpty(option.percentage)) {
-                        holder.optionButton.setText(CurrencyUtils.convert(option.tipAmt, currency) + " (" + option.percentage + ")");
-                    }else {
-                        holder.optionButton.setText(CurrencyUtils.convert(option.tipAmt, currency));
-                    }
-                }
-            }
+        public void onBindViewHolder(@NonNull TipInfoHolder holder, int position) {
+            TipInfo tipInfo = data.get(position);
+            holder.key.setText(tipInfo.name);
+            holder.value.setText(tipInfo.amount);
         }
 
         @Override
         public int getItemCount() {
-            return list.size();
+            return data.size();
+        }
+
+        private class TipInfoHolder extends RecyclerView.ViewHolder {
+            TextView key, value;
+            public TipInfoHolder(@NonNull View itemView) {
+                super(itemView);
+                key = itemView.findViewById(R.id.key);
+                key.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+                value = itemView.findViewById(R.id.value);
+                value.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+            }
         }
     }
 
     private static class TipOption {
-         boolean selected;
-         long tipAmt;
-         String percentage;
-         boolean editStyle;
-         TipOption(long tipAmt){
-             this.tipAmt = tipAmt;
-         }
+        long tipAmount;
+        String tipRate;
+
+        TipOption(long tipAmount, String tipRate){
+            this.tipAmount = tipAmount;
+            this.tipRate = tipRate;
+        }
     }
 
-    private static class ViewHolder extends RecyclerView.ViewHolder {
-        AppCompatRadioButton optionButton;
-        EditText editText;
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            optionButton = itemView.findViewById(R.id.option_item);
-            editText = itemView.findViewById(R.id.edit_item);
+    public interface TipOptionClickListener { void onTipOptionClick(TipOption tipOption);}
+
+    public class TipOptionAdapter extends RecyclerView.Adapter<TipOptionAdapter.TipOptionHolder> {
+        private List<TipOption> data;
+        private LayoutInflater layoutInflater;
+        private TipOptionClickListener tipOptionClickListener;
+
+        TipOptionAdapter(Context context, List<TipOption> tipOptionList, TipOptionClickListener tipOptionClickListener){
+            this.data = tipOptionList;
+            this.layoutInflater = LayoutInflater.from(context);
+            this.tipOptionClickListener = tipOptionClickListener;
         }
+
+        @NonNull @Override public TipOptionHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new TipOptionHolder(layoutInflater.inflate(R.layout.fragment_checkable_item, parent, false));
+        }
+
+
+        @Override @SuppressLint("SetTextI18n") public void onBindViewHolder(@NonNull TipOptionHolder holder, int position) {
+            String percentageSuffix = data.get(position).tipRate != null ? (" ("+ data.get(position).tipRate + ")") : "";
+            holder.text.setText(CurrencyUtils.convert(data.get(position).tipAmount, currency) + percentageSuffix);
+            holder.bindListener(data.get(position), tipOptionClickListener);
+        }
+
+        @Override public int getItemCount() {
+            return data.size();
+        }
+
+        private class TipOptionHolder extends RecyclerView.ViewHolder{
+            TextView text;
+
+            public TipOptionHolder(@NonNull View itemView) {
+                super(itemView);
+                text = itemView.findViewById(R.id.checkable_text);
+                text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            }
+
+            public void bindListener(final TipOption tipOption, final TipOptionClickListener listener) {
+                itemView.setOnClickListener(v -> {
+                    listener.onTipOptionClick(tipOption);
+                    clearCheckedText((ViewGroup) itemView.getParent());
+                    ((CheckedTextView)itemView.findViewById(R.id.checkable_text)).setChecked(true);
+                });
+            }
+        }
+    }
+
+    @Override
+    protected void onConfirmButtonClicked(){
+        sendNext(tip);
+    }
+
+    private void sendNext(long value){
+        String param = EntryRequest.PARAM_TIP;
+        EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
     }
 }
