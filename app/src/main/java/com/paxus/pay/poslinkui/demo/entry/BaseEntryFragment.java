@@ -2,6 +2,7 @@ package com.paxus.pay.poslinkui.demo.entry;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -178,9 +179,11 @@ public abstract class BaseEntryFragment extends Fragment {
             }
             return true;
         });
-        ((Activity) (editTexts[0].getContext())).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        Context context = (!(editTexts[0].getContext() instanceof Activity) && editTexts[0].getContext() instanceof ContextWrapper)
+                ? ((ContextWrapper) editTexts[0].getContext()).getBaseContext() : editTexts[0].getContext();
+        ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         editTexts[0].requestFocus();
-        InputMethodManager inputMethodManager = (InputMethodManager) (((Activity) (editTexts[0].getContext())).getSystemService(Context.INPUT_METHOD_SERVICE));
+        InputMethodManager inputMethodManager = (InputMethodManager) (((Activity) context).getSystemService(Context.INPUT_METHOD_SERVICE));
         inputMethodManager.showSoftInput(editTexts[0], InputMethodManager.SHOW_IMPLICIT);
     }
 
