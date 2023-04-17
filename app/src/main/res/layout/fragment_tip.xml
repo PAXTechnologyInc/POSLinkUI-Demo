@@ -1,126 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-        <LinearLayout
-            android:id="@+id/base_amount_layout"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="bottom|left"
-            android:visibility="gone">
-            <TextView
-                android:text="Amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                />
-            <TextView
-                android:id="@+id/base_amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/tips_summary"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:orientation="horizontal"
-            android:visibility="gone">
-            <LinearLayout
-                android:id="@+id/summary_tip1"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:textAlignment="textEnd"
-                android:gravity="end"
-                android:visibility="gone">
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/detail_item_tip1"
-                    android:id="@+id/summary_tip1_name"/>
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/summary_tip1_amt"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/summary_tip2"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:textAlignment="textEnd"
-                android:gravity="end"
-                android:visibility="gone">
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/detail_item_tip2"
-                    android:id="@+id/summary_tip2_name"/>
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/summary_tip2_amt"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/summary_tip3"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="right"
-                android:visibility="gone">
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/detail_item_tip2"
-                    android:id="@+id/summary_tip3_name"/>
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/summary_tip3_amt"/>
-            </LinearLayout>
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/tip_name"
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_tip_base_amount"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="start"
-        android:layout_marginVertical="@dimen/space_between_textview"
-        android:textSize="18sp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/recycler_view_tip_summary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent=".5"
+        android:textAlignment="textStart"
+        app:layout_constraintVertical_chainStyle="packed"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
+        android:id="@+id/recycler_view_tip_summary"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:id="@+id/options_layout"
-        style="@style/POSLinkUIPastel"/>
+        app:layout_constraintStart_toEndOf="@id/layout_tip_base_amount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent=".5"
+        />
 
-    <EditText
+    <TextView
+        android:id="@+id/textview_tip_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/edit_tip"
-        android:inputType="numberSigned"
-        android:digits="0123456789,.$€"
-        android:gravity="center_horizontal"/>
+        android:layout_marginVertical="@dimen/space_between_textview"
+        android:textSize="18sp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_tip_base_amount"
+        app:layout_constraintBottom_toTopOf="@id/recycler_view_tip_options"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_tip_options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textview_tip_name"
+        app:layout_constraintBottom_toTopOf="@id/text_input_layout"
+        />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_gap"
+        android:hint="Tip Amount"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recycler_view_tip_options"
+        app:layout_constraintBottom_toTopOf="@id/button_no_tip">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text_tip_entry"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="numberSigned"
+            android:digits="0123456789,.$€"
+            style="@style/POSLinkUIPastelEditText"
+            android:gravity="start|top"
+            android:textAlignment="center"
+            tools:ignore="RtlCompat" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
+        android:id="@+id/button_no_tip"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"
-        android:id="@+id/confirm_button"
-        android:text="@string/confirm"/>
-</LinearLayout>
-</ScrollView>
+        android:text="@string/no_tip"
+        android:layout_marginVertical="@dimen/default_gap"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_input_layout"
+        app:layout_constraintBottom_toTopOf="@id/button_confirm"
+        />
+
+    <Button
+        android:id="@+id/button_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:text="@string/confirm"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_no_tip"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
