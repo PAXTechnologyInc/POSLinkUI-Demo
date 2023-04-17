@@ -57,9 +57,6 @@ public abstract class BaseEntryFragment extends Fragment {
         if (bundle != null) {
             action = bundle.getString(EntryRequest.PARAM_ACTION);
             senderPackage = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-            bundle.remove(EntryRequest.PARAM_ACTION);
-            bundle.remove(EntryExtraData.PARAM_PACKAGE);
-
             loadArgument(bundle);
         } else {
             Logger.e(this.getClass().getSimpleName() + " arguments missing!!!");

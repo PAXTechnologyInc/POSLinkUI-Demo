@@ -59,9 +59,6 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
         if(bundle!= null) {
             action = bundle.getString(EntryRequest.PARAM_ACTION);
             senderPackage = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-            bundle.remove(EntryRequest.PARAM_ACTION);
-            bundle.remove(EntryExtraData.PARAM_PACKAGE);
-
             loadParameter(bundle);
         }
 
