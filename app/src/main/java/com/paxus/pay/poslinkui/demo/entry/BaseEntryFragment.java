@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +29,9 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Yanina.Yang on 5/11/2022.
@@ -81,7 +86,7 @@ public abstract class BaseEntryFragment extends Fragment {
     public void onStop() {
         super.onStop();
         Logger.d("onStop " + getClass().getSimpleName());
-        prepareEditTextsForSubmissionWithSoftKeyboard(null);
+        prepareEditTextsForSubmissionWithSoftKeyboard();
     }
 
     @Override
@@ -135,8 +140,10 @@ public abstract class BaseEntryFragment extends Fragment {
     }
 
     protected void sendNext(Bundle bundle){
+        EditabilityBlocker.getInstance().block((ViewGroup) getView());
         EntryRequestUtils.sendNext(requireContext(), senderPackage, action, bundle);
     }
+
     protected void sendSecurityArea(TextView view, String... hint){
         if(view == null) {
             EntryRequestUtils.sendSecureArea(requireContext(), senderPackage, action);
@@ -218,13 +225,13 @@ public abstract class BaseEntryFragment extends Fragment {
                 ? ((ContextWrapper) editTexts[0].getContext()).getBaseContext() : editTexts[0].getContext();
         ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         editTexts[0].requestFocus();
-        InputMethodManager inputMethodManager = (InputMethodManager) (((Activity) context).getSystemService(Context.INPUT_METHOD_SERVICE));
+        InputMethodManager inputMethodManager = (InputMethodManager) (context.getSystemService(Context.INPUT_METHOD_SERVICE));
         inputMethodManager.showSoftInput(editTexts[0], InputMethodManager.SHOW_IMPLICIT);
     }
 
     //Used to get information from activity
     FragmentResultListener fragmentResultListener = (requestKey, result) -> {
-        Logger.i(getClass().getSimpleName() + " receives " + requestKey + "\n" + result.toString());
+        Logger.i(getClass().getSimpleName() + " receives " + requestKey + "\n" + result);
         switch (requestKey) {
             case "response":
                 switch (result.getString("action")) {
@@ -232,6 +239,7 @@ public abstract class BaseEntryFragment extends Fragment {
                         onEntryAccepted();
                         break;
                     case EntryResponse.ACTION_DECLINED:
+                        EditabilityBlocker.getInstance().release();
                         onEntryDeclined(result.getLong("code"), result.getString("message"));
                         break;
                 }
@@ -256,5 +264,39 @@ public abstract class BaseEntryFragment extends Fragment {
 
         getParentFragmentManager().setFragmentResultListener("response", this, fragmentResultListener);
         getParentFragmentManager().setFragmentResultListener("keyCode", this, fragmentResultListener);
+    }
+
+
+    private static class EditabilityBlocker {
+        private static EditabilityBlocker instance = null;
+        private List<View> blockedViews = new ArrayList<>();
+        private EditabilityBlocker() {}
+        public synchronized static EditabilityBlocker getInstance(){
+            if(instance == null) instance = new EditabilityBlocker();
+            return instance;
+        }
+        public void block(ViewGroup parent){
+            for(int i=0; i<parent.getChildCount(); i++){
+                if (parent.getChildAt(i) instanceof EditText || parent.getChildAt(i) instanceof Button) {
+                    if(parent.getChildAt(i).getVisibility() == View.VISIBLE && parent.getChildAt(i).isEnabled()){
+                        parent.getChildAt(i).setEnabled(false);
+                        blockedViews.add(parent.getChildAt(i));
+                    }
+                } else if (parent.getChildAt(i) instanceof CheckedTextView) {
+                    if(parent.getVisibility() == View.VISIBLE && parent.isEnabled()){
+                        parent.setEnabled(false);
+                        blockedViews.add(parent);
+                    }
+                } else if (parent.getChildAt(i) instanceof ViewGroup) {
+                    block((ViewGroup) parent.getChildAt(i));
+                }
+            }
+        }
+        public void release(){
+            for(View blockedView: blockedViews) {
+                blockedView.setEnabled(true);
+            }
+            blockedViews.clear();
+        }
     }
 }
