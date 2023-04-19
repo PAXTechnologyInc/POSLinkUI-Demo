@@ -9,20 +9,27 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.OptionEntry;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.entry.BaseEntryDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 
 /**
  * Abstract class for all option entry actions defined in {@link OptionEntry}
  */
-public abstract class AOptionsDialogFragment extends BaseEntryDialogFragment {
+public abstract class AOptionEntryFragment extends BaseEntryFragment {
 
     protected ListView listView;
+    private String[] options;
 
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_option_dialog;
+    }
+
+    @Override
+    protected void loadArgument(@NonNull Bundle bundle) {
+        options = bundle.containsKey(EntryExtraData.PARAM_OPTIONS) ? bundle.getStringArray(EntryExtraData.PARAM_OPTIONS) : new String[]{};
     }
 
     @Override
@@ -43,6 +50,10 @@ public abstract class AOptionsDialogFragment extends BaseEntryDialogFragment {
         confirmButton.setOnClickListener(v->onConfirmButtonClicked());
     }
 
+    protected @NonNull String[] getOptions() {
+        return options;
+    }
+
     private void onCancelButtonClicked() {
         sendAbort();
     }
@@ -61,9 +72,6 @@ public abstract class AOptionsDialogFragment extends BaseEntryDialogFragment {
     }
 
     protected abstract String getRequestedParamName();
-
-    protected abstract @NonNull
-    String[] getOptions();
 
     protected abstract String formatTitle();
 
