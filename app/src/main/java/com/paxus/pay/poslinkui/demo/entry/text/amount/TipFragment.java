@@ -139,29 +139,28 @@ public class TipFragment extends BaseEntryFragment {
             tipOptionsView.setVisibility(View.VISIBLE);
             tipOptionsView.setLayoutManager(new GridLayoutManager(getContext(), tipOptionList.size()));
             TipOptionAdapter tipOptionAdapter = new TipOptionAdapter(getContext(), tipOptionList, tipOption -> {
-                ((TextInputEditText) rootView.findViewById(R.id.edit_text_tip_entry)).setText("0");
+                ((EditText) rootView.findViewById(R.id.edit_text_tip_entry)).setText("0");
                 tip = tipOption.tipAmount;
                 InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             });
             tipOptionsView.setAdapter(tipOptionAdapter);
 
-            ((TextInputLayout)rootView.findViewById(R.id.text_input_layout)).setHint(R.string.other);
+            ((TextView)rootView.findViewById(R.id.text_view_other_tip)).setVisibility(View.VISIBLE);
 
             //Soft Keyboard Submission
-            TextInputEditText tipInputEditText = rootView.findViewById(R.id.edit_text_tip_entry);
-            tipInputEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            EditText tipInputEditText = rootView.findViewById(R.id.edit_text_tip_entry);
+            tipInputEditText.setImeOptions(tipInputEditText.getImeOptions() | EditorInfo.IME_ACTION_DONE);
             tipInputEditText.setOnEditorActionListener((v, actionId, event) -> {
                 if (actionId == EditorInfo.IME_ACTION_DONE)  onConfirmButtonClicked();
                 return true;
             });
         } else {
             focusableEditTexts = new EditText[]{rootView.findViewById(R.id.edit_text_tip_entry)};
-            ((TextInputLayout)rootView.findViewById(R.id.text_input_layout)).setHint(null);
         }
 
         //Enter Tip or Enter Other Tip
-        TextInputEditText tipInputEditText = rootView.findViewById(R.id.edit_text_tip_entry);
+        EditText tipInputEditText = rootView.findViewById(R.id.edit_text_tip_entry);
         tipInputEditText.addTextChangedListener(new AmountTextWatcher(maxLength, currency){
             @Override public void afterTextChanged(Editable s) {
                 super.afterTextChanged(s);
@@ -174,10 +173,10 @@ public class TipFragment extends BaseEntryFragment {
 
         //No Tip
         Button noTipButton = rootView.findViewById(R.id.button_no_tip);
-        noTipButton.setOnClickListener( v -> {
-            tip = 0;
-            onConfirmButtonClicked();
-        });
+        if(isNoTipSelectionAllowed){
+            noTipButton.setVisibility(View.VISIBLE);
+            noTipButton.setOnClickListener( v -> submit(0));
+        }
 
         //Confirm
         Button confirmButton = rootView.findViewById(R.id.button_confirm);

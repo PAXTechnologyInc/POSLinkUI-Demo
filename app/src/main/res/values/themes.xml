@@ -40,16 +40,20 @@
         <!--overriding default widget styles-->
         <item name="editTextStyle">@style/POSLinkUIPastelEditText</item>
         <item name="radioButtonStyle">@style/POSLinkUIPastelRadioButton</item>
-        <item name="checkedTextViewStyle">@style/POSLinkUIPastelRadioButton</item>
+        <item name="android:textViewStyle">@style/POSLinkUIPastelTextView</item>
+    </style>
 
+    <style name="POSLinkUIPastelTextView" parent="android:Widget.Material.TextView">
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizePresetSizes">@array/text_auto_size_valid_sizes</item>
     </style>
 
     <style name="POSLinkUIPastelEditText" parent="android:Widget.Material.EditText">
         <item name="android:background">@drawable/rounded_corner_on_background</item>
         <item name="android:textColor">@color/pastel_text_color_on_light</item>
-        <item name="android:padding">@dimen/padding_vertical</item>
         <item name="android:imeOptions">flagNoExtractUi</item>
         <item name="android:gravity">center</item>
+        <item name="android:minHeight">@dimen/button_height</item>
     </style>
 
     <style name="POSLinkUIPastelRadioButton" parent="android:Widget.CompoundButton.RadioButton">

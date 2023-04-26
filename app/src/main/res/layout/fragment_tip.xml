@@ -51,45 +51,76 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textview_tip_name"
-        app:layout_constraintBottom_toTopOf="@id/text_input_layout"
+        app:layout_constraintBottom_toTopOf="@id/edit_text_tip_entry"
         />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/text_input_layout"
+    <EditText
+        android:id="@+id/edit_text_tip_entry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_gap"
-        android:hint="Tip Amount"
-        app:boxStrokeWidth="0dp"
-        app:boxStrokeWidthFocused="0dp"
+        android:inputType="numberSigned"
+        android:digits="0123456789,.$€"
+        android:layout_margin="@dimen/margin_gap"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/recycler_view_tip_options"
-        app:layout_constraintBottom_toTopOf="@id/button_no_tip">
+        app:layout_constraintBottom_toTopOf="@id/button_no_tip"
+        />
+    <TextView
+        android:id="@+id/text_view_other_tip"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/other"
+        android:layout_margin="@dimen/margin_gap"
+        android:paddingHorizontal="@dimen/margin_gap"
+        android:textColor="@color/pastel_text_color_on_light"
+        app:layout_constraintVertical_bias="0"
+        android:textSize="@dimen/text_size_hint"
+        app:layout_constraintStart_toStartOf="@id/edit_text_tip_entry"
+        app:layout_constraintEnd_toEndOf="@id/edit_text_tip_entry"
+        app:layout_constraintTop_toTopOf="@id/edit_text_tip_entry"
+        app:layout_constraintBottom_toBottomOf="@id/edit_text_tip_entry"
+        />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_text_tip_entry"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="numberSigned"
-            android:digits="0123456789,.$€"
-            style="@style/POSLinkUIPastelEditText"
-            android:gravity="start|top"
-            android:textAlignment="center"
-            tools:ignore="RtlCompat" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/text_input_layout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="@dimen/margin_gap"-->
+<!--        android:hint="Tip Amount"-->
+<!--        app:boxStrokeWidth="0dp"-->
+<!--        app:boxStrokeWidthFocused="0dp"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/recycler_view_tip_options"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/button_no_tip"-->
+<!--        style="@style/POSLinkUIPastelEditText">-->
+
+<!--        <com.google.android.material.textfield.TextInputEditText-->
+<!--            android:id="@+id/edit_text_tip_entry"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:inputType="numberSigned"-->
+<!--            android:digits="0123456789,.$€"-->
+<!--            android:gravity="start|top"-->
+<!--            android:textAlignment="center"-->
+<!--            tools:ignore="RtlCompat" />-->
+
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
 
     <Button
         android:id="@+id/button_no_tip"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"
         android:text="@string/no_tip"
-        android:layout_marginVertical="@dimen/default_gap"
-
+        android:layout_marginTop="@dimen/margin_gap"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_input_layout"
+        app:layout_constraintTop_toBottomOf="@id/edit_text_tip_entry"
         app:layout_constraintBottom_toTopOf="@id/button_confirm"
         />
 

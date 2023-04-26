@@ -4,4 +4,8 @@
 
     <dimen name="padding_horizontal">20dp</dimen>
     <dimen name="padding_vertical">15dp</dimen>
+
+    <dimen name="margin_gap">5dp</dimen>
+    <dimen name="toolbar_height">38dp</dimen>
+    <dimen name="button_height">46dp</dimen>
 </resources>
