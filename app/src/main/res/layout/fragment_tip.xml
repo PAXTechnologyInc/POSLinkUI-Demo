@@ -77,6 +77,9 @@
         android:textColor="@color/pastel_text_color_on_light"
         app:layout_constraintVertical_bias="0"
         android:textSize="@dimen/text_size_hint"
+
+        android:visibility="invisible"
+
         app:layout_constraintStart_toStartOf="@id/edit_text_tip_entry"
         app:layout_constraintEnd_toEndOf="@id/edit_text_tip_entry"
         app:layout_constraintTop_toTopOf="@id/edit_text_tip_entry"
