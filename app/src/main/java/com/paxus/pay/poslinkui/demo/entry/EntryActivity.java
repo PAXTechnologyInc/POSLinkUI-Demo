@@ -263,8 +263,8 @@ public class EntryActivity extends AppCompatActivity{
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
-        if((event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)
-                || (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) ){
+        if( event.getAction() == KeyEvent.ACTION_UP &&
+                (event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK) ){
             Bundle response = new Bundle();
             response.putInt("keyCode", event.getKeyCode());
             getSupportFragmentManager().setFragmentResult("keyCode", response);
