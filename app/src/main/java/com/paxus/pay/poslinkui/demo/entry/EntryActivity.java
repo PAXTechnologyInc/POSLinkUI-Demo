@@ -30,8 +30,6 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
-import java.security.Key;
-
 /**
  * Use fragment to implement all UI (Activity and Dialog).
  * <p>
