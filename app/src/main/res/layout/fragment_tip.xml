@@ -83,34 +83,6 @@
         app:layout_constraintBottom_toBottomOf="@id/edit_text_tip_entry"
         />
 
-
-
-<!--    <com.google.android.material.textfield.TextInputLayout-->
-<!--        android:id="@+id/text_input_layout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_margin="@dimen/margin_gap"-->
-<!--        android:hint="Tip Amount"-->
-<!--        app:boxStrokeWidth="0dp"-->
-<!--        app:boxStrokeWidthFocused="0dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/recycler_view_tip_options"-->
-<!--        app:layout_constraintBottom_toTopOf="@id/button_no_tip"-->
-<!--        style="@style/POSLinkUIPastelEditText">-->
-
-<!--        <com.google.android.material.textfield.TextInputEditText-->
-<!--            android:id="@+id/edit_text_tip_entry"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:inputType="numberSigned"-->
-<!--            android:digits="0123456789,.$€"-->
-<!--            android:gravity="start|top"-->
-<!--            android:textAlignment="center"-->
-<!--            tools:ignore="RtlCompat" />-->
-
-<!--    </com.google.android.material.textfield.TextInputLayout>-->
-
     <Button
         android:id="@+id/button_no_tip"
         android:layout_width="match_parent"
