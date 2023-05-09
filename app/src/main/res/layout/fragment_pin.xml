@@ -68,7 +68,7 @@
 
     <include layout="@layout/fragment_pin_custom_keyboard"
         android:id="@+id/pinpad_layout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
 
         app:layout_constraintStart_toStartOf="parent"

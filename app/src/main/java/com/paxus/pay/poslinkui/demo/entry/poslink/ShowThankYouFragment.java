@@ -14,6 +14,7 @@ import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 /**
  * Implement text entry actions:<br>
@@ -34,9 +35,6 @@ public class ShowThankYouFragment extends BaseEntryFragment {
     private String message1;
     private String message2;
 
-    private Handler handler;
-    private final Runnable timeoutRun = () -> sendTimeout();
-
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_show_thank_you;
@@ -49,7 +47,6 @@ public class ShowThankYouFragment extends BaseEntryFragment {
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
         message1 = bundle.getString(EntryExtraData.PARAM_MESSAGE_1,"");
         message2 = bundle.getString(EntryExtraData.PARAM_MESSAGE_2,"");
-
     }
 
     @Override
@@ -64,8 +61,7 @@ public class ShowThankYouFragment extends BaseEntryFragment {
         formatTextView(msg2View, message2);
 
         if(timeOut > 0 ) {
-            handler = new Handler();
-            handler.postDelayed(timeoutRun, timeOut);
+            getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
         }
     }
 
@@ -81,26 +77,6 @@ public class ShowThankYouFragment extends BaseEntryFragment {
         msg = msg.replaceFirst("(\\\\[LRC])","");
 
         textView.setText(msg);
-    }
-
-    @Override
-    protected void onEntryAccepted() {
-        super.onEntryAccepted();
-
-        if(handler!= null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if(handler != null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
     }
 
 }

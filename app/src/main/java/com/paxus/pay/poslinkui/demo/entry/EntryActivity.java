@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,10 +25,13 @@ import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.pax.us.pay.ui.constant.status.BatchStatus;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
-import com.pax.us.pay.ui.constant.status.StatusData;
 import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.R;
+import com.paxus.pay.poslinkui.demo.status.StatusFragment;
+import com.paxus.pay.poslinkui.demo.status.TransCompletedStatusFragment;
+import com.paxus.pay.poslinkui.demo.utils.BundleMaker;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 /**
@@ -41,11 +45,16 @@ import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 public class EntryActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
-    private FragmentContainerView fragmentContainer;
+    private FragmentContainerView statusFragmentContainer;
+    private FragmentContainerView entryFragmentContainer;
+
     private BroadcastReceiver receiver;
 
     private String transType = "";
     private String transMode = "";
+    private String senderPackage = "";
+
+    TaskScheduler scheduler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +62,16 @@ public class EntryActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_entry);
-        fragmentContainer = findViewById(R.id.fragment_placeholder);
         toolbar = findViewById(R.id.toolbar);
+        statusFragmentContainer = findViewById(R.id.status_container);
+        entryFragmentContainer = findViewById(R.id.fragment_placeholder);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         registerUIReceiver();
+        scheduler = new TaskScheduler(this);
 
         Logger.i(getClass().getSimpleName() + " receives " + getIntent().getAction() + "\n" + getIntent().getExtras().toString());
         loadEntry(getIntent());
@@ -69,17 +80,23 @@ public class EntryActivity extends AppCompatActivity{
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        //If activity is at the top of stack, startActivity will trigger onNewIntent. So you can load entry here.
         loadEntry(intent);
+        scheduler.cancelTasks();
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Logger.d(getClass().getSimpleName() +" onSaveInstanceState");
-        //If EntryActivity is not at the top of stack, a new EntryActivity will be created. After that, the old one need kill itself.
         unregisterUIReceiver();
-        this.finishAndRemoveTask();
+        scheduler.cancelTasks();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Logger.d(getClass().getSimpleName() +" onRestoreInstanceState");
+        registerUIReceiver();
     }
 
     @Override
@@ -87,10 +104,17 @@ public class EntryActivity extends AppCompatActivity{
         super.onDestroy();
         Logger.d(getClass().getSimpleName() +" onDestroy");
         unregisterUIReceiver();
+        scheduler.shutdown();
     }
 
     private void loadEntry(Intent intent){
         Logger.i(getClass().getSimpleName() + " receives " + intent.getAction() + "\n" + intent.getExtras().toString());
+
+        getIntent().setAction(intent.getAction());
+        clearStatus();
+        senderPackage = intent.getStringExtra(EntryExtraData.PARAM_PACKAGE);
+        setScheduledTaskListener(intent);
+        enableDarkOverlay(false);
 
         updateTransMode(intent.getStringExtra(EntryExtraData.PARAM_TRANS_MODE));
 
@@ -102,7 +126,7 @@ public class EntryActivity extends AppCompatActivity{
                 if (frag == null) {
                     //To show dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, hide tool bar.
                     toolbar.setVisibility(View.GONE);
-                    fragmentContainer.setVisibility(View.GONE);
+                    entryFragmentContainer.setVisibility(View.GONE);
                 }
                 ((DialogFragment) fragment).show(getSupportFragmentManager(), "EntryDialog");
             } else {
@@ -111,7 +135,7 @@ public class EntryActivity extends AppCompatActivity{
                 if (frag == null) {
                     //Show tool bar
                     toolbar.setVisibility(View.VISIBLE);
-                    fragmentContainer.setVisibility(View.VISIBLE);
+                    entryFragmentContainer.setVisibility(View.VISIBLE);
                 }
                 getSupportFragmentManager().executePendingTransactions();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragment).commit();
@@ -121,28 +145,55 @@ public class EntryActivity extends AppCompatActivity{
         }
     }
 
+    private void enableDarkOverlay(boolean show){
+        View view = findViewById(R.id.entry_dark_overlap);
+        if((view.getVisibility() == View.VISIBLE && show) || (view.getVisibility() == View.INVISIBLE && !show)) return;
+        view.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(show ? 0 : 1, show ? 1 : 0);
+        alphaAnimation.setDuration(100);
+        view.startAnimation(alphaAnimation);
+    }
+
+    private void setScheduledTaskListener(Intent intent) {
+        //Used to schedule tasks requested by child fragments
+        scheduler.cancelTasks();
+        getSupportFragmentManager().setFragmentResultListener(TaskScheduler.SCHEDULE, this, (requestKey, result) -> {
+            String taskType = result.getString(TaskScheduler.PARAM_TASK);
+            long delay = result.getLong(TaskScheduler.PARAM_DELAY);
+            long initTime = result.getLong(TaskScheduler.PARAM_INIT_TIME);
+            scheduler.schedule(TaskScheduler.TASK.valueOf(taskType), delay, initTime);
+        });
+    }
+
+    private void clearStatus() {
+        if(!isStatusPresent()) return;
+        getSupportFragmentManager().executePendingTransactions();
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .setCustomAnimations(R.anim.scale_up, R.anim.scale_down)
+                .remove(getSupportFragmentManager().findFragmentById(R.id.status_container))
+                .commitNow();
+    }
+
+    private boolean isStatusPresent() {
+        return getSupportFragmentManager().findFragmentById(R.id.status_container) != null;
+    }
+
     public void loadStatus(Intent intent) {
-        String action = intent.getAction();
-        if (InformationStatus.TRANS_COMPLETED.equals(action)) {
-            String msg = intent.getStringExtra(StatusData.PARAM_MSG); //For POSLinkEntry, msg might be empty
-            long code = intent.getLongExtra(StatusData.PARAM_CODE, 0L);
-            if (TextUtils.isEmpty(msg) || code == -3) {//Transaction Cancelled
-                finishAndRemoveTask();
-                return;
-            }
-            //Close Entry Dialog before prompt Trans Complete Dialog
-            UIFragmentHelper.closeDialog(getSupportFragmentManager(), "EntryDialog");
-        }
-        String dialogTag = UIFragmentHelper.createStatusDialogTag(action);
-        if(!TextUtils.isEmpty(dialogTag)) {
-            DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
-            if (dialogFragment != null) {
-                UIFragmentHelper.showDialog(getSupportFragmentManager(), dialogFragment, dialogTag);
-            } else {
-                UIFragmentHelper.closeDialog(getSupportFragmentManager(),dialogTag);
-            }
-        }else {
-            Logger.e("unsupported receive Status Action"+action);
+        StatusFragment statusFragment = InformationStatus.TRANS_COMPLETED.equals(intent.getAction()) ? new TransCompletedStatusFragment(intent, this) : new StatusFragment(intent, this);
+        getSupportFragmentManager().executePendingTransactions();
+
+        if(statusFragment.isConclusive()){
+            clearStatus();
+        } else if (statusFragment.isTerminationNeeded()) {
+            clearStatus();
+            scheduler.cancelTasks();
+            scheduler.schedule(TaskScheduler.TASK.FINISH, 1000, System.currentTimeMillis());
+        } else {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .setCustomAnimations(R.anim.scale_up, R.anim.scale_down)
+                    .replace(R.id.status_container, statusFragment).commitNow();
         }
     }
 
@@ -185,14 +236,12 @@ public class EntryActivity extends AppCompatActivity{
         }
     }
 
-
     /**
      * Broadcast Receiver to receive status updates from BroadPOS Manager
      * void registerUIReceiver()
      * void unregisterUIReceiver()
      * class POSLinkUIReceiver
      */
-
     private void registerUIReceiver(){
         receiver = new POSLinkUIReceiver();
         IntentFilter filter = new IntentFilter();
@@ -255,14 +304,11 @@ public class EntryActivity extends AppCompatActivity{
         }
     }
 
-    /**
-     * Forwards key events to fragments using ViewModel.
-     * For BaseEntryFragment and BaseEntryDialogFragment, two different view models have been used
-     * EntryViewModelFactory chooses the appropriate one
-     */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
+        if(isStatusPresent()) return true;
+
         if( event.getAction() == KeyEvent.ACTION_UP &&
                 (event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK) ){
             Bundle response = new Bundle();
@@ -272,6 +318,7 @@ public class EntryActivity extends AppCompatActivity{
         }
         return super.dispatchKeyEvent(event);
     }
+
     /**
      * Forwards Manager's broadcasts to fragments
      */
@@ -281,14 +328,15 @@ public class EntryActivity extends AppCompatActivity{
             Logger.i(getClass().getSimpleName() + " receives " + intent.getAction() + "\n" + (intent.getExtras()!=null?intent.getExtras().toString():"Empty Extras"));
 
             if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())){
-                Bundle response = new Bundle();
-                response.putString("action", EntryResponse.ACTION_ACCEPTED);
+                enableDarkOverlay(true);
+                Bundle response = new BundleMaker().addString("action", EntryResponse.ACTION_ACCEPTED).get();
                 getSupportFragmentManager().setFragmentResult("response", response);
             }else if(EntryResponse.ACTION_DECLINED.equals(intent.getAction())){
-                Bundle response = new Bundle();
-                response.putString("action", EntryResponse.ACTION_DECLINED);
-                response.putLong("code", intent.getLongExtra(EntryResponse.PARAM_CODE,0));
-                response.putString("message", intent.getStringExtra(EntryResponse.PARAM_MSG));
+                Bundle response = new BundleMaker()
+                        .addLong("code", intent.getLongExtra(EntryResponse.PARAM_CODE,0))
+                        .addString("message", intent.getStringExtra(EntryResponse.PARAM_MSG))
+                        .addString("action", EntryResponse.ACTION_DECLINED)
+                        .get();
                 getSupportFragmentManager().setFragmentResult("response", response);
             }else{
                 loadStatus(intent);

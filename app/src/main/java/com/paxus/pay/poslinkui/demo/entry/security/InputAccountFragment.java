@@ -121,12 +121,12 @@ public class InputAccountFragment extends BaseEntryFragment {
         }
         loadView(rootView);
 
-        DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
-        if (dialogFragment != null) {
-            String tag = "update_entry_mode";
-            UIFragmentHelper.showDialog(getParentFragmentManager(), dialogFragment, tag);
-            new Handler().postDelayed(() -> UIFragmentHelper.closeDialog(getParentFragmentManager(), tag), 2000);
-        }
+//        DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
+//        if (dialogFragment != null) {
+//            String tag = "update_entry_mode";
+//            UIFragmentHelper.showDialog(getParentFragmentManager(), dialogFragment, tag);
+//            new Handler().postDelayed(() -> UIFragmentHelper.closeDialog(getParentFragmentManager(), tag), 2000);
+//        }
     }
 
     private void updateCtlessLightStatus(String status) {

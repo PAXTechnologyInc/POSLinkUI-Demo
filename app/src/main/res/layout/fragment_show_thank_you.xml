@@ -11,23 +11,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/title"
-            android:textSize="25sp"
-            android:textColor="@color/purple_700"
-            android:autoSizeTextType="uniform"
+            android:textSize="@dimen/text_size_title"
             android:maxLines="1"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/message1"
-            android:autoSizeTextType="uniform"
-            android:textSize="20sp"
+            android:textSize="@dimen/text_size_subtitle"
             android:maxLines="1"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/message2"
-            android:textSize="20sp"
-            android:autoSizeTextType="uniform"
+            android:textSize="@dimen/text_size_subtitle"
             android:maxLines="1"/>
     </LinearLayout>
 

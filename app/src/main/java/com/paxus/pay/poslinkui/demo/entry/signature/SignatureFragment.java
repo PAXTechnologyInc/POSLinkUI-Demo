@@ -3,7 +3,6 @@ package com.paxus.pay.poslinkui.demo.entry.signature;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,8 +18,13 @@ import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implement signature entry action {@value SignatureEntry#ACTION_SIGNATURE}<br>
@@ -42,24 +46,17 @@ public class SignatureFragment extends BaseEntryFragment {
     private boolean enableCancel;
     private Button confirmBtn;
     private ElectronicSignatureView mSignatureView;
+
     private TextView timeoutView;
-    private long tickTimeout;
-    private final Handler handler = new Handler();
-    private final Runnable tick = new Runnable() {
-        @Override
-        public void run() {
-            tickTimeout = tickTimeout - 1000;
-            long tick = tickTimeout/1000;
-            if(timeoutView != null){
-                timeoutView.setText(String.valueOf(tick));
-            }
-            if(tick == 0){
-                //4.If timeout, sendTimeout
-                sendTimeout();
-            }else{
-                handler.postDelayed(this,1000);
-            }
-        }
+    private long tempTimeout;
+    private final long intervalMilis = 1000;
+
+    ScheduledExecutorService countdownUpdateScheduler;
+    ScheduledFuture<?> countdownFuture;
+    Runnable updateCountdown = () -> {
+        if(timeoutView != null) timeoutView.setText(String.valueOf(tempTimeout/intervalMilis));
+        if(tempTimeout<=0) countdownFuture.cancel(true);
+        tempTimeout -= intervalMilis;
     };
 
     @Override
@@ -70,13 +67,14 @@ public class SignatureFragment extends BaseEntryFragment {
     @Override
     protected void loadArgument(@NonNull Bundle bundle){
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
+        tempTimeout = timeOut;
 
         signLine1 = bundle.getString(EntryExtraData.PARAM_SIGNLINE1);
         signLine2 = bundle.getString(EntryExtraData.PARAM_SIGNLINE2);
         enableCancel = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_CANCEL);
         totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
         currency = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
-
+        countdownUpdateScheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
     @Override
@@ -123,15 +121,10 @@ public class SignatureFragment extends BaseEntryFragment {
 
             return false;
         });
-        timeoutView = rootView.findViewById(R.id.timeout);
-        tickTimeout = timeOut;
-        timeoutView.setText(String.valueOf(tickTimeout/1000));
-        handler.postDelayed(tick,1000);
-    }
+        getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+        timeoutView = rootView.findViewById(R.id.timeout);
+        countdownFuture = countdownUpdateScheduler.scheduleAtFixedRate(updateCountdown, 0, intervalMilis, TimeUnit.MILLISECONDS);
     }
 
     //1.When cancel button clicked, sendAbort
@@ -142,7 +135,7 @@ public class SignatureFragment extends BaseEntryFragment {
     //2.When clear button clicked, clear signature board and reset timeout.
     private void onClearButtonClicked(){
         mSignatureView.clear();
-        tickTimeout = timeOut;
+        tempTimeout = timeOut;
     }
 
     @Override
@@ -173,7 +166,7 @@ public class SignatureFragment extends BaseEntryFragment {
     }
 
     private void submit(short[] signature){
-        handler.removeCallbacks(tick); //Stop Tick
+        countdownFuture.cancel(true);
         Bundle bundle = new Bundle();
         bundle.putShortArray(EntryRequest.PARAM_SIGNATURE, signature);
         sendNext(bundle);
@@ -182,7 +175,13 @@ public class SignatureFragment extends BaseEntryFragment {
     @Override
     protected void sendAbort() {
         super.sendAbort();
-        handler.removeCallbacks(tick); //Stop Tick
+        countdownFuture.cancel(true);
     }
 
+    @Override
+    public void onDestroy() {
+        countdownFuture.cancel(true);
+        countdownUpdateScheduler.shutdownNow();
+        super.onDestroy();
+    }
 }
