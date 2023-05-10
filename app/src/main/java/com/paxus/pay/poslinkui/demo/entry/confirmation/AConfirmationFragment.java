@@ -9,50 +9,47 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
+import com.pax.us.pay.ui.constant.entry.EntryExtraData;
+import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.entry.BaseEntryDialogFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 
 /**
  * Abstract class for all entry actions defined in {@link ConfirmationEntry} <br>
  * except for {@value ConfirmationEntry#ACTION_CONFIRM_SURCHARGE_FEE} and {@value ConfirmationEntry#ACTION_CONFIRM_RECEIPT_VIEW}
  */
-public abstract class AConfirmationDialogFragment extends BaseEntryDialogFragment {
-    @Override
-    protected int getLayoutResourceId() {
-        return R.layout.fragment_confirmation_dialog;
-    }
+public abstract class AConfirmationFragment extends BaseEntryFragment {
+    private String message;
+    private String[] options;
 
     @Override
-    protected abstract void loadParameter(@NonNull Bundle bundle);
+    protected int getLayoutResourceId() {
+        return R.layout.fragment_confirmation;
+    }
+
+
+    @Override
+    protected void loadArgument(@NonNull Bundle bundle){
+        message = bundle.getString(EntryExtraData.PARAM_MESSAGE);
+        options = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
+    }
 
     @Override
     protected void loadView(View rootView) {
         TextView messageTv = rootView.findViewById(R.id.message);
-        messageTv.setText(formatMessage());
+        messageTv.setText(formatMessage(message));
 
         Button positiveButton = rootView.findViewById(R.id.confirm_button);
-        String positiveText = getPositiveText();
-        if(!TextUtils.isEmpty(positiveText)) {
-            positiveButton.setText(positiveText);
-            positiveButton.setOnClickListener( v-> onConfirmButtonClicked());
-        }else{
-            positiveButton.setVisibility(View.GONE);
-        }
+        positiveButton.setText(getPositiveText());
+        positiveButton.setOnClickListener( v-> onConfirmButtonClicked());
 
         Button negativeButton = rootView.findViewById(R.id.cancel_button);
         String negativeText = getNegativeText();
         if(!TextUtils.isEmpty(negativeText)) {
+            negativeButton.setVisibility(View.VISIBLE);
             negativeButton.setText(negativeText);
             negativeButton.setOnClickListener(v -> onNegativeButtonClicked());
-        }else{
-            negativeButton.setVisibility(View.GONE);
         }
-
-    }
-
-    private void onNegativeButtonClicked() {
-        submit(false);
     }
 
     @Override
@@ -60,19 +57,24 @@ public abstract class AConfirmationDialogFragment extends BaseEntryDialogFragmen
         submit(true);
     }
 
+    private void onNegativeButtonClicked() {
+        submit(false);
+    }
+
     protected void submit(boolean confirm) {
         Bundle bundle = new Bundle();
-        bundle.putBoolean(getRequestedParamName(), confirm);
+        bundle.putBoolean(EntryRequest.PARAM_CONFIRMED, confirm);
         sendNext(bundle);
     }
 
-    protected abstract @NonNull
-    String getRequestedParamName();
+    protected abstract String formatMessage(String message);
 
-    protected abstract String formatMessage();
+    @NonNull protected String getPositiveText(){
+        return (options != null && options.length>0) ? options[0] : getResources().getString(R.string.confirm_option_accept);
+    }
 
-    protected abstract String getPositiveText();
-
-    protected abstract String getNegativeText();
+    protected String getNegativeText(){
+        return (options != null && options.length>1) ? options[1] : null;
+    }
 
 }

@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
-import com.pax.us.pay.ui.constant.entry.EntryRequest;
 
 /**
  * Implement confirmation entry action {@link ConfirmationEntry#ACTION_CONFIRM_DCC} <br>
@@ -21,8 +20,7 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
  * if click Cancel, sendNext(false)
  * </p>
  */
-public class ConfirmDCCFragment extends AConfirmationDialogFragment {
-    private long timeout;
+public class ConfirmDCCFragment extends AConfirmationFragment {
     private String amountMessage;
     private String exchangeRate;
     private String currencyAlfCode;
@@ -31,8 +29,7 @@ public class ConfirmDCCFragment extends AConfirmationDialogFragment {
     private boolean confirmWithCurrency;
 
     @Override
-    protected void loadParameter(@NonNull Bundle bundle) {
-        timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
+    protected void loadArgument(@NonNull Bundle bundle) {
         amountMessage = bundle.getString(EntryExtraData.PARAM_AMOUNT_MESSAGE);
         exchangeRate = bundle.getString(EntryExtraData.PARAM_EXCHANGE_RATE);
         currencyAlfCode = bundle.getString(EntryExtraData.PARAM_CURRENCY_ALPHA_CODE);
@@ -42,14 +39,8 @@ public class ConfirmDCCFragment extends AConfirmationDialogFragment {
 
     }
 
-    @NonNull
     @Override
-    protected String getRequestedParamName() {
-        return EntryRequest.PARAM_CONFIRMED;
-    }
-
-    @Override
-    protected String formatMessage() {
+    protected String formatMessage(String message) {
         StringBuilder contentMsg = new StringBuilder();
         if (!TextUtils.isEmpty(amountMessage)) {
             contentMsg.append("USD ").append(amountMessage).append("\n");
@@ -67,7 +58,7 @@ public class ConfirmDCCFragment extends AConfirmationDialogFragment {
     }
 
     @Override
-    protected String getPositiveText() {
+    @NonNull protected String getPositiveText() {
         if (confirmWithCurrency && !TextUtils.isEmpty(currencyAlfCode)) {
             return "USD";
         } else {
