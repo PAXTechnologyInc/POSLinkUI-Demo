@@ -6,8 +6,6 @@ import androidx.annotation.NonNull;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
-import com.pax.us.pay.ui.constant.entry.EntryRequest;
-import com.pax.us.pay.ui.constant.entry.enumeration.ConfirmationType;
 import com.pax.us.pay.ui.constant.entry.enumeration.PrintStatusType;
 import com.paxus.pay.poslinkui.demo.R;
 
@@ -22,48 +20,16 @@ import java.util.List;
  * 2.If click NO, sendNext(false)
  * </p>
  */
-public class ConfirmPrinterStatusFragment extends AConfirmationDialogFragment {
-    private long timeout;
-    private String message;
-    private List<String> options;
+public class ConfirmPrinterStatusFragment extends AConfirmationFragment {
     private String printStatus;
 
     @Override
-    protected void loadParameter(@NonNull Bundle bundle) {
-        timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
-        message = bundle.getString(EntryExtraData.PARAM_MESSAGE);
-        String[] array = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
-        if (array != null) {
-            options = Arrays.asList(array);
-        }
+    protected void loadArgument(@NonNull Bundle bundle) {
         printStatus = bundle.getString(EntryExtraData.PARAM_PRINT_STATUS);
     }
 
-    @NonNull
     @Override
-    protected String getRequestedParamName() {
-        return EntryRequest.PARAM_CONFIRMED;
-    }
-
-    @Override
-    protected String getPositiveText() {
-        if (options != null && options.contains(ConfirmationType.YES)) {
-            return getString(R.string.confirm_option_yes);
-        }
-        return null;
-    }
-
-    @Override
-    protected String getNegativeText() {
-        if (options != null && options.contains(ConfirmationType.NO)) {
-            return getString(R.string.confirm_option_no);
-        }
-        return null;
-    }
-
-
-    @Override
-    protected String formatMessage() {
+    protected String formatMessage(String message) {
         if (PrintStatusType.PRINTER_OUT_OF_PAPER.equals(printStatus)) {
             return getString(R.string.prompt_printer_out_of_paper);
         } else if (PrintStatusType.PRINTER_HOT.equals(printStatus)) {

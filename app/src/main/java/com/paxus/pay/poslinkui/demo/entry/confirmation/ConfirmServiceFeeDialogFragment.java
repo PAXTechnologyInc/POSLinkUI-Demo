@@ -26,7 +26,6 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ConfirmServiceFeeDialogFragment extends BaseEntryDialogFragment {
-    private long timeout;
     private String feeName;
     private long totalAmount;
     private long feeAmount;
@@ -39,7 +38,6 @@ public class ConfirmServiceFeeDialogFragment extends BaseEntryDialogFragment {
 
     @Override
     protected void loadParameter(@NonNull Bundle bundle) {
-        timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         feeName = bundle.getString(EntryExtraData.PARAM_SERVICE_FEE_NAME);
         totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
         feeAmount = bundle.getLong(EntryExtraData.PARAM_SERVICE_FEE);

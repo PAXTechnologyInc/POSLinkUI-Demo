@@ -291,10 +291,6 @@
     <string name="e_wic">E WIC</string>
     <string name="both">BOTH</string>
     <string name="e_wic_voucher">E WIC VOUCHER</string>
-    <!-- BypassReason -->
-    <string name="want_to_bypass">Bypass</string>
-    <string name="cannot_read">Unable to Read</string>
-    <string name="does_not_exist">Not Present</string>
 
     <!-- SubTransType -->
     <string name="option_by_cardnum">BY CARDNUM</string>
