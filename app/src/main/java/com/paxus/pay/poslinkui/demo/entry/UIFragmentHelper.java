@@ -22,6 +22,7 @@ import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.CheckCardPresentFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.CheckDeactivateWarnFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmAdjustTipFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmBalanceFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmBatchCloseFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmCardEntryRetryFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmCardProcessResultFragment;
@@ -230,6 +231,7 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_CONFIRM_DCC, ConfirmDCCFragment.class);
             put(ConfirmationEntry.ACTION_START_UI, StartUIDialogFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_TOTAL_AMOUNT, ConfirmTotalAmountFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_BALANCE, ConfirmBalanceFragment.class);
         }
     };
 

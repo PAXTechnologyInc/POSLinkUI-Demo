@@ -28,6 +28,7 @@ public class SupplementPartialApprovalFragment extends AConfirmationFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
+        super.loadArgument(bundle);
         currency = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
         approvedAmt = bundle.getLong(EntryExtraData.PARAM_APPROVED_AMOUNT);
         total = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);

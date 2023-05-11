@@ -578,6 +578,7 @@
     <string name="confirm_application_update_with_batch_close">To apply the update, please close the current batch.\nDo you want to close now?</string>
     <string name="confirm_online_retry_offline">Retry Online Or Offline, Retry Online?</string>
     <string name="confirm_total_amount_message">Total Amount: %1$s.\nDo you wish to continue?</string>
+    <string name="confirm_balance_message">Balance: %1$s.\nDo you wish to continue?</string>
 
     <string name="prompt_printer_out_of_paper">Printer Out Of Paper, Retry?</string>
     <string name="confirm_printer_over_hot">Printer Over Hot, Retry?</string>

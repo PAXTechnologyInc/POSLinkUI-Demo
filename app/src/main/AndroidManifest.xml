@@ -143,6 +143,7 @@
                 <action android:name="com.pax.us.pay.action.CONFIRM_RECEIPT_SIGNATURE"/>
                 <action android:name="com.pax.us.pay.action.CONFIRM_SIGNATURE_MATCH"/>
                 <action android:name="com.pax.us.pay.action.CONFIRM_UNIFIED_MESSAGE" />
+                <action android:name="com.pax.us.pay.action.CONFIRM_BALANCE" />
                 <action android:name="com.pax.us.pay.action.CONFIRM_TOTAL_AMOUNT"/>
             </intent-filter>
             <intent-filter>
