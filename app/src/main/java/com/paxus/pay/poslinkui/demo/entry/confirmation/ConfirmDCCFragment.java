@@ -30,13 +30,13 @@ public class ConfirmDCCFragment extends AConfirmationFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
+        super.loadArgument(bundle);
         amountMessage = bundle.getString(EntryExtraData.PARAM_AMOUNT_MESSAGE);
         exchangeRate = bundle.getString(EntryExtraData.PARAM_EXCHANGE_RATE);
         currencyAlfCode = bundle.getString(EntryExtraData.PARAM_CURRENCY_ALPHA_CODE);
         foreignAmountMessage = bundle.getString(EntryExtraData.PARAM_FOREIGN_AMOUNT_MESSAGE);
         confirmWithCurrency = bundle.getBoolean(EntryExtraData.PARAM_CONFIRM_WITH_CURRENCY);
         margin = bundle.getString(EntryExtraData.PARAM_MARGIN);
-
     }
 
     @Override

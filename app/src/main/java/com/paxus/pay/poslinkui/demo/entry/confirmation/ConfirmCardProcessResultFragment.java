@@ -27,6 +27,7 @@ public class ConfirmCardProcessResultFragment extends AConfirmationFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
+        super.loadArgument(bundle);
         timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
     }
 

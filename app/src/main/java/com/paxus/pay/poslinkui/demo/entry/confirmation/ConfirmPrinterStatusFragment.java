@@ -25,6 +25,7 @@ public class ConfirmPrinterStatusFragment extends AConfirmationFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
+        super.loadArgument(bundle);
         printStatus = bundle.getString(EntryExtraData.PARAM_PRINT_STATUS);
     }
 

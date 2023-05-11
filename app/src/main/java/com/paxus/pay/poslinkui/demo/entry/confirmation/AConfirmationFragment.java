@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
@@ -29,7 +30,7 @@ public abstract class AConfirmationFragment extends BaseEntryFragment {
 
 
     @Override
-    protected void loadArgument(@NonNull Bundle bundle){
+    @CallSuper protected void loadArgument(@NonNull Bundle bundle){
         message = bundle.getString(EntryExtraData.PARAM_MESSAGE);
         options = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
     }
