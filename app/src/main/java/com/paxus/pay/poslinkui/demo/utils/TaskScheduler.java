@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.paxus.pay.poslinkui.demo.entry.task.FinishTask;
-import com.paxus.pay.poslinkui.demo.entry.task.GoHomeTask;
 import com.paxus.pay.poslinkui.demo.entry.task.ScheduledTask;
 import com.paxus.pay.poslinkui.demo.entry.task.TimeoutTask;
 
@@ -20,12 +19,11 @@ public class TaskScheduler {
 
 //Static Members
     public static final String SCHEDULE = "schedule", PARAM_DELAY = "delay", PARAM_TASK = "taskType", PARAM_INIT_TIME = "initTime";
-    public enum TASK {TIMEOUT, FINISH, GO_HOME}
+    public enum TASK {TIMEOUT, FINISH}
 
     private static Map<TASK, Class> TaskClassMap = new HashMap<TASK, Class>(){{
         put(TASK.TIMEOUT, TimeoutTask.class);
         put(TASK.FINISH, FinishTask.class);
-        put(TASK.GO_HOME, GoHomeTask.class);
     }};
 
     //This creates bundle necessary to send scheduling request from fragment to entryactivity

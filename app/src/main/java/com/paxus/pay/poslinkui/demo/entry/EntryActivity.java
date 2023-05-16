@@ -34,6 +34,8 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
+import java.util.Map;
+
 /**
  * Use fragment to implement all UI (Activity and Dialog).
  * <p>
@@ -58,7 +60,7 @@ public class EntryActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Logger.d("EntryActivity onCreate");
+        Logger.d( getClass().getSimpleName() + " onCreate");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_entry);
@@ -79,6 +81,7 @@ public class EntryActivity extends AppCompatActivity{
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Logger.d( getClass().getSimpleName() + " onNewIntent");
         super.onNewIntent(intent);
         loadEntry(intent);
         scheduler.cancelTasks();
@@ -108,8 +111,7 @@ public class EntryActivity extends AppCompatActivity{
     }
 
     private void loadEntry(Intent intent){
-        Logger.i(getClass().getSimpleName() + " receives " + intent.getAction() + "\n" + intent.getExtras().toString());
-
+        logIntent(intent);
         getIntent().setAction(intent.getAction());
         clearStatus();
         senderPackage = intent.getStringExtra(EntryExtraData.PARAM_PACKAGE);
@@ -143,6 +145,16 @@ public class EntryActivity extends AppCompatActivity{
         } else {
             Toast.makeText(this, "NOT FOUND:" + intent.getAction(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void logIntent(Intent intent) {
+        StringBuilder intentBuilder = new StringBuilder(getClass().getSimpleName() + " receives " + intent.getAction() + "\n");
+        if(intent.getExtras() != null){
+            for(String key : intent.getExtras().keySet()){
+                intentBuilder.append(key + ":\t\t" + intent.getExtras().get(key) + "\n");
+            }
+        }
+        Logger.i(intentBuilder.toString());
     }
 
     private void enableDarkOverlay(boolean show){
@@ -325,7 +337,7 @@ public class EntryActivity extends AppCompatActivity{
     public class POSLinkUIReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.i(getClass().getSimpleName() + " receives " + intent.getAction() + "\n" + (intent.getExtras()!=null?intent.getExtras().toString():"Empty Extras"));
+            logIntent(intent);
 
             if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())){
                 enableDarkOverlay(true);

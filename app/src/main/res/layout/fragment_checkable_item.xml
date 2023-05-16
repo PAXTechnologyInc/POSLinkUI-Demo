@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
-        android:background="@drawable/checkable_text"
+        android:background="@drawable/option_item_background"
+        android:textColor="@drawable/option_item_text_color"
         android:gravity="center"
 
         app:layout_constraintStart_toStartOf="parent"

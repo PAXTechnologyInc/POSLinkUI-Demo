@@ -8,7 +8,6 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 public class TimeoutTask extends ScheduledTask {
 
-
     public TimeoutTask(Activity activity) {
         super(activity);
         Logger.d(getClass().getSimpleName() + " initializing.");

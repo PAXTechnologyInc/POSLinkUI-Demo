@@ -39,8 +39,7 @@ public abstract class AOptionEntryFragment extends BaseEntryFragment {
 
         listView = rootView.findViewById(R.id.list_view);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(),
-                android.R.layout.simple_list_item_single_choice, getOptions());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.option_list_item, getOptions());
         listView.setAdapter(adapter);
 
         Button cancelButton = rootView.findViewById(R.id.cancel_button);

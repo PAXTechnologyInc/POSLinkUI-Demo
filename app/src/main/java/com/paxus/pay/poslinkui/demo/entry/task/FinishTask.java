@@ -8,7 +8,6 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 public class FinishTask extends ScheduledTask {
 
-
     public FinishTask(Activity activity) {
         super(activity);
         Logger.d(getClass().getSimpleName() + " initializing.");
