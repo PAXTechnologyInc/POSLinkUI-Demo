@@ -2,6 +2,8 @@ package com.paxus.pay.poslinkui.demo.entry.task;
 
 import android.app.Activity;
 
+import androidx.annotation.NonNull;
+
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 import java.util.concurrent.ScheduledFuture;
@@ -26,5 +28,11 @@ public abstract class ScheduledTask implements Runnable {
 
     public long getDelay() {
         return future.getDelay(TimeUnit.MILLISECONDS);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " " + ((future != null) ? ("Cancelled: " + future.isCancelled() + "\tDone: " + future.isDone() + "\tDelay: " + future.getDelay(TimeUnit.MILLISECONDS)) : "NULL");
     }
 }

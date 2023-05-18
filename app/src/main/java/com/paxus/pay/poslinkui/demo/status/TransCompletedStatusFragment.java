@@ -13,7 +13,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 public class TransCompletedStatusFragment extends StatusFragment {
-    long code, delay;
+    private long code, delay;
     private static final long DEFAULT_DELAY = 10000;
 
     private static final long TRANS_RESULT_CODE_FOR_INSTANT_TERMINATION = -3;
@@ -24,10 +24,8 @@ public class TransCompletedStatusFragment extends StatusFragment {
         this.delay = getArguments().getLong(StatusData.PARAM_HOST_RESP_TIMEOUT, DEFAULT_DELAY);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.FINISH, delay));
+    public long getDelay(){
+        return delay;
     }
 
     @Override
@@ -38,7 +36,7 @@ public class TransCompletedStatusFragment extends StatusFragment {
     }
 
     @Override
-    public boolean isTerminationNeeded() {
+    public boolean isImmediateTerminationNeeded() {
         return this.message == null || this.message.isEmpty() || this.code == TRANS_RESULT_CODE_FOR_INSTANT_TERMINATION;
     }
 }

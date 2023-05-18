@@ -169,9 +169,8 @@ public class StatusFragment extends Fragment {
         return message;
     }
 
-    public boolean isTerminationNeeded() {
+    public boolean isImmediateTerminationNeeded() {
         return false;
     }
-
 
 }

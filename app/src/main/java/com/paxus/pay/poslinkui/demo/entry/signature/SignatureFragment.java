@@ -136,6 +136,7 @@ public class SignatureFragment extends BaseEntryFragment {
     private void onClearButtonClicked(){
         mSignatureView.clear();
         tempTimeout = timeOut;
+        getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
     }
 
     @Override

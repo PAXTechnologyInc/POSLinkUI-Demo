@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -33,8 +32,6 @@ import com.paxus.pay.poslinkui.demo.utils.BundleMaker;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
-
-import java.util.Map;
 
 /**
  * Use fragment to implement all UI (Activity and Dialog).
@@ -75,7 +72,6 @@ public class EntryActivity extends AppCompatActivity{
         registerUIReceiver();
         scheduler = new TaskScheduler(this);
 
-        Logger.i(getClass().getSimpleName() + " receives " + getIntent().getAction() + "\n" + getIntent().getExtras().toString());
         loadEntry(getIntent());
     }
 
@@ -85,21 +81,6 @@ public class EntryActivity extends AppCompatActivity{
         super.onNewIntent(intent);
         loadEntry(intent);
         scheduler.cancelTasks();
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Logger.d(getClass().getSimpleName() +" onSaveInstanceState");
-        unregisterUIReceiver();
-        scheduler.cancelTasks();
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        Logger.d(getClass().getSimpleName() +" onRestoreInstanceState");
-        registerUIReceiver();
     }
 
     @Override
@@ -179,12 +160,11 @@ public class EntryActivity extends AppCompatActivity{
 
     private void clearStatus() {
         if(!isStatusPresent()) return;
-        getSupportFragmentManager().executePendingTransactions();
         getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .setCustomAnimations(R.anim.scale_up, R.anim.scale_down)
-                .remove(getSupportFragmentManager().findFragmentById(R.id.status_container))
-                .commitNow();
+            .setReorderingAllowed(true)
+            .setCustomAnimations(R.anim.anim_enter_from_bottom, R.anim.anim_exit_to_bottom)
+            .remove(getSupportFragmentManager().findFragmentById(R.id.status_container))
+            .commit();
     }
 
     private boolean isStatusPresent() {
@@ -197,15 +177,20 @@ public class EntryActivity extends AppCompatActivity{
 
         if(statusFragment.isConclusive()){
             clearStatus();
-        } else if (statusFragment.isTerminationNeeded()) {
+        } else if (statusFragment.isImmediateTerminationNeeded()) {
             clearStatus();
             scheduler.cancelTasks();
             scheduler.schedule(TaskScheduler.TASK.FINISH, 1000, System.currentTimeMillis());
         } else {
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .setCustomAnimations(R.anim.scale_up, R.anim.scale_down)
-                    .replace(R.id.status_container, statusFragment).commitNow();
+            if(statusFragment instanceof TransCompletedStatusFragment) {
+                scheduler.schedule(TaskScheduler.TASK.FINISH, ((TransCompletedStatusFragment) statusFragment).getDelay(), System.currentTimeMillis());
+            }
+
+            if(!getSupportFragmentManager().isStateSaved()) {
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.anim_enter_from_bottom, R.anim.anim_exit_to_bottom)
+                        .replace(R.id.status_container, statusFragment).commit();
+            }
         }
     }
 

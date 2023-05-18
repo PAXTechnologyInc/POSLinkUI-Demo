@@ -39,6 +39,7 @@ public class TaskScheduler {
     public TaskScheduler(Activity activity){
         activityForContext = activity;
         scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        //scheduledExecutorService.scheduleAtFixedRate(() -> Logger.d(scheduledTaskMap), 0, 1000, TimeUnit.MILLISECONDS);
     }
 
     public void shutdown(){
@@ -47,9 +48,9 @@ public class TaskScheduler {
     }
 
     public void cancelTask(TASK taskType){
-        if(scheduledTaskMap.containsKey(taskType.name())){
-            scheduledTaskMap.get(taskType.name()).cancel();
-            scheduledTaskMap.remove(taskType.name());
+        if(scheduledTaskMap.containsKey(taskType)){
+            scheduledTaskMap.get(taskType).cancel();
+            scheduledTaskMap.remove(taskType);
         }
     }
     public void cancelTasks() {
