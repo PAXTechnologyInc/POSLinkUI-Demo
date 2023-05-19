@@ -28,6 +28,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,10 +61,6 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
     private List<String> hardKeyList;
     private String barcodeType;
     private String barcodeData;
-
-
-    private Handler handler;
-    private final Runnable timeoutRun = () -> sendTimeout();
 
     @Override
     protected int getLayoutResourceId() {
@@ -132,8 +129,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         formatButton(btn3, button3Name, button3Color, "3");
 
         if(timeOut > 0 ) {
-            handler = new Handler();
-            handler.postDelayed(timeoutRun, timeOut);
+            getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
         }
 
         if(enableHardKey) {
@@ -204,26 +200,6 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
             }
         }else{
             button.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    protected void onEntryAccepted() {
-        super.onEntryAccepted();
-
-        if(handler!= null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if(handler != null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
         }
     }
 

@@ -141,6 +141,7 @@ public abstract class BaseEntryFragment extends Fragment {
 
     protected void sendNext(Bundle bundle){
         EditabilityBlocker.getInstance().block((ViewGroup) getView());
+        prepareEditTextsForSubmissionWithSoftKeyboard();
         EntryRequestUtils.sendNext(requireContext(), senderPackage, action, bundle);
     }
 

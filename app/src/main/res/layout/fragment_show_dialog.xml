@@ -15,7 +15,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/title"
                 android:textSize="28sp"
-                android:autoSizeTextType="uniform"
                 android:maxLines="1"
                 android:gravity="center"/>
             <LinearLayout

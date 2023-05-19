@@ -16,6 +16,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.ManageUIConst;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 /**
  * Implement text entry actions:<br>
@@ -34,9 +35,6 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
     private String[] labelProps;
     private String buttonType;
 
-    private Handler handler;
-    private final Runnable timeoutRun = () -> sendTimeout();
-
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_show_dialog_form;
@@ -50,7 +48,6 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
         labels = bundle.getStringArray(EntryExtraData.PARAM_LABELS);
         labelProps = bundle.getStringArray(EntryExtraData.PARAM_LABELS_PROPERTY);
         buttonType = bundle.getString(EntryExtraData.PARAM_BUTTON_TYPE, ManageUIConst.ButtonType.RADIO_BUTTON);
-
     }
 
     @Override
@@ -62,8 +59,7 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
         }
 
         if(timeOut > 0 ) {
-            handler = new Handler();
-            handler.postDelayed(timeoutRun, timeOut);
+            getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
         }
     }
 
@@ -89,26 +85,6 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
                 submit(bundle.getString(ShowDialogFormCheckBoxFragment.CHECKED_INDEX));
             }
         });
-    }
-
-    @Override
-    protected void onEntryAccepted() {
-        super.onEntryAccepted();
-
-        if(handler!= null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if(handler != null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
     }
 
     private void submit(String selectLabel){

@@ -22,8 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             String appVer = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-            TextView versionText = (TextView)findViewById(R.id.version);
-            versionText.setText("Version:"+appVer);
+            ((TextView)findViewById(R.id.version)).setText("Version: "+appVer);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

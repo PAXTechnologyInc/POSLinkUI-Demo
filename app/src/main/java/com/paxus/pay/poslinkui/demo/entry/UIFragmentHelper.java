@@ -120,8 +120,6 @@ import com.paxus.pay.poslinkui.demo.entry.text.text.OrderNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.OrigTransIdentifierFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.PoNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.ProdDescFragment;
-import com.paxus.pay.poslinkui.demo.status.StatusDialogFragment;
-import com.paxus.pay.poslinkui.demo.status.TransCompletedDialogFragment;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 import java.util.HashMap;
@@ -316,55 +314,6 @@ public class UIFragmentHelper {
             return fragment;
         } catch (Exception e) {
             Logger.e(e);
-        }
-        return null;
-    }
-
-    /**
-     * Create all dialogs
-     *
-     * @param intent Intent
-     * @return DialogFragment
-     */
-    public static DialogFragment createStatusDialogFragment(Intent intent) {
-        String action = intent.getAction();
-        Set<String> categories = intent.getCategories();
-        if (action != null) {
-            switch (action) {
-                case InformationStatus.TRANS_COMPLETED: {
-                    if (categories == null) {
-                        Logger.e("WARNING:\"" + action + "\" Category is missing!");
-                    }
-                    return TransCompletedDialogFragment.newInstance(intent);
-                }
-                case InformationStatus.TRANS_ONLINE_STARTED:
-                case InformationStatus.EMV_TRANS_ONLINE_STARTED:
-                case InformationStatus.RKI_STARTED:
-                case InformationStatus.DCC_ONLINE_STARTED:
-                case InformationStatus.PINPAD_CONNECTION_STARTED:
-                case InformationStatus.ENTER_PIN_STARTED:
-                case CardStatus.CARD_REMOVAL_REQUIRED:
-                case CardStatus.CARD_QUICK_REMOVAL_REQUIRED:
-                case CardStatus.CARD_SWIPE_REQUIRED:
-                case CardStatus.CARD_INSERT_REQUIRED:
-                case CardStatus.CARD_TAP_REQUIRED:
-                case BatchStatus.BATCH_CLOSE_UPLOADING:
-                case BatchStatus.BATCH_SF_UPLOADING:
-                case CardStatus.CARD_PROCESS_STARTED: {
-                    if (categories == null) {
-                        Logger.e("WARNING:\"" + action + "\" Category is missing!");
-                    }
-                    return (DialogFragment) createFragment(StatusDialogFragment.class, intent);
-                }
-                case Uncategory.PRINT_STARTED:
-                case Uncategory.FILE_UPDATE_STARTED:
-                case Uncategory.FCP_FILE_UPDATE_STARTED:
-                case Uncategory.LOG_UPLOAD_STARTED:
-                case Uncategory.LOG_UPLOAD_CONNECTED:
-                case Uncategory.LOG_UPLOAD_UPLOADING:
-                case Uncategory.CAPK_UPDATE_STARTED:
-                    return (DialogFragment) createFragment(StatusDialogFragment.class, intent);
-            }
         }
         return null;
     }

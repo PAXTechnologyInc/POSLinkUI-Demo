@@ -4,16 +4,15 @@
     <item>
         <selector>
             <item android:state_checked="true">
-                <shape
-                    android:shape="rectangle"
-                    android:tint="@color/pastel_accent">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/pastel_accent"/>
                     <corners android:radius="@dimen/corner_radius" />
                 </shape>
             </item>
             <item android:state_checked="false">
-                <shape
-                    android:shape="rectangle"
-                    android:tint="@color/pastel_primary">
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/transparent"/>
+                    <stroke android:width="0.3mm" android:color="@color/pastel_on_background"/>
                     <corners android:radius="@dimen/corner_radius" />
                 </shape>
             </item>
