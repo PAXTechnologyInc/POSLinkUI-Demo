@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        finishAndRemoveTask();
+    protected void onStop() {
+        super.onStop();
+        finish();
     }
 }
