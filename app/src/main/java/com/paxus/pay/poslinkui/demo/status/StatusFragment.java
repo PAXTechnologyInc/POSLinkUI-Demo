@@ -28,6 +28,8 @@ public class StatusFragment extends Fragment {
     protected Intent intent;
     protected  String message;
 
+    public static final long DURATION_DEFAULT = 5000, DURATION_SHORT = 1000;
+
     public StatusFragment(Intent intent, Context context) {
         this.intent = intent;
         Bundle bundle = new Bundle();

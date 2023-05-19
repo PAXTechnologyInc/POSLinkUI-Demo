@@ -33,6 +33,8 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
+import java.util.Objects;
+
 /**
  * Use fragment to implement all UI (Activity and Dialog).
  * <p>
@@ -51,7 +53,6 @@ public class EntryActivity extends AppCompatActivity{
 
     private String transType = "";
     private String transMode = "";
-    private String senderPackage = "";
 
     TaskScheduler scheduler;
 
@@ -95,7 +96,6 @@ public class EntryActivity extends AppCompatActivity{
         logIntent(intent);
         getIntent().setAction(intent.getAction());
         clearStatus();
-        senderPackage = intent.getStringExtra(EntryExtraData.PARAM_PACKAGE);
         setScheduledTaskListener(intent);
         enableDarkOverlay(false);
 
@@ -132,7 +132,7 @@ public class EntryActivity extends AppCompatActivity{
         StringBuilder intentBuilder = new StringBuilder(getClass().getSimpleName() + " receives " + intent.getAction() + "\n");
         if(intent.getExtras() != null){
             for(String key : intent.getExtras().keySet()){
-                intentBuilder.append(key + ":\t\t" + intent.getExtras().get(key) + "\n");
+                intentBuilder.append(key).append(":\t\t").append(intent.getExtras().get(key)).append("\n");
             }
         }
         Logger.i(intentBuilder.toString());
@@ -163,7 +163,7 @@ public class EntryActivity extends AppCompatActivity{
         getSupportFragmentManager().beginTransaction()
             .setReorderingAllowed(true)
             .setCustomAnimations(R.anim.anim_enter_from_bottom, R.anim.anim_exit_to_bottom)
-            .remove(getSupportFragmentManager().findFragmentById(R.id.status_container))
+            .remove(Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.status_container)))
             .commit();
     }
 
@@ -180,7 +180,7 @@ public class EntryActivity extends AppCompatActivity{
         } else if (statusFragment.isImmediateTerminationNeeded()) {
             clearStatus();
             scheduler.cancelTasks();
-            scheduler.schedule(TaskScheduler.TASK.FINISH, 1000, System.currentTimeMillis());
+            scheduler.schedule(TaskScheduler.TASK.FINISH, StatusFragment.DURATION_SHORT, System.currentTimeMillis());
         } else {
             if(statusFragment instanceof TransCompletedStatusFragment) {
                 scheduler.schedule(TaskScheduler.TASK.FINISH, ((TransCompletedStatusFragment) statusFragment).getDelay(), System.currentTimeMillis());
@@ -188,8 +188,8 @@ public class EntryActivity extends AppCompatActivity{
 
             if(!getSupportFragmentManager().isStateSaved()) {
                 getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.anim_enter_from_bottom, R.anim.anim_exit_to_bottom)
-                        .replace(R.id.status_container, statusFragment).commit();
+                    .setCustomAnimations(R.anim.anim_enter_from_bottom, R.anim.anim_exit_to_bottom)
+                    .replace(R.id.status_container, statusFragment).commit();
             }
         }
     }

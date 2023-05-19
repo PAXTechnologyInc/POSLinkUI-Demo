@@ -14,14 +14,13 @@ import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 public class TransCompletedStatusFragment extends StatusFragment {
     private long code, delay;
-    private static final long DEFAULT_DELAY = 10000;
 
     private static final long TRANS_RESULT_CODE_FOR_INSTANT_TERMINATION = -3;
 
     public TransCompletedStatusFragment(Intent intent, Context context) {
         super(intent, context);
         this.code = getArguments().getLong(StatusData.PARAM_CODE);
-        this.delay = getArguments().getLong(StatusData.PARAM_HOST_RESP_TIMEOUT, DEFAULT_DELAY);
+        this.delay = getArguments().getLong(StatusData.PARAM_HOST_RESP_TIMEOUT, DURATION_DEFAULT);
     }
 
     public long getDelay(){
