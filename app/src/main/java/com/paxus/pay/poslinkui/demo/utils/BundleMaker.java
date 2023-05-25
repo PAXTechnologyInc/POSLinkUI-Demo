@@ -19,6 +19,11 @@ public class BundleMaker {
         return this;
     }
 
+    public BundleMaker addBundle(Bundle bundle) {
+        if(bundle != null) this.bundle.putAll(bundle);
+        return this;
+    }
+
     public Bundle get(){
         return bundle;
     }

@@ -34,14 +34,14 @@ A simple explanation for reading log (Step by Step)
 - POSLinkUIDemo create activity per intent
     > start Entry Action "com.pax.us.pay.action.ENTER_AMOUNT"
 - After click confirm button, POSLInkUIDemo send next broadcast with result to BroadPOS
-    > send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
+    > Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
 - BroadPOS return entry response tell POSLinkUIDemo that the result could be accepted or declined
 - If declined, that means the input is not valid, user need retry. Generally POSLinkUIDemo will show a toast message.
-    > receive Entry Response ACTION_DECLINED for action "com.pax.us.pay.action.ENTER_AMOUNT" (-32-Please Input Amount)
+    > Receive Response Broadcast ACTION_DECLINED for action "com.pax.us.pay.action.ENTER_AMOUNT" (-32-Please Input Amount)
 - After user redo input amount, click confirm button, POSLinkUIDemo request next again.
-    > send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
+    > Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
 - Finally, ACTION_NEXT was accepted. The ENTER_AMOUNT action end.
-    > receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_AMOUNT"
+    > Receive Response Broadcast ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_AMOUNT"
 - Then generally BroadPOS will go to next step. Like startActivity for enter tip.
     > start Entry Action "com.pax.us.pay.action.ENTER_TIP"
 
@@ -54,29 +54,29 @@ A simple explanation for reading log (Step by Step)
     AmountTextWatcher afterTextChanged:$0.01
     AmountTextWatcher afterTextChanged:$0.10
     AmountTextWatcher afterTextChanged:$1.00
-    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
-    receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_AMOUNT"
+    Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
+    Receive Response Broadcast ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_AMOUNT"
     EntryActivity onNewIntent
     start Entry Action "com.pax.us.pay.action.ENTER_TIP"
     TipFragment onCreateView
     AmountFragment onDestroy
-    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
-    receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_TIP"
+    Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
+    Receive Response Broadcast ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_TIP"
     EntryActivity onNewIntent
     start Entry Action "com.pax.us.pay.action.INPUT_ACCOUNT"
     InputAccountFragment onCreateView
     TipFragment onDestroy
-    send Entry Request ACTION_SECURITY_AREA for action "com.pax.us.pay.action.INPUT_ACCOUNT"
+    Send Request Broadcast ACTION_SECURITY_AREA for action "com.pax.us.pay.action.INPUT_ACCOUNT"
     receive Status Action "com.pax.us.pay.CLSS_LIGHT_READY_FOR_TXN"
     receive Status Action "com.pax.us.pay.CLSS_LIGHT_READY_FOR_TXN"
     receive Status Action "com.pax.us.pay.CARD_PROCESS_STARTED"
     receive Status Action "com.pax.us.pay.CARD_PROCESS_COMPLETED"
-    receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.INPUT_ACCOUNT"
+    Receive Response Broadcast ACTION_ACCEPTED for action "com.pax.us.pay.action.INPUT_ACCOUNT"
     EntryActivity onNewIntent
     start Entry Action "com.pax.us.pay.action.SELECT_AID"
     OptionsDialogFragment onCreateView
-    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.SELECT_AID"
-    receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.SELECT_AID"
+    Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.SELECT_AID"
+    Receive Response Broadcast ACTION_ACCEPTED for action "com.pax.us.pay.action.SELECT_AID"
     OptionsDialogFragment onDismiss
     receive Status Action "com.pax.us.pay.CARD_PROCESS_STARTED"
     receive Status Action "com.pax.us.pay.CARD_PROCESS_COMPLETED"
@@ -97,27 +97,27 @@ A simple explanation for reading log (Step by Step)
     PIN Layout[key_5]:Rect(166, 820 - 307, 960)
     PIN Layout[key_2]:Rect(166, 665 - 307, 804)
     PIN Layout[key_1]:Rect(8, 665 - 150, 804)
-    send Entry Request ACTION_SET_PIN_KEY_LAYOUT for action "com.pax.us.pay.action.ENTER_PIN"
-    send Entry Request ACTION_SECURITY_AREA for action "com.pax.us.pay.action.ENTER_PIN"
+    Send Request Broadcast ACTION_SET_PIN_KEY_LAYOUT for action "com.pax.us.pay.action.ENTER_PIN"
+    Send Request Broadcast ACTION_SECURITY_AREA for action "com.pax.us.pay.action.ENTER_PIN"
     receive Status Action "com.pax.us.pay.PIN_ENTERING"
     receive Status Action "com.pax.us.pay.PIN_ENTERING"
     receive Status Action "com.pax.us.pay.PIN_ENTERING"
     receive Status Action "com.pax.us.pay.PIN_ENTERING"
-    receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_PIN"
+    Receive Response Broadcast ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_PIN"
     receive Status Action "com.pax.us.pay.CARD_REMOVAL_REQUIRED"
     receive Status Action "com.pax.us.pay.CARD_REMOVED"
     EntryActivity onCreate
     start Entry Action "com.pax.us.pay.action.GET_SIGNATURE"
     SignatureFragment onCreateView
     EntryActivity onSaveInstanceState
-    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.GET_SIGNATURE"
-    receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.GET_SIGNATURE"
+    Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.GET_SIGNATURE"
+    Receive Response Broadcast ACTION_ACCEPTED for action "com.pax.us.pay.action.GET_SIGNATURE"
     EntryActivity onNewIntent
     start Entry Action "com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW"
     ConfirmReceiptViewFragment onCreateView
     SignatureFragment onDestroy
-    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW"
-    receive Entry Response ACTION_ACCEPTED for action "com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW"
+    Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW"
+    Receive Response Broadcast ACTION_ACCEPTED for action "com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW"
     receive Status Action "com.pax.us.pay.PRINT_STARTED"
     receive Status Action "com.pax.us.pay.PRINT_COMPLETED"
     EntryActivity onNewIntent
@@ -126,7 +126,7 @@ A simple explanation for reading log (Step by Step)
     PINFragment onDestroy
     EntryActivity onDestroy
     ConfirmationDialogFragment onDismiss
-    send Entry Request ACTION_NEXT from action  "com.pax.us.pay.action.CONFIRM_PRINT_CUSTOMER_COPY"
+    Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.CONFIRM_PRINT_CUSTOMER_COPY"
     receive Status Action "com.pax.us.pay.PRINT_STARTED"
     receive Status Action "com.pax.us.pay.PRINT_COMPLETED"
     receive Status Action "com.pax.us.pay.PRINT_COMPLETED"

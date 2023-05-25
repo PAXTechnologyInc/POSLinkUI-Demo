@@ -28,7 +28,7 @@ public class ViewUtils {
             ViewGroup rootView = activity.findViewById(android.R.id.content);
             if (null == rootView.findViewWithTag(WATERMARK_TAG)) {
                 View waterMarkView = LayoutInflater.from(activity).inflate(R.layout.layout_watermark, null);
-                Drawable bitmapDrawable = genWaterMark(content);
+                Drawable bitmapDrawable = genWaterMark(activity, content);
                 waterMarkView.setBackground(bitmapDrawable);
                 //avoid re-draw
                 waterMarkView.setTag(WATERMARK_TAG);
@@ -47,9 +47,9 @@ public class ViewUtils {
         }
     }
 
-    public static BitmapDrawable genWaterMark(String content) {
+    public static BitmapDrawable genWaterMark(Activity activity, String content) {
         TextPaint paint = new TextPaint();
-        paint.setColor(Color.YELLOW);
+        paint.setColor(activity.getBaseContext().getResources().getColor(R.color.pastel_secondary));
         paint.setAlpha(100);
         paint.setAntiAlias(true);
         paint.setTextAlign(Paint.Align.LEFT);
