@@ -33,6 +33,7 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -132,7 +133,10 @@ public class EntryActivity extends AppCompatActivity{
         StringBuilder intentBuilder = new StringBuilder(getClass().getSimpleName() + " receives " + intent.getAction() + "\n");
         if(intent.getExtras() != null){
             for(String key : intent.getExtras().keySet()){
-                intentBuilder.append(key).append(":\t\t").append(intent.getExtras().get(key)).append("\n");
+                intentBuilder.append(key).append(": ");
+                boolean isArray = intent.getExtras().get(key) != null && intent.getExtras().get(key).getClass().isArray();
+                intentBuilder.append(isArray ? Arrays.toString((String[])intent.getExtras().get(key)) : intent.getExtras().get(key));
+                intentBuilder.append(System.lineSeparator());
             }
         }
         Logger.i(intentBuilder.toString());
