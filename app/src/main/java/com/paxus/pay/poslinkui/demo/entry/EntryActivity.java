@@ -29,6 +29,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.status.StatusFragment;
 import com.paxus.pay.poslinkui.demo.status.TransCompletedStatusFragment;
 import com.paxus.pay.poslinkui.demo.utils.BundleMaker;
+import com.paxus.pay.poslinkui.demo.utils.InterfaceHistory;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
@@ -50,17 +51,21 @@ public class EntryActivity extends AppCompatActivity{
     private FragmentContainerView statusFragmentContainer;
     private FragmentContainerView entryFragmentContainer;
 
-    private BroadcastReceiver receiver;
+    private StatusBroadcastReceiver statusBroadcastReceiver;
+    private ResponseBroadcastReceiver responseBroadcastReceiver;
 
     private String transType = "";
     private String transMode = "";
 
     TaskScheduler scheduler;
+    InterfaceHistory interfaceHistory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Logger.d( getClass().getSimpleName() + " onCreate");
         super.onCreate(savedInstanceState);
+
+        interfaceHistory = new InterfaceHistory();
 
         setContentView(R.layout.activity_entry);
         toolbar = findViewById(R.id.toolbar);
@@ -95,6 +100,7 @@ public class EntryActivity extends AppCompatActivity{
 
     private void loadEntry(Intent intent){
         logIntent(intent);
+        interfaceHistory.add(intent.getStringExtra("interfaceID"), intent.getAction());
         getIntent().setAction(intent.getAction());
         clearStatus();
         setScheduledTaskListener(intent);
@@ -241,73 +247,29 @@ public class EntryActivity extends AppCompatActivity{
      * Broadcast Receiver to receive status updates from BroadPOS Manager
      * void registerUIReceiver()
      * void unregisterUIReceiver()
-     * class POSLinkUIReceiver
      */
     private void registerUIReceiver(){
-        receiver = new POSLinkUIReceiver();
-        IntentFilter filter = new IntentFilter();
-        //----------------Entry Response-----------------
-        filter.addAction(EntryResponse.ACTION_ACCEPTED);
-        filter.addAction(EntryResponse.ACTION_DECLINED);
+        statusBroadcastReceiver = new StatusBroadcastReceiver();
+        this.registerReceiver(statusBroadcastReceiver, statusBroadcastReceiver.getFilter());
 
-        //-----------------Uncategory Status-----------------
-        filter.addAction(Uncategory.PRINT_STARTED);
-        filter.addAction(Uncategory.PRINT_COMPLETED);
-        filter.addAction(Uncategory.FILE_UPDATE_STARTED);
-        filter.addAction(Uncategory.FILE_UPDATE_COMPLETED);
-        filter.addAction(Uncategory.FCP_FILE_UPDATE_STARTED);
-        filter.addAction(Uncategory.FCP_FILE_UPDATE_COMPLETED);
-        filter.addAction(Uncategory.CAPK_UPDATE_STARTED);
-        filter.addAction(Uncategory.CAPK_UPDATE_COMPLETED);
-        filter.addAction(Uncategory.LOG_UPLOAD_STARTED);
-        filter.addAction(Uncategory.LOG_UPLOAD_CONNECTED);
-        filter.addAction(Uncategory.LOG_UPLOAD_UPLOADING);
-        filter.addAction(Uncategory.LOG_UPLOAD_COMPLETED);
-
-        //----------------Information Status-----------------
-        filter.addCategory(InformationStatus.CATEGORY);
-        filter.addAction(InformationStatus.DCC_ONLINE_STARTED);
-        filter.addAction(InformationStatus.DCC_ONLINE_FINISHED);
-        filter.addAction(InformationStatus.EMV_TRANS_ONLINE_STARTED);
-        filter.addAction(InformationStatus.EMV_TRANS_ONLINE_FINISHED);
-        filter.addAction(InformationStatus.TRANS_ONLINE_STARTED);
-        filter.addAction(InformationStatus.TRANS_ONLINE_FINISHED);
-        filter.addAction(InformationStatus.RKI_STARTED);
-        filter.addAction(InformationStatus.RKI_FINISHED);
-        filter.addAction(InformationStatus.PINPAD_CONNECTION_STARTED);
-        filter.addAction(InformationStatus.PINPAD_CONNECTION_FINISHED);
-        filter.addAction(InformationStatus.TRANS_COMPLETED);
-        filter.addAction(InformationStatus.ERROR);
-        filter.addAction(InformationStatus.ENTER_PIN_STARTED);
-
-        //----------------Card Status-----------------
-        filter.addCategory(CardStatus.CATEGORY);
-        filter.addAction(CardStatus.CARD_REMOVED);
-        filter.addAction(CardStatus.CARD_REMOVAL_REQUIRED);
-        filter.addAction(CardStatus.CARD_QUICK_REMOVAL_REQUIRED);
-        filter.addAction(CardStatus.CARD_PROCESS_STARTED);
-        filter.addAction(CardStatus.CARD_PROCESS_COMPLETED);
-
-        //----------------Batch Status-----------------
-        filter.addCategory(BatchStatus.CATEGORY);
-        filter.addAction(BatchStatus.BATCH_SF_UPLOADING);
-        filter.addAction(BatchStatus.BATCH_SF_COMPLETED);
-        filter.addAction(BatchStatus.BATCH_CLOSE_UPLOADING);
-        filter.addAction(BatchStatus.BATCH_CLOSE_COMPLETED);
-
-        this.registerReceiver(receiver, filter);
+        responseBroadcastReceiver = new ResponseBroadcastReceiver();
+        this.registerReceiver(responseBroadcastReceiver, responseBroadcastReceiver.getFilter());
     }
     
     private void unregisterUIReceiver(){
-        if(receiver != null){
-            this.unregisterReceiver(receiver);
-            receiver = null;
+        if(statusBroadcastReceiver != null) {
+            this.unregisterReceiver(statusBroadcastReceiver);
+            statusBroadcastReceiver = null;
+        }
+        if(responseBroadcastReceiver != null) {
+            this.unregisterReceiver(responseBroadcastReceiver);
+            responseBroadcastReceiver = null;
         }
     }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
+//        Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
         if(isStatusPresent()) return true;
 
         if( event.getAction() == KeyEvent.ACTION_UP &&
@@ -323,25 +285,92 @@ public class EntryActivity extends AppCompatActivity{
     /**
      * Forwards Manager's broadcasts to fragments
      */
-    public class POSLinkUIReceiver extends BroadcastReceiver {
+    public class ResponseBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             logIntent(intent);
 
-            if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())){
+            //Validation
+            boolean isValid = interfaceHistory.validate(intent.getStringExtra("interfaceID"), intent.getStringExtra("originatingAction"));
+            if(!isValid) return;
+
+            //Acceptance needs to block the view
+            if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())) {
                 enableDarkOverlay(true);
-                Bundle response = new BundleMaker().addString("action", EntryResponse.ACTION_ACCEPTED).get();
-                getSupportFragmentManager().setFragmentResult("response", response);
-            }else if(EntryResponse.ACTION_DECLINED.equals(intent.getAction())){
-                Bundle response = new BundleMaker()
-                        .addLong("code", intent.getLongExtra(EntryResponse.PARAM_CODE,0))
-                        .addString("message", intent.getStringExtra(EntryResponse.PARAM_MSG))
-                        .addString("action", EntryResponse.ACTION_DECLINED)
-                        .get();
-                getSupportFragmentManager().setFragmentResult("response", response);
-            }else{
-                loadStatus(intent);
             }
+
+            //For both acceptance and decline, forward response to BaseEntryFragment
+            Bundle responseBroadcastExtras = new BundleMaker()
+                    .addString("action", intent.getAction())
+                    .addBundle(intent.getExtras())
+                    .get();
+
+            getSupportFragmentManager().setFragmentResult("response", responseBroadcastExtras);
+        }
+
+        public IntentFilter getFilter(){
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(EntryResponse.ACTION_ACCEPTED);
+            filter.addAction(EntryResponse.ACTION_DECLINED);
+            return filter;
+        }
+    }
+
+    public class StatusBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            logIntent(intent);
+            loadStatus(intent);
+        }
+
+        public IntentFilter getFilter(){
+            IntentFilter filter = new IntentFilter();
+            //-----------------Uncategory Status-----------------
+            filter.addAction(Uncategory.PRINT_STARTED);
+            filter.addAction(Uncategory.PRINT_COMPLETED);
+            filter.addAction(Uncategory.FILE_UPDATE_STARTED);
+            filter.addAction(Uncategory.FILE_UPDATE_COMPLETED);
+            filter.addAction(Uncategory.FCP_FILE_UPDATE_STARTED);
+            filter.addAction(Uncategory.FCP_FILE_UPDATE_COMPLETED);
+            filter.addAction(Uncategory.CAPK_UPDATE_STARTED);
+            filter.addAction(Uncategory.CAPK_UPDATE_COMPLETED);
+            filter.addAction(Uncategory.LOG_UPLOAD_STARTED);
+            filter.addAction(Uncategory.LOG_UPLOAD_CONNECTED);
+            filter.addAction(Uncategory.LOG_UPLOAD_UPLOADING);
+            filter.addAction(Uncategory.LOG_UPLOAD_COMPLETED);
+
+            //----------------Information Status-----------------
+            filter.addCategory(InformationStatus.CATEGORY);
+            filter.addAction(InformationStatus.DCC_ONLINE_STARTED);
+            filter.addAction(InformationStatus.DCC_ONLINE_FINISHED);
+            filter.addAction(InformationStatus.EMV_TRANS_ONLINE_STARTED);
+            filter.addAction(InformationStatus.EMV_TRANS_ONLINE_FINISHED);
+            filter.addAction(InformationStatus.TRANS_ONLINE_STARTED);
+            filter.addAction(InformationStatus.TRANS_ONLINE_FINISHED);
+            filter.addAction(InformationStatus.RKI_STARTED);
+            filter.addAction(InformationStatus.RKI_FINISHED);
+            filter.addAction(InformationStatus.PINPAD_CONNECTION_STARTED);
+            filter.addAction(InformationStatus.PINPAD_CONNECTION_FINISHED);
+            filter.addAction(InformationStatus.TRANS_COMPLETED);
+            filter.addAction(InformationStatus.ERROR);
+            filter.addAction(InformationStatus.ENTER_PIN_STARTED);
+
+            //----------------Card Status-----------------
+            filter.addCategory(CardStatus.CATEGORY);
+            filter.addAction(CardStatus.CARD_REMOVED);
+            filter.addAction(CardStatus.CARD_REMOVAL_REQUIRED);
+            filter.addAction(CardStatus.CARD_QUICK_REMOVAL_REQUIRED);
+            filter.addAction(CardStatus.CARD_PROCESS_STARTED);
+            filter.addAction(CardStatus.CARD_PROCESS_COMPLETED);
+
+            //----------------Batch Status-----------------
+            filter.addCategory(BatchStatus.CATEGORY);
+            filter.addAction(BatchStatus.BATCH_SF_UPLOADING);
+            filter.addAction(BatchStatus.BATCH_SF_COMPLETED);
+            filter.addAction(BatchStatus.BATCH_CLOSE_UPLOADING);
+            filter.addAction(BatchStatus.BATCH_CLOSE_COMPLETED);
+
+            return filter;
         }
     }
 }

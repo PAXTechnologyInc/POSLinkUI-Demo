@@ -128,7 +128,7 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
      * Entry Accepted means BroadPOS accepts the output from ACTION_NEXT
      */
     protected void onEntryAccepted() {
-        Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + action + "\"");
+        Logger.i("Receive Response Broadcast ACTION_ACCEPTED for action \"" + action + "\"");
         try {
             dismiss();
         } catch (Exception e) {
@@ -139,7 +139,7 @@ public abstract class BaseEntryDialogFragment extends DialogFragment {
      * Entry Declined means BroadPOS declined the output from ACTION_NEXT cuz it was not valid
      */
     protected void onEntryDeclined(long errCode, String errMessage){
-        Logger.i("receive Entry Response ACTION_DECLINED for action \"" + action + "\" (" + errCode + "-" + errMessage + ")");
+        Logger.i("Receive Response Broadcast ACTION_DECLINED for action \"" + action + "\" (" + errCode + "-" + errMessage + ")");
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 

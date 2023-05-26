@@ -186,7 +186,7 @@ public abstract class BaseEntryFragment extends Fragment {
      * Entry Accepted means BroadPOS accepts the output from ACTION_NEXT
      */
     protected void onEntryAccepted() {
-        Logger.i("receive Entry Response ACTION_ACCEPTED for action \"" + action + "\"");
+        Logger.i("Receive Response Broadcast ACTION_ACCEPTED for action \"" + action + "\"");
         deactivate();
     }
 
@@ -197,7 +197,7 @@ public abstract class BaseEntryFragment extends Fragment {
      * @param errMessage Error Message
      */
     protected void onEntryDeclined(long errCode, String errMessage) {
-        Logger.i("receive Entry Response ACTION_DECLINED for action \"" + action + "\" (" + errCode + "-" + errMessage + ")");
+        Logger.i("Receive Response Broadcast ACTION_DECLINED for action \"" + action + "\" (" + errCode + "-" + errMessage + ")");
         Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
     }
 
@@ -230,30 +230,27 @@ public abstract class BaseEntryFragment extends Fragment {
         inputMethodManager.showSoftInput(editTexts[0], InputMethodManager.SHOW_IMPLICIT);
     }
 
-    //Used to get information from activity
-    FragmentResultListener fragmentResultListener = (requestKey, result) -> {
-        Logger.i(getClass().getSimpleName() + " receives " + requestKey + "\n" + result);
-        switch (requestKey) {
-            case "response":
-                switch (result.getString("action")) {
-                    case EntryResponse.ACTION_ACCEPTED:
-                        onEntryAccepted();
-                        break;
-                    case EntryResponse.ACTION_DECLINED:
-                        EditabilityBlocker.getInstance().release();
-                        onEntryDeclined(result.getLong("code"), result.getString("message"));
-                        break;
-                }
+    //Used to get response broadcast from activity
+    FragmentResultListener responseBroadcastListener = (requestKey, result) -> {
+        switch (result.getString("action")) {
+            case EntryResponse.ACTION_ACCEPTED:
+                onEntryAccepted();
                 break;
-            case "keyCode":
-                switch (result.getInt("keyCode")) {
-                    case KeyEvent.KEYCODE_ENTER:
-                        executeEnterKeyEvent();
-                        break;
-                    case KeyEvent.KEYCODE_BACK:
-                        executeBackPressEvent();
-                        break;
-                }
+            case EntryResponse.ACTION_DECLINED:
+                EditabilityBlocker.getInstance().release();
+                onEntryDeclined(result.getLong(EntryResponse.PARAM_CODE), result.getString(EntryResponse.PARAM_MSG));
+                break;
+        }
+    };
+
+    //Used to get dispatched keyevent from activity
+    FragmentResultListener keyEventListener = (requestKey, result) -> {
+        switch (result.getInt("keyCode")) {
+            case KeyEvent.KEYCODE_ENTER:
+                executeEnterKeyEvent();
+                break;
+            case KeyEvent.KEYCODE_BACK:
+                executeBackPressEvent();
                 break;
         }
     };
@@ -263,8 +260,8 @@ public abstract class BaseEntryFragment extends Fragment {
         Logger.d(getClass().getSimpleName() + " onViewCreated.");
         super.onViewCreated(view, savedInstanceState);
 
-        getParentFragmentManager().setFragmentResultListener("response", this, fragmentResultListener);
-        getParentFragmentManager().setFragmentResultListener("keyCode", this, fragmentResultListener);
+        getParentFragmentManager().setFragmentResultListener("response", this, responseBroadcastListener);
+        getParentFragmentManager().setFragmentResultListener("keyCode", this, keyEventListener);
     }
 
 
