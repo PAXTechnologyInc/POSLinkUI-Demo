@@ -11,7 +11,7 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
  */
 public class EntryRequestUtils {
     public static void sendNext(Context context, String packageName, String action, String param, String value){
-        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
+        Logger.i("Send Request Broadcast ACTION_NEXT from action  \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -24,7 +24,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendNext(Context context, String packageName, String action, String param, long value){
-        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
+        Logger.i("Send Request Broadcast ACTION_NEXT from action  \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -37,7 +37,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendNext(Context context, String packageName, String action, String param, int value){
-        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
+        Logger.i("Send Request Broadcast ACTION_NEXT from action  \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -50,7 +50,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendNext(Context context, String packageName, String action, String param, boolean value){
-        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
+        Logger.i("Send Request Broadcast ACTION_NEXT from action  \""+action+"\"");
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
         bundle.putBoolean(param, value);
@@ -62,7 +62,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendNext(Context context, String packageName, String action, String param, short[] value){
-        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
+        Logger.i("Send Request Broadcast ACTION_NEXT from action  \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -75,7 +75,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendNext(Context context, String packageName, String action){
-        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
+        Logger.i("Send Request Broadcast ACTION_NEXT from action  \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -87,7 +87,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendNext(Context context, String packageName, String action, Bundle bundle){
-        Logger.i("send Entry Request ACTION_NEXT from action  \""+action+"\"");
+        Logger.i("Send Request Broadcast ACTION_NEXT from action  \""+action+"\"");
         if(bundle == null) bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
 
@@ -123,7 +123,7 @@ public class EntryRequestUtils {
 
     public static void sendSecureArea(Context context, String packageName, String action,
                                       int x, int y, int width, int height, int fontSize, String hint,String fontColor){
-        Logger.i("send Entry Request ACTION_SECURITY_AREA for action \""+action+"\"");
+        Logger.i("Send Request Broadcast ACTION_SECURITY_AREA for action \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -151,7 +151,7 @@ public class EntryRequestUtils {
      * @param action action name
      */
     public static void sendSecureArea(Context context, String packageName, String action){
-        Logger.i("send Entry Request ACTION_SECURITY_AREA for action \""+action+"\"");
+        Logger.i("Send Request Broadcast ACTION_SECURITY_AREA for action \""+action+"\"");
 
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, action);
@@ -163,7 +163,7 @@ public class EntryRequestUtils {
     }
 
     public static void sendSetPinKeyLayout(Context context, String packageName, String action, Bundle keyLocations){
-        Logger.i("send Entry Request ACTION_SET_PIN_KEY_LAYOUT for action \""+action+"\"");
+        Logger.i("Send Request Broadcast ACTION_SET_PIN_KEY_LAYOUT for action \""+action+"\"");
 
         Bundle bundle = new Bundle(keyLocations);
         bundle.putString(EntryRequest.PARAM_ACTION, action);
