@@ -47,7 +47,7 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUploadRetryFragmen
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUploadTransFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.DisplayQRCodeReceiptFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ReversePartialApprovalFragment;
-import com.paxus.pay.poslinkui.demo.entry.confirmation.StartUIDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.StartUIFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.SupplementPartialApprovalFragment;
 import com.paxus.pay.poslinkui.demo.entry.information.DisplayTransInfoFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectAccountTypeFragment;
@@ -227,7 +227,7 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_CONFIRM_CARD_ENTRY_RETRY, ConfirmCardEntryRetryFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_SIGNATURE_MATCH, ConfirmSignatureMatchFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_DCC, ConfirmDCCFragment.class);
-            put(ConfirmationEntry.ACTION_START_UI, StartUIDialogFragment.class);
+            put(ConfirmationEntry.ACTION_START_UI, StartUIFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_TOTAL_AMOUNT, ConfirmTotalAmountFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_BALANCE, ConfirmBalanceFragment.class);
         }
