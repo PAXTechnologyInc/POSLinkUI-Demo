@@ -136,16 +136,8 @@ public class EntryActivity extends AppCompatActivity{
     }
 
     private void logIntent(Intent intent) {
-        StringBuilder intentBuilder = new StringBuilder(getClass().getSimpleName() + " receives " + intent.getAction() + "\n");
-        if(intent.getExtras() != null){
-            for(String key : intent.getExtras().keySet()){
-                intentBuilder.append(key).append(": ");
-                boolean isArray = intent.getExtras().get(key) != null && intent.getExtras().get(key).getClass().isArray();
-                intentBuilder.append(isArray ? Arrays.toString((String[])intent.getExtras().get(key)) : intent.getExtras().get(key));
-                intentBuilder.append(System.lineSeparator());
-            }
-        }
-        Logger.i(intentBuilder.toString());
+        Logger.d(getClass().getSimpleName() + " receives " + intent.getAction());
+        Logger.intent(intent);
     }
 
     private void enableDarkOverlay(boolean show){
