@@ -367,7 +367,7 @@ public class UIFragmentHelper {
             case Uncategory.LOG_UPLOAD_UPLOADING:
             case Uncategory.LOG_UPLOAD_COMPLETED:
                 return "log_upload";
-            case BatchStatus.BATCH_SF_UPLOADING:
+            case BatchStatus.BATCH_UPLOADING:
             case BatchStatus.BATCH_SF_COMPLETED:
                 return "sf_upload";
             case BatchStatus.BATCH_CLOSE_UPLOADING:
