@@ -37,7 +37,7 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmPrintFpsFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmPrinterStatusFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmReceiptSignatureFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmReceiptViewFragment;
-import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmServiceFeeDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmServiceFeeFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmSignatureMatchFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmSurchargeFeeFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmTotalAmountFragment;
@@ -47,7 +47,7 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUploadRetryFragmen
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUploadTransFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.DisplayQRCodeReceiptFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ReversePartialApprovalFragment;
-import com.paxus.pay.poslinkui.demo.entry.confirmation.StartUIDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.StartUIFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.SupplementPartialApprovalFragment;
 import com.paxus.pay.poslinkui.demo.entry.information.DisplayTransInfoFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectAccountTypeFragment;
@@ -182,6 +182,7 @@ public class UIFragmentHelper {
             put(SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS, EnterCardAllDigitsFragment.class);
             put(SecurityEntry.ACTION_ENTER_PIN, PINFragment.class);
             put(SecurityEntry.ACTION_ENTER_ADMINISTRATION_PASSWORD, AdministratorPasswordFragment.class);
+            put("com.pax.us.pay.action.ADMINISTRATOR_PASSWORD", AdministratorPasswordFragment.class);
         }
     };
 
@@ -211,7 +212,7 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_CONFIRM_UNTIPPED, ConfirmUntippedFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_DUPLICATE_TRANS, ConfirmDuplicateTransFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_SURCHARGE_FEE, ConfirmSurchargeFeeFragment.class);
-            put(ConfirmationEntry.ACTION_CONFIRM_SERVICE_FEE, ConfirmServiceFeeDialogFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_SERVICE_FEE, ConfirmServiceFeeFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_PRINTER_STATUS, ConfirmPrinterStatusFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_UPLOAD_TRANS, ConfirmUploadTransFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_PRINT_FAILED_TRANS, ConfirmPrintFailedTransFragment.class);
@@ -227,7 +228,7 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_CONFIRM_CARD_ENTRY_RETRY, ConfirmCardEntryRetryFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_SIGNATURE_MATCH, ConfirmSignatureMatchFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_DCC, ConfirmDCCFragment.class);
-            put(ConfirmationEntry.ACTION_START_UI, StartUIDialogFragment.class);
+            put(ConfirmationEntry.ACTION_START_UI, StartUIFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_TOTAL_AMOUNT, ConfirmTotalAmountFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_BALANCE, ConfirmBalanceFragment.class);
         }
@@ -367,7 +368,7 @@ public class UIFragmentHelper {
             case Uncategory.LOG_UPLOAD_UPLOADING:
             case Uncategory.LOG_UPLOAD_COMPLETED:
                 return "log_upload";
-            case BatchStatus.BATCH_SF_UPLOADING:
+            case BatchStatus.BATCH_UPLOADING:
             case BatchStatus.BATCH_SF_COMPLETED:
                 return "sf_upload";
             case BatchStatus.BATCH_CLOSE_UPLOADING:

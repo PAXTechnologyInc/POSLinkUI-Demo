@@ -20,6 +20,7 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_NEXT);
         intent.putExtras(bundle);
         intent.setPackage(packageName);
+        Logger.intent(intent);
         context.sendBroadcast(intent);
     }
 
@@ -33,6 +34,7 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_NEXT);
         intent.putExtras(bundle);
         intent.setPackage(packageName);
+        Logger.intent(intent);
         context.sendBroadcast(intent);
     }
 
@@ -46,6 +48,7 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_NEXT);
         intent.putExtras(bundle);
         intent.setPackage(packageName);
+        Logger.intent(intent);
         context.sendBroadcast(intent);
     }
 
@@ -58,6 +61,7 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_NEXT);
         intent.putExtras(bundle);
         intent.setPackage(packageName);
+        Logger.intent(intent);
         context.sendBroadcast(intent);
     }
 
@@ -71,6 +75,7 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_NEXT);
         intent.putExtras(bundle);
         intent.setPackage(packageName);
+        Logger.intent(intent);
         context.sendBroadcast(intent);
     }
 
@@ -83,6 +88,7 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_NEXT);
         intent.putExtras(bundle);
         intent.setPackage(packageName);
+        Logger.intent(intent);
         context.sendBroadcast(intent);
     }
 
@@ -94,6 +100,7 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_NEXT)
                 .setPackage(packageName)
                 .putExtras(bundle);
+        Logger.intent(intent);
         context.sendBroadcast(intent);
     }
 
@@ -106,6 +113,7 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_TIME_OUT);
         intent.putExtras(bundle);
         intent.setPackage(packageName);
+        Logger.intent(intent);
         context.sendBroadcast(intent);
     }
 
@@ -118,6 +126,7 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_ABORT);
         intent.putExtras(bundle);
         intent.setPackage(packageName);
+        Logger.intent(intent);
         context.sendBroadcast(intent);
     }
 
@@ -139,6 +148,7 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_SECURITY_AREA);
         intent.putExtras(bundle);
         intent.setPackage(packageName);
+        Logger.intent(intent);
         context.sendBroadcast(intent);
 
     }
@@ -159,6 +169,7 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_SECURITY_AREA);
         intent.putExtras(bundle);
         intent.setPackage(packageName);
+        Logger.intent(intent);
         context.sendBroadcast(intent);
     }
 
@@ -171,7 +182,7 @@ public class EntryRequestUtils {
         Intent intent = new Intent(EntryRequest.ACTION_SET_PIN_KEY_LAYOUT)
                 .setPackage(packageName)
                 .putExtras(bundle);
-
+        Logger.intent(intent);
         context.sendBroadcast(intent);
     }
 }

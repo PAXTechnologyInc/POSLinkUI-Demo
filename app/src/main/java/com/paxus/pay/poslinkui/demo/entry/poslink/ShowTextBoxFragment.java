@@ -83,7 +83,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         button3Name = bundle.getString(EntryExtraData.PARAM_BUTTON_3_NAME);
         button3Color = bundle.getString(EntryExtraData.PARAM_BUTTON_3_COLOR);
         button3Key = bundle.getString(EntryExtraData.PARAM_BUTTON_3_KEY);
-        enableHardKey = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_HARD_KEY);
+        enableHardKey = bundle.getString(EntryExtraData.PARAM_ENABLE_HARD_KEY, "0").equals("1");
         if(enableHardKey) {
             String keyList = bundle.getString(EntryExtraData.PARAM_HARD_KEY_LIST);
             if (!TextUtils.isEmpty(keyList)) {

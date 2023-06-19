@@ -27,6 +27,7 @@ import androidx.fragment.app.FragmentResultListener;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
@@ -208,7 +209,7 @@ public abstract class BaseEntryFragment extends Fragment {
         if (editTexts == null || editTexts.length == 0) {
             requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+            inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY|InputMethodManager.HIDE_NOT_ALWAYS);
             return;
         }
         for (int i = 0; i < editTexts.length - 1; i++) {
@@ -222,12 +223,16 @@ public abstract class BaseEntryFragment extends Fragment {
             }
             return true;
         });
-        Context context = (!(editTexts[0].getContext() instanceof Activity) && editTexts[0].getContext() instanceof ContextWrapper)
-                ? ((ContextWrapper) editTexts[0].getContext()).getBaseContext() : editTexts[0].getContext();
-        ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         editTexts[0].requestFocus();
-        InputMethodManager inputMethodManager = (InputMethodManager) (context.getSystemService(Context.INPUT_METHOD_SERVICE));
-        inputMethodManager.showSoftInput(editTexts[0], InputMethodManager.SHOW_IMPLICIT);
+        if(!DeviceUtils.hasPhysicalKeyboard()){
+            Logger.d("Showing soft keyboard");
+            Context context = (!(editTexts[0].getContext() instanceof Activity) && editTexts[0].getContext() instanceof ContextWrapper)
+                    ? ((ContextWrapper) editTexts[0].getContext()).getBaseContext() : editTexts[0].getContext();
+            ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            InputMethodManager inputMethodManager = (InputMethodManager) (context.getSystemService(Context.INPUT_METHOD_SERVICE));
+            inputMethodManager.showSoftInput(editTexts[0], InputMethodManager.SHOW_FORCED);
+        }
+
     }
 
     //Used to get response broadcast from activity

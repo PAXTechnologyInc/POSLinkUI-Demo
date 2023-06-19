@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -42,6 +45,10 @@ public class StatusFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_status, container, false);
+
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
 
         TextView titleTextView = view.findViewById(R.id.status_title);
         titleTextView.setText(message);
@@ -150,13 +157,14 @@ public class StatusFragment extends Fragment {
                 message = context.getResources().getString(R.string.uploading_trans) + " " + edcType + "\n" + currentCount + "/" + totalCount;
                 break;
             }
-            case BatchStatus.BATCH_SF_UPLOADING: {
+            case BatchStatus.BATCH_UPLOADING: {
                 String sfType = bundle.getString(StatusData.PARAM_SF_TYPE);
                 long sfCurrentCount = bundle.getLong(StatusData.PARAM_SF_CURRENT_COUNT, 0);
                 long sfTotalCount = bundle.getLong(StatusData.PARAM_SF_TOTAL_COUNT, 0);
-                message = SFType.FAILED.equals(sfType) ? context.getResources().getString(R.string.uploading_failed_trans)
-                        : context.getResources().getString(R.string.uploading_sf_trans) +
-                        context.getResources().getString(R.string.total_count) + sfTotalCount + context.getResources().getString(R.string.current_count) + sfCurrentCount;
+                message = (SFType.FAILED.equals(sfType) ?
+                        context.getResources().getString(R.string.uploading_failed_trans)
+                        : context.getResources().getString(R.string.uploading_sf_trans)) +
+                        "\n" + sfCurrentCount + " out of " + sfTotalCount;
                 break;
             }
             case InformationStatus.TRANS_COMPLETED: {
@@ -175,4 +183,17 @@ public class StatusFragment extends Fragment {
         return false;
     }
 
+    public boolean sameAs(@Nullable StatusFragment another){
+        return another != null && this.intent.getAction().equals(another.intent.getAction());
+    }
+
+    public void updateStatus(Intent intent, Context context) {
+        this.intent = intent;
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
+        if(intent.getExtras() != null) bundle.putAll(intent.getExtras());
+        setArguments(bundle);
+        this.message = generateStatusMessage(bundle, context);
+        ((TextView)getView().findViewById(R.id.status_title)).setText(message);
+    }
 }

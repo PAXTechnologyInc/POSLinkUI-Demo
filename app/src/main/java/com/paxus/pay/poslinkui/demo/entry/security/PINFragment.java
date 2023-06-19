@@ -23,6 +23,7 @@ import com.pax.us.pay.ui.constant.status.PINStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
@@ -121,7 +122,7 @@ public class PINFragment extends BaseEntryFragment {
         rootView.findViewById(R.id.bypass).setVisibility(couldBypass? View.VISIBLE:View.GONE);
 
         View customizedPinPad = rootView.findViewById(R.id.pinpad_layout);
-        if(isUsingExternalPinPad || hasPhysicalKeyboard()){
+        if(isUsingExternalPinPad || DeviceUtils.hasPhysicalKeyboard()){
             //(2)When using external pin pad or terminal has physical pin pad, do not use customized pin pad.
             customizedPinPad.setVisibility(View.GONE);
             sendSecurityArea(null);
@@ -174,17 +175,6 @@ public class PINFragment extends BaseEntryFragment {
 
         //---------------------Send Security Area------------------
         sendSecurityArea(null);
-    }
-
-    public boolean hasPhysicalKeyboard(){
-        //For devices which has physical pin pad, do not prompt virtual pin pad
-        String buildModel = Build.MODEL;
-
-        return "A80".equals(buildModel)
-                || "A30".equals(buildModel)
-                || "A35".equals(buildModel)
-                || "Aries6".equals(buildModel)
-                || "Aries8".equals(buildModel);
     }
 
     private class Receiver extends BroadcastReceiver {

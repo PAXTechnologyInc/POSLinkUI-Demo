@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -136,16 +137,8 @@ public class EntryActivity extends AppCompatActivity{
     }
 
     private void logIntent(Intent intent) {
-        StringBuilder intentBuilder = new StringBuilder(getClass().getSimpleName() + " receives " + intent.getAction() + "\n");
-        if(intent.getExtras() != null){
-            for(String key : intent.getExtras().keySet()){
-                intentBuilder.append(key).append(": ");
-                boolean isArray = intent.getExtras().get(key) != null && intent.getExtras().get(key).getClass().isArray();
-                intentBuilder.append(isArray ? Arrays.toString((String[])intent.getExtras().get(key)) : intent.getExtras().get(key));
-                intentBuilder.append(System.lineSeparator());
-            }
-        }
-        Logger.i(intentBuilder.toString());
+        Logger.d(getClass().getSimpleName() + " receives " + intent.getAction());
+        Logger.intent(intent);
     }
 
     private void enableDarkOverlay(boolean show){
@@ -182,7 +175,7 @@ public class EntryActivity extends AppCompatActivity{
     }
 
     public void loadStatus(Intent intent) {
-        StatusFragment statusFragment = InformationStatus.TRANS_COMPLETED.equals(intent.getAction()) ? new TransCompletedStatusFragment(intent, this) : new StatusFragment(intent, this);
+        @NonNull StatusFragment statusFragment = InformationStatus.TRANS_COMPLETED.equals(intent.getAction()) ? new TransCompletedStatusFragment(intent, this) : new StatusFragment(intent, this);
         getSupportFragmentManager().executePendingTransactions();
 
         if(statusFragment.isConclusive()){
@@ -194,6 +187,12 @@ public class EntryActivity extends AppCompatActivity{
         } else {
             if(statusFragment instanceof TransCompletedStatusFragment) {
                 scheduler.schedule(TaskScheduler.TASK.FINISH, ((TransCompletedStatusFragment) statusFragment).getDelay(), System.currentTimeMillis());
+            }
+
+            StatusFragment currentFragment = (StatusFragment) getSupportFragmentManager().findFragmentById(R.id.status_container);
+            if(statusFragment.sameAs(currentFragment)){
+                currentFragment.updateStatus(intent, this);
+                return;
             }
 
             if(!getSupportFragmentManager().isStateSaved()) {
@@ -292,7 +291,7 @@ public class EntryActivity extends AppCompatActivity{
 
             //Validation
             boolean isValid = interfaceHistory.validate(intent.getStringExtra("interfaceID"), intent.getStringExtra("originatingAction"));
-            if(!isValid) return;
+            //if(!isValid) return; // Commented out until Manager supports interfaceID
 
             //Acceptance needs to block the view
             if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())) {
@@ -365,7 +364,7 @@ public class EntryActivity extends AppCompatActivity{
 
             //----------------Batch Status-----------------
             filter.addCategory(BatchStatus.CATEGORY);
-            filter.addAction(BatchStatus.BATCH_SF_UPLOADING);
+            filter.addAction(BatchStatus.BATCH_UPLOADING);
             filter.addAction(BatchStatus.BATCH_SF_COMPLETED);
             filter.addAction(BatchStatus.BATCH_CLOSE_UPLOADING);
             filter.addAction(BatchStatus.BATCH_CLOSE_COMPLETED);
