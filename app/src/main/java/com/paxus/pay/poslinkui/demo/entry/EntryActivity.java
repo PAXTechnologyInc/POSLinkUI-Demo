@@ -292,7 +292,7 @@ public class EntryActivity extends AppCompatActivity{
 
             //Validation
             boolean isValid = interfaceHistory.validate(intent.getStringExtra("interfaceID"), intent.getStringExtra("originatingAction"));
-            if(!isValid) return;
+            //if(!isValid) return;
 
             //Acceptance needs to block the view
             if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())) {
@@ -365,7 +365,7 @@ public class EntryActivity extends AppCompatActivity{
 
             //----------------Batch Status-----------------
             filter.addCategory(BatchStatus.CATEGORY);
-            filter.addAction(BatchStatus.BATCH_SF_UPLOADING);
+            filter.addAction(BatchStatus.BATCH_UPLOADING);
             filter.addAction(BatchStatus.BATCH_SF_COMPLETED);
             filter.addAction(BatchStatus.BATCH_CLOSE_UPLOADING);
             filter.addAction(BatchStatus.BATCH_CLOSE_COMPLETED);

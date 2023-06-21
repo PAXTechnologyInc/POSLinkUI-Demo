@@ -150,7 +150,7 @@ public class StatusFragment extends Fragment {
                 message = context.getResources().getString(R.string.uploading_trans) + " " + edcType + "\n" + currentCount + "/" + totalCount;
                 break;
             }
-            case BatchStatus.BATCH_SF_UPLOADING: {
+            case BatchStatus.BATCH_UPLOADING: {
                 String sfType = bundle.getString(StatusData.PARAM_SF_TYPE);
                 long sfCurrentCount = bundle.getLong(StatusData.PARAM_SF_CURRENT_COUNT, 0);
                 long sfTotalCount = bundle.getLong(StatusData.PARAM_SF_TOTAL_COUNT, 0);
