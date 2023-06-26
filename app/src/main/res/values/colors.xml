@@ -30,5 +30,6 @@
     <color name="pastel_warning">#FF7878</color>
     <color name="pastel_text_color">#ECECEC</color>
     <color name="pastel_text_color_on_light">#222222</color>
+    <color name="pastel_disabled">#A8A8A8</color>
 
 </resources>

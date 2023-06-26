@@ -3,6 +3,8 @@ package com.paxus.pay.poslinkui.demo.entry.signature;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -18,6 +20,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 import java.util.List;
@@ -54,9 +57,18 @@ public class SignatureFragment extends BaseEntryFragment {
     ScheduledExecutorService countdownUpdateScheduler;
     ScheduledFuture<?> countdownFuture;
     Runnable updateCountdown = () -> {
-        if(timeoutView != null) timeoutView.setText(String.valueOf(tempTimeout/intervalMilis));
-        if(tempTimeout<=0) countdownFuture.cancel(true);
-        tempTimeout -= intervalMilis;
+        try {
+            if(tempTimeout<=0) {
+                countdownFuture.cancel(true);
+                if(timeoutView != null) new Handler(Looper.getMainLooper()).post(()-> timeoutView.setVisibility(View.INVISIBLE));
+                return;
+            }
+            if(timeoutView != null) new Handler(Looper.getMainLooper()).post(()-> timeoutView.setText(String.valueOf(tempTimeout/intervalMilis)));
+            tempTimeout -= intervalMilis;
+        } catch (Exception e) {
+            //scheduleAtFixedRate: If any execution of the task encounters an exception, subsequent executions are suppressed.
+            Logger.e(e);
+        }
     };
 
     @Override
