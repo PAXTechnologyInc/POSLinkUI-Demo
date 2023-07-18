@@ -182,6 +182,7 @@ public class UIFragmentHelper {
             put(SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS, EnterCardAllDigitsFragment.class);
             put(SecurityEntry.ACTION_ENTER_PIN, PINFragment.class);
             put(SecurityEntry.ACTION_ENTER_ADMINISTRATION_PASSWORD, AdministratorPasswordFragment.class);
+            put("com.pax.us.pay.action.ADMINISTRATOR_PASSWORD", AdministratorPasswordFragment.class);
         }
     };
 

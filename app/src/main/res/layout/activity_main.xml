@@ -1,16 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:background="@color/pastel_background"
-    android:orientation="vertical">
+    android:padding="@dimen/version_name_text_size">
+
     <TextView
-        android:gravity="center"
+        android:id="@+id/version"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/version"
+        android:gravity="center"
+        android:padding="@dimen/version_name_text_size"
         android:textSize="@dimen/version_name_text_size"
-        android:paddingHorizontal="@dimen/version_name_text_size"
-         />
-</LinearLayout>
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/customize_filter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="1"
+        />
+
+    <CheckedTextView
+        android:id="@+id/customize_filter"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height"
+        android:background="@drawable/option_item_background"
+        android:paddingHorizontal="@dimen/padding_horizontal"
+
+        android:text="Customize"
+        android:gravity="center"
+        android:textAlignment="gravity"
+        android:focusable="false"
+
+        app:layout_constraintTop_toBottomOf="@id/version"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:layout_margin="@dimen/padding_vertical"
+        />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/activity_main_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
