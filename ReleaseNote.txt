@@ -1,0 +1,3 @@
+Version: ${ci_release_title}
+
+Bug fixing:

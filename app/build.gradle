@@ -5,8 +5,16 @@ plugins {
 def releaseTime() {
     return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
 }
-def VERSION_NAME = "V1.01.00_" + releaseTime()
-def ARCHIVES_BASE_NAME = "POSLinkUI Demo_" + VERSION_NAME
+
+plugins {
+    id "org.sonarqube" version "3.5.0.2730"
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "PAXTechnologyInc_POSLinkUI-Demo_AYZwDwscUeaf_QOlm5VX"
+    }
+}
 
 android {
     compileSdk 30
@@ -23,9 +31,9 @@ android {
     defaultConfig {
         applicationId "com.paxus.pay.poslinkui.demo"
         minSdk 22
-        targetSdk 30
-        versionCode 1
-        versionName VERSION_NAME
+        targetSdk 31
+        versionCode VERSION_CODE.toInteger()
+        versionName System.getProperty('VERSION_NAME') ?: ("V${VERSION_NAME}_"+releaseTime())
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -53,7 +61,7 @@ android {
                 }
 
                 variant.outputs.all {
-                    outputFileName ARCHIVES_BASE_NAME + ".apk"
+                    outputFileName "POSLinkUI Demo_${defaultConfig.versionName}_${variant.buildType.name}.apk"
                     println outputFileName
                 }
             }

@@ -6,6 +6,10 @@
 apply from: file('gradle/github.gradle')
 apply from: file('gradle/version.gradle')
 
+ext {
+    loadVersions('version.properties')
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
