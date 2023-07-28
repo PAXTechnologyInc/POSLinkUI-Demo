@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="20sp"
-        android:textColor="@color/purple_700"
+        android:textSize="@dimen/text_size_title"
         android:layout_marginTop="10dp"
         android:layout_alignParentTop="true"/>
     <ListView
