@@ -2,18 +2,14 @@ package com.paxus.pay.poslinkui.demo.entry.confirmation;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
-import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.entry.BaseEntryDialogFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
  * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_SERVICE_FEE}
@@ -25,19 +21,23 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * 4.If enableBypass is true, display bypass button, else hide it.
  * </p>
  */
-public class ConfirmServiceFeeDialogFragment extends BaseEntryDialogFragment {
+public class ConfirmServiceFeeFragment extends AConfirmationFragment {
     private String feeName;
-    private long totalAmount;
     private long feeAmount;
+    private long totalAmount;
     private String currency;
 
     @Override
     protected int getLayoutResourceId() {
+        /**
+         * {@link AConfirmationFragment needs message, confirm_button, and cancel_button}
+         */
         return R.layout.fragment_service_fee;
     }
 
     @Override
-    protected void loadParameter(@NonNull Bundle bundle) {
+    protected void loadArgument(@NonNull Bundle bundle) {
+        super.loadArgument(bundle);
         feeName = bundle.getString(EntryExtraData.PARAM_SERVICE_FEE_NAME);
         totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
         feeAmount = bundle.getLong(EntryExtraData.PARAM_SERVICE_FEE);
@@ -46,6 +46,8 @@ public class ConfirmServiceFeeDialogFragment extends BaseEntryDialogFragment {
 
     @Override
     protected void loadView(View rootView) {
+        super.loadView(rootView);
+
         TextView sale = rootView.findViewById(R.id.sale_amount);
         sale.setText(CurrencyUtils.convert(totalAmount - feeAmount, currency));
 
@@ -57,22 +59,10 @@ public class ConfirmServiceFeeDialogFragment extends BaseEntryDialogFragment {
 
         TextView total = rootView.findViewById(R.id.total_amount);
         total.setText(CurrencyUtils.convert(totalAmount, currency));
-
-        Button confirm = rootView.findViewById(R.id.confirm_button);
-        confirm.setOnClickListener(v-> onConfirmButtonClicked());
-
-        Button cancel = rootView.findViewById(R.id.cancel_button);
-        cancel.setOnClickListener(v -> onCancelButtonClicked());
     }
 
     @Override
-    protected void onConfirmButtonClicked() {
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(EntryRequest.PARAM_CONFIRMED, true);
-        sendNext(bundle);
-    }
-
-    private void onCancelButtonClicked() {
-        sendAbort();
+    protected String formatMessage(String message) {
+        return null;
     }
 }
