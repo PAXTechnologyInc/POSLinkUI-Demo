@@ -12,12 +12,8 @@ import android.view.animation.AlphaAnimation;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainerView;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
@@ -30,12 +26,12 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.status.StatusFragment;
 import com.paxus.pay.poslinkui.demo.status.TransCompletedStatusFragment;
 import com.paxus.pay.poslinkui.demo.utils.BundleMaker;
+import com.paxus.pay.poslinkui.demo.utils.EntryActivityActionBar;
 import com.paxus.pay.poslinkui.demo.utils.InterfaceHistory;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -48,10 +44,6 @@ import java.util.Objects;
  */
 public class EntryActivity extends AppCompatActivity{
 
-    private Toolbar toolbar;
-    private FragmentContainerView statusFragmentContainer;
-    private FragmentContainerView entryFragmentContainer;
-
     private StatusBroadcastReceiver statusBroadcastReceiver;
     private ResponseBroadcastReceiver responseBroadcastReceiver;
 
@@ -61,21 +53,16 @@ public class EntryActivity extends AppCompatActivity{
     TaskScheduler scheduler;
     InterfaceHistory interfaceHistory;
 
+    EntryActivityActionBar actionBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Logger.d( getClass().getSimpleName() + " onCreate");
         super.onCreate(savedInstanceState);
-
         interfaceHistory = new InterfaceHistory();
 
         setContentView(R.layout.activity_entry);
-        toolbar = findViewById(R.id.toolbar);
-        statusFragmentContainer = findViewById(R.id.status_container);
-        entryFragmentContainer = findViewById(R.id.fragment_placeholder);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        actionBar = new EntryActivityActionBar(this, getSupportActionBar());
 
         registerUIReceiver();
         scheduler = new TaskScheduler(this);
@@ -100,37 +87,21 @@ public class EntryActivity extends AppCompatActivity{
     }
 
     private void loadEntry(Intent intent){
+        setIntent(intent);
         logIntent(intent);
         interfaceHistory.add(intent.getStringExtra("interfaceID"), intent.getAction());
-        getIntent().setAction(intent.getAction());
+
         clearStatus();
-        setScheduledTaskListener(intent);
+        setScheduledTaskListener();
         enableDarkOverlay(false);
 
         updateTransMode(intent.getStringExtra(EntryExtraData.PARAM_TRANS_MODE));
 
-        Fragment fragment = UIFragmentHelper.createFragment(intent);
-        Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
-
-        if (fragment != null) {
-            if (fragment instanceof DialogFragment) {
-                if (frag == null) {
-                    //To show dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, hide tool bar.
-                    toolbar.setVisibility(View.GONE);
-                    entryFragmentContainer.setVisibility(View.GONE);
-                }
-                ((DialogFragment) fragment).show(getSupportFragmentManager(), "EntryDialog");
-            } else {
-                UIFragmentHelper.closeDialog(getSupportFragmentManager(), "EntryDialog");
-                updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
-                if (frag == null) {
-                    //Show tool bar
-                    toolbar.setVisibility(View.VISIBLE);
-                    entryFragmentContainer.setVisibility(View.VISIBLE);
-                }
-                getSupportFragmentManager().executePendingTransactions();
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragment).commit();
-            }
+        Fragment entryFragment = UIFragmentHelper.createFragment(intent);
+        if (entryFragment != null) {
+            updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
+            getSupportFragmentManager().executePendingTransactions();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, entryFragment).commit();
         } else {
             Toast.makeText(this, "NOT FOUND:" + intent.getAction(), Toast.LENGTH_SHORT).show();
         }
@@ -150,7 +121,7 @@ public class EntryActivity extends AppCompatActivity{
         view.startAnimation(alphaAnimation);
     }
 
-    private void setScheduledTaskListener(Intent intent) {
+    private void setScheduledTaskListener() {
         //Used to schedule tasks requested by child fragments
         scheduler.cancelTasks();
         getSupportFragmentManager().setFragmentResultListener(TaskScheduler.SCHEDULE, this, (requestKey, result) -> {
@@ -234,11 +205,7 @@ public class EntryActivity extends AppCompatActivity{
     private void updateTransType(String transType){
         if(transType!= null && !transType.equals(this.transType)){
             this.transType = transType;
-
-            ActionBar actionBar = getSupportActionBar();
-            if(actionBar != null) {
-                actionBar.setTitle(transType);
-            }
+            actionBar.setTitle(transType);
         }
     }
 
@@ -268,7 +235,6 @@ public class EntryActivity extends AppCompatActivity{
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-//        Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
         if(isStatusPresent()) return true;
 
         if( event.getAction() == KeyEvent.ACTION_UP &&
