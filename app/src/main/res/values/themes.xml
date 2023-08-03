@@ -52,6 +52,7 @@
     <style name="POSLinkUIPastelEditText" parent="android:Widget.Material.EditText">
         <item name="android:background">@drawable/rounded_corner_on_background</item>
         <item name="android:textColor">@color/pastel_text_color_on_light</item>
+        <item name="android:textColorHint">@color/pastel_text_color_on_light</item>
         <item name="android:imeOptions">flagNoExtractUi</item>
         <item name="android:gravity">center</item>
         <item name="android:minHeight">@dimen/button_height</item>

@@ -74,7 +74,7 @@
             android:padding="@dimen/padding_vertical"
             android:gravity="center_horizontal"
             android:textColor="#FF9C27B0"
-            android:textSize="20sp"/>
+            android:textSize="@dimen/text_size_subtitle"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"

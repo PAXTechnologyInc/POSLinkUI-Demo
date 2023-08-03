@@ -291,7 +291,7 @@ public class EntryActivity extends AppCompatActivity{
 
             //Validation
             boolean isValid = interfaceHistory.validate(intent.getStringExtra("interfaceID"), intent.getStringExtra("originatingAction"));
-            //if(!isValid) return;
+            //if(!isValid) return; // Commented out until Manager supports interfaceID
 
             //Acceptance needs to block the view
             if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())) {
