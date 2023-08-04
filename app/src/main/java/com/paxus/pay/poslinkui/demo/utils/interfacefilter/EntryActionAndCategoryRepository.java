@@ -20,6 +20,10 @@ import java.util.Map;
  */
 class EntryActionAndCategoryRepository {
 
+    private EntryActionAndCategoryRepository() {
+        //Private Constructor
+    }
+
     private static final List<EntryCategory> ENTRY_CATEGORY_LIST = new ArrayList<EntryCategory>(){{
         add(new EntryCategory(TextEntry.CATEGORY, "Text"));
         add(new EntryCategory(SecurityEntry.CATEGORY, "Security"));
@@ -97,7 +101,7 @@ class EntryActionAndCategoryRepository {
         put(OptionEntry.ACTION_SELECT_ORIG_CURRENCY, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_ORIG_CURRENCY, "Select Orig Currency", ".OPTION.SELECT_ORIG_CURRENCY", true));
         put(OptionEntry.ACTION_SELECT_INSTALLMENT_PLAN, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_INSTALLMENT_PLAN, "Select Installment Plan", ".OPTION.SELECT_INSTALLMENT_PLAN", true));
         put(OptionEntry.ACTION_SELECT_TRANS_FOR_ADJUST, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_TRANS_FOR_ADJUST, "Select Trans For Adjust", ".OPTION.SELECT_TRANS_FOR_ADJUST", true));
-        put(OptionEntry.ACTION_SELECT_COF_INITIATOR, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_COF_INITIATOR, "Select COF Initiator", ".OPTION.SELECT_COF_INITIATOR", true));
+        //put(OptionEntry.ACTION_SELECT_COF_INITIATOR, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_COF_INITIATOR, "Select COF Initiator", ".OPTION.SELECT_COF_INITIATOR", true));
 
         // Confirmation Entry
         put(ConfirmationEntry.ACTION_START_UI, new EntryAction(ConfirmationEntry.CATEGORY, ConfirmationEntry.ACTION_START_UI, "Start UI", ".CONFIRMATION.START_UI", true));

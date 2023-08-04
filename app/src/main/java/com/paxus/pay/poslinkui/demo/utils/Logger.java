@@ -77,11 +77,23 @@ public final class Logger {
             for(String key : intent.getExtras().keySet()){
                 intentBuilder.append(key).append(": ");
                 boolean isArray = intent.getExtras().get(key) != null && intent.getExtras().get(key).getClass().isArray();
-                intentBuilder.append(isArray ? Arrays.toString((String[])intent.getExtras().get(key)) : intent.getExtras().get(key));
+                intentBuilder.append(isArray ? stringifyArray(intent.getExtras().get(key)) : intent.getExtras().get(key));
                 intentBuilder.append(System.lineSeparator());
             }
         }
         Logger.i(intentBuilder.toString());
+    }
+
+    private static String stringifyArray(Object array){
+        switch (array.getClass().getSimpleName()){
+            case "short[]":
+                return Arrays.toString((short[])array);
+            case "Object[]":
+            case "String[]":
+                return Arrays.toString((String[])array);
+            default:
+                return "UNABLE TO LOG";
+        }
     }
 
 }
