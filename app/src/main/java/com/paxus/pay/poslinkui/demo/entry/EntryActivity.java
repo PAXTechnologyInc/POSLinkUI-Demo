@@ -81,9 +81,9 @@ public class EntryActivity extends AppCompatActivity{
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Logger.d(getClass().getSimpleName() +" onSaveInstanceState");
-        //If EntryActivity is not at the top of stack, a new EntryActivity will be created. After that, the old one need kill itself.
-        unregisterUIReceiver();
-        this.finishAndRemoveTask();
+//        //If EntryActivity is not at the top of stack, a new EntryActivity will be created. After that, the old one need kill itself.
+//        unregisterUIReceiver();
+//        this.finishAndRemoveTask();
     }
 
     @Override
@@ -142,27 +142,32 @@ public class EntryActivity extends AppCompatActivity{
         logIntentExtras(intent);
         Logger.i("Receive Status Action \"" + intent.getAction() + "\"");
 
-        String action = intent.getAction();
-        if (InformationStatus.TRANS_COMPLETED.equals(action)) {
-            String msg = intent.getStringExtra(StatusData.PARAM_MSG); //For POSLinkEntry, msg might be empty
-            long code = intent.getLongExtra(StatusData.PARAM_CODE, 0L);
-            if (TextUtils.isEmpty(msg) || code == -3) {//Transaction Cancelled
-                finishAndRemoveTask();
-                return;
+        try {
+            String action = intent.getAction();
+            if (InformationStatus.TRANS_COMPLETED.equals(action)) {
+                String msg = intent.getStringExtra(StatusData.PARAM_MSG); //For POSLinkEntry, msg might be empty
+                long code = intent.getLongExtra(StatusData.PARAM_CODE, 0L);
+                if (TextUtils.isEmpty(msg) || code == -3) {//Transaction Cancelled
+                    finishAndRemoveTask();
+                    return;
+                }
+                //Close Entry Dialog before prompt Trans Complete Dialog
+                UIFragmentHelper.closeDialog(getSupportFragmentManager(), "EntryDialog");
             }
-            //Close Entry Dialog before prompt Trans Complete Dialog
-            UIFragmentHelper.closeDialog(getSupportFragmentManager(), "EntryDialog");
-        }
-        String dialogTag = UIFragmentHelper.createStatusDialogTag(action);
-        if(!TextUtils.isEmpty(dialogTag)) {
-            DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
-            if (dialogFragment != null) {
-                UIFragmentHelper.showDialog(getSupportFragmentManager(), dialogFragment, dialogTag);
+            String dialogTag = UIFragmentHelper.createStatusDialogTag(action);
+            if (!TextUtils.isEmpty(dialogTag)) {
+                DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
+                if (dialogFragment != null) {
+                    UIFragmentHelper.showDialog(getSupportFragmentManager(), dialogFragment, dialogTag);
+                } else {
+                    UIFragmentHelper.closeDialog(getSupportFragmentManager(), dialogTag);
+                }
             } else {
-                UIFragmentHelper.closeDialog(getSupportFragmentManager(),dialogTag);
+                Logger.e("unsupported receive Status Action" + action);
             }
-        }else {
-            Logger.e("unsupported receive Status Action"+action);
+        }catch (IllegalStateException e){
+            //To avoid crash
+            Logger.e(e);
         }
     }
 
