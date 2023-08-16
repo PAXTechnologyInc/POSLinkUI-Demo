@@ -81,9 +81,6 @@ public class EntryActivity extends AppCompatActivity{
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Logger.d(getClass().getSimpleName() +" onSaveInstanceState");
-//        //If EntryActivity is not at the top of stack, a new EntryActivity will be created. After that, the old one need kill itself.
-//        unregisterUIReceiver();
-//        this.finishAndRemoveTask();
     }
 
     @Override
