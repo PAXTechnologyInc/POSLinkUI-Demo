@@ -4,11 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextPaint;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
-import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.PanStyles;
@@ -33,9 +30,7 @@ import com.pax.us.pay.ui.constant.status.SecurityStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.entry.UIFragmentHelper;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.ClssLight;
@@ -79,7 +74,6 @@ public class InputAccountFragment extends BaseEntryFragment {
 
     protected BroadcastReceiver receiver;
     protected View rootView;
-    protected TextView panInputBox;
     protected Button confirmButton;
     protected int panLength = 0;
 
@@ -89,44 +83,19 @@ public class InputAccountFragment extends BaseEntryFragment {
 
     //1.When input box layout ready, send secure area location
     // For A35, need delay 100ms (Ticket: BPOSANDJAX-325)
-    private void onPanInputBoxLayoutReady() {
+    private void onPanInputBoxLayoutReady(TextView inputTextView) {
+        Runnable securityAreaRequest = () -> sendSecurityArea(inputTextView, "Card Number");
         //Change hint and font color if you want
         if (Build.MODEL.equals("A35")) {
-            new Handler().postDelayed(() -> {
-                sendSecurityArea(panInputBox, "Card Number");
-            }, 100);
+            new Handler(Looper.myLooper()).postDelayed(securityAreaRequest, 100);
         } else {
-            sendSecurityArea(panInputBox, "Card Number");
+            securityAreaRequest.run();
         }
     }
 
     @Override
     protected void onConfirmButtonClicked() {
         sendNext(null);
-    }
-
-    private void onUpdateEntryMode(Intent intent) {
-        String action = intent.getAction();
-        if (CardStatus.CARD_TAP_REQUIRED.equals(action)) {
-            updateCtlessLightStatus(ClssLightStatus.CLSS_LIGHT_READY_FOR_TXN);
-        }
-
-        enableManual = false;
-        enableInsert = CardStatus.CARD_INSERT_REQUIRED.equals(action);
-        enableSwipe = CardStatus.CARD_SWIPE_REQUIRED.equals(action);
-        enableTap = CardStatus.CARD_TAP_REQUIRED.equals(action);
-        enableContactlessLight = enableContactlessLight && enableTap;
-        if (receiver != null) {
-            requireContext().unregisterReceiver(receiver);
-        }
-        loadView(rootView);
-
-//        DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
-//        if (dialogFragment != null) {
-//            String tag = "update_entry_mode";
-//            UIFragmentHelper.showDialog(getParentFragmentManager(), dialogFragment, tag);
-//            new Handler().postDelayed(() -> UIFragmentHelper.closeDialog(getParentFragmentManager(), tag), 2000);
-//        }
     }
 
     private void updateCtlessLightStatus(String status) {
@@ -224,7 +193,7 @@ public class InputAccountFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.manual_message);
         textView.setText(manualMessage);
 
-        panInputBox = rootView.findViewById(R.id.edit_account);
+        TextView panInputBox = rootView.findViewById(R.id.edit_account);
         confirmButton = rootView.findViewById(R.id.confirm_button);
         if (enableManual) {
             panInputBox.setEnabled(true);
@@ -235,23 +204,13 @@ public class InputAccountFragment extends BaseEntryFragment {
                 @Override
                 public void onGlobalLayout() {
                     panInputBox.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    onPanInputBoxLayoutReady();
+                    onPanInputBoxLayoutReady(panInputBox);
                     mContentView = requireActivity().getWindow().findViewById(Window.ID_ANDROID_CONTENT);
                     if ("Q10A".equals(Build.MODEL)) {
-                        panInputBox.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                            @Override
-                            public void onLayoutChange(View view, int left,
-                                                       int top,
-                                                       int right,
-                                                       int bottom,
-                                                       int oldLeft,
-                                                       int oldTop,
-                                                       int oldRight,
-                                                       int oldBottom) {
-                                Logger.d("Security EditText onLayoutChange:" + left + "," + top + "," + right + "," + bottom + "," + oldLeft + "," + oldTop + "," + oldRight + "," + oldBottom);
-                                if (right != oldRight) {
-                                    onPanInputBoxLayoutReady();
-                                }
+                        panInputBox.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                            Logger.d("Security EditText onLayoutChange:" + left + "," + top + "," + right + "," + bottom + "," + oldLeft + "," + oldTop + "," + oldRight + "," + oldBottom);
+                            if (right != oldRight) {
+                                onPanInputBoxLayoutReady(panInputBox);
                             }
                         });
                     }
@@ -261,7 +220,7 @@ public class InputAccountFragment extends BaseEntryFragment {
             rootView.findViewById(R.id.layout_manual).setVisibility(View.GONE);
         }
         clssLightsView = rootView.findViewById(R.id.clss_light);
-        clssLightsView.setVisibility(enableContactlessLight ? View.VISIBLE : View.GONE);
+        clssLightsView.setVisibility((enableContactlessLight && enableTap) ? View.VISIBLE : View.GONE);
 
         int swipeId = R.drawable.selection_swipe_card_a920;
         int insertId = R.drawable.selection_insert_card_a920;
@@ -327,8 +286,11 @@ public class InputAccountFragment extends BaseEntryFragment {
         google.setVisibility(supportGooglePay ? View.VISIBLE : View.GONE);
         samsung.setVisibility(supportSamsungPay ? View.VISIBLE : View.GONE);
         rootView.findViewById(R.id.contactless_logo_container)
-                .setVisibility((supportNFC || supportApplePay || supportGooglePay || supportSamsungPay) ? View.VISIBLE : View.GONE);
+                .setVisibility(((supportNFC || supportApplePay || supportGooglePay || supportSamsungPay) && enableTap) ? View.VISIBLE : View.GONE);
 
+        if(receiver != null) {
+            requireContext().unregisterReceiver(receiver);
+        }
         receiver = new InputAccountFragment.Receiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addCategory(SecurityStatus.CATEGORY);
@@ -403,10 +365,20 @@ public class InputAccountFragment extends BaseEntryFragment {
                     amountTv.setText(CurrencyUtils.convert(totalAmount, currencyType));
                     return;
                 case CardStatus.CARD_INSERT_REQUIRED:
+                    enableInsert = true;
+                    enableManual = enableSwipe = enableTap = false;
+                    loadView(rootView);
+                    break;
                 case CardStatus.CARD_TAP_REQUIRED:
+                    updateCtlessLightStatus(ClssLightStatus.CLSS_LIGHT_READY_FOR_TXN);
+                    enableTap = true;
+                    enableManual = enableInsert = enableSwipe = false;
+                    loadView(rootView);
+                    break;
                 case CardStatus.CARD_SWIPE_REQUIRED:
-                    //6.Update entry mode
-                    onUpdateEntryMode(intent);
+                    enableSwipe = true;
+                    enableManual = enableInsert = enableTap = false;
+                    loadView(rootView);
                     return;
                 case SecurityStatus.SECURITY_ENTER_CLEARED: {
                     panLength = 0;
