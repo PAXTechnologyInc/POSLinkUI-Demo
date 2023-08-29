@@ -206,7 +206,7 @@ public abstract class BaseEntryFragment extends Fragment {
      * Changes IME_ACTION of soft keyboard. All but the last EditText will focus the next one. Last one will submit.
      */
     private void prepareEditTextsForSubmissionWithSoftKeyboard(EditText... editTexts) {
-        if (editTexts == null || editTexts.length == 0) {
+        if (editTexts == null || editTexts.length == 0 || !isActive()) {
             requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY|InputMethodManager.HIDE_NOT_ALWAYS);
