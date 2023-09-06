@@ -266,7 +266,7 @@
 
         <activity-alias android:name=".INFORMATION.DISPLAY_TRANS_INFORMATION" android:targetActivity=".entry.EntryActivity">
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="com.pax.us.pay.ui.category.INFORMATION"/>
+                <category android:name="com.pax.us.pay.ui.category.DETAILS"/>
                 <action android:name="com.pax.us.pay.action.DISPLAY_TRANS_INFORMATION"/>
             </intent-filter>
         </activity-alias>
