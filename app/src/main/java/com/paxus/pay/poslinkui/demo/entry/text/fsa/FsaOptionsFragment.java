@@ -15,6 +15,9 @@ import androidx.fragment.app.Fragment;
 
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.view.SelectOptionsView;
+
+import java.util.List;
 
 /**
  * Created by Yanina.Yang on 5/19/2022.
@@ -58,33 +61,34 @@ public class FsaOptionsFragment extends Fragment {
     }
 
     private String title;
-    private String[] items;
-    private ListView listView;
+    private List<SelectOptionsView.Option> items;
+    private SelectOptionsView selectOptionsView;
+
+    private int resultIndex = -1;
 
     void loadParameter(@NonNull Bundle bundle){
         title = bundle.getString(TITLE);
-        items = bundle.getStringArray(OPTIONS);
+        items = SelectOptionsView.buildOptions(bundle.getStringArray(OPTIONS));
     }
 
     void loadView(View rootView){
         TextView titleView = rootView.findViewById(R.id.title_view);
         titleView.setText(title);
 
-        listView = rootView.findViewById(R.id.list_view);
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(),
-                android.R.layout.simple_list_item_single_choice, items);
-        listView.setAdapter(adapter);
+        selectOptionsView = rootView.findViewById(R.id.select_options_view);
+        selectOptionsView.initialize(getActivity(), 1, items, option -> {
+            resultIndex = (int) option.getValue();
+        });
 
-        Button confirmButton = rootView.findViewById(R.id.confirm_button);
-        confirmButton.setOnClickListener(v->onConfirmButtonClicked());
+        rootView.findViewById(R.id.confirm_button).setOnClickListener(v -> submit());
+        getParentFragmentManager().setFragmentResultListener(FSAFragment.REQUEST_KEY_CONFIRM, this, (requestKey, result) -> submit());
     }
 
-    private void onConfirmButtonClicked(){
-        if(listView.getCheckedItemPosition()>= 0 ){
-            Bundle bundle = new Bundle();
-            bundle.putInt(INDEX, listView.getCheckedItemPosition());
-            getParentFragmentManager().setFragmentResult(RESULT, bundle);
-        }
+    private void submit(){
+        if(resultIndex < 0) return;
+
+        Bundle result = new Bundle();
+        result.putInt(INDEX, resultIndex);
+        getParentFragmentManager().setFragmentResult(RESULT, result);
     }
 }

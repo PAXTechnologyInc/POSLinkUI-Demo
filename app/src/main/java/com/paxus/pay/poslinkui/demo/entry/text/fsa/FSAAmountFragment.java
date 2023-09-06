@@ -60,7 +60,6 @@ public class FSAAmountFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Logger.d(this.getClass().getSimpleName()+" onCreateView");
 
-        //1. Load layout in onCreateView (getLayoutResourceId, loadParameter, loadView)
         Bundle bundle = getArguments();
         if(bundle != null) {
             loadArgument(bundle);
@@ -103,6 +102,7 @@ public class FSAAmountFragment extends Fragment {
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
+        getParentFragmentManager().setFragmentResultListener(FSAFragment.REQUEST_KEY_CONFIRM, this, (requestKey, result) -> onConfirmButtonClicked());
     }
 
     private void onConfirmButtonClicked() {

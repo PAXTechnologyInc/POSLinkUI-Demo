@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -105,6 +106,16 @@ public class SelectOptionsView extends RecyclerView {
         public Object getValue() {
             return value;
         }
+    }
+
+    public static List<Option> buildOptions(String[] options) {
+        List<Option> list = new ArrayList<>();
+        if(options == null) return list;
+
+        for(int i=0; i<options.length; i++){
+            list.add(new Option(null, options[i], null, i));
+        }
+        return list;
     }
 
     @FunctionalInterface
