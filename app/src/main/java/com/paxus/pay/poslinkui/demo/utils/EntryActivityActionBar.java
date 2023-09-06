@@ -31,7 +31,7 @@ public class EntryActivityActionBar {
         actionBar.setDisplayShowTitleEnabled(false);
 
         ConstraintLayout actionBarView = (ConstraintLayout) activityContext.getLayoutInflater().inflate(R.layout.action_bar, null);
-        actionBar.setCustomView(actionBarView, new ActionBar.LayoutParams(MATCH_PARENT, (int) activityContext.getResources().getDimension(R.dimen.toolbar_height)));
+        actionBar.setCustomView(actionBarView, new ActionBar.LayoutParams(MATCH_PARENT, MATCH_PARENT));
 
         ((ViewGroup)actionBar.getCustomView().getParent()).setPadding(0,0,0,0);
     }
