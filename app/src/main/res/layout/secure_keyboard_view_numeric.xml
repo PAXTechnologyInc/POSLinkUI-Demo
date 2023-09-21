@@ -14,7 +14,6 @@
         app:useDefaultMargins="true"
         android:background="#00FFFFFF">
         <TextView
-            android:id="@+id/key_1"
             android:text="1"
             android:gravity="center"
             app:layout_rowWeight="1"
@@ -23,9 +22,7 @@
             android:textColor="@color/pastel_text_color_on_light"
             android:tag="8"
             />
-        <!-- KeyEvent.KEYCODE_1 = 8 -->
         <TextView
-            android:id="@+id/key_2"
             android:text="2"
             android:gravity="center"
             app:layout_columnWeight="1"
@@ -35,7 +32,6 @@
             android:tag="9"
             />
         <TextView
-            android:id="@+id/key_3"
             android:text="3"
             android:gravity="center"
             app:layout_columnWeight="1"
@@ -45,16 +41,14 @@
             android:tag="10"
             />
         <TextView
-            android:id="@+id/key_cancel"
-            android:text="Cancel"
+            android:text="Delete"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
-            android:background="@color/cancel"
-            android:tag="111"
+            android:background="@color/pastel_warning"
+            android:tag="67"
             />
         <TextView
-            android:id="@+id/key_4"
             android:text="4"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
@@ -64,7 +58,6 @@
             android:tag="11"
             />
         <TextView
-            android:id="@+id/key_5"
             android:text="5"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
@@ -74,7 +67,6 @@
             android:tag="12"
             />
         <TextView
-            android:id="@+id/key_6"
             android:text="6"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
@@ -84,8 +76,7 @@
             android:tag="13"
             />
         <TextView
-            android:id="@+id/key_clear"
-            android:text="Clear"
+            android:text=" Clear "
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
@@ -93,7 +84,6 @@
             android:tag="28"
             />
         <TextView
-            android:id="@+id/key_7"
             android:text="7"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
@@ -103,7 +93,6 @@
             android:tag="14"
             />
         <TextView
-            android:id="@+id/key_8"
             android:text="8"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
@@ -113,7 +102,6 @@
             android:tag="15"
             />
         <TextView
-            android:id="@+id/key_9"
             android:text="9"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
@@ -123,8 +111,7 @@
             android:tag="16"
             />
         <TextView
-            android:id="@+id/key_enter"
-            android:text="Enter"
+            android:text=" Enter "
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             app:layout_rowSpan="2"
@@ -133,12 +120,14 @@
             android:tag="66"
             />
         <TextView
-            android:text=""
+            android:text="Cancel"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:background="@color/cancel"
+            android:tag="111"
+            />
         <TextView
-            android:id="@+id/key_0"
             android:text="0"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"

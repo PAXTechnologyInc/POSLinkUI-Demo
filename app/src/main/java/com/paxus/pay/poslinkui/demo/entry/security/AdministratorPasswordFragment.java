@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,6 +20,8 @@ import com.pax.us.pay.ui.constant.entry.enumeration.AdminPasswordType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
+import com.paxus.pay.poslinkui.demo.view.SecureKeyboardView;
 
 import java.util.Locale;
 
@@ -34,6 +37,7 @@ public class AdministratorPasswordFragment extends BaseEntryFragment {
     private long timeout;
 
     private TextView inputTextView;
+    private SecureKeyboardView secureKeyboardView;
 
     @Override
     protected int getLayoutResourceId() {
@@ -67,17 +71,22 @@ public class AdministratorPasswordFragment extends BaseEntryFragment {
         titleView.setText(prompt);
 
         inputTextView = rootView.findViewById(R.id.pwd_input_text);
+        secureKeyboardView = rootView.findViewById(R.id.keyboard_view);
+
         ViewTreeObserver observer = inputTextView.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 inputTextView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 onInputBoxLayoutReady();
+
+                secureKeyboardView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                    onInputBoxLayoutReady();
+                });
             }
         });
 
-        rootView.findViewById(R.id.pwd_confirm_button)
-                .setOnClickListener(view -> onConfirmButtonClicked());
+        rootView.findViewById(R.id.pwd_confirm_button).setOnClickListener(view -> onConfirmButtonClicked());
     }
 
     @Override
@@ -86,10 +95,22 @@ public class AdministratorPasswordFragment extends BaseEntryFragment {
     }
 
     protected void onInputBoxLayoutReady() {
+        Runnable securityAreaRequest = () -> {
+            Bundle bundle = new Bundle();
+
+            bundle.putAll(ViewUtils.generateInputTextAreaExtras(getActivity(), inputTextView, "Password"));
+
+            if(secureKeyboardView != null) {
+                bundle.putAll(secureKeyboardView.generateLocationBundle(getActivity()));
+            }
+
+            sendRequestBroadcast(EntryRequest.ACTION_SECURITY_AREA, bundle);
+        };
+
         if (Build.MODEL.equals("A35")) {
-            new Handler().postDelayed(() -> sendSecurityArea(inputTextView), 100);
+            new Handler(Looper.getMainLooper()).postDelayed(securityAreaRequest, 100);
         } else {
-            sendSecurityArea(inputTextView);
+            securityAreaRequest.run();
         }
     }
 }

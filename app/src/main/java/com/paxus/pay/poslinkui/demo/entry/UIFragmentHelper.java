@@ -83,6 +83,7 @@ import com.paxus.pay.poslinkui.demo.entry.security.EnterCardAllDigitsFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterCardLast4DigitsFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterVcodeFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.InputAccountFragment;
+import com.paxus.pay.poslinkui.demo.entry.security.InputAccountFragmentWithCustomKeyboard;
 import com.paxus.pay.poslinkui.demo.entry.security.ManageInputAccountFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.PINFragment;
 import com.paxus.pay.poslinkui.demo.entry.signature.SignatureFragment;
@@ -175,7 +176,7 @@ public class UIFragmentHelper {
 
     private static final Map<String, Class<? extends Fragment>> SECURE_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>() {
         {
-            put(SecurityEntry.ACTION_INPUT_ACCOUNT, InputAccountFragment.class);
+            put(SecurityEntry.ACTION_INPUT_ACCOUNT, InputAccountFragmentWithCustomKeyboard.class);
             put(SecurityEntry.ACTION_MANAGE_INPUT_ACCOUNT, ManageInputAccountFragment.class);
             put(SecurityEntry.ACTION_ENTER_VCODE, EnterVcodeFragment.class);
             put(SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS, EnterCardLast4DigitsFragment.class);
