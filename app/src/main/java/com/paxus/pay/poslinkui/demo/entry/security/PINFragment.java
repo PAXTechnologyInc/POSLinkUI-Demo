@@ -64,6 +64,8 @@ public class PINFragment extends BaseEntryFragment {
         intentFilter.addCategory(PINStatus.CATEGORY);
         intentFilter.addAction(PINStatus.PIN_ENTERING);
         intentFilter.addAction(PINStatus.PIN_ENTER_CLEARED);
+        intentFilter.addAction(PINStatus.PIN_ENTER_ABORTED);
+        intentFilter.addAction(PINStatus.PIN_ENTER_COMPLETED);
         requireContext().registerReceiver(receiver, intentFilter);
     }
     @Override
@@ -190,6 +192,10 @@ public class PINFragment extends BaseEntryFragment {
                     break;
                 case PINStatus.PIN_ENTER_CLEARED:
                     if(text.length() > 0) pinBox.setText(text.substring(0,text.length()-1));
+                    break;
+                case PINStatus.PIN_ENTER_ABORTED:
+                    break;
+                case PINStatus.PIN_ENTER_COMPLETED:
                     break;
             }
         }
