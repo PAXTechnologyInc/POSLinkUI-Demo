@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -24,6 +25,7 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.ManageUIConst;
+import com.pax.us.pay.ui.constant.status.POSLinkStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
@@ -61,6 +63,22 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
     private List<String> hardKeyList;
     private String barcodeType;
     private String barcodeData;
+
+    private LinearLayout textLayout;
+
+    //Interfaces of POSLink Category may need to listen to POSLinkStatus Broadcasts
+    private POSLinkStatusManager posLinkStatusManager;
+    
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        posLinkStatusManager = new POSLinkStatusManager(getContext(), getViewLifecycleOwner());
+        posLinkStatusManager.registerHandler(POSLinkStatus.CLEAR_MESSAGE, this::clearMessage);
+    }
+
+    private void clearMessage() {
+        textLayout.removeAllViews();
+    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -101,14 +119,14 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         TextView titleView = rootView.findViewById(R.id.title_view);
         titleView.setText(title);
 
-        LinearLayout textView = rootView.findViewById(R.id.text_view);
+        textLayout = rootView.findViewById(R.id.text_view);
         if(text == null || text.isEmpty()){
-            textView.setVisibility(View.GONE);
+            textLayout.setVisibility(View.GONE);
         }else {
             for(TextView tv: TextShowingUtils.getTextViewList(requireContext(),text)){
-                textView.addView(tv);
+                textLayout.addView(tv);
             }
-            textView.setVisibility(View.VISIBLE);
+            textLayout.setVisibility(View.VISIBLE);
         }
         if(barcodeData != null && !barcodeData.isEmpty()){
             ImageView imageView = new ImageView(requireContext());
@@ -116,7 +134,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             imageView.setLayoutParams(layoutParams);
-            textView.addView(imageView);
+            textLayout.addView(imageView);
         }
 
         Button btn1 = rootView.findViewById(R.id.button1);
