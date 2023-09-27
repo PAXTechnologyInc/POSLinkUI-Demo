@@ -21,7 +21,7 @@
     </style>
 
 
-    <style name="POSLinkUIPastel" parent="Theme.MaterialComponents.DayNight">
+    <style name="POSLinkUIPastel" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@style/NoAnimation</item>
@@ -32,7 +32,7 @@
         <item name="colorPrimaryDark">@color/pastel_background</item>
         <item name="colorSecondary">@color/pastel_secondary</item>
         <item name="colorAccent">@color/pastel_accent</item>
-        <item name="android:statusBarColor">@color/pastel_background</item>
+        <item name="android:statusBarColor">#d71e28</item>
 
         <item name="colorError">@color/pastel_warning</item>
         <!--overriding default widget styles-->

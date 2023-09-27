@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">POSLinkUI Demo</string>
+    <string name="app_name">Wells Fargo</string>
 
     <string name="test_only">FOR TEST ONLY\n(Not for commercial use)</string>
     <string name="demo_only">FOR DEMO ONLY\n(Not for commercial use)</string>
