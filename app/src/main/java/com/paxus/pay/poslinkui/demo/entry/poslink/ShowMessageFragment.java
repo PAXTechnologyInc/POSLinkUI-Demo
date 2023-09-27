@@ -9,13 +9,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
-import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
+import com.pax.us.pay.ui.constant.status.POSLinkStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 import org.json.JSONArray;
@@ -26,13 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implement text entry actions:<br>
+ * Implement POSLink Entry actions:<br>
  * {@value PoslinkEntry#ACTION_SHOW_MESSAGE}
- *
- * <p>
- * UI Tips:
- *
- * </p>
  */
 public class ShowMessageFragment extends BaseEntryFragment {
     private String title;
@@ -41,6 +36,21 @@ public class ShowMessageFragment extends BaseEntryFragment {
     private String imgUrl;
     private String imgDesc;
     private List<MsgInfoWrapper> messages;
+
+    //Interfaces of POSLink Category may need to listen to POSLinkStatus Broadcasts
+    private POSLinkStatusManager posLinkStatusManager;
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        posLinkStatusManager = new POSLinkStatusManager(getContext(), getViewLifecycleOwner());
+        posLinkStatusManager.registerHandler(POSLinkStatus.CLEAR_MESSAGE, this::clearMessage);
+    }
+
+    private void clearMessage() {
+        messages.clear();
+        loadView(getView());
+    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -105,6 +115,8 @@ public class ShowMessageFragment extends BaseEntryFragment {
             sendNext(null);
         }
     }
+
+
 
     private List<MsgInfoWrapper> parseMessageList(String jsonString) {
         try {

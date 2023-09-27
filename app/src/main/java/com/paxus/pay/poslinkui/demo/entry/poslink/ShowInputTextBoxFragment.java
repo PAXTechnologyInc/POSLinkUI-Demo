@@ -15,12 +15,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.ManageUIConst;
+import com.pax.us.pay.ui.constant.status.POSLinkStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
@@ -49,6 +51,21 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
     private String defaultValue;
 
     private EditText editText;
+    private LinearLayout textLayout;
+
+    //Interfaces of POSLink Category may need to listen to POSLinkStatus Broadcasts
+    private POSLinkStatusManager posLinkStatusManager;
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        posLinkStatusManager = new POSLinkStatusManager(getContext(), getViewLifecycleOwner());
+        posLinkStatusManager.registerHandler(POSLinkStatus.CLEAR_MESSAGE, this::clearMessage);
+    }
+
+    private void clearMessage() {
+        textLayout.removeAllViews();
+    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -80,14 +97,14 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
         TextView titleView = rootView.findViewById(R.id.title_view);
         titleView.setText(inputTextTitle);
 
-        LinearLayout textView = rootView.findViewById(R.id.text_view);
+        textLayout = rootView.findViewById(R.id.text_view);
         if(text == null || text.isEmpty()){
-            textView.setVisibility(View.GONE);
+            textLayout.setVisibility(View.GONE);
         }else {
             for(TextView tv: TextShowingUtils.getTextViewList(requireContext(),text)){
-                textView.addView(tv);
+                textLayout.addView(tv);
             }
-            textView.setVisibility(View.VISIBLE);
+            textLayout.setVisibility(View.VISIBLE);
         }
 
         editText = rootView.findViewById(R.id.edit_text);
