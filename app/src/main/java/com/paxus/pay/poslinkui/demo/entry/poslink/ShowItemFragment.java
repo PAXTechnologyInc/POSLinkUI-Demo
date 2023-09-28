@@ -50,6 +50,7 @@ public class ShowItemFragment extends BaseEntryFragment {
         super.onViewCreated(view, savedInstanceState);
         posLinkStatusManager = new POSLinkStatusManager(getContext(), getViewLifecycleOwner());
         posLinkStatusManager.registerHandler(POSLinkStatus.CLEAR_MESSAGE, this::clearMessage);
+        sendNext(null);
     }
 
     private void clearMessage() {
@@ -100,12 +101,6 @@ public class ShowItemFragment extends BaseEntryFragment {
             recyclerViewShowItem.setAdapter(itemListAdapter);
         }
 
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        sendNext(null);
     }
 
     private List<ItemDetailWrapper> parseItemList(String jsonString) {
