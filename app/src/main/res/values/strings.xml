@@ -176,6 +176,7 @@
     <string name="select_cashback_amount">Please Select Cashback</string>
     <string name="select_merchant">Please Select Merchant</string>
     <string name="select_orig_currency">Please Select Orig Trans Currency</string>
+    <string name="select_cof_initiator">Please Select COF Initiator</string>
 
     <string name="pls_input_clerk_id">Please Enter Clerk ID</string>
     <string name="pls_input_server_id">Please Enter Server ID</string>

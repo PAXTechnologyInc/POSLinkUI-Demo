@@ -55,6 +55,7 @@ import com.paxus.pay.poslinkui.demo.entry.option.SelectAidFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectBatchTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectByPassFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectCardTypeFragment;
+import com.paxus.pay.poslinkui.demo.entry.option.SelectCofInitiatorFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectDuplicateOverrideFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectEbtTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectEdcGroupFragment;
@@ -269,6 +270,7 @@ public class UIFragmentHelper {
             put(OptionEntry.ACTION_SELECT_AID, SelectAidFragment.class);
             put(OptionEntry.ACTION_SELECT_BY_PASS, SelectByPassFragment.class);
             put(OptionEntry.ACTION_SELECT_EBT_TYPE, SelectEbtTypeFragment.class);
+            put(OptionEntry.ACTION_SELECT_COF_INITIATOR, SelectCofInitiatorFragment.class);
         }
     };
 
@@ -310,7 +312,7 @@ public class UIFragmentHelper {
             fragment = clz.getConstructor().newInstance();
             Bundle bundle = new Bundle();
             bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-            bundle.putAll(intent.getExtras());
+            bundle.putAll(intent.getExtras()!=null ? intent.getExtras() : new Bundle());
             fragment.setArguments(bundle);
             return fragment;
         } catch (Exception e) {
