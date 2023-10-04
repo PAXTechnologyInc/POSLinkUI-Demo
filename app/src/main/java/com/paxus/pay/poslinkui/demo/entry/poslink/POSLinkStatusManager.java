@@ -57,6 +57,7 @@ public class POSLinkStatusManager extends BroadcastReceiver implements Lifecycle
 
     private static IntentFilter getIntentFilter() {
         IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addCategory(POSLinkStatus.CATEGORY);
         for (String action : ALLOWED_STATUS_ACTIONS) {
             intentFilter.addAction(action);
         }
