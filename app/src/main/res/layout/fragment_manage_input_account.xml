@@ -4,13 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.paxus.pay.poslinkui.demo.view.ClssLightsView
-        android:id="@+id/clss_light"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="5dp"
-        android:layout_weight="1" />
-
     <RelativeLayout
         android:id="@+id/ly_merchant"
         android:layout_width="match_parent"
