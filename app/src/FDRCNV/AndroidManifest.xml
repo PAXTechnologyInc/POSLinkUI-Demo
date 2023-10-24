@@ -13,13 +13,14 @@
     <application
         android:name=".DemoApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/icon"
+        android:icon="@mipmap/poslinkui_demo_icon"
+        android:roundIcon="@mipmap/poslinkui_demo_icon"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/POSLinkUIPastel">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:exported="true">
             <!--            Add launcher then you can see the app in desktop and uninstall it easily-->
             <intent-filter>
 

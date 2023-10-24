@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -30,6 +29,7 @@ import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.utils.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ import java.util.List;
 public abstract class BaseEntryFragment extends Fragment {
 
     private boolean active = false;
-
+    private Context appContext = getActivity();
     private String senderPackage, action;
     protected EditText[] focusableEditTexts = null;
 
@@ -197,9 +197,9 @@ public abstract class BaseEntryFragment extends Fragment {
      * @param errCode    Error Code
      * @param errMessage Error Message
      */
-    protected void onEntryDeclined(long errCode, String errMessage) {
+    protected void onEntryDeclined(int errCode, String errMessage) {
         Logger.i("Receive Response Broadcast ACTION_DECLINED for action \"" + action + "\" (" + errCode + "-" + errMessage + ")");
-        Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
+        new Toast(getActivity()).show(errMessage, Toast.TYPE.FAILURE);
     }
 
     /**
@@ -243,7 +243,7 @@ public abstract class BaseEntryFragment extends Fragment {
                 break;
             case EntryResponse.ACTION_DECLINED:
                 EditabilityBlocker.getInstance().release();
-                onEntryDeclined(result.getLong(EntryResponse.PARAM_CODE), result.getString(EntryResponse.PARAM_MSG));
+                onEntryDeclined(result.getInt(EntryResponse.PARAM_CODE), result.getString(EntryResponse.PARAM_MSG)); //POSUI-244
                 break;
         }
     };

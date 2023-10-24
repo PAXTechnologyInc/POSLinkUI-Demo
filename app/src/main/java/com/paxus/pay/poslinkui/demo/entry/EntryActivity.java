@@ -7,8 +7,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -88,12 +86,11 @@ public class EntryActivity extends AppCompatActivity{
 
     private void loadEntry(Intent intent){
         setIntent(intent);
-        logIntent(intent);
+        Logger.intent(intent, "ACTIVITY INTENT:\t" + intent.getAction());
         interfaceHistory.add(intent.getStringExtra("interfaceID"), intent.getAction());
 
         clearStatus();
         setScheduledTaskListener();
-        enableDarkOverlay(false);
 
         updateTransMode(intent.getStringExtra(EntryExtraData.PARAM_TRANS_MODE));
 
@@ -101,25 +98,15 @@ public class EntryActivity extends AppCompatActivity{
         if (entryFragment != null) {
             updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
             getSupportFragmentManager().executePendingTransactions();
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, entryFragment).commit();
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.anim_enter_from_right, R.anim.anim_exit_to_left, R.anim.anim_enter_from_right, R.anim.anim_exit_to_left)
+                    .replace(R.id.fragment_placeholder, entryFragment)
+                    .commit();
         } else {
             Toast.makeText(this, "NOT FOUND:" + intent.getAction(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void logIntent(Intent intent) {
-        Logger.d(getClass().getSimpleName() + " receives " + intent.getAction());
-        Logger.intent(intent);
-    }
-
-    private void enableDarkOverlay(boolean show){
-        View view = findViewById(R.id.entry_dark_overlap);
-        if((view.getVisibility() == View.VISIBLE && show) || (view.getVisibility() == View.INVISIBLE && !show)) return;
-        view.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
-        AlphaAnimation alphaAnimation = new AlphaAnimation(show ? 0 : 1, show ? 1 : 0);
-        alphaAnimation.setDuration(100);
-        view.startAnimation(alphaAnimation);
-    }
 
     private void setScheduledTaskListener() {
         //Used to schedule tasks requested by child fragments
@@ -138,7 +125,8 @@ public class EntryActivity extends AppCompatActivity{
             .setReorderingAllowed(true)
             .setCustomAnimations(R.anim.anim_enter_from_bottom, R.anim.anim_exit_to_bottom)
             .remove(Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.status_container)))
-            .commit();
+            .commitAllowingStateLoss(); // POSUI-243
+
     }
 
     private boolean isStatusPresent() {
@@ -146,11 +134,14 @@ public class EntryActivity extends AppCompatActivity{
     }
 
     public void loadStatus(Intent intent) {
-        @NonNull StatusFragment statusFragment = InformationStatus.TRANS_COMPLETED.equals(intent.getAction()) ? new TransCompletedStatusFragment(intent, this) : new StatusFragment(intent, this);
+        @NonNull
+        StatusFragment statusFragment = InformationStatus.TRANS_COMPLETED.equals(intent.getAction())
+                ? new TransCompletedStatusFragment(intent, this)
+                : new StatusFragment(intent, this);
         getSupportFragmentManager().executePendingTransactions();
 
         if(statusFragment.isConclusive()){
-            clearStatus();
+            //clearStatus();
         } else if (statusFragment.isImmediateTerminationNeeded()) {
             clearStatus();
             scheduler.cancelTasks();
@@ -162,7 +153,7 @@ public class EntryActivity extends AppCompatActivity{
 
             StatusFragment currentFragment = (StatusFragment) getSupportFragmentManager().findFragmentById(R.id.status_container);
             if(statusFragment.sameAs(currentFragment)){
-                currentFragment.updateStatus(intent, this);
+                currentFragment.updateStatusMessage(intent, this);
                 return;
             }
 
@@ -253,23 +244,17 @@ public class EntryActivity extends AppCompatActivity{
     public class ResponseBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            logIntent(intent);
+            Logger.intent(intent, "RESPONSE BROADCAST:\t" + intent.getAction());
 
             //Validation
             boolean isValid = interfaceHistory.validate(intent.getStringExtra("interfaceID"), intent.getStringExtra("originatingAction"));
             //if(!isValid) return; // Commented out until Manager supports interfaceID
 
-            //Acceptance needs to block the view
-            if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())) {
-                enableDarkOverlay(true);
-            }
-
-            //For both acceptance and decline, forward response to BaseEntryFragment
+            //Forward Response Broadcast to BaseEntryFragment
             Bundle responseBroadcastExtras = new BundleMaker()
                     .addString("action", intent.getAction())
                     .addBundle(intent.getExtras())
                     .get();
-
             getSupportFragmentManager().setFragmentResult("response", responseBroadcastExtras);
         }
 
@@ -284,7 +269,7 @@ public class EntryActivity extends AppCompatActivity{
     public class StatusBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            logIntent(intent);
+            Logger.intent(intent, "STATUS BROADCAST:\t" + intent.getAction());
             loadStatus(intent);
         }
 

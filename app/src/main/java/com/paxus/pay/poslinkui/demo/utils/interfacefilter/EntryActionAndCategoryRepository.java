@@ -102,6 +102,7 @@ class EntryActionAndCategoryRepository {
         put(OptionEntry.ACTION_SELECT_INSTALLMENT_PLAN, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_INSTALLMENT_PLAN, "Select Installment Plan", ".OPTION.SELECT_INSTALLMENT_PLAN", true));
         put(OptionEntry.ACTION_SELECT_TRANS_FOR_ADJUST, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_TRANS_FOR_ADJUST, "Select Trans For Adjust", ".OPTION.SELECT_TRANS_FOR_ADJUST", true));
         put(OptionEntry.ACTION_SELECT_COF_INITIATOR, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_COF_INITIATOR, "Select COF Initiator", ".OPTION.SELECT_COF_INITIATOR", true));
+        put(OptionEntry.ACTION_SELECT_COF_INITIATOR, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_CASH_DISCOUNT, "Select Cash Discount", ".OPTION.SELECT_CASH_DISCOUNT", true));
 
         // Confirmation Entry
         put(ConfirmationEntry.ACTION_START_UI, new EntryAction(ConfirmationEntry.CATEGORY, ConfirmationEntry.ACTION_START_UI, "Start UI", ".CONFIRMATION.START_UI", true));
@@ -136,6 +137,7 @@ class EntryActionAndCategoryRepository {
         put(ConfirmationEntry.ACTION_DISPLAY_QR_CODE_RECEIPT, new EntryAction(ConfirmationEntry.CATEGORY, ConfirmationEntry.ACTION_DISPLAY_QR_CODE_RECEIPT, "Display QR Code Receipt", ".CONFIRMATION.DISPLAY_QR_CODE_RECEIPT", true));
         put(ConfirmationEntry.ACTION_CONFIRM_DCC, new EntryAction(ConfirmationEntry.CATEGORY, ConfirmationEntry.ACTION_CONFIRM_DCC, "Confirm DCC", ".CONFIRMATION.CONFIRM_DCC", true));
         put(ConfirmationEntry.ACTION_CONFIRM_TOTAL_AMOUNT, new EntryAction(ConfirmationEntry.CATEGORY, ConfirmationEntry.ACTION_CONFIRM_TOTAL_AMOUNT, "Confirm Total Amount", ".CONFIRMATION.CONFIRM_TOTAL_AMOUNT", true));
+        put(ConfirmationEntry.ACTION_CONFIRM_CASH_PAYMENT, new EntryAction(ConfirmationEntry.CATEGORY, ConfirmationEntry.ACTION_CONFIRM_CASH_PAYMENT, "Confirm Cash Payment", ".CONFIRMATION.CONFIRM_CASH_PAYMENT", true));
 
         // Information Entry
         put(InformationEntry.ACTION_DISPLAY_TRANS_INFORMATION, new EntryAction(InformationEntry.CATEGORY, InformationEntry.ACTION_DISPLAY_TRANS_INFORMATION, "Display Transaction Information", ".INFORMATION.DISPLAY_TRANS_INFORMATION", true));

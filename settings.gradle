@@ -12,5 +12,5 @@
 //        mavenCentral()
 //    }
 //}
-rootProject.name = "POSLinkUI Demo"
+rootProject.name = "POSLinkUI-Demo"
 include ':app'

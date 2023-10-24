@@ -160,11 +160,11 @@ public class SelectOptionsView extends RecyclerView {
 
             if (option.title != null) {
                 text.append(option.title);
-                text.setSpan(new AbsoluteSizeSpan((int) getResources().getDimension(R.dimen.text_size_title)), 0, option.title.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                text.setSpan(new AbsoluteSizeSpan((int) getResources().getDimension(R.dimen.text_size_subtitle)), 0, option.title.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
             }
             if (option.subtitle != null) {
                 text.append(option.title != null ? "\n" : "").append(option.subtitle);
-                text.setSpan(new AbsoluteSizeSpan((int) (option.title != null ? getResources().getDimension(R.dimen.text_size_hint) : getResources().getDimension(R.dimen.text_size_title))),
+                text.setSpan(new AbsoluteSizeSpan((int) (option.title != null ? getResources().getDimension(R.dimen.text_size_hint) : getResources().getDimension(R.dimen.text_size_subtitle))),
                         text.length() - option.subtitle.length(), text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 text.setSpan(new StyleSpan(Typeface.BOLD), 0, option.title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }

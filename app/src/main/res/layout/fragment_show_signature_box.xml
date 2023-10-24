@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/title_view"
-        android:textSize="32sp"
+        android:textSize="@dimen/text_size_title"
         android:gravity="center"
 
         app:layout_constraintTop_toTopOf="parent"
@@ -97,7 +97,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/button_height"
         android:id="@+id/confirm_button"
-        android:text="@string/confirm"
+        android:text="@string/enter"
         android:layout_weight="1"
         android:layout_margin="@dimen/margin_gap"
         android:backgroundTint="@color/pastel_primary"

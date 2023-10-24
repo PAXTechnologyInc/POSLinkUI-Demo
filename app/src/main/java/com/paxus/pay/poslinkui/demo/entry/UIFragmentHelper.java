@@ -26,6 +26,7 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmBalanceFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmBatchCloseFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmCardEntryRetryFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmCardProcessResultFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmCashPaymentFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmDCCFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmDeleteSfFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmDuplicateTransFragment;
@@ -55,6 +56,7 @@ import com.paxus.pay.poslinkui.demo.entry.option.SelectAidFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectBatchTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectByPassFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectCardTypeFragment;
+import com.paxus.pay.poslinkui.demo.entry.option.SelectCashDiscountFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectCofInitiatorFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectDuplicateOverrideFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectEbtTypeFragment;
@@ -232,6 +234,7 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_START_UI, StartUIFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_TOTAL_AMOUNT, ConfirmTotalAmountFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_BALANCE, ConfirmBalanceFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_CASH_PAYMENT, ConfirmCashPaymentFragment.class);
         }
     };
 
@@ -271,6 +274,7 @@ public class UIFragmentHelper {
             put(OptionEntry.ACTION_SELECT_BY_PASS, SelectByPassFragment.class);
             put(OptionEntry.ACTION_SELECT_EBT_TYPE, SelectEbtTypeFragment.class);
             put(OptionEntry.ACTION_SELECT_COF_INITIATOR, SelectCofInitiatorFragment.class);
+            put(OptionEntry.ACTION_SELECT_CASH_DISCOUNT, SelectCashDiscountFragment.class);
         }
     };
 
@@ -319,84 +323,5 @@ public class UIFragmentHelper {
             Logger.e(e);
         }
         return null;
-    }
-
-    /**
-     * Create dialog tag cuz we use it to close dialog
-     *
-     * @param action action
-     * @return tag
-     */
-    public static String createStatusDialogTag(String action) {
-        switch (action) {
-            case InformationStatus.TRANS_COMPLETED:
-                return "trans_completed";
-            case InformationStatus.TRANS_ONLINE_STARTED:
-            case InformationStatus.TRANS_ONLINE_FINISHED:
-                return "trans_online";
-            case InformationStatus.EMV_TRANS_ONLINE_STARTED:
-            case InformationStatus.EMV_TRANS_ONLINE_FINISHED:
-                return "emv_trans_online";
-            case InformationStatus.RKI_STARTED:
-            case InformationStatus.RKI_FINISHED:
-                return "rki_process";
-            case InformationStatus.DCC_ONLINE_STARTED:
-            case InformationStatus.DCC_ONLINE_FINISHED:
-                return "dcc_online";
-            case InformationStatus.PINPAD_CONNECTION_STARTED:
-            case InformationStatus.PINPAD_CONNECTION_FINISHED:
-                return "pin_pad_connection";
-            case CardStatus.CARD_REMOVAL_REQUIRED:
-            case CardStatus.CARD_QUICK_REMOVAL_REQUIRED:
-            case CardStatus.CARD_REMOVED:
-                return "remove_card";
-            case CardStatus.CARD_PROCESS_STARTED:
-            case CardStatus.CARD_PROCESS_COMPLETED:
-                return "card_process";
-            case Uncategory.PRINT_STARTED:
-            case Uncategory.PRINT_COMPLETED:
-                return "print_process";
-            case Uncategory.FILE_UPDATE_STARTED:
-            case Uncategory.FILE_UPDATE_COMPLETED:
-                return "file_update";
-            case Uncategory.FCP_FILE_UPDATE_STARTED:
-            case Uncategory.FCP_FILE_UPDATE_COMPLETED:
-                return "fcp_file_update";
-            case Uncategory.CAPK_UPDATE_STARTED:
-            case Uncategory.CAPK_UPDATE_COMPLETED:
-                return "capk_update";
-            case Uncategory.LOG_UPLOAD_STARTED:
-            case Uncategory.LOG_UPLOAD_CONNECTED:
-            case Uncategory.LOG_UPLOAD_UPLOADING:
-            case Uncategory.LOG_UPLOAD_COMPLETED:
-                return "log_upload";
-            case BatchStatus.BATCH_UPLOADING:
-            case BatchStatus.BATCH_SF_COMPLETED:
-                return "sf_upload";
-            case BatchStatus.BATCH_CLOSE_UPLOADING:
-            case BatchStatus.BATCH_CLOSE_COMPLETED:
-                return "batch_upload";
-            case InformationStatus.ENTER_PIN_STARTED:
-                return "enter-pin-started";
-            default:
-                return null;
-        }
-    }
-
-
-    public static void showDialog(FragmentManager fragmentManager, DialogFragment dialogFragment, String tag) {
-        dialogFragment.show(fragmentManager, tag);
-    }
-
-    public static void closeDialog(FragmentManager fragmentManager, String tag) {
-        Fragment prev = fragmentManager.findFragmentByTag(tag);
-        if (prev != null) {
-            DialogFragment df = (DialogFragment) prev;
-            try {
-                df.dismiss();
-            } catch (Exception e) {
-                //Secure Dismiss dialog
-            }
-        }
     }
 }

@@ -23,7 +23,8 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
-import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Implement text entry actions:<br>
@@ -73,13 +74,15 @@ public class InputTextFragment extends BaseEntryFragment {
 
         editText = rootView.findViewById(R.id.edit_text);
         focusableEditTexts = new EditText[]{editText};
+
         if ("1".equals(inputType)) {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             if(maxLength > 0 ) {
                 editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
             }
             editText.setText(defaultValue);
-        }else if("2".equals(inputType)){//Date
+
+        } else if("2".equals(inputType)) {//Date
             minLength = 8;
             maxLength = 8;
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -90,7 +93,7 @@ public class InputTextFragment extends BaseEntryFragment {
             editText.addTextChangedListener(new FormatTextWatcher(FORMAT_DATE));
             editText.setText(defaultValue);
 
-        }else if("3".equals(inputType)){//Time
+        } else if("3".equals(inputType)) {//Time
             minLength = 6;
             maxLength = 6;
             editText.setTextIsSelectable(false);
@@ -101,24 +104,28 @@ public class InputTextFragment extends BaseEntryFragment {
             editText.addTextChangedListener(new FormatTextWatcher(FORMAT_TIME));
             editText.setText(defaultValue);
 
-        }else if("4".equals(inputType)){//Amount
+        } else if("4".equals(inputType)) {//Amount
             editText.setTextIsSelectable(false);
+            editText.addTextChangedListener(new CurrencyTextWatcher(editText, CurrencyType.USD, maxLength));
+            editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
+            editText.setKeyListener(DigitsKeyListener.getInstance("0123456789,.$€£"));
+            editText.setHint(CurrencyUtils.CURRENCY_SYMBOL_MAP.get(CurrencyType.USD) + "0.00");
+
             if(defaultValue != null) {
                 String def = defaultValue.replaceAll("[^0-9]","");
                 if(!TextUtils.isEmpty(def)) {
                     editText.setText(CurrencyUtils.convert(Long.parseLong(def), CurrencyType.USD));
                 }
-
             }
-            editText.addTextChangedListener(new AmountTextWatcher(maxLength, CurrencyType.USD));
-        }else if("5".equals(inputType)){//password
-            editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+        } else if("5".equals(inputType)) {//password
+            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             if(maxLength > 0 ) {
                 editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
             }
             editText.setText(defaultValue);
 
-        }else if("6".equals(inputType)){//Phone
+        } else if("6".equals(inputType)) {//Phone
             minLength = 10;
             maxLength = 10;
 
@@ -130,7 +137,7 @@ public class InputTextFragment extends BaseEntryFragment {
             editText.addTextChangedListener(new FormatTextWatcher(FORMAT_PHONE));
             editText.setText(defaultValue);
 
-        }else if("7".equals(inputType)){//SSN
+        } else if("7".equals(inputType)) {//SSN
             minLength = 9;
             maxLength = 9;
             editText.setTextIsSelectable(false);
@@ -141,7 +148,7 @@ public class InputTextFragment extends BaseEntryFragment {
             editText.addTextChangedListener(new FormatTextWatcher(FORMAT_SSN));
             editText.setText(defaultValue);
 
-        }else {
+        } else {
             editText.setInputType(InputType.TYPE_CLASS_TEXT);
             if(maxLength > 0 ) {
                 editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
@@ -251,6 +258,60 @@ public class InputTextFragment extends BaseEntryFragment {
                 editable.replace(0, editable.length(), value);
                 editing = false;
             }
+        }
+    }
+
+    private class CurrencyTextWatcher implements TextWatcher {
+        private final WeakReference<EditText> editTextWeakReference;
+        private String currencyType;
+        private int maxLength;
+
+        private String valueBeforeTextChange;
+        public CurrencyTextWatcher(EditText editText, String currencyType, int maxLength) {
+            this.editTextWeakReference = new WeakReference<>(editText);
+            this.currencyType = currencyType;
+            this.maxLength = maxLength;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            valueBeforeTextChange = charSequence.toString();
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            String temp = editable.toString().replaceAll("[^0-9]", "");
+
+            editTextWeakReference.get().removeTextChangedListener(this);
+
+            if(temp.length() > maxLength) {
+                editable.replace(0, editable.length(), valueBeforeTextChange);
+            } else {
+                String currencySymbol = CurrencyUtils.CURRENCY_SYMBOL_MAP.containsKey(currencyType) ?
+                        CurrencyUtils.CURRENCY_SYMBOL_MAP.get(currencyType) : "";
+                String character = temp.length() > 2 ? removeLeadingZero(temp.substring(0, temp.length() - 2)) : "0";
+                String mantissa = temp.length() > 2 ? temp.substring(temp.length() - 2) : putLeadingZero(temp, 2);
+
+                editable.replace(0, editable.length(), currencySymbol + character + "." + mantissa);
+            }
+
+            editTextWeakReference.get().addTextChangedListener(this);
+        }
+
+        private String putLeadingZero(String value, int totalLength) {
+            while (value.length() < totalLength) {
+                value = "0" + value;
+            }
+            return value;
+        }
+        private String removeLeadingZero(String value) {
+            while (value.length() > 1 && value.indexOf("0")==0) {
+                value = value.substring(1);
+            }
+            return value;
         }
     }
 }

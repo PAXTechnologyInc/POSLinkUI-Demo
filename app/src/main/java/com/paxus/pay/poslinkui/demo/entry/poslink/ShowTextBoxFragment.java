@@ -118,23 +118,30 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
     protected void loadView(View rootView) {
         TextView titleView = rootView.findViewById(R.id.title_view);
         titleView.setText(title);
-
         textLayout = rootView.findViewById(R.id.text_view);
-        if(text == null || text.isEmpty()){
+
+        //POSUI-245
+        boolean noText = text == null || text.isEmpty();
+        boolean noBard = barcodeData == null || barcodeData.isEmpty();
+        if (noText && noBard) {
             textLayout.setVisibility(View.GONE);
-        }else {
-            for(TextView tv: TextShowingUtils.getTextViewList(requireContext(),text)){
-                textLayout.addView(tv);
+        } else {
+            if (!noText) { // text
+                for(TextView tv: TextShowingUtils.getTextViewList(requireContext(),text)){
+                    textLayout.addView(tv);
+                }
             }
+            if (!noBard) { // qr code
+                ImageView imageView = new ImageView(requireContext());
+                imageView.setImageBitmap(createQRCode(barcodeData, 500,null));
+                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                imageView.setColorFilter(Color.WHITE);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                imageView.setLayoutParams(layoutParams);
+                textLayout.addView(imageView);
+            }
+            // output
             textLayout.setVisibility(View.VISIBLE);
-        }
-        if(barcodeData != null && !barcodeData.isEmpty()){
-            ImageView imageView = new ImageView(requireContext());
-            imageView.setImageBitmap(createQRCode(barcodeData, 500,null));
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            imageView.setLayoutParams(layoutParams);
-            textLayout.addView(imageView);
         }
 
         Button btn1 = rootView.findViewById(R.id.button1);

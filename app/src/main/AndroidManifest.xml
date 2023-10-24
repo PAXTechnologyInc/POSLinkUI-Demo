@@ -13,13 +13,14 @@
     <application
         android:name=".DemoApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/icon"
+        android:icon="@mipmap/poslinkui_demo_icon"
+        android:roundIcon="@mipmap/poslinkui_demo_icon"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/POSLinkUIPastel">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:exported="true">
             <!--            Add launcher then you can see the app in desktop and uninstall it easily-->
             <intent-filter>
 
@@ -250,6 +251,13 @@
             </intent-filter>
         </activity-alias>
 
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_CASH_PAYMENT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_CASH_PAYMENT"/>
+            </intent-filter>
+        </activity-alias>
+
         <activity-alias android:name=".CONFIRMATION.START_UI" android:targetActivity=".entry.EntryActivity">
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
@@ -310,6 +318,13 @@
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="com.pax.us.pay.ui.category.OPTION"/>
                 <action android:name="com.pax.us.pay.action.SELECT_CASHBACK_AMOUNT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_CASH_DISCOUNT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_CASH_DISCOUNT"/>
             </intent-filter>
         </activity-alias>
 

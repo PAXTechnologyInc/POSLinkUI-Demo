@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
 
         tools:text="Credit Sale"
-        android:autoSizeTextType="none"
         android:textSize="@dimen/text_size_normal"
         android:textStyle="bold"
 
@@ -62,5 +61,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/action_bar_clss_light"
         app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/toast_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -183,7 +183,7 @@ public class PINFragment extends BaseEntryFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.i("receive Status Action \""+intent.getAction()+"\"");
+            Logger.intent(intent, "STATUS BROADCAST:\t" + intent.getAction());
             String text = pinBox.getText().toString();
 
             switch (intent.getAction()) {

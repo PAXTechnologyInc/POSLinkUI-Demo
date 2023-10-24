@@ -14,7 +14,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/title"
-                android:textSize="28sp"
+                android:textSize="@dimen/text_size_supertitle"
                 android:maxLines="1"
                 android:gravity="center"/>
             <LinearLayout
