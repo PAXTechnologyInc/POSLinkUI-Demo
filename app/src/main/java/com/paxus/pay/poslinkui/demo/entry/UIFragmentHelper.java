@@ -26,6 +26,7 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmBalanceFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmBatchCloseFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmCardEntryRetryFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmCardProcessResultFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmCashPaymentFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmDCCFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmDeleteSfFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmDuplicateTransFragment;
@@ -55,6 +56,7 @@ import com.paxus.pay.poslinkui.demo.entry.option.SelectAidFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectBatchTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectByPassFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectCardTypeFragment;
+import com.paxus.pay.poslinkui.demo.entry.option.SelectCashDiscountFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectCofInitiatorFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectDuplicateOverrideFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectEbtTypeFragment;
@@ -232,6 +234,7 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_START_UI, StartUIFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_TOTAL_AMOUNT, ConfirmTotalAmountFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_BALANCE, ConfirmBalanceFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_CASH_PAYMENT, ConfirmCashPaymentFragment.class);
         }
     };
 
@@ -271,6 +274,7 @@ public class UIFragmentHelper {
             put(OptionEntry.ACTION_SELECT_BY_PASS, SelectByPassFragment.class);
             put(OptionEntry.ACTION_SELECT_EBT_TYPE, SelectEbtTypeFragment.class);
             put(OptionEntry.ACTION_SELECT_COF_INITIATOR, SelectCofInitiatorFragment.class);
+            put(OptionEntry.ACTION_SELECT_CASH_DISCOUNT, SelectCashDiscountFragment.class);
         }
     };
 
