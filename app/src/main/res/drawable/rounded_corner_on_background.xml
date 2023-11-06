@@ -1,8 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <stroke
-        android:width="2dp"
-        android:color="@color/pastel_on_background" />
-    <corners android:radius="@dimen/corner_radius"/>
-    <solid android:color="@color/pastel_on_background"/>
-</shape>
+<?xml version="1.0" encoding="UTF-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_enabled="true">
+        <shape android:shape="rectangle">
+            <stroke android:width="2dp" android:color="@color/pastel_on_background" />
+            <corners android:radius="@dimen/corner_radius"/>
+            <solid android:color="@color/pastel_on_background"/>
+        </shape>
+    </item>
+
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/corner_radius"/>
+            <solid android:color="@color/pastel_disabled"/>
+        </shape>
+    </item>
+
+</selector>

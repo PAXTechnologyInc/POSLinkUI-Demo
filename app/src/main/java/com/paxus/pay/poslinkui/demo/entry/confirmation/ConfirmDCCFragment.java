@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
-import com.pax.us.pay.ui.constant.entry.EntryRequest;
 
 /**
  * Implement confirmation entry action {@link ConfirmationEntry#ACTION_CONFIRM_DCC} <br>
@@ -21,10 +20,7 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
  * if click Cancel, sendNext(false)
  * </p>
  */
-public class ConfirmDCCFragment extends AConfirmationDialogFragment {
-    private String action;
-    private String packageName;
-    private long timeout;
+public class ConfirmDCCFragment extends AConfirmationFragment {
     private String amountMessage;
     private String exchangeRate;
     private String currencyAlfCode;
@@ -33,27 +29,18 @@ public class ConfirmDCCFragment extends AConfirmationDialogFragment {
     private boolean confirmWithCurrency;
 
     @Override
-    protected void loadParameter(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        timeout = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
+    protected void loadArgument(@NonNull Bundle bundle) {
+        super.loadArgument(bundle);
         amountMessage = bundle.getString(EntryExtraData.PARAM_AMOUNT_MESSAGE);
         exchangeRate = bundle.getString(EntryExtraData.PARAM_EXCHANGE_RATE);
         currencyAlfCode = bundle.getString(EntryExtraData.PARAM_CURRENCY_ALPHA_CODE);
         foreignAmountMessage = bundle.getString(EntryExtraData.PARAM_FOREIGN_AMOUNT_MESSAGE);
         confirmWithCurrency = bundle.getBoolean(EntryExtraData.PARAM_CONFIRM_WITH_CURRENCY);
         margin = bundle.getString(EntryExtraData.PARAM_MARGIN);
-
-    }
-
-    @NonNull
-    @Override
-    protected String getRequestedParamName() {
-        return EntryRequest.PARAM_CONFIRMED;
     }
 
     @Override
-    protected String formatMessage() {
+    protected String formatMessage(String message) {
         StringBuilder contentMsg = new StringBuilder();
         if (!TextUtils.isEmpty(amountMessage)) {
             contentMsg.append("USD ").append(amountMessage).append("\n");
@@ -71,7 +58,7 @@ public class ConfirmDCCFragment extends AConfirmationDialogFragment {
     }
 
     @Override
-    protected String getPositiveText() {
+    @NonNull protected String getPositiveText() {
         if (confirmWithCurrency && !TextUtils.isEmpty(currencyAlfCode)) {
             return "USD";
         } else {
@@ -86,15 +73,5 @@ public class ConfirmDCCFragment extends AConfirmationDialogFragment {
         } else {
             return "Cancel";
         }
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
     }
 }

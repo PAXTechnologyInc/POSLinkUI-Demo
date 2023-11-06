@@ -16,7 +16,6 @@ import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
@@ -30,9 +29,6 @@ import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
  * </p>
  */
 public class TotalAmountFragment extends BaseEntryFragment {
-    private String transType;
-    private String transMode;
-
     private long timeOut;
     private int minLength;
     private int maxLength;
@@ -42,18 +38,6 @@ public class TotalAmountFragment extends BaseEntryFragment {
     private long baseAmount;
     private boolean noTipEnabled;
     private String tipName;
-    private String packageName;
-    private String action;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     private EditText editText;
 
@@ -64,10 +48,6 @@ public class TotalAmountFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
         currency =  bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
 
@@ -91,7 +71,7 @@ public class TotalAmountFragment extends BaseEntryFragment {
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_amount);
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+        focusableEditTexts = new EditText[]{editText};
         editText.setSelected(false);
         editText.setText(CurrencyUtils.convert(0,currency));
         editText.setSelection(editText.getEditableText().length());
@@ -116,21 +96,21 @@ public class TotalAmountFragment extends BaseEntryFragment {
     }
 
 
-    private void sendNext(long value){
-
-        String param = EntryRequest.PARAM_TOTAL_AMOUNT;
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
+    private void submit(long value){
+        Bundle bundle = new Bundle();
+        bundle.putLong(EntryRequest.PARAM_TOTAL_AMOUNT, value);
+        sendNext(bundle);
     }
 
     //-----------Click Callback for buttons-----------
     //If click no tip button, send next with base amount
     private void onNoTipButtonClicked(){
-        sendNext(baseAmount);
+        submit(baseAmount);
     }
 
     @Override
     protected void onConfirmButtonClicked(){
         long value = CurrencyUtils.parse(editText.getText().toString());
-        sendNext(value);
+        submit(value);
     }
 }

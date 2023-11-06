@@ -14,18 +14,9 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_TAX_AMOUNT}<br>
- *
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 
 public class TaxAmountFragment extends AAmountFragment {
-    private String transType;
-    private String transMode;
-    private String packageName;
-    private String action;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
@@ -34,10 +25,6 @@ public class TaxAmountFragment extends AAmountFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         currency = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
 
@@ -46,16 +33,6 @@ public class TaxAmountFragment extends AAmountFragment {
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
     }
 
     @Override

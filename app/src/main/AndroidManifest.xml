@@ -13,10 +13,9 @@
     <application
         android:name=".DemoApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/POSLinkUIPastel">
 
@@ -31,159 +30,787 @@
             </intent-filter>
         </activity>
 
-<!--        1. exported should be true. Then this activity can be started by Intent.-->
+    <!--        1. exported should be true. Then this activity can be started by Intent.-->
 <!--        2. launchMode is set to singleTop. If the activity is at the top of stack, it will not be created. New intent will be called.-->
 <!--        3. To show some dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE. The theme is set to No Action Bar and transparent.-->
-        <activity
-            android:name=".entry.EntryActivity"
+        <activity android:name=".entry.EntryActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:autoRemoveFromRecents="true"
             android:clearTaskOnLaunch="true"
-            >
-            <intent-filter>
-                <category android:name="com.pax.us.pay.ui.category.TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
+            />
 
-                <action android:name="com.pax.us.pay.action.ENTER_AMOUNT" />
-                <action android:name="com.pax.us.pay.action.ENTER_TIP" />
-                <action android:name="com.pax.us.pay.action.ENTER_TOTAL_AMOUNT" />
-                <action android:name="com.pax.us.pay.action.ENTER_CASH_BACK" />
-                <action android:name="com.pax.us.pay.action.ENTER_ADDRESS" />
-                <action android:name="com.pax.us.pay.action.ENTER_ZIP_CODE" />
-                <action android:name="com.pax.us.pay.action.ENTER_AVS_DATA" />
-                <action android:name="com.pax.us.pay.action.ENTER_EXPIRY_DATE" />
-                <!--Fleet-->
-                <action android:name="com.pax.us.pay.action.ENTER_FUEL_AMOUNT" />
-                <action android:name="com.pax.us.pay.action.ENTER_PROMPT_RESTRICTION_CODE" />
-                <action android:name="com.pax.us.pay.action.ENTER_FLEET_DATA" />
-                <!--MOTO-->
-                <action android:name="com.pax.us.pay.action.ENTER_ORDER_NUMBER" />
-                <action android:name="com.pax.us.pay.action.ENTER_CS_PHONE_NUMBER" />
-                <!--FSA-->
-                <action android:name="com.pax.us.pay.action.ENTER_FSA_DATA" />
-                <!--Commercial-->
-                <action android:name="com.pax.us.pay.action.ENTER_CUSTOMER_CODE" />
-                <action android:name="com.pax.us.pay.action.ENTER_PO_NUMBER" />
-                <action android:name="com.pax.us.pay.action.ENTER_MERCHANT_TAX_ID" />
-                <action android:name="com.pax.us.pay.action.ENTER_DEST_ZIP_CODE" />
-                <action android:name="com.pax.us.pay.action.ENTER_PROD_DESC" />
-                <action android:name="com.pax.us.pay.action.ENTER_TAX_AMOUNT" />
-                <!--Other-->
-                <action android:name="com.pax.us.pay.action.ENTER_INVOICE_NUMBER" />
-                <action android:name="com.pax.us.pay.action.ENTER_CLERK_ID" />
-                <action android:name="com.pax.us.pay.action.ENTER_SERVER_ID" />
-                <action android:name="com.pax.us.pay.action.ENTER_TABLE_NUMBER" />
-                <action android:name="com.pax.us.pay.action.ENTER_GUEST_NUMBER" />
-
-                <action android:name="com.pax.us.pay.action.ENTER_TRANS_NUMBER" />
-                <action android:name="com.pax.us.pay.action.ENTER_REFERENCE_NUMBER" />
-                <action android:name="com.pax.us.pay.action.ENTER_AUTH_CODE" />
-                <action android:name="com.pax.us.pay.action.ENTER_VOUCHER_DATA" />
-                <action android:name="com.pax.us.pay.action.ENTER_ORIG_DATE" />
-
-                <action android:name="com.pax.us.pay.action.ENTER_PHONE_NUMBER" />
-                <action android:name="com.pax.us.pay.action.ENTER_MERCHANT_REFERENCE_NUMBER" />
-                <action android:name="com.pax.us.pay.action.ENTER_OCT_REFERENCE_NUMBER" />
-                <action android:name="com.pax.us.pay.action.ENTER_ORIGINAL_TRANSACTION_IDENTIFIER" />
-            </intent-filter>
-            <intent-filter>
-                <category android:name="com.pax.us.pay.ui.category.SECURITY" />
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <action android:name="com.pax.us.pay.action.INPUT_ACCOUNT" />
-                <action android:name="com.pax.us.pay.action.MANAGE_INPUT_ACCOUNT" />
-                <action android:name="com.pax.us.pay.action.ENTER_CARD_ALL_DIGITS" />
-                <action android:name="com.pax.us.pay.action.ENTER_CARD_LAST_4_DIGITS" />
-                <action android:name="com.pax.us.pay.action.ENTER_CVV" />
-                <action android:name="com.pax.us.pay.action.ENTER_PIN" />
-                <action android:name="com.pax.us.pay.action.ADMINISTRATOR_PASSWORD" />
-            </intent-filter>
-
-            <intent-filter>
-                <category android:name="com.pax.us.pay.ui.category.DETAILS" />
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <action android:name="com.pax.us.pay.action.DISPLAY_TRANS_INFORMATION" />
-            </intent-filter>
-            <intent-filter>
-                <category android:name="com.pax.us.pay.ui.category.SIGNATURE" />
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <action android:name="com.pax.us.pay.action.GET_SIGNATURE" />
-            </intent-filter>
-            <intent-filter>
-                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION" />
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <action android:name="com.pax.us.pay.action.START_UI" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_SERVICE_FEE" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_SURCHARGE_FEE" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_CARD_PRESENT" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_CARD_PROCESS_RESULT" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_DUPLICATE_TRANS" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_ONLINE_RETRY" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_PRINT_CUSTOMER_COPY" />
-                <action android:name="com.pax.us.pay.action.DISPLAY_QR_CODE_RECEIPT" />
-                <action android:name="com.pax.us.pay.action.REVERSE_PARTIAL_APPROVAL" />
-                <action android:name="com.pax.us.pay.action.SUPPLEMENT_PARTIAL_APPROVAL" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_CARD_ENTRY_RETRY" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_MERCHANT_SCOPE" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_DEACTIVATE_WARN" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_BATCH_CLOSE" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_UNTIPPED" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_PRINTER_STATUS" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_UPLOAD_TRANS" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_UPLOAD_RETRY" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_PRINT_FAILED_TRANS" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_PRINT_FPS" />
-                <action android:name="com.pax.us.pay.action.CONFIRM_DELETE_SF"/>
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_ADJUST_TIP" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
                 <action android:name="com.pax.us.pay.action.CONFIRM_ADJUST_TIP"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_BALANCE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_BALANCE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_BATCH_CLOSE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_BATCH_CLOSE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_BATCH_FOR_APPLICATION_UPDATE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_BATCH_FOR_APPLICATION_UPDATE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_CARD_ENTRY_RETRY" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_CARD_ENTRY_RETRY"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CHECK_CARD_PRESENT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_CARD_PRESENT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_CARD_PROCESS_RESULT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_CARD_PROCESS_RESULT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_DCC" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_DCC"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CHECK_DEACTIVATE_WARN" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_DEACTIVATE_WARN"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_DELETE_SF" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_DELETE_SF"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_DUPLICATE_TRANS" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_DUPLICATE_TRANS"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_MERCHANT_SCOPE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_MERCHANT_SCOPE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_ONLINE_RETRY" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_ONLINE_RETRY"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_ONLINE_RETRY_OFFLINE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_ONLINE_RETRY_OFFLINE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_PRINTER_STATUS" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_PRINTER_STATUS"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_PRINT_CUSTOMER_COPY" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_PRINT_CUSTOMER_COPY"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_PRINT_FAILED_TRANS" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_PRINT_FAILED_TRANS"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_PRINT_FPS" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_PRINT_FPS"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_RECEIPT_SIGNATURE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
                 <action android:name="com.pax.us.pay.action.CONFIRM_RECEIPT_SIGNATURE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_RECEIPT_VIEW" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_RECEIPT_VIEW"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_SERVICE_FEE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_SERVICE_FEE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_SIGNATURE_MATCH" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
                 <action android:name="com.pax.us.pay.action.CONFIRM_SIGNATURE_MATCH"/>
-                <action android:name="com.pax.us.pay.action.CONFIRM_UNIFIED_MESSAGE" />
             </intent-filter>
-            <intent-filter>
-                <category android:name="com.pax.us.pay.ui.category.OPTION" />
-                <category android:name="android.intent.category.DEFAULT" />
+        </activity-alias>
 
-                <action android:name="com.pax.us.pay.action.SELECT_MERCHANT" />
-                <action android:name="com.pax.us.pay.action.SELECT_EDC_TYPE" />
-                <action android:name="com.pax.us.pay.action.SELECT_TRANS_TYPE" />
-                <action android:name="com.pax.us.pay.action.SELECT_SUB_TRANS_TYPE" />
-                <action android:name="com.pax.us.pay.action.SELECT_EBT_TYPE" />
-                <action android:name="com.pax.us.pay.action.SELECT_AID" />
-                <action android:name="com.pax.us.pay.action.SELECT_BY_PASS" />
-                <action android:name="com.pax.us.pay.action.SELECT_CARD_TYPE" />
-                <action android:name="com.pax.us.pay.action.SELECT_ACCOUNT_TYPE" />
-                <action android:name="com.pax.us.pay.action.SELECT_LANGUAGE" />
-                <action android:name="com.pax.us.pay.action.SELECT_MOTO_TYPE" />
-                <action android:name="com.pax.us.pay.action.SELECT_ORIG_CURRENCY" />
-                <action android:name="com.pax.us.pay.action.SELECT_REFUND_REASON" />
-                <action android:name="com.pax.us.pay.action.SELECT_TAX_REASON" />
-                <action android:name="com.pax.us.pay.action.SELECT_DUPLICATE_OVERRIDE" />
-                <action android:name="com.pax.us.pay.action.SELECT_SEARCH_CRITERIA" />
-                <action android:name="com.pax.us.pay.action.SELECT_BATCH_TYPE" />
-                <action android:name="com.pax.us.pay.action.SELECT_REPORT_TYPE" />
-                <action android:name="com.pax.us.pay.action.SELECT_EDC_GROUP" />
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_SURCHARGE_FEE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_SURCHARGE_FEE"/>
             </intent-filter>
+        </activity-alias>
 
-            <intent-filter>
-                <category android:name="com.pax.us.pay.ui.category.POSLINK" />
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <action android:name="com.pax.us.pay.action.SHOW_DIALOG" />
-                <action android:name="com.pax.us.pay.action.SHOW_THANK_YOU" />
-                <action android:name="com.pax.us.pay.action.INPUT_TEXT" />
-                <action android:name="com.pax.us.pay.action.SHOW_DIALOG_FORM" />
-                <action android:name="com.pax.us.pay.action.SHOW_MESSAGE" />
-                <action android:name="com.pax.us.pay.action.SHOW_ITEM" />
-                <action android:name="com.pax.us.pay.action.SHOW_TEXT_BOX" />
-                <action android:name="com.pax.us.pay.action.SHOW_SIGNATURE_BOX" />
-                <action android:name="com.pax.us.pay.action.SHOW_INPUT_TEXT_BOX" />
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_TOTAL_AMOUNT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_TOTAL_AMOUNT"/>
             </intent-filter>
-        </activity>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_UNIFIED_MESSAGE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_UNIFIED_MESSAGE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_UNTIPPED" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_UNTIPPED"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_UPLOAD_RETRY" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_UPLOAD_RETRY"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_UPLOAD_TRANS" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRM_UPLOAD_TRANS"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_UPLOAD_TRANS"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.DISPLAY_QR_CODE_RECEIPT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.DISPLAY_QR_CODE_RECEIPT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.REVERSE_PARTIAL_APPROVAL" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.REVERSE_PARTIAL_APPROVAL"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.START_UI" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.START_UI"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.SUPPLEMENT_PARTIAL_APPROVAL" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.SUPPLEMENT_PARTIAL_APPROVAL"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".INFORMATION.DISPLAY_TRANS_INFORMATION" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.DETAILS"/>
+                <action android:name="com.pax.us.pay.action.DISPLAY_TRANS_INFORMATION"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_ACCOUNT_TYPE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_ACCOUNT_TYPE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_AID" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_AID"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_BATCH_TYPE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_BATCH_TYPE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_BY_PASS" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_BY_PASS"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_CARD_TYPE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_CARD_TYPE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_CASHBACK_AMOUNT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_CASHBACK_AMOUNT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_COF_INITIATOR" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_COF_INITIATOR"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_DUPLICATE_OVERRIDE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_DUPLICATE_OVERRIDE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_EBT_TYPE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_EBT_TYPE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_EDC_GROUP" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_EDC_GROUP"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_EDC_TYPE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_EDC_TYPE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_INSTALLMENT_PLAN" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_INSTALLMENT_PLAN"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_LANGUAGE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_LANGUAGE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_MERCHANT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_MERCHANT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_MOTO_TYPE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_MOTO_TYPE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_ORIG_CURRENCY" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_ORIG_CURRENCY"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_REFUND_REASON" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_REFUND_REASON"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_REPORT_TYPE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_REPORT_TYPE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_SEARCH_CRITERIA" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_SEARCH_CRITERIA"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_SUB_TRANS_TYPE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_SUB_TRANS_TYPE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_TAX_REASON" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_TAX_REASON"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_TIP_AMOUNT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_TIP_AMOUNT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_TRANS_FOR_ADJUST" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_TRANS_FOR_ADJUST"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_TRANS_TYPE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_TRANS_TYPE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".POSLINK.INPUT_TEXT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.POSLINK"/>
+                <action android:name="com.pax.us.pay.action.INPUT_TEXT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".POSLINK.SHOW_DIALOG" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.POSLINK"/>
+                <action android:name="com.pax.us.pay.action.SHOW_DIALOG"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".POSLINK.SHOW_DIALOG_FORM" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.POSLINK"/>
+                <action android:name="com.pax.us.pay.action.SHOW_DIALOG_FORM"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".POSLINK.SHOW_INPUT_TEXT_BOX" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.POSLINK"/>
+                <action android:name="com.pax.us.pay.action.SHOW_INPUT_TEXT_BOX"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".POSLINK.SHOW_ITEM" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.POSLINK"/>
+                <action android:name="com.pax.us.pay.action.SHOW_ITEM"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".POSLINK.SHOW_MESSAGE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.POSLINK"/>
+                <action android:name="com.pax.us.pay.action.SHOW_MESSAGE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".POSLINK.SHOW_SIGNATURE_BOX" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.POSLINK"/>
+                <action android:name="com.pax.us.pay.action.SHOW_SIGNATURE_BOX"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".POSLINK.SHOW_TEXT_BOX" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.POSLINK"/>
+                <action android:name="com.pax.us.pay.action.SHOW_TEXT_BOX"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".POSLINK.SHOW_THANK_YOU" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.POSLINK"/>
+                <action android:name="com.pax.us.pay.action.SHOW_THANK_YOU"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".SECURITY.ENTER_ADMINISTRATION_PASSWORD" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.SECURITY"/>
+                <action android:name="com.pax.us.pay.action.ADMINISTRATOR_PASSWORD"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".SECURITY.ENTER_CARD_ALL_DIGITS" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.SECURITY"/>
+                <action android:name="com.pax.us.pay.action.ENTER_CARD_ALL_DIGITS"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".SECURITY.ENTER_CARD_LAST_4_DIGITS" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.SECURITY"/>
+                <action android:name="com.pax.us.pay.action.ENTER_CARD_LAST_4_DIGITS"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".SECURITY.ENTER_VCODE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.SECURITY"/>
+                <action android:name="com.pax.us.pay.action.ENTER_CVV"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".SECURITY.ENTER_PIN" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.SECURITY"/>
+                <action android:name="com.pax.us.pay.action.ENTER_PIN"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".SECURITY.INPUT_ACCOUNT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.SECURITY"/>
+                <action android:name="com.pax.us.pay.action.INPUT_ACCOUNT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".SECURITY.MANAGE_INPUT_ACCOUNT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.SECURITY"/>
+                <action android:name="com.pax.us.pay.action.MANAGE_INPUT_ACCOUNT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".SIGNATURE.SIGNATURE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.SIGNATURE"/>
+                <action android:name="com.pax.us.pay.action.GET_SIGNATURE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_ADDRESS" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_ADDRESS"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_AMOUNT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_AMOUNT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_AUTH" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_AUTH_CODE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_AVS_DATA" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_AVS_DATA"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_CASH_BACK" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_CASH_BACK"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_CLERK_ID" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_CLERK_ID"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_CS_PHONE_NUMBER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_CS_PHONE_NUMBER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_CUSTOMER_CODE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_CUSTOMER_CODE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_DEST_ZIPCODE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_DEST_ZIP_CODE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_EXPIRY_DATE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_EXPIRY_DATE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_FLEET_DATA" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_FLEET_DATA"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_FSA_DATA" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_FSA_DATA"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_FUEL_AMOUNT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_FUEL_AMOUNT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_GUEST_NUMBER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_GUEST_NUMBER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_INVOICE_NUMBER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_INVOICE_NUMBER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_MERCHANT_REFERENCE_NUMBER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_MERCHANT_REFERENCE_NUMBER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_MERCHANT_TAX_ID" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_MERCHANT_TAX_ID"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_OCT_REFERENCE_NUMBER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_OCT_REFERENCE_NUMBER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_ORDER_NUMBER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_ORDER_NUMBER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_ORIGINAL_TRANSACTION_IDENTIFIER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_ORIGINAL_TRANSACTION_IDENTIFIER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_ORIG_DATE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_ORIG_DATE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_PHONE_NUMBER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_PHONE_NUMBER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_PO_NUMBER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_PO_NUMBER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_PROD_DESC" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_PROD_DESC"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_PROMPT_RESTRICTION_CODE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_PROMPT_RESTRICTION_CODE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_REFERENCE_NUMBER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_REFERENCE_NUMBER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_SERVER_ID" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_SERVER_ID"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_TABLE_NUMBER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_TABLE_NUMBER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_TAX_AMOUNT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_TAX_AMOUNT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_TIP" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_TIP"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_TOTAL_AMOUNT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_TOTAL_AMOUNT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_TRANS_NUMBER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_TRANS_NUMBER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_VISA_INSTALLMENT_PLAN_ACCEPTANCE_ID" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_VISA_INSTALLMENT_PLAN_ACCEPTANCE_ID"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_VISA_INSTALLMENT_TRANSACTIONID" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_VISA_INSTALLMENT_TRANSACTIONID"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_VOUCHER_DATA" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_VOUCHER_DATA"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".TEXT.ENTER_ZIPCODE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_ZIP_CODE"/>
+            </intent-filter>
+        </activity-alias>
+
+
 
     </application>
 

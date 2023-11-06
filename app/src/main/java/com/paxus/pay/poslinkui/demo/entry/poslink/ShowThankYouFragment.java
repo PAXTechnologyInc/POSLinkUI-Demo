@@ -14,6 +14,7 @@ import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 /**
  * Implement text entry actions:<br>
@@ -29,32 +30,10 @@ public class ShowThankYouFragment extends BaseEntryFragment {
     public static final String RIGHT_ALIGN = "\\R";
     public static final String CENTER_ALIGN = "\\C";
 
-    private String packageName;
-    private String action;
     private long timeOut;
-    private String transMode;
     private String title;
     private String message1;
     private String message2;
-
-    private Handler handler;
-    private final Runnable timeoutRun = new Runnable() {
-        @Override
-        public void run() {
-            EntryRequestUtils.sendNext(requireContext(), packageName, action);
-        }
-    };
-
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -63,15 +42,11 @@ public class ShowThankYouFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
         message1 = bundle.getString(EntryExtraData.PARAM_MESSAGE_1,"");
         message2 = bundle.getString(EntryExtraData.PARAM_MESSAGE_2,"");
-
     }
 
     @Override
@@ -86,8 +61,7 @@ public class ShowThankYouFragment extends BaseEntryFragment {
         formatTextView(msg2View, message2);
 
         if(timeOut > 0 ) {
-            handler = new Handler();
-            handler.postDelayed(timeoutRun, timeOut);
+            getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
         }
     }
 
@@ -103,26 +77,6 @@ public class ShowThankYouFragment extends BaseEntryFragment {
         msg = msg.replaceFirst("(\\\\[LRC])","");
 
         textView.setText(msg);
-    }
-
-    @Override
-    protected void onEntryAccepted() {
-        super.onEntryAccepted();
-
-        if(handler!= null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if(handler != null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
     }
 
 }

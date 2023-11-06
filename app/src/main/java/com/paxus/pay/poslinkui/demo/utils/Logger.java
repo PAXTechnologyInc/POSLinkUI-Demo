@@ -1,7 +1,11 @@
 package com.paxus.pay.poslinkui.demo.utils;
 
+import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.Arrays;
 
 /**
  * Logger, but more pretty, simple and powerful
@@ -64,6 +68,32 @@ public final class Logger {
      */
     public static void xml(@Nullable String xml) {
         com.orhanobut.logger.Logger.d(xml);
+    }
+
+
+    public static void intent(Intent intent) {
+        StringBuilder intentBuilder = new StringBuilder();
+        if(intent.getExtras() != null){
+            for(String key : intent.getExtras().keySet()){
+                intentBuilder.append(key).append(": ");
+                boolean isArray = intent.getExtras().get(key) != null && intent.getExtras().get(key).getClass().isArray();
+                intentBuilder.append(isArray ? stringifyArray(intent.getExtras().get(key)) : intent.getExtras().get(key));
+                intentBuilder.append(System.lineSeparator());
+            }
+        }
+        Logger.i(intentBuilder.toString());
+    }
+
+    private static String stringifyArray(Object array){
+        switch (array.getClass().getSimpleName()){
+            case "short[]":
+                return Arrays.toString((short[])array);
+            case "Object[]":
+            case "String[]":
+                return Arrays.toString((String[])array);
+            default:
+                return "UNABLE TO LOG";
+        }
     }
 
 }

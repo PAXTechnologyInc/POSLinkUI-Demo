@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -24,10 +25,12 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.ManageUIConst;
+import com.pax.us.pay.ui.constant.status.POSLinkStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,20 +41,12 @@ import java.util.Map;
 /**
  * Implement text entry actions:<br>
  * {@value PoslinkEntry#ACTION_SHOW_TEXT_BOX}
- *
- * <p>
- *     UI Tips:
- *     If confirm button clicked, sendNext
- * </p>
  */
 public class ShowTextBoxFragment extends BaseEntryFragment {
 
     private static final String BARCODE_QR_CODE = "7";
 
-    private String packageName;
-    private String action;
     private long timeOut;
-    private String transMode;
     private String title;
     private String text;
     private boolean continuousScreen;
@@ -69,36 +64,29 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
     private String barcodeType;
     private String barcodeData;
 
+    private LinearLayout textLayout;
 
-    private Handler handler;
-    private final Runnable timeoutRun = new Runnable() {
-        @Override
-        public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
-        }
-    };
+    //Interfaces of POSLink Category may need to listen to POSLinkStatus Broadcasts
+    private POSLinkStatusManager posLinkStatusManager;
+    
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        posLinkStatusManager = new POSLinkStatusManager(getContext(), getViewLifecycleOwner());
+        posLinkStatusManager.registerHandler(POSLinkStatus.CLEAR_MESSAGE, this::clearMessage);
+    }
+
+    private void clearMessage() {
+        textLayout.removeAllViews();
+    }
 
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_show_text_box;
     }
 
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         text = bundle.getString(EntryExtraData.PARAM_TEXT);
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
@@ -113,7 +101,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         button3Name = bundle.getString(EntryExtraData.PARAM_BUTTON_3_NAME);
         button3Color = bundle.getString(EntryExtraData.PARAM_BUTTON_3_COLOR);
         button3Key = bundle.getString(EntryExtraData.PARAM_BUTTON_3_KEY);
-        enableHardKey = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_HARD_KEY);
+        enableHardKey = bundle.getString(EntryExtraData.PARAM_ENABLE_HARD_KEY, "0").equals("1");
         if(enableHardKey) {
             String keyList = bundle.getString(EntryExtraData.PARAM_HARD_KEY_LIST);
             if (!TextUtils.isEmpty(keyList)) {
@@ -131,14 +119,14 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         TextView titleView = rootView.findViewById(R.id.title_view);
         titleView.setText(title);
 
-        LinearLayout textView = rootView.findViewById(R.id.text_view);
+        textLayout = rootView.findViewById(R.id.text_view);
         if(text == null || text.isEmpty()){
-            textView.setVisibility(View.GONE);
+            textLayout.setVisibility(View.GONE);
         }else {
             for(TextView tv: TextShowingUtils.getTextViewList(requireContext(),text)){
-                textView.addView(tv);
+                textLayout.addView(tv);
             }
-            textView.setVisibility(View.VISIBLE);
+            textLayout.setVisibility(View.VISIBLE);
         }
         if(barcodeData != null && !barcodeData.isEmpty()){
             ImageView imageView = new ImageView(requireContext());
@@ -146,7 +134,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             imageView.setLayoutParams(layoutParams);
-            textView.addView(imageView);
+            textLayout.addView(imageView);
         }
 
         Button btn1 = rootView.findViewById(R.id.button1);
@@ -159,8 +147,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         formatButton(btn3, button3Name, button3Color, "3");
 
         if(timeOut > 0 ) {
-            handler = new Handler();
-            handler.postDelayed(timeoutRun, timeOut);
+            getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
         }
 
         if(enableHardKey) {
@@ -234,28 +221,10 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         }
     }
 
-    @Override
-    protected void onEntryAccepted() {
-        super.onEntryAccepted();
-
-        if(handler!= null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if(handler != null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
-    }
-
     private void sendNext(String index){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_BUTTON_NUMBER, index);
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_BUTTON_NUMBER, index);
+        sendNext(bundle);
     }
 
     private Bitmap createQRCode(String content, int qrCodeSize, Bitmap logo){

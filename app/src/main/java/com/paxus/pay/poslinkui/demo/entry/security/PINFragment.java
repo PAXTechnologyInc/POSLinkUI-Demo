@@ -23,6 +23,7 @@ import com.pax.us.pay.ui.constant.status.PINStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
@@ -41,27 +42,13 @@ import java.util.Map;
  * </p>
  */
 public class PINFragment extends BaseEntryFragment {
-    private String transType;
     private long timeOut;
     private String pinStyle;
     private boolean isOnlinePin;
-    private String transMode;
     private boolean isUsingExternalPinPad;
     private Long totalAmount;
     private String currencyType;
     private String pinRange;
-    private String packageName;
-    private String action;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     private View rootView;
     private TextView pinBox;
@@ -77,6 +64,8 @@ public class PINFragment extends BaseEntryFragment {
         intentFilter.addCategory(PINStatus.CATEGORY);
         intentFilter.addAction(PINStatus.PIN_ENTERING);
         intentFilter.addAction(PINStatus.PIN_ENTER_CLEARED);
+        intentFilter.addAction(PINStatus.PIN_ENTER_ABORTED);
+        intentFilter.addAction(PINStatus.PIN_ENTER_COMPLETED);
         requireContext().registerReceiver(receiver, intentFilter);
     }
     @Override
@@ -93,10 +82,6 @@ public class PINFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         if(bundle.containsKey(EntryExtraData.PARAM_TOTAL_AMOUNT)) {
@@ -113,8 +98,6 @@ public class PINFragment extends BaseEntryFragment {
     @Override
     protected void loadView(View rootView) {
         this.rootView = rootView;
-
-
 
         TextView textView = rootView.findViewById(R.id.message);
         if(PinStyles.RETRY.equals(pinStyle)){
@@ -141,10 +124,10 @@ public class PINFragment extends BaseEntryFragment {
         rootView.findViewById(R.id.bypass).setVisibility(couldBypass? View.VISIBLE:View.GONE);
 
         View customizedPinPad = rootView.findViewById(R.id.pinpad_layout);
-        if(isUsingExternalPinPad || hasPhysicalKeyboard()){
+        if(isUsingExternalPinPad || DeviceUtils.hasPhysicalKeyboard()){
             //(2)When using external pin pad or terminal has physical pin pad, do not use customized pin pad.
             customizedPinPad.setVisibility(View.GONE);
-            sendSecureArea();
+            sendSecurityArea(null);
         }else {
             ViewTreeObserver observer = customizedPinPad.getViewTreeObserver();
             observer.addOnGlobalLayoutListener(
@@ -160,7 +143,6 @@ public class PINFragment extends BaseEntryFragment {
 
     }
 
-    //(1)when pin pad layout ready, send pin pad layout and secure area location
     private void onCustomizedPinPadLayoutReady(){
         /*
          * If you don't want customize pin pad, you don't need send pin pad location
@@ -181,42 +163,20 @@ public class PINFragment extends BaseEntryFragment {
         padMap.put(EntryRequest.PARAM_KEY_ENTER, R.id.key_enter);
         padMap.put(EntryRequest.PARAM_KEY_CANCEL, R.id.key_cancel);
 
-        Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, action);
+        Bundle keyLocations = new Bundle();
         for (Map.Entry<String, Integer> entry : padMap.entrySet()) {
             View v = rootView.findViewById(entry.getValue());
             int[] location = new int[2];
             v.getLocationOnScreen(location);
             String key = entry.getKey();
             Rect value = new Rect(location[0], location[1], location[0] + v.getWidth(), location[1] + v.getHeight());
-            bundle.putParcelable(key, value);
+            keyLocations.putParcelable(key, value);
             Logger.d("PIN Layout["+key+"]:"+value);
         }
-        Logger.i("send Entry Request ACTION_SET_PIN_KEY_LAYOUT for action \""+action+"\"");
-        Intent intent = new Intent(EntryRequest.ACTION_SET_PIN_KEY_LAYOUT);
-        intent.setPackage(packageName);
-        intent.putExtras(bundle);
-        requireContext().sendBroadcast(intent);
+        sendSetPinKeyLayout(keyLocations);
+
         //---------------------Send Security Area------------------
-        sendSecureArea();
-    }
-
-    /**
-     * For this action, EntryRequest.ACTION_SECURITY_AREA is just used to tell BroadPOS you are ready.
-     */
-    private void sendSecureArea(){
-        EntryRequestUtils.sendSecureArea(requireContext(),packageName,action);
-    }
-
-    public boolean hasPhysicalKeyboard(){
-        //For devices which has physical pin pad, do not prompt virtual pin pad
-        String buildModel = Build.MODEL;
-
-        return "A80".equals(buildModel)
-                || "A30".equals(buildModel)
-                || "A35".equals(buildModel)
-                || "Aries6".equals(buildModel)
-                || "Aries8".equals(buildModel);
+        sendSecurityArea(null);
     }
 
     private class Receiver extends BroadcastReceiver {
@@ -232,6 +192,10 @@ public class PINFragment extends BaseEntryFragment {
                     break;
                 case PINStatus.PIN_ENTER_CLEARED:
                     if(text.length() > 0) pinBox.setText(text.substring(0,text.length()-1));
+                    break;
+                case PINStatus.PIN_ENTER_ABORTED:
+                    break;
+                case PINStatus.PIN_ENTER_COMPLETED:
                     break;
             }
         }

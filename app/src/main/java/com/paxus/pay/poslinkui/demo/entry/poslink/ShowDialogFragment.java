@@ -15,6 +15,7 @@ import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 /**
  * Implement text entry actions:<br>
@@ -27,34 +28,12 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ShowDialogFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
     private long timeOut;
-    private String transMode;
     private String title;
     private String button1;
     private String button2;
     private String button3;
     private String button4;
-
-    private Handler handler;
-    private final Runnable timeoutRun = new Runnable() {
-        @Override
-        public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
-        }
-    };
-
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -63,9 +42,6 @@ public class ShowDialogFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
@@ -105,8 +81,7 @@ public class ShowDialogFragment extends BaseEntryFragment {
         formatButton(btn4, button4, 4);
 
         if(timeOut > 0 ) {
-            handler = new Handler();
-            handler.postDelayed(timeoutRun, timeOut);
+            getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
         }
     }
 
@@ -116,7 +91,7 @@ public class ShowDialogFragment extends BaseEntryFragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    sendNext(index);
+                    submit(index);
                 }
             });
         }else{
@@ -124,28 +99,10 @@ public class ShowDialogFragment extends BaseEntryFragment {
         }
     }
 
-    @Override
-    protected void onEntryAccepted() {
-        super.onEntryAccepted();
-
-        if(handler!= null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if(handler != null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
-    }
-
-    private void sendNext(int index){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_INDEX, index);
+    private void submit(int index){
+        Bundle bundle = new Bundle();
+        bundle.putInt(EntryRequest.PARAM_INDEX, index);
+        sendNext(bundle);
     }
 
 }

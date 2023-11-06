@@ -9,13 +9,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
-import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
+import com.pax.us.pay.ui.constant.status.POSLinkStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 import org.json.JSONArray;
@@ -26,23 +26,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implement text entry actions:<br>
+ * Implement POSLink Entry actions:<br>
  * {@value PoslinkEntry#ACTION_SHOW_MESSAGE}
- *
- * <p>
- * UI Tips:
- *
- * </p>
  */
 public class ShowMessageFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
     private String title;
     private String tax;
     private String total;
     private String imgUrl;
     private String imgDesc;
     private List<MsgInfoWrapper> messages;
+
+    //Interfaces of POSLink Category may need to listen to POSLinkStatus Broadcasts
+    private POSLinkStatusManager posLinkStatusManager;
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        posLinkStatusManager = new POSLinkStatusManager(getContext(), getViewLifecycleOwner());
+        posLinkStatusManager.registerHandler(POSLinkStatus.CLEAR_MESSAGE, this::clearMessage);
+    }
+
+    private void clearMessage() {
+        messages.clear();
+        loadView(getView());
+    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -51,9 +59,6 @@ public class ShowMessageFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-
         title = bundle.getString(EntryExtraData.PARAM_TITLE,"");
         tax = bundle.getString(EntryExtraData.PARAM_TAX_LINE,"");
         total = bundle.getString(EntryExtraData.PARAM_TOTAL_LINE,"");
@@ -107,20 +112,11 @@ public class ShowMessageFragment extends BaseEntryFragment {
         super.onResume();
 
         if (isActive()) {
-            EntryRequestUtils.sendNext(requireContext(), packageName, action);
+            sendNext(null);
         }
     }
 
 
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     private List<MsgInfoWrapper> parseMessageList(String jsonString) {
         try {

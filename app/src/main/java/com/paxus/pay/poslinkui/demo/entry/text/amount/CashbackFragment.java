@@ -1,19 +1,19 @@
 package com.paxus.pay.poslinkui.demo.entry.text.amount;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
+import android.text.TextWatcher;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.inputmethod.EditorInfo;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatRadioButton;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -22,47 +22,28 @@ import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
+import com.paxus.pay.poslinkui.demo.view.SelectOptionsView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_CASH_BACK}<br>
- * <p>
- *     UI Tips:
- *     If confirm button clicked, sendNext
- * </p>
  */
 public class CashbackFragment extends BaseEntryFragment {
-    private String transType;
-    private String transMode;
-
-    private long timeOut;
     private int minLength;
     private int maxLength;
 
     private String currency = "";
-    private long[] cashBackOptions;
     private boolean promptOther;
-    private String packageName;
-    private String action;
 
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
+    private List<SelectOptionsView.Option> optionList = new ArrayList<>();
 
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
-    private CashbackOption selectedItem;
-
-    private EditText editText;
+    private long cashback = 0;
 
     @Override
     protected int getLayoutResourceId() {
@@ -71,16 +52,9 @@ public class CashbackFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
         currency =  bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
 
         String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-12");
-
         if(!TextUtils.isEmpty(valuePatten)){
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
@@ -88,151 +62,88 @@ public class CashbackFragment extends BaseEntryFragment {
 
         String[] options = bundle.getStringArray(EntryExtraData.PARAM_CASHBACK_OPTIONS);
         if(options != null){
-            cashBackOptions = new long[options.length];
-            for(int i = 0;i< options.length;i++){
-                try {
-                    cashBackOptions[i] = Long.parseLong(options[i]);
-                }catch (Exception e){
-                    cashBackOptions[i] = 0;
+            for(int i=0; i<options.length; i++){
+                long cashbackAmount = 0;
+                try{
+                    cashbackAmount = Long.parseLong(options[i]);
+                    if(cashbackAmount == 0) continue; //Temporary workaround because jax hosts adds 0 to options to draw "No thanks" button
+                } catch (NumberFormatException | IndexOutOfBoundsException e){
                 }
+                optionList.add(new SelectOptionsView.Option(null, CurrencyUtils.convert(cashbackAmount, currency), null, cashbackAmount));
             }
         }
-        promptOther = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_OTHER_PROMPT);
 
+        promptOther = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_OTHER_PROMPT) | true;
     }
 
-    @Override
+
+    @Override @SuppressLint("ClickableViewAccessibility")
     protected void loadView(View rootView) {
+        boolean isSelectCashbackEnabled = !optionList.isEmpty();
 
-        boolean haveOptions = cashBackOptions != null && cashBackOptions.length>0;
+        SelectOptionsView cashbackOptionsView = rootView.findViewById(R.id.options_layout);
+        EditText editCashback = rootView.findViewById(R.id.edit_cashback);
 
-        RecyclerView optionView = rootView.findViewById(R.id.options_layout);
-        if(haveOptions) {
-            List<CashbackOption> options = new ArrayList<>();
-            for(long amt: cashBackOptions){
-                options.add(new CashbackOption(amt));
+        if(isSelectCashbackEnabled) {
+            ((TextView)rootView.findViewById(R.id.message)).setText(getString(R.string.select_cashback_amount));
+            rootView.findViewById(R.id.options_layout).setVisibility(View.VISIBLE);
+            cashbackOptionsView.initialize(getActivity(), 2, optionList, cashbackSelectCallback);
+
+            if(promptOther) {
+                rootView.findViewById(R.id.text_view_other_cashback).setVisibility(View.VISIBLE);
+                editCashback.setVisibility(View.VISIBLE);
+                editCashback.setImeOptions(editCashback.getImeOptions() | EditorInfo.IME_ACTION_DONE);
+                editCashback.setOnEditorActionListener((v, actionId, event) -> {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) onConfirmButtonClicked();
+                    return true;
+                });
             }
-            if(promptOther){
-                CashbackOption op = new CashbackOption(0);
-                op.editStyle = true;
-                options.add(op);
-            }
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireActivity());
-            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            optionView.setLayoutManager(linearLayoutManager);
-            optionView.setAdapter(new Adapter(options));
+        } else {
+            editCashback.setVisibility(View.VISIBLE);
+            focusableEditTexts = new EditText[]{editCashback};
         }
-        TextView textView = rootView.findViewById(R.id.message);
-        if(haveOptions){
-            textView.setText(getString(R.string.select_cashback_amount));
-        }else {
-            textView.setText(getString(R.string.prompt_input_cashback));
+        if(editCashback.getVisibility() == View.VISIBLE){
+            editCashback.addTextChangedListener(new CashbackEditTextWatcher(maxLength,currency, value -> this.cashback = value));
         }
 
-        editText = rootView.findViewById(R.id.edit_cashback);
-        if(haveOptions){
-            editText.setVisibility(View.GONE);
-        }else {
-            editText.setVisibility(View.VISIBLE);
-            prepareEditTextsForSubmissionWithSoftKeyboard(editText);
-            editText.addTextChangedListener(new AmountTextWatcher(maxLength,currency));
-        }
+        SelectOptionsView noCashbackOptionsView = rootView.findViewById(R.id.no_thanks_options_layout);
+        List<SelectOptionsView.Option> noCashbackOptionList = new ArrayList<>(Arrays.asList(new SelectOptionsView.Option(null, "No Thanks!!", null, 0L)));
+        noCashbackOptionsView.initialize(getActivity(), 1, noCashbackOptionList, cashbackSelectCallback);
 
-        Button confirmBtn = rootView.findViewById(R.id.confirm_button);
-        confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
+        if(isSelectCashbackEnabled) cashbackOptionsView.append(noCashbackOptionsView);
+
+        rootView.findViewById(R.id.confirm_button).setOnClickListener(v -> onConfirmButtonClicked());
+    }
+
+    private SelectOptionsView.OptionSelectListener cashbackSelectCallback = option -> {
+        this.cashback = (long) option.getValue();
+        onConfirmButtonClicked();
+    };
+
+    private @FunctionalInterface interface CashbackEditCallback {
+        void onChange(long cashback);
+    }
+    private class CashbackEditTextWatcher extends AmountTextWatcher {
+        private CashbackEditCallback callback;
+        public CashbackEditTextWatcher(int maxLength, String currency, CashbackEditCallback callback) {
+            super(maxLength, currency);
+            this.callback = callback;
+        }
+        @Override
+        public void afterTextChanged(Editable s) {
+            super.afterTextChanged(s);
+            new Handler(Looper.getMainLooper()).post(()->callback.onChange(CurrencyUtils.parse(s.toString())));
+        }
     }
 
     @Override
     protected void onConfirmButtonClicked(){
-        if(editText.getVisibility() == View.VISIBLE) {
-            long value = CurrencyUtils.parse(editText.getText().toString());
-            sendNext(value);
-        }else {
-            if(selectedItem != null){
-                sendNext(selectedItem.cashbackAmt);
-            }
-        }
+        submit(cashback);
     }
 
-    private void sendNext(long value){
-        String param = EntryRequest.PARAM_CASHBACK_AMOUNT;
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, param,value);
-    }
-
-    private class Adapter extends RecyclerView.Adapter<ViewHolder>{
-
-        private final List<CashbackOption> list;
-        public Adapter(List<CashbackOption> list){
-            this.list = list;
-        }
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_cashback_option, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            CashbackOption option = list.get(position);
-
-            holder.optionButton.setChecked(option.selected);
-            holder.optionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    for(CashbackOption option: list){
-                        option.selected = false;
-                    }
-                    option.selected = true;
-                    selectedItem = option;
-
-                    notifyDataSetChanged();
-                }
-            });
-            if(option.editStyle){
-                holder.editText.setVisibility(View.VISIBLE);
-                holder.editText.setHint(getString(R.string.other_amount));
-                holder.editText.addTextChangedListener(new AmountTextWatcher(maxLength,currency){
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        super.afterTextChanged(s);
-                        option.cashbackAmt = CurrencyUtils.parse(s.toString());
-                    }
-                });
-                holder.optionButton.setText("");
-            }else {
-                holder.editText.setVisibility(View.GONE);
-                if(option.cashbackAmt == 0){
-                    holder.optionButton.setText(getString(R.string.no_thanks));
-                }else {
-                    holder.optionButton.setText(CurrencyUtils.convert(option.cashbackAmt, currency));
-                }
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return list.size();
-        }
-    }
-
-    private class CashbackOption{
-         boolean selected;
-         long cashbackAmt;
-         boolean editStyle;
-         CashbackOption(long cashbackAmt){
-             this.cashbackAmt = cashbackAmt;
-         }
-    }
-
-    private static class ViewHolder extends RecyclerView.ViewHolder {
-        AppCompatRadioButton optionButton;
-        EditText editText;
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            optionButton = itemView.findViewById(R.id.option_item);
-            editText = itemView.findViewById(R.id.edit_item);
-        }
+    private void submit(long value){
+        Bundle bundle = new Bundle();
+        bundle.putLong(EntryRequest.PARAM_CASHBACK_AMOUNT, value);
+        sendNext(bundle);
     }
 }

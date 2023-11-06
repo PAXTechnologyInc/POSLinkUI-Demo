@@ -1,180 +1,277 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    >
-    <com.paxus.pay.poslinkui.demo.view.ClssLightsView
+    android:layout_margin="@dimen/margin_gap">
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/ly_merchant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="merchant, merchantName"
+        />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/merchant"
+        android:text="@string/prompt_merchant"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/merchantName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/total_amount"
+
+        tools:text="@string/prompt_merchant"
+        tools:textColor="@color/black"
+
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0"
+        />
+
+    <TextView
+        android:id="@+id/merchantName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="textEnd"
+
+        app:layout_constraintStart_toEndOf="@id/merchant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/merchant"
+        app:layout_constraintBottom_toBottomOf="@id/merchant"
+
+        tools:text="Merchant Name"
+        tools:textColor="@color/black"
+        />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/ly_total_amount"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="total_amount, amount_view"
+        />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/total_amount"
+        android:text="@string/total_amount"
+        android:textSize="@dimen/text_size_subtitle"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/amount_view"
+        app:layout_constraintTop_toBottomOf="@id/merchant"
+        app:layout_constraintBottom_toTopOf="@id/divider1"
+
+        tools:text="Total Amount"
+        tools:textColor="@color/black"
+        />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/amount_view"
+        android:textAlignment="textEnd"
+        android:textSize="@dimen/text_size_subtitle"
+
+        app:layout_constraintStart_toEndOf="@id/total_amount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/total_amount"
+        app:layout_constraintBottom_toBottomOf="@id/total_amount"
+
+        tools:textColor="@color/black"
+        tools:text="2645.00"
+        />
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        app:layout_constraintHeight_max="@dimen/margin_gap"
+
+        app:layout_constraintTop_toBottomOf="@id/total_amount"
+        app:layout_constraintBottom_toTopOf="@id/manual_message"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/layout_manual"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="manual_message, edit_account, confirm_button"
+        />
+
+    <TextView
+        android:id="@+id/manual_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider1"
+        app:layout_constraintBottom_toTopOf="@id/edit_account"
+
+        tools:text="Enter Card Number"
+        tools:textColor="@color/black"
+        />
+
+    <TextView
+        android:background="@drawable/rounded_corner_on_background"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height"
+        android:id="@+id/edit_account"
+        android:padding="@dimen/padding_vertical"
+        android:gravity="center_horizontal"
+        android:textColor="#FF9C27B0"
+        android:textSize="@dimen/text_size_subtitle"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/manual_message"
+        app:layout_constraintBottom_toTopOf="@id/confirm_button"
+        />
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height"
+        android:text="@string/confirm"
+        android:id="@+id/confirm_button"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_account"
+        app:layout_constraintBottom_toTopOf="@id/divider2"
+        />
+
+    <View
+        android:id="@+id/divider2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/clss_light"
-        android:gravity="center_vertical"/>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/confirm_button"
+        app:layout_constraintBottom_toTopOf="@id/insert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintHeight_min="@dimen/margin_gap"
+        />
+
+    <ImageView
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:id="@+id/ly_merchant">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/merchant"
-            android:gravity="start"
-            android:text="@string/prompt_merchant"
-            android:layout_alignParentStart="true"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/merchantName"
-            android:layout_alignParentEnd="true"
-            android:gravity="end"/>
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
+        android:id="@+id/insert"
+        android:scaleType="fitCenter"
+
+        tools:src="@mipmap/insert_card_a920"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tap"
+        app:layout_constraintTop_toBottomOf="@id/divider2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+    <ImageView
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/total_amount"
-            android:gravity="start"
-            android:text="@string/total_amount"
-            android:layout_alignParentStart="true"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/amount_view"
-            android:layout_alignParentEnd="true"
-            android:gravity="end"/>
-    </RelativeLayout>
+        android:id="@+id/tap"
+        android:scaleType="fitCenter"
+        android:layout_marginHorizontal="@dimen/margin_gap"
 
-    <LinearLayout
-        android:layout_width="match_parent"
+        tools:src="@mipmap/tap_card_a920"
+
+        app:layout_constraintStart_toEndOf="@id/insert"
+        app:layout_constraintEnd_toStartOf="@id/swipe"
+        app:layout_constraintTop_toBottomOf="@id/divider2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <ImageView
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="5"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:weightSum="3.5"
-        android:id="@+id/layout_manual">
+        android:id="@+id/swipe"
+        android:scaleType="fitCenter"
 
-        <TextView
-            android:id="@+id/manual_message"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:textSize="14sp" />
+        tools:src="@mipmap/swipe_card_a920"
 
-        <TextView
-            android:background="@drawable/rounded_corner_on_background"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@+id/edit_account"
-            android:padding="@dimen/padding_vertical"
-            android:gravity="center_horizontal"
-            android:textColor="#FF9C27B0"
-            android:textSize="20sp"/>
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.5"
-            android:text="@string/confirm"
-            android:textAllCaps="false"
-            android:id="@+id/confirm_button"/>
-    </LinearLayout>
+        app:layout_constraintStart_toEndOf="@id/tap"
+        app:layout_constraintEnd_toStartOf="@id/contactless_logo_container"
+        app:layout_constraintTop_toBottomOf="@id/divider2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.Group
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="4"
-        android:paddingHorizontal="@dimen/padding_horizontal"
-        android:weightSum="5"
-        android:orientation="horizontal"
-        >
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/insert"
-            android:layout_margin="5dp"
-            android:scaleType= "fitCenter"/>
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/tap"
-            android:layout_margin="5dp"
-            android:scaleType="fitCenter"/>
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/swipe"
-            android:layout_margin="5dp"
-            android:scaleType="fitCenter"/>
+        android:id="@+id/contactless_logo_container"
 
-        <LinearLayout
-            android:id="@+id/contactless_logo_container"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:orientation="vertical"
-            android:weightSum="2"
-            android:padding="@dimen/padding_vertical"
-            android:background="@drawable/rounded_corner_on_background"
-            >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                >
-                <ImageView
-                    android:id="@+id/nfc"
-                    android:src="@mipmap/tap"
-                    android:layout_height="match_parent"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:padding="@dimen/margin_gap"
-                    />
-                <ImageView
-                    android:id="@+id/google"
-                    android:src="@mipmap/google_pay"
-                    android:layout_height="match_parent"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:padding="@dimen/margin_gap"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                >
-                <ImageView
-                    android:id="@+id/apple"
-                    android:src="@mipmap/apple_pay"
-                    android:layout_height="match_parent"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:padding="@dimen/margin_gap"
-                    />
-                <ImageView
-                    android:id="@+id/samsung"
-                    android:src="@mipmap/samsung_pay"
-                    android:layout_height="match_parent"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:padding="@dimen/margin_gap"
-                    />
-            </LinearLayout>
-        </LinearLayout>
+        android:background="@drawable/rounded_corner_on_background"
 
-    </LinearLayout>
+        app:layout_constraintTop_toTopOf="@id/nfc"
+        app:layout_constraintBottom_toBottomOf="@id/nfc"
+        app:layout_constraintStart_toEndOf="@id/swipe"
+        app:layout_constraintEnd_toEndOf="parent"
 
-</LinearLayout>
+        app:layout_constraintWidth_percent="0.5"
+
+        app:constraint_referenced_ids="nfc, google, apple, samsung"
+        />
+
+    <ImageView
+        android:id="@+id/nfc"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@mipmap/tap"
+        android:paddingHorizontal="@dimen/margin_gap"
+
+        app:layout_constraintStart_toStartOf="@id/contactless_logo_container"
+        app:layout_constraintEnd_toStartOf="@id/google"
+        app:layout_constraintTop_toTopOf="@id/swipe"
+        app:layout_constraintBottom_toBottomOf="@id/swipe"
+        />
+
+    <ImageView
+        android:id="@+id/google"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@mipmap/google_pay"
+        android:paddingHorizontal="@dimen/margin_gap"
+
+        app:layout_constraintStart_toEndOf="@id/nfc"
+        app:layout_constraintEnd_toStartOf="@id/apple"
+        app:layout_constraintTop_toTopOf="@id/swipe"
+        app:layout_constraintBottom_toBottomOf="@id/swipe"
+        />
+
+    <ImageView
+        android:id="@+id/apple"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@mipmap/apple_pay"
+        android:paddingHorizontal="@dimen/margin_gap"
+
+        app:layout_constraintStart_toEndOf="@id/google"
+        app:layout_constraintEnd_toStartOf="@id/samsung"
+        app:layout_constraintTop_toTopOf="@id/swipe"
+        app:layout_constraintBottom_toBottomOf="@id/swipe"
+        />
+
+    <ImageView
+        android:id="@+id/samsung"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@mipmap/samsung_pay"
+        android:paddingHorizontal="@dimen/margin_gap"
+
+        app:layout_constraintStart_toEndOf="@id/apple"
+        app:layout_constraintEnd_toEndOf="@id/contactless_logo_container"
+        app:layout_constraintTop_toTopOf="@id/swipe"
+        app:layout_constraintBottom_toBottomOf="@id/swipe"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

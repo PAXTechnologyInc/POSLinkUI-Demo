@@ -13,10 +13,9 @@
     <application
         android:name=".DemoApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/POSLinkUIPastel">
 
@@ -82,7 +81,7 @@
 
                 <action android:name="com.pax.us.pay.action.INPUT_ACCOUNT" />
                 <action android:name="com.pax.us.pay.action.MANAGE_INPUT_ACCOUNT" />
-                <action android:name="com.pax.us.pay.action.ADMINISTRATOR_PASSWORD" />
+                <action android:name="com.pax.us.pay.action.ENTER_ADMINISTRATOR_PASSWORD" />
                 <action android:name="com.pax.us.pay.action.ENTER_CARD_ALL_DIGITS" />
                 <action android:name="com.pax.us.pay.action.ENTER_CARD_LAST_4_DIGITS" />
                 <action android:name="com.pax.us.pay.action.ENTER_CVV" />

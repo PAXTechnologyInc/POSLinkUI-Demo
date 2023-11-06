@@ -1,5 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.text.number;
 
+import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.View;
 import android.widget.Button;
@@ -9,7 +10,6 @@ import android.widget.TextView;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
  * Implement text entry actions:<br>
@@ -22,11 +22,6 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * {@value TextEntry#ACTION_ENTER_MERCHANT_TAX_ID}<br>
  * {@value TextEntry#ACTION_ENTER_PROMPT_RESTRICTION_CODE}<br>
  * {@value TextEntry#ACTION_ENTER_TRANS_NUMBER}<br>
- *
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 public abstract class ANumFragment extends BaseEntryFragment {
 
@@ -37,7 +32,6 @@ public abstract class ANumFragment extends BaseEntryFragment {
         return R.layout.fragment_base_num;
     }
 
-
     @Override
     protected void loadView(View rootView) {
         String message = formatMessage();
@@ -45,7 +39,7 @@ public abstract class ANumFragment extends BaseEntryFragment {
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_number);
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+        focusableEditTexts = new EditText[]{editText};
         int maxLength = getMaxLength();
         if (maxLength > 0) {
             editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
@@ -62,11 +56,13 @@ public abstract class ANumFragment extends BaseEntryFragment {
     @Override
     protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
-        sendNext(value);
+        submit(value);
     }
 
-    protected void sendNext(String value) {
-        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction(), getRequestedParamName(), value);
+    protected void submit(String value) {
+        Bundle bundle = new Bundle();
+        bundle.putString(getRequestedParamName(), value);
+        sendNext(bundle);
     }
 
     protected abstract String getRequestedParamName();

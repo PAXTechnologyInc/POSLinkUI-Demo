@@ -16,6 +16,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.ManageUIConst;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 /**
  * Implement text entry actions:<br>
@@ -28,33 +29,11 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * </p>
  */
 public class ShowDialogFormFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
     private long timeOut;
-    private String transMode;
     private String title;
     private String[] labels;
     private String[] labelProps;
     private String buttonType;
-
-    private Handler handler;
-    private final Runnable timeoutRun = new Runnable() {
-        @Override
-        public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
-        }
-    };
-
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -63,16 +42,12 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
         labels = bundle.getStringArray(EntryExtraData.PARAM_LABELS);
         labelProps = bundle.getStringArray(EntryExtraData.PARAM_LABELS_PROPERTY);
         buttonType = bundle.getString(EntryExtraData.PARAM_BUTTON_TYPE, ManageUIConst.ButtonType.RADIO_BUTTON);
-
     }
 
     @Override
@@ -84,8 +59,7 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
         }
 
         if(timeOut > 0 ) {
-            handler = new Handler();
-            handler.postDelayed(timeoutRun, timeOut);
+            getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
         }
     }
 
@@ -96,7 +70,7 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
         getChildFragmentManager().setFragmentResultListener(ShowDialogFormRadioFragment.RESULT, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                sendNext(String.valueOf(bundle.getInt(ShowDialogFormRadioFragment.INDEX)));
+                submit(String.valueOf(bundle.getInt(ShowDialogFormRadioFragment.INDEX)));
             }
         });
     }
@@ -108,33 +82,15 @@ public class ShowDialogFormFragment extends BaseEntryFragment {
         getChildFragmentManager().setFragmentResultListener(ShowDialogFormCheckBoxFragment.RESULT, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                sendNext(bundle.getString(ShowDialogFormCheckBoxFragment.CHECKED_INDEX));
+                submit(bundle.getString(ShowDialogFormCheckBoxFragment.CHECKED_INDEX));
             }
         });
     }
 
-    @Override
-    protected void onEntryAccepted() {
-        super.onEntryAccepted();
-
-        if(handler!= null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if(handler != null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
-    }
-
-    private void sendNext(String selectLabel){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_LABEL_SELECTED, selectLabel);
+    private void submit(String selectLabel){
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_LABEL_SELECTED, selectLabel);
+        sendNext(bundle);
     }
 
 }

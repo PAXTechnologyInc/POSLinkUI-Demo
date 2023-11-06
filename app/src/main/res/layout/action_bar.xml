@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/action_bar"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/pastel_background"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingHorizontal="@dimen/padding_horizontal"
+
+    tools:layout_height="@dimen/toolbar_height"
+    >
+
+    <TextView
+        android:id="@+id/action_bar_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        tools:text="Credit Sale"
+        android:autoSizeTextType="none"
+        android:textSize="@dimen/text_size_normal"
+        android:textStyle="bold"
+
+        android:gravity="center_vertical|start"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/action_bar_clss_light"
+
+        app:layout_constraintHorizontal_bias="0"
+        />
+
+    <com.paxus.pay.poslinkui.demo.view.ClssLightsView
+        android:id="@+id/action_bar_clss_light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintStart_toEndOf="@id/action_bar_title"
+        app:layout_constraintEnd_toStartOf="@id/action_bar_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+
+        android:visibility="invisible"
+        tools:visibility="visible"
+        />
+
+    <ImageView
+        android:id="@+id/action_bar_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+
+        android:scaleType="centerInside"
+
+        android:visibility="gone"
+        tools:visibility="visible"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/action_bar_clss_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/pastel_secondary">
+    <item>
+        <selector>
+            <item android:state_checked="true">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/pastel_accent"/>
+                    <corners android:radius="@dimen/corner_radius" />
+                </shape>
+            </item>
+            <item android:state_checked="false">
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/transparent"/>
+                    <stroke android:width="0.3mm" android:color="@color/pastel_on_background"/>
+                    <corners android:radius="@dimen/corner_radius" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+</ripple>

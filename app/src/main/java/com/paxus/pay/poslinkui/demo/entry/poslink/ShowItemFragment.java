@@ -6,16 +6,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
-import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
+import com.pax.us.pay.ui.constant.status.POSLinkStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 import org.json.JSONArray;
@@ -34,21 +34,30 @@ import java.util.List;
  * </p>
  */
 public class ShowItemFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
-    private String transMode;
     private String title;
     private String taxLine;
     private String totalLine;
     private String currencySymbol;
-
-    RecyclerView recyclerViewShowItem;
-    TextView tvTotalLineShowItem;
-    TextView tvTaxLineShowItem;
-    LinearLayout titleLayout;
-
     private List<ItemDetailWrapper> itemWrapperList = new ArrayList<>();
+
     private RecyclerView.Adapter itemListAdapter;
+
+    //Interfaces of POSLink Category may need to listen to POSLinkStatus Broadcasts
+    private POSLinkStatusManager posLinkStatusManager;
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        posLinkStatusManager = new POSLinkStatusManager(getContext(), getViewLifecycleOwner());
+        posLinkStatusManager.registerHandler(POSLinkStatus.CLEAR_MESSAGE, this::clearMessage);
+        sendNext(null);
+    }
+
+    private void clearMessage() {
+        int itemCount = itemWrapperList.size();
+        itemWrapperList.clear();
+        itemListAdapter.notifyItemRangeRemoved(0, itemCount);
+    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -56,42 +65,26 @@ public class ShowItemFragment extends BaseEntryFragment {
     }
 
     @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
-    @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
         taxLine = bundle.getString(EntryExtraData.PARAM_TAX_LINE);
         totalLine = bundle.getString(EntryExtraData.PARAM_TOTAL_LINE);
         currencySymbol = bundle.getString(EntryExtraData.PARAM_CURRENCY_SYMBOL);
 
         itemWrapperList = parseItemList(bundle.getString(EntryExtraData.PARAM_MESSAGE_LIST));
-
     }
 
     @Override
     protected void loadView(View rootView) {
-        titleLayout = rootView.findViewById(R.id.tv_title_show_item);
-        tvTotalLineShowItem = rootView.findViewById(R.id.tv_total_line_show_item);
-        tvTaxLineShowItem = rootView.findViewById(R.id.tv_tax_line_show_item);
-        recyclerViewShowItem = rootView.findViewById(R.id.recycler_View_show_item);
+        LinearLayout titleLayout = rootView.findViewById(R.id.tv_title_show_item);
+        TextView tvTotalLineShowItem = rootView.findViewById(R.id.tv_total_line_show_item);
+        TextView tvTaxLineShowItem = rootView.findViewById(R.id.tv_tax_line_show_item);
+        RecyclerView recyclerViewShowItem = rootView.findViewById(R.id.recycler_View_show_item);
 
-
-        if(title == null || title.isEmpty()){
+        if (title == null || title.isEmpty()) {
             titleLayout.setVisibility(View.GONE);
-        }else {
-            for(TextView textView: TextShowingUtils.getTextViewList(requireContext(),title)){
+        } else {
+            for (TextView textView : TextShowingUtils.getTextViewList(requireContext(), title)) {
                 titleLayout.addView(textView);
             }
             titleLayout.setVisibility(View.VISIBLE);
@@ -103,19 +96,14 @@ public class ShowItemFragment extends BaseEntryFragment {
         recyclerViewShowItem.setLayoutManager(linearLayoutManager);
         recyclerViewShowItem.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
-        if(itemWrapperList != null) {
+        if (itemWrapperList != null) {
             itemListAdapter = new ItemListAdapter(requireContext(), itemWrapperList, currencySymbol);
             recyclerViewShowItem.setAdapter(itemListAdapter);
         }
 
-        sendNext();
     }
 
-    private void sendNext() {
-        EntryRequestUtils.sendNext(requireContext(), packageName, action);
-    }
-
-    private List<ItemDetailWrapper> parseItemList(String jsonString){
+    private List<ItemDetailWrapper> parseItemList(String jsonString) {
         try {
             List<ItemDetailWrapper> list = new ArrayList<>();
             JSONArray jsonArray = new JSONArray(jsonString);
@@ -137,12 +125,12 @@ public class ShowItemFragment extends BaseEntryFragment {
                         msgObj.optString("quantity"),
                         msgObj.optString("productImgUri"),
                         msgObj.optString("productImgDesc")
-                        ));
+                ));
                 list.add(item);
             }
 
             return list;
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
             Logger.e(e);
         }
 

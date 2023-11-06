@@ -24,8 +24,6 @@
     <style name="POSLinkUIPastel" parent="Theme.MaterialComponents.DayNight">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowActionBar">false</item>
         <item name="android:windowAnimationStyle">@style/NoAnimation</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
 
@@ -40,19 +38,39 @@
         <!--overriding default widget styles-->
         <item name="editTextStyle">@style/POSLinkUIPastelEditText</item>
         <item name="radioButtonStyle">@style/POSLinkUIPastelRadioButton</item>
-        <item name="checkedTextViewStyle">@style/POSLinkUIPastelRadioButton</item>
+        <item name="checkboxStyle">@style/POSLinkUIPastelCheckBox</item>
+        <item name="android:textViewStyle">@style/POSLinkUIPastelTextView</item>
 
+        <item name="actionBarStyle">@style/POSLinkUIPastelActionBar</item>
+    </style>
+
+    <style name="POSLinkUIPastelActionBar" parent="Widget.AppCompat.Light.ActionBar">
+        <item name="android:contentInsetStart">0dp</item>
+        <item name="android:contentInsetEnd">0dp</item>
+        <item name="contentInsetStart">0dp</item>
+        <item name="contentInsetEnd">0dp</item>
+    </style>
+
+    <style name="POSLinkUIPastelTextView" parent="android:Widget.Material.TextView">
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizePresetSizes">@array/text_auto_size_valid_sizes</item>
     </style>
 
     <style name="POSLinkUIPastelEditText" parent="android:Widget.Material.EditText">
         <item name="android:background">@drawable/rounded_corner_on_background</item>
         <item name="android:textColor">@color/pastel_text_color_on_light</item>
-        <item name="android:padding">@dimen/padding_vertical</item>
+        <item name="android:textColorHint">@color/pastel_text_color_on_light</item>
         <item name="android:imeOptions">flagNoExtractUi</item>
         <item name="android:gravity">center</item>
+        <item name="android:minHeight">@dimen/button_height</item>
     </style>
 
     <style name="POSLinkUIPastelRadioButton" parent="android:Widget.CompoundButton.RadioButton">
+        <item name="android:buttonTint">@color/pastel_text_color</item>
+        <item name="android:textColor">@color/pastel_text_color</item>
+    </style>
+
+    <style name="POSLinkUIPastelCheckBox" parent="android:Widget.CompoundButton.CheckBox">
         <item name="android:buttonTint">@color/pastel_text_color</item>
         <item name="android:textColor">@color/pastel_text_color</item>
     </style>

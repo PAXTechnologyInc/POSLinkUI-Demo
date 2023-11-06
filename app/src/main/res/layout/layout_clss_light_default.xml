@@ -11,7 +11,8 @@
         android:src="@drawable/light_blue"
         android:layout_weight="1"
         android:scaleType="fitCenter"
-        android:contentDescription="@string/image_desc" />
+        android:contentDescription="@string/image_desc"
+        android:layout_marginHorizontal="@dimen/default_gap" />
 
     <com.paxus.pay.poslinkui.demo.view.ClssLight
         android:id="@+id/light2"
@@ -20,7 +21,8 @@
         android:src="@drawable/light_yellow"
         android:layout_weight="1"
         android:scaleType="fitCenter"
-        android:contentDescription="@string/image_desc" />
+        android:contentDescription="@string/image_desc"
+        android:layout_marginHorizontal="@dimen/default_gap" />
 
     <com.paxus.pay.poslinkui.demo.view.ClssLight
         android:id="@+id/light3"
@@ -29,7 +31,8 @@
         android:src="@drawable/light_green"
         android:layout_weight="1"
         android:scaleType="fitCenter"
-        android:contentDescription="@string/image_desc" />
+        android:contentDescription="@string/image_desc"
+        android:layout_marginHorizontal="@dimen/default_gap" />
 
     <com.paxus.pay.poslinkui.demo.view.ClssLight
         android:id="@+id/light4"
@@ -38,6 +41,7 @@
         android:src="@drawable/light_red"
         android:layout_weight="1"
         android:scaleType="fitCenter"
-        android:contentDescription="@string/image_desc" />
+        android:contentDescription="@string/image_desc"
+        android:layout_marginHorizontal="@dimen/default_gap" />
 
 </LinearLayout>

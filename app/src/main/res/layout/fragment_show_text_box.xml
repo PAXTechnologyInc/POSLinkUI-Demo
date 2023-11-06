@@ -30,22 +30,19 @@
         android:layout_margin="5dp">
         <Button
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
+            android:layout_height="@dimen/button_height"
             android:id="@+id/button1"
             android:layout_margin="5dp"
             android:layout_weight="1"/>
         <Button
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
+            android:layout_height="@dimen/button_height"
             android:id="@+id/button2"
             android:layout_margin="5dp"
             android:layout_weight="1"/>
         <Button
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
+            android:layout_height="@dimen/button_height"
             android:id="@+id/button3"
             android:layout_margin="5dp"
             android:layout_weight="1"/>

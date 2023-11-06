@@ -22,6 +22,7 @@ import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.CheckCardPresentFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.CheckDeactivateWarnFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmAdjustTipFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmBalanceFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmBatchCloseFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmCardEntryRetryFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmCardProcessResultFragment;
@@ -36,16 +37,17 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmPrintFpsFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmPrinterStatusFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmReceiptSignatureFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmReceiptViewFragment;
-import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmServiceFeeDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmServiceFeeFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmSignatureMatchFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmSurchargeFeeFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmTotalAmountFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUnifiedMessageFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUntippedFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUploadRetryFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmUploadTransFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.DisplayQRCodeReceiptFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ReversePartialApprovalFragment;
-import com.paxus.pay.poslinkui.demo.entry.confirmation.StartUIDialogFragment;
+import com.paxus.pay.poslinkui.demo.entry.confirmation.StartUIFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.SupplementPartialApprovalFragment;
 import com.paxus.pay.poslinkui.demo.entry.information.DisplayTransInfoFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectAccountTypeFragment;
@@ -53,6 +55,7 @@ import com.paxus.pay.poslinkui.demo.entry.option.SelectAidFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectBatchTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectByPassFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectCardTypeFragment;
+import com.paxus.pay.poslinkui.demo.entry.option.SelectCofInitiatorFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectDuplicateOverrideFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectEbtTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectEdcGroupFragment;
@@ -76,13 +79,13 @@ import com.paxus.pay.poslinkui.demo.entry.poslink.ShowMessageFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowSignatureBoxFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowTextBoxFragment;
 import com.paxus.pay.poslinkui.demo.entry.poslink.ShowThankYouFragment;
+import com.paxus.pay.poslinkui.demo.entry.security.AdministratorPasswordFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterCardAllDigitsFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterCardLast4DigitsFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.EnterVcodeFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.InputAccountFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.ManageInputAccountFragment;
 import com.paxus.pay.poslinkui.demo.entry.security.PINFragment;
-import com.paxus.pay.poslinkui.demo.entry.security.PasswordDialogFragment;
 import com.paxus.pay.poslinkui.demo.entry.signature.SignatureFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.AVSFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.EnterOrigTransDateFragment;
@@ -118,8 +121,6 @@ import com.paxus.pay.poslinkui.demo.entry.text.text.OrderNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.OrigTransIdentifierFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.PoNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.ProdDescFragment;
-import com.paxus.pay.poslinkui.demo.status.StatusDialogFragment;
-import com.paxus.pay.poslinkui.demo.status.TransCompletedDialogFragment;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
 import java.util.HashMap;
@@ -181,7 +182,8 @@ public class UIFragmentHelper {
             put(SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS, EnterCardLast4DigitsFragment.class);
             put(SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS, EnterCardAllDigitsFragment.class);
             put(SecurityEntry.ACTION_ENTER_PIN, PINFragment.class);
-            put(SecurityEntry.ACTION_ENTER_ADMINISTRATION_PASSWORD, PasswordDialogFragment.class);
+            put(SecurityEntry.ACTION_ENTER_ADMINISTRATION_PASSWORD, AdministratorPasswordFragment.class);
+            put("com.pax.us.pay.action.ADMINISTRATOR_PASSWORD", AdministratorPasswordFragment.class);
         }
     };
 
@@ -211,7 +213,7 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_CONFIRM_UNTIPPED, ConfirmUntippedFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_DUPLICATE_TRANS, ConfirmDuplicateTransFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_SURCHARGE_FEE, ConfirmSurchargeFeeFragment.class);
-            put(ConfirmationEntry.ACTION_CONFIRM_SERVICE_FEE, ConfirmServiceFeeDialogFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_SERVICE_FEE, ConfirmServiceFeeFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_PRINTER_STATUS, ConfirmPrinterStatusFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_UPLOAD_TRANS, ConfirmUploadTransFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_PRINT_FAILED_TRANS, ConfirmPrintFailedTransFragment.class);
@@ -227,8 +229,9 @@ public class UIFragmentHelper {
             put(ConfirmationEntry.ACTION_CONFIRM_CARD_ENTRY_RETRY, ConfirmCardEntryRetryFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_SIGNATURE_MATCH, ConfirmSignatureMatchFragment.class);
             put(ConfirmationEntry.ACTION_CONFIRM_DCC, ConfirmDCCFragment.class);
-            put(ConfirmationEntry.ACTION_START_UI, StartUIDialogFragment.class);
-
+            put(ConfirmationEntry.ACTION_START_UI, StartUIFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_TOTAL_AMOUNT, ConfirmTotalAmountFragment.class);
+            put(ConfirmationEntry.ACTION_CONFIRM_BALANCE, ConfirmBalanceFragment.class);
         }
     };
 
@@ -267,6 +270,7 @@ public class UIFragmentHelper {
             put(OptionEntry.ACTION_SELECT_AID, SelectAidFragment.class);
             put(OptionEntry.ACTION_SELECT_BY_PASS, SelectByPassFragment.class);
             put(OptionEntry.ACTION_SELECT_EBT_TYPE, SelectEbtTypeFragment.class);
+            put(OptionEntry.ACTION_SELECT_COF_INITIATOR, SelectCofInitiatorFragment.class);
         }
     };
 
@@ -308,7 +312,7 @@ public class UIFragmentHelper {
             fragment = clz.getConstructor().newInstance();
             Bundle bundle = new Bundle();
             bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
-            bundle.putAll(intent.getExtras());
+            bundle.putAll(intent.getExtras()!=null ? intent.getExtras() : new Bundle());
             fragment.setArguments(bundle);
             return fragment;
         } catch (Exception e) {
@@ -318,59 +322,12 @@ public class UIFragmentHelper {
     }
 
     /**
-     * Create all dialogs
-     *
-     * @param intent Intent
-     * @return DialogFragment
-     */
-    public static DialogFragment createStatusDialogFragment(Intent intent) {
-        String action = intent.getAction();
-        Set<String> categories = intent.getCategories();
-        if (action != null) {
-            switch (action) {
-                case InformationStatus.TRANS_COMPLETED: {
-                    if (categories == null) {
-                        Logger.e("WARNING:\"" + action + "\" Category is missing!");
-                    }
-                    return TransCompletedDialogFragment.newInstance(intent);
-                }
-                case InformationStatus.TRANS_ONLINE_STARTED:
-                case InformationStatus.EMV_TRANS_ONLINE_STARTED:
-                case InformationStatus.RKI_STARTED:
-                case InformationStatus.DCC_ONLINE_STARTED:
-                case InformationStatus.PINPAD_CONNECTION_STARTED:
-                case CardStatus.CARD_REMOVAL_REQUIRED:
-                case CardStatus.CARD_QUICK_REMOVAL_REQUIRED:
-                case CardStatus.CARD_SWIPE_REQUIRED:
-                case CardStatus.CARD_INSERT_REQUIRED:
-                case CardStatus.CARD_TAP_REQUIRED:
-                case BatchStatus.BATCH_CLOSE_UPLOADING:
-                case BatchStatus.BATCH_SF_UPLOADING:
-                case CardStatus.CARD_PROCESS_STARTED: {
-                    if (categories == null) {
-                        Logger.e("WARNING:\"" + action + "\" Category is missing!");
-                    }
-                    return (DialogFragment) createFragment(StatusDialogFragment.class, intent);
-                }
-                case Uncategory.PRINT_STARTED:
-                case Uncategory.FILE_UPDATE_STARTED:
-                case Uncategory.FCP_FILE_UPDATE_STARTED:
-                case Uncategory.LOG_UPLOAD_STARTED:
-                case Uncategory.LOG_UPLOAD_CONNECTED:
-                case Uncategory.LOG_UPLOAD_UPLOADING:
-                case Uncategory.CAPK_UPDATE_STARTED:
-                    return (DialogFragment) createFragment(StatusDialogFragment.class, intent);
-            }
-        }
-        return null;
-    }
-
-    /**
      * Create dialog tag cuz we use it to close dialog
+     *
      * @param action action
      * @return tag
      */
-    public static String createStatusDialogTag(String action){
+    public static String createStatusDialogTag(String action) {
         switch (action) {
             case InformationStatus.TRANS_COMPLETED:
                 return "trans_completed";
@@ -413,23 +370,25 @@ public class UIFragmentHelper {
             case Uncategory.LOG_UPLOAD_UPLOADING:
             case Uncategory.LOG_UPLOAD_COMPLETED:
                 return "log_upload";
-            case BatchStatus.BATCH_SF_UPLOADING:
+            case BatchStatus.BATCH_UPLOADING:
             case BatchStatus.BATCH_SF_COMPLETED:
                 return "sf_upload";
             case BatchStatus.BATCH_CLOSE_UPLOADING:
             case BatchStatus.BATCH_CLOSE_COMPLETED:
                 return "batch_upload";
+            case InformationStatus.ENTER_PIN_STARTED:
+                return "enter-pin-started";
             default:
                 return null;
         }
     }
 
 
-    public static void showDialog(FragmentManager fragmentManager, DialogFragment dialogFragment, String tag){
+    public static void showDialog(FragmentManager fragmentManager, DialogFragment dialogFragment, String tag) {
         dialogFragment.show(fragmentManager, tag);
     }
 
-    public static void closeDialog(FragmentManager fragmentManager, String tag){
+    public static void closeDialog(FragmentManager fragmentManager, String tag) {
         Fragment prev = fragmentManager.findFragmentByTag(tag);
         if (prev != null) {
             DialogFragment df = (DialogFragment) prev;

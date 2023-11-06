@@ -14,28 +14,15 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 /**
  * Implement text entry actions:<br>
  * {@value TextEntry#ACTION_ENTER_CS_PHONE_NUMBER}<br>
- *
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 
 public class CsPhoneNumberFragment extends ANumFragment {
-    private String packageName;
-    private String action;
-    private String transType;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    private String transMode;
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "1-32");
@@ -43,17 +30,6 @@ public class CsPhoneNumberFragment extends ANumFragment {
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
-
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
     }
 
     @Override
@@ -65,7 +41,6 @@ public class CsPhoneNumberFragment extends ANumFragment {
     protected String formatMessage() {
         return getString(R.string.pls_input_cs_phone_number);
     }
-
 
     @Override
     protected String getRequestedParamName() {

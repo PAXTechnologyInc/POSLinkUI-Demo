@@ -1,126 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<LinearLayout
+
+    <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-        <LinearLayout
-            android:id="@+id/base_amount_layout"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="bottom|left"
-            android:visibility="gone">
-            <TextView
-                android:text="Amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                />
-            <TextView
-                android:id="@+id/base_amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/tips_summary"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:orientation="horizontal"
-            android:visibility="gone">
-            <LinearLayout
-                android:id="@+id/summary_tip1"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:textAlignment="textEnd"
-                android:gravity="end"
-                android:visibility="gone">
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/detail_item_tip1"
-                    android:id="@+id/summary_tip1_name"/>
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/summary_tip1_amt"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/summary_tip2"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:textAlignment="textEnd"
-                android:gravity="end"
-                android:visibility="gone">
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/detail_item_tip2"
-                    android:id="@+id/summary_tip2_name"/>
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/summary_tip2_amt"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/summary_tip3"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="right"
-                android:visibility="gone">
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/detail_item_tip2"
-                    android:id="@+id/summary_tip3_name"/>
-                <TextView android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/summary_tip3_amt"/>
-            </LinearLayout>
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/tip_name"
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_tip_base_amount"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="start"
-        android:layout_marginVertical="@dimen/space_between_textview"
-        android:textSize="18sp" />
+        app:layout_constraintWidth_percent=".5"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/recycler_view_tip_summary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/textview_tip_name"
+
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_tip_summary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintStart_toEndOf="@id/layout_tip_base_amount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/layout_tip_base_amount"
+        app:layout_constraintWidth_percent=".5"
+        />
+
+    <TextView
+        android:id="@+id/textview_tip_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/options_layout"
-        style="@style/POSLinkUIPastel"/>
+        android:layout_marginVertical="@dimen/space_between_textview"
+        android:textSize="18sp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_tip_base_amount"
+        app:layout_constraintBottom_toTopOf="@id/select_view_tip_options"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0"
+        />
+
+    <com.paxus.pay.poslinkui.demo.view.SelectOptionsView
+        android:id="@+id/select_view_tip_options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textview_tip_name"
+        app:layout_constraintBottom_toTopOf="@id/select_view_no_tip"
+        />
+
+    <com.paxus.pay.poslinkui.demo.view.SelectOptionsView
+        android:id="@+id/select_view_no_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/select_view_tip_options"
+        app:layout_constraintBottom_toTopOf="@id/edit_text_tip_entry"
+        />
 
     <EditText
+        android:id="@+id/edit_text_tip_entry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/edit_tip"
         android:inputType="numberSigned"
         android:digits="0123456789,.$€"
-        android:gravity="center_horizontal"/>
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/select_view_no_tip"
+        app:layout_constraintBottom_toTopOf="@id/button_confirm"
+        />
+    <TextView
+        android:id="@+id/text_view_other_tip"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/other"
+        android:layout_margin="@dimen/margin_gap"
+        android:paddingHorizontal="@dimen/margin_gap"
+        android:textColor="@color/pastel_text_color_on_light"
+        app:layout_constraintVertical_bias="0"
+        android:textSize="@dimen/text_size_hint"
+        app:layout_constraintStart_toStartOf="@id/edit_text_tip_entry"
+        app:layout_constraintEnd_toEndOf="@id/edit_text_tip_entry"
+        app:layout_constraintTop_toTopOf="@id/edit_text_tip_entry"
+        app:layout_constraintBottom_toBottomOf="@id/edit_text_tip_entry"
+        />
 
     <Button
+        android:id="@+id/button_confirm"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/confirm_button"
-        android:text="@string/confirm"/>
-</LinearLayout>
+        android:layout_height="@dimen/button_height"
+        android:text="@string/confirm"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_text_tip_entry"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

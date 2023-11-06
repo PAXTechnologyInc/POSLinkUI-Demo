@@ -36,11 +36,7 @@ import java.io.IOException;
  * </p>
  */
 public class ConfirmReceiptViewFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
-    private String transType;
     private long timeOut;
-    private String transMode;
 
     private String receiptUri;
 
@@ -64,24 +60,9 @@ public class ConfirmReceiptViewFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         receiptUri = bundle.getString(EntryExtraData.PARAM_RECEIPT_URI);
-    }
-
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
     }
 
     @Override
@@ -127,17 +108,12 @@ public class ConfirmReceiptViewFragment extends BaseEntryFragment {
             Toast.makeText(requireContext(), e.getMessage(),Toast.LENGTH_SHORT).show();
             sendAbort();
         }
-
-
     }
 
     private void onPrintButtonClicked(){
         imageView.startAnimation(receiptOutAnim);
-        sendNext(true);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(EntryRequest.PARAM_CONFIRMED, true);
+        sendNext(bundle);
     }
-
-    private void sendNext(boolean confirm){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action,EntryRequest.PARAM_CONFIRMED,confirm);
-    }
-
 }

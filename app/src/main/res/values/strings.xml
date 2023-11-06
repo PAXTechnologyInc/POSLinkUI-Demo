@@ -176,6 +176,7 @@
     <string name="select_cashback_amount">Please Select Cashback</string>
     <string name="select_merchant">Please Select Merchant</string>
     <string name="select_orig_currency">Please Select Orig Trans Currency</string>
+    <string name="select_cof_initiator">Please Select COF Initiator</string>
 
     <string name="pls_input_clerk_id">Please Enter Clerk ID</string>
     <string name="pls_input_server_id">Please Enter Server ID</string>
@@ -291,10 +292,6 @@
     <string name="e_wic">E WIC</string>
     <string name="both">BOTH</string>
     <string name="e_wic_voucher">E WIC VOUCHER</string>
-    <!-- BypassReason -->
-    <string name="want_to_bypass">Bypass</string>
-    <string name="cannot_read">Unable to Read</string>
-    <string name="does_not_exist">Not Present</string>
 
     <!-- SubTransType -->
     <string name="option_by_cardnum">BY CARDNUM</string>
@@ -417,6 +414,7 @@
     <string name="confirm_amount">Confirm Amount</string>
     <string name="reversal_process">Reversal...</string>
     <string name="emv_process_start">EMV Process Start...</string>
+    <string name="please_flip_over">Please Flip Over!</string>
     <string name="card_error">Card Error!</string>
     <string name="please_remove_card">Please Remove Card!</string>
     <string name="please_remove_card_quickly">Please Remove Card Quickly!</string>
@@ -580,6 +578,8 @@
     <string name="confirm_printer_status">Printer Have Issue, Retry?</string>
     <string name="confirm_application_update_with_batch_close">To apply the update, please close the current batch.\nDo you want to close now?</string>
     <string name="confirm_online_retry_offline">Retry Online Or Offline, Retry Online?</string>
+    <string name="confirm_total_amount_message">Total Amount: %1$s.\nDo you wish to continue?</string>
+    <string name="confirm_balance_message">Balance: %1$s.\nDo you wish to continue?</string>
 
     <string name="prompt_printer_out_of_paper">Printer Out Of Paper, Retry?</string>
     <string name="confirm_printer_over_hot">Printer Over Hot, Retry?</string>

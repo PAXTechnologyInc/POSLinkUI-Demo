@@ -16,8 +16,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/title"
                 android:textSize="28sp"
-                android:textColor="@color/purple_700"
-                android:autoSizeTextType="uniform"
                 android:maxLines="1"
                 android:gravity="center"
                 android:layout_marginBottom="10dp"/>
@@ -51,19 +49,17 @@
                 android:layout_marginTop="20dp">
                 <Button
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/button_height"
                     android:layout_weight="1"
                     android:id="@+id/reset_button"
                     android:text="@string/reset"
-                    android:textAllCaps="false"
                     android:layout_margin="5dp"/>
                 <Button
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/button_height"
                     android:layout_weight="1"
                     android:id="@+id/confirm_button"
                     android:text="@string/confirm"
-                    android:textAllCaps="false"
                     android:layout_margin="5dp"/>
             </LinearLayout>
         </LinearLayout>

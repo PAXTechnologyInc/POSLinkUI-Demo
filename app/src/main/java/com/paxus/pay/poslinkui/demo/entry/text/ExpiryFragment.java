@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,20 +19,10 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_EXPIRY_DATE}<br>
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 public class ExpiryFragment extends BaseEntryFragment {
-
-    private String transType;
-    private String transMode;
-
     private long timeOut;
     private String message = "";
-    private String packageName;
-    private String action;
 
     private EditText editText;
 
@@ -44,10 +33,6 @@ public class ExpiryFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         message = getString(R.string.pls_input_expiry_date);
@@ -60,7 +45,7 @@ public class ExpiryFragment extends BaseEntryFragment {
         textView.setText(message);
 
         editText = rootView.findViewById(R.id.edit_expiry);
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+
         editText.setSelection(editText.getEditableText().length());
         editText.addTextChangedListener(new TextWatcher() {
             protected boolean mEditing;
@@ -102,16 +87,8 @@ public class ExpiryFragment extends BaseEntryFragment {
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
-    }
 
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
+        focusableEditTexts = new EditText[]{editText};
     }
 
     @Override
@@ -119,12 +96,14 @@ public class ExpiryFragment extends BaseEntryFragment {
         String value = editText.getText().toString();
         value = value.replaceAll("[^0-9]", "");
         if (value.length() == 4) {
-            sendNext(value);
+            submit(value);
         }
     }
 
-    private void sendNext(String value) {
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_EXPIRY_DATE, value);
+    private void submit(String value) {
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_EXPIRY_DATE, value);
+        sendNext(bundle);
     }
 
     @Override

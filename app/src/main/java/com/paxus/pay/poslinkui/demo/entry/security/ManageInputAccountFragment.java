@@ -4,11 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,23 +17,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
-import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.status.CardStatus;
-import com.pax.us.pay.ui.constant.status.ClssLightStatus;
 import com.pax.us.pay.ui.constant.status.SecurityStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.entry.UIFragmentHelper;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
-import com.paxus.pay.poslinkui.demo.view.ClssLight;
-import com.paxus.pay.poslinkui.demo.view.ClssLightsView;
 
 /**
  * Implement security entry actions {@link SecurityEntry#ACTION_MANAGE_INPUT_ACCOUNT}
@@ -51,14 +42,10 @@ import com.paxus.pay.poslinkui.demo.view.ClssLightsView;
 
 public class ManageInputAccountFragment extends BaseEntryFragment {
 
-    protected String packageName;
-    protected String action;
-    protected String transType;
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
     protected String manualMessage = "";
-    protected String transMode;
     protected boolean enableInsert;
     protected boolean enableTap;
     protected boolean enableSwipe;
@@ -71,7 +58,6 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
     protected String merchantName;
     protected String amountMessage;
 
-    protected ClssLightsView clssLightsView;
     protected TextView amountTv;
 
     protected BroadcastReceiver receiver;
@@ -84,48 +70,23 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
     private int mOrigWidth;
     private int mOrigHeight;
 
-    //1.When input box layout ready, send secure area location
-    // For A35, need delay 100ms (Ticket: BPOSANDJAX-325)
+    ClssLightsViewStatusManager clssLightsViewStatusManager;
+
     private void onPanInputBoxLayoutReady() {
-        //Change hint and font color if you want
         if (Build.MODEL.equals("A35")) {
-            new Handler().postDelayed(() -> {
-                sendSecureArea(panInputBox, "Card Number");
-            }, 100);
+            new Handler().postDelayed(() -> sendSecurityArea(panInputBox, "Card Number"), 100);
         } else {
-            sendSecureArea(panInputBox, "Card Number");
+            sendSecurityArea(panInputBox, "Card Number");
         }
     }
 
     @Override
     protected void onConfirmButtonClicked() {
-        EntryRequestUtils.sendNext(requireContext(), packageName, action);
-    }
-
-    private void sendSecureArea(TextView editText, String hint) {
-        int[] location = new int[2];
-        editText.getLocationInWindow(location);
-        int x = location[0];
-        int y = location[1];
-        int barHeight = 0;
-        boolean immersiveSticky = (requireActivity().getWindow().getDecorView().getSystemUiVisibility() &
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) > 0;
-        if (!immersiveSticky) {
-            //area of application
-            Rect outRect1 = new Rect();
-            requireActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(outRect1);
-            barHeight = outRect1.top;  //statusBar's height
-        }
-        TextPaint paint = editText.getPaint();
-        int fontSize = (int) (paint.getTextSize() / paint.density);
-        EntryRequestUtils.sendSecureArea(requireContext(), packageName, action, x, y - barHeight, editText.getWidth(), editText.getHeight(), fontSize, hint, String.format("%X", editText.getCurrentTextColor()));
+        sendNext(null);
     }
 
     private void onUpdateEntryMode(Intent intent) {
         String action = intent.getAction();
-        if (CardStatus.CARD_TAP_REQUIRED.equals(action)) {
-            updateCtlessLightStatus(ClssLightStatus.CLSS_LIGHT_READY_FOR_TXN);
-        }
 
         enableManual = false;
         enableInsert = CardStatus.CARD_INSERT_REQUIRED.equals(action);
@@ -134,54 +95,6 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
         enableContactlessLight = enableContactlessLight && enableTap;
 
         loadView(rootView);
-
-        DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
-        if (dialogFragment != null) {
-            String tag = "update_entry_mode";
-            UIFragmentHelper.showDialog(getParentFragmentManager(), dialogFragment, tag);
-            new Handler().postDelayed(() -> UIFragmentHelper.closeDialog(getParentFragmentManager(), tag), 2000);
-        }
-    }
-
-    private void updateCtlessLightStatus(String status) {
-        if (clssLightsView.getVisibility() != View.VISIBLE) {
-            return;
-        }
-        switch (status) {
-            case ClssLightStatus.CLSS_LIGHT_COMPLETED:
-            case ClssLightStatus.CLSS_LIGHT_NOT_READY: //Fix ANBP-383, ANFDRC-319
-                clssLightsView.setLights(-1, ClssLight.OFF);
-                return;
-            case ClssLightStatus.CLSS_LIGHT_ERROR:
-                clssLightsView.setLight(0, ClssLight.OFF);
-                clssLightsView.setLight(1, ClssLight.OFF);
-                clssLightsView.setLight(2, ClssLight.OFF);
-                clssLightsView.setLight(3, ClssLight.ON);
-                return;
-            case ClssLightStatus.CLSS_LIGHT_IDLE:
-                clssLightsView.setLights(0, ClssLight.BLINK);
-                return;
-            case ClssLightStatus.CLSS_LIGHT_PROCESSING:
-                clssLightsView.setLight(0, ClssLight.ON);
-                clssLightsView.setLight(1, ClssLight.ON);
-                clssLightsView.setLight(2, ClssLight.OFF);
-                clssLightsView.setLight(3, ClssLight.OFF);
-                return;
-            case ClssLightStatus.CLSS_LIGHT_READY_FOR_TXN:
-                clssLightsView.setLight(0, ClssLight.ON);
-                clssLightsView.setLight(1, ClssLight.OFF);
-                clssLightsView.setLight(2, ClssLight.OFF);
-                clssLightsView.setLight(3, ClssLight.OFF);
-                return;
-            case ClssLightStatus.CLSS_LIGHT_REMOVE_CARD:
-                clssLightsView.setLight(0, ClssLight.ON);
-                clssLightsView.setLight(1, ClssLight.ON);
-                clssLightsView.setLight(2, ClssLight.ON);
-                clssLightsView.setLight(3, ClssLight.OFF);
-                return;
-            default:
-                break;
-        }
     }
 
     @Override
@@ -200,10 +113,6 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         enableInsert = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_INSERT);
         enableTap = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_TAP);
@@ -271,8 +180,9 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
         } else {
             rootView.findViewById(R.id.layout_manual).setVisibility(View.GONE);
         }
-        clssLightsView = rootView.findViewById(R.id.clss_light);
-        clssLightsView.setVisibility(enableContactlessLight ? View.VISIBLE : View.GONE);
+
+        if(clssLightsViewStatusManager == null) clssLightsViewStatusManager = new ClssLightsViewStatusManager(getContext(), this, getActivity().findViewById(R.id.action_bar_clss_light));
+        clssLightsViewStatusManager.activate(enableContactlessLight && enableTap);
 
         int swipeId = R.drawable.selection_swipe_card_a920;
         int insertId = R.drawable.selection_insert_card_a920;
@@ -341,14 +251,6 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
         if (enableTap) {
             receiver = new ManageInputAccountFragment.Receiver();
             IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addCategory(ClssLightStatus.CATEGORY);
-            intentFilter.addAction(ClssLightStatus.CLSS_LIGHT_IDLE);
-            intentFilter.addAction(ClssLightStatus.CLSS_LIGHT_COMPLETED);
-            intentFilter.addAction(ClssLightStatus.CLSS_LIGHT_NOT_READY);
-            intentFilter.addAction(ClssLightStatus.CLSS_LIGHT_READY_FOR_TXN);
-            intentFilter.addAction(ClssLightStatus.CLSS_LIGHT_PROCESSING);
-            intentFilter.addAction(ClssLightStatus.CLSS_LIGHT_REMOVE_CARD);
-            intentFilter.addAction(ClssLightStatus.CLSS_LIGHT_ERROR);
 
             intentFilter.addCategory(SecurityStatus.CATEGORY);
             intentFilter.addAction(SecurityStatus.SECURITY_ENTER_CLEARED);
@@ -378,32 +280,12 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
 
     }
 
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
-
     private class Receiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Logger.i("receive Status Action \"" + intent.getAction() + "\"");
             switch (intent.getAction()) {
-                case ClssLightStatus.CLSS_LIGHT_COMPLETED:
-                case ClssLightStatus.CLSS_LIGHT_NOT_READY:
-                case ClssLightStatus.CLSS_LIGHT_ERROR:
-                case ClssLightStatus.CLSS_LIGHT_IDLE:
-                case ClssLightStatus.CLSS_LIGHT_PROCESSING:
-                case ClssLightStatus.CLSS_LIGHT_READY_FOR_TXN:
-                case ClssLightStatus.CLSS_LIGHT_REMOVE_CARD:
-                    //3.Update contactless light according status
-                    updateCtlessLightStatus(intent.getAction());
-                    return;
                 case CardStatus.CARD_INSERT_REQUIRED:
                 case CardStatus.CARD_TAP_REQUIRED:
                 case CardStatus.CARD_SWIPE_REQUIRED:

@@ -20,35 +20,17 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_AVS_DATA}<br>
- * <p>
- *     UI Tips:
- *     If confirm button clicked, sendNext
- * </p>
  */
 public class AVSFragment extends BaseEntryFragment {
-    private String transType;
     private long timeOut;
     private int minLengthAddr;
     private int maxLengthAddr;
     private int minLengthZip;
     private int maxLengthZip;
-    private String transMode;
     private boolean zipText;
-    private String packageName;
-    private String action;
 
     private EditText editTextAddr;
     private EditText editTextZip;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -57,10 +39,6 @@ public class AVSFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         String valuePattenAddr = bundle.getString(EntryExtraData.PARAM_ADDRESS_PATTERN,"0-30");
@@ -84,7 +62,7 @@ public class AVSFragment extends BaseEntryFragment {
     protected void loadView(View rootView) {
         editTextAddr = rootView.findViewById(R.id.edit_address);
         editTextZip = rootView.findViewById(R.id.edit_zip);
-        prepareEditTextsForSubmissionWithSoftKeyboard(editTextAddr, editTextZip);
+        focusableEditTexts = new EditText[]{editTextAddr, editTextZip};
 
         if(maxLengthAddr > 0 ) editTextAddr.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthAddr)});
         if(maxLengthZip > 0 ) editTextZip.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthZip)});
@@ -93,8 +71,6 @@ public class AVSFragment extends BaseEntryFragment {
         //Send Next when clicking confirm button
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener( v-> onConfirmButtonClicked());
-
-
     }
 
     @Override
@@ -107,6 +83,9 @@ public class AVSFragment extends BaseEntryFragment {
             return;
         }
 
-        EntryRequestUtils.sendNextAVS(requireContext(), packageName, action, addr, zip);
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_ADDRESS, addr);
+        bundle.putString(EntryRequest.PARAM_ZIP_CODE, zip);
+        sendNext(bundle);
     }
 }

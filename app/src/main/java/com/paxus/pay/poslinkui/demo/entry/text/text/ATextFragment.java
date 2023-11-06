@@ -1,5 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.text.text;
 
+import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.View;
 import android.widget.Button;
@@ -9,7 +10,6 @@ import android.widget.TextView;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 
 /**
  * Implement text entry actions:<br>
@@ -19,11 +19,6 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
  * {@value TextEntry#ACTION_ENTER_ORDER_NUMBER}<br>
  * {@value TextEntry#ACTION_ENTER_PO_NUMBER}<br>
  * {@value TextEntry#ACTION_ENTER_PROD_DESC}<br>
- *
- * <p>
- * UI Tips:
- * If confirm button clicked, sendNext
- * </p>
  */
 public abstract class ATextFragment extends BaseEntryFragment {
 
@@ -40,7 +35,6 @@ public abstract class ATextFragment extends BaseEntryFragment {
         textView.setText(formatMessage());
 
         editText = rootView.findViewById(R.id.edit_text);
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
         int maxLength = getMaxLength();
         if (maxLength > 0) {
             editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
@@ -48,6 +42,7 @@ public abstract class ATextFragment extends BaseEntryFragment {
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
+        focusableEditTexts = new EditText[]{editText};
     }
 
     protected abstract int getMaxLength();
@@ -57,11 +52,13 @@ public abstract class ATextFragment extends BaseEntryFragment {
     @Override
     protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
-        sendNext(value);
+        submit(value);
     }
 
-    protected void sendNext(String value) {
-        EntryRequestUtils.sendNext(requireContext(), getSenderPackageName(), getEntryAction(), getRequestedParamName(), value);
+    protected void submit(String value) {
+        Bundle bundle = new Bundle();
+        bundle.putString(getRequestedParamName(), value);
+        sendNext(bundle);
     }
 
     protected abstract String getRequestedParamName();

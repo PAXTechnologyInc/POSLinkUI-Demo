@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -19,8 +20,14 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.entry.signature.ElectronicSignatureView;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implement signature entry action {@value PoslinkEntry#ACTION_SHOW_SIGNATURE_BOX}<br>
@@ -33,33 +40,32 @@ import java.util.List;
  * </p>
  */
 public class ShowSignatureBoxFragment extends BaseEntryFragment {
-    private String packageName;
-    private String action;
     private String title;
     private String text;
     private long timeOut;
-    private String transMode;
     private long signBox;
 
     private Button confirmBtn;
     private ElectronicSignatureView mSignatureView;
+
     private TextView timeoutView;
-    private long tickTimeout;
-    private final Handler handler = new Handler();
-    private final Runnable tick = new Runnable() {
-        @Override
-        public void run() {
-            tickTimeout = tickTimeout - 1000;
-            long tick = tickTimeout/1000;
-            if(timeoutView != null){
-                timeoutView.setText(String.valueOf(tick));
+    private long tempTimeout;
+    private final long intervalMilis = 1000;
+
+    ScheduledExecutorService countdownUpdateScheduler;
+    ScheduledFuture<?> countdownFuture;
+    Runnable updateCountdown = () -> {
+        try {
+            if(tempTimeout<=0) {
+                countdownFuture.cancel(true);
+                if(timeoutView != null) new Handler(Looper.getMainLooper()).post(()-> timeoutView.setVisibility(View.INVISIBLE));
+                return;
             }
-            if(tick == 0){
-                //4.If timeout, sendTimeout
-                sendTimeout();
-            }else{
-                handler.postDelayed(this,1000);
-            }
+            if(timeoutView != null) new Handler(Looper.getMainLooper()).post(()-> timeoutView.setText(String.valueOf(tempTimeout/intervalMilis)));
+            tempTimeout -= intervalMilis;
+        } catch (Exception e) {
+            //scheduleAtFixedRate: If any execution of the task encounters an exception, subsequent executions are suppressed.
+            Logger.e(e);
         }
     };
 
@@ -70,14 +76,13 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle){
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
+        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
+        tempTimeout = timeOut;
+
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
         text = bundle.getString(EntryExtraData.PARAM_TEXT);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
-        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
         signBox = bundle.getLong(EntryExtraData.PARAM_SIGN_BOX);
-
+        countdownUpdateScheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
     @Override
@@ -121,10 +126,10 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
 
             return false;
         });
+        getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
+
         timeoutView = rootView.findViewById(R.id.timeout);
-        tickTimeout = timeOut;
-        timeoutView.setText(String.valueOf(tickTimeout/1000));
-        handler.postDelayed(tick,1000);
+        countdownFuture = countdownUpdateScheduler.scheduleAtFixedRate(updateCountdown, 0, intervalMilis, TimeUnit.MILLISECONDS);
     }
 
     //1.When cancel button clicked, sendAbort
@@ -135,7 +140,7 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
     //2.When clear button clicked, clear signature board and reset timeout.
     private void onClearButtonClicked(){
         mSignatureView.clear();
-        tickTimeout = timeOut;
+        tempTimeout = timeOut;
     }
 
     @Override
@@ -166,28 +171,22 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
     }
 
     private void sendNext(short[] signature) {
-        handler.removeCallbacks(tick); //Stop Tick
-
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_SIGNATURE, signature);
-    }
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
+        countdownFuture.cancel(true);
+        Bundle bundle = new Bundle();
+        bundle.putShortArray(EntryRequest.PARAM_SIGNATURE, signature);
+        sendNext(bundle);
     }
 
     @Override
     protected void sendAbort() {
         super.sendAbort();
-        handler.removeCallbacks(tick); //Stop Tick
+        countdownFuture.cancel(true);
     }
 
-    private void sendTimeout() {
-        EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
+    @Override
+    public void onDestroy() {
+        countdownFuture.cancel(true);
+        countdownUpdateScheduler.shutdownNow();
+        super.onDestroy();
     }
 }

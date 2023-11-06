@@ -1,12 +1,10 @@
 package com.paxus.pay.poslinkui.demo.entry.text.fsa;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
@@ -28,28 +26,14 @@ import java.util.List;
  *
  * <p>
  *     UI Tips:
- *     This action is a complex action. Please see implementation details on {@link #loadFsaAmountOptions()} and {@link #sendNext()}
+ *     This action is a complex action. Please see implementation details on {@link #loadFsaAmountOptions()} and {@link #submit()}
  * </p>
  */
 public class FSAFragment extends BaseEntryFragment {
-    private String transType;
-    private String transMode;
     private long timeOut;
     private String currency;
     private long totalAmount;
     private List<String> fsaAmountOptions;
-    private String packageName;
-    private String action;
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     private String fsaOption = "";
     private long healthAmt = 0;
@@ -63,6 +47,8 @@ public class FSAFragment extends BaseEntryFragment {
 
     private int amtIndex = 0;
 
+    public static final String REQUEST_KEY_CONFIRM = "confirm";
+
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_fsa;
@@ -70,10 +56,6 @@ public class FSAFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transType = bundle.getString(EntryExtraData.PARAM_TRANS_TYPE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
         currency =  bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
         totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
@@ -89,7 +71,7 @@ public class FSAFragment extends BaseEntryFragment {
     }
 
     private void loadFsaAmountOptions(){
-        if(fsaAmountOptions != null && fsaAmountOptions.size()>0){
+        if(fsaAmountOptions != null && !fsaAmountOptions.isEmpty()){
             boolean healthCareEnabled = fsaAmountOptions.contains(EntryRequest.PARAM_HEALTH_CARE_AMOUNT);
             boolean transitEnabled = fsaAmountOptions.contains(EntryRequest.PARAM_TRANSIT_AMOUNT);
             if( healthCareEnabled && transitEnabled){
@@ -113,26 +95,20 @@ public class FSAFragment extends BaseEntryFragment {
     private void selectFsaType(){
 
         String[] fsaTypes = new String[]{FSAType.TRANSIT, FSAType.HEALTH_CARE};
-        Fragment fragment = FsaOptionsFragment.newInstance(
-                getString(R.string.select_fsa_type),
-                fsaTypes
-        );
+        Fragment fragment = FsaOptionsFragment.newInstance(getString(R.string.select_fsa_type), fsaTypes);
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_placeholder, fragment).commit();
         getChildFragmentManager().beginTransaction();
 
-        getChildFragmentManager().setFragmentResultListener(FsaOptionsFragment.RESULT, this, new FragmentResultListener() {
-                    @Override
-                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                        int index = bundle.getInt(FsaOptionsFragment.INDEX);
-                        fsaOption = fsaTypes[index];
-                        if(FSAType.TRANSIT.equals(fsaOption)){
-                            enterTransitAmount();
-                        }else {
-                            selectHealthCareSubType();
-                        }
-                    }
-                });
+        getChildFragmentManager().setFragmentResultListener(FsaOptionsFragment.RESULT, this, (requestKey, bundle) -> {
+            int index = bundle.getInt(FsaOptionsFragment.INDEX);
+            fsaOption = fsaTypes[index];
+            if(FSAType.TRANSIT.equals(fsaOption)){
+                enterTransitAmount();
+            }else {
+                selectHealthCareSubType();
+            }
+        });
     }
 
     private void enterTransitAmount(){
@@ -141,13 +117,10 @@ public class FSAFragment extends BaseEntryFragment {
         );
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_placeholder, fragment).commit();
-        getChildFragmentManager().setFragmentResultListener(FSAAmountFragment.RESULT, this, new FragmentResultListener() {
-                    @Override
-                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                        transitAmt = bundle.getLong(FSAAmountFragment.VALUE);
-                        sendNext();
-                    }
-                });
+        getChildFragmentManager().setFragmentResultListener(FSAAmountFragment.RESULT, this, (requestKey, bundle) -> {
+            transitAmt = bundle.getLong(FSAAmountFragment.VALUE);
+            submit();
+        });
     }
 
     private void selectHealthCareSubType(){
@@ -161,56 +134,43 @@ public class FSAFragment extends BaseEntryFragment {
         transaction.replace(R.id.fragment_placeholder, fragment).commit();
         getChildFragmentManager().beginTransaction();
 
-        getChildFragmentManager().setFragmentResultListener(FsaOptionsFragment.RESULT, this, new FragmentResultListener() {
-                    @Override
-                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                        int index = bundle.getInt(FsaOptionsFragment.INDEX);
-                        if(index == 0){
-                            enterTotalHealthCareAmount();
-                        }else {
-                            enterSubHealthCareAmount();
-                        }
-                    }
-                });
+        getChildFragmentManager().setFragmentResultListener(FsaOptionsFragment.RESULT, this, (requestKey, bundle) -> {
+            int index = bundle.getInt(FsaOptionsFragment.INDEX);
+            if(index == 0){
+                enterTotalHealthCareAmount();
+            }else {
+                enterSubHealthCareAmount();
+            }
+        });
     }
 
     private void enterTotalHealthCareAmount(){
-        Fragment fragment = FSAAmountFragment.newInstance(
-                getString(R.string.prompt_input_healthcare_amount),0,9,currency,totalAmount
-        );
+        Fragment fragment = FSAAmountFragment.newInstance(getString(R.string.prompt_input_healthcare_amount),0,9,currency,totalAmount);
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_placeholder, fragment).commit();
-        getChildFragmentManager().setFragmentResultListener(FSAAmountFragment.RESULT, this, new FragmentResultListener() {
-                    @Override
-                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                        healthAmt = bundle.getLong(FSAAmountFragment.VALUE);
-                        sendNext();
-                    }
-                });
+        getChildFragmentManager().setFragmentResultListener(FSAAmountFragment.RESULT, this, (requestKey, bundle) -> {
+            healthAmt = bundle.getLong(FSAAmountFragment.VALUE);
+            submit();
+        });
     }
 
     private void enterSubHealthCareAmount(){
         if(amtIndex>=0 && amtIndex< fsaAmountOptions.size()){
             String amtOption = fsaAmountOptions.get(amtIndex);
             if(!EntryRequest.PARAM_TRANSIT_AMOUNT.equals(amtOption) && !EntryRequest.PARAM_HEALTH_CARE_AMOUNT.equals(amtOption)){
-                Fragment fragment = FSAAmountFragment.newInstance(
-                        getSubHealthCareAmountTitle(amtOption),0,9,currency, totalAmount
-                );
+                Fragment fragment = FSAAmountFragment.newInstance(getSubHealthCareAmountTitle(amtOption),0,9,currency, totalAmount);
                 FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_placeholder, fragment).commit();
-                getChildFragmentManager().setFragmentResultListener(FSAAmountFragment.RESULT, this, new FragmentResultListener() {
-                            @Override
-                            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                               onGetSubHealthCareAmount(amtOption, bundle.getLong(FSAAmountFragment.VALUE));
-                            }
-                        });
+                getChildFragmentManager().setFragmentResultListener(FSAAmountFragment.RESULT, this,
+                    (requestKey, bundle) -> onGetSubHealthCareAmount(amtOption, bundle.getLong(FSAAmountFragment.VALUE))
+                );
                 return;
             }
             amtIndex++;
             enterSubHealthCareAmount();
             return;
         }
-        sendNext();
+        submit();
     }
 
     private String getSubHealthCareAmountTitle(String amtOption){
@@ -271,9 +231,8 @@ public class FSAFragment extends BaseEntryFragment {
         return healthAmt>0 ? healthAmt : clinicAmt + prescriptionAmt + dentalAmt + visionAmt + copayAmt + otcAmt;
     }
 
-    private void sendNext(){
+    private void submit(){
         Bundle bundle = new Bundle();
-        bundle.putString(EntryRequest.PARAM_ACTION, action);
         bundle.putString(EntryRequest.PARAM_FSA_OPTION, fsaOption);
         if(fsaAmountOptions.contains(EntryRequest.PARAM_HEALTH_CARE_AMOUNT)){
             bundle.putLong(EntryRequest.PARAM_HEALTH_CARE_AMOUNT, getHealthCareAmount());
@@ -303,9 +262,11 @@ public class FSAFragment extends BaseEntryFragment {
         if(fsaAmountOptions.contains(EntryRequest.PARAM_TRANSIT_AMOUNT)){
             bundle.putLong(EntryRequest.PARAM_TRANSIT_AMOUNT, transitAmt);
         }
-        Intent intent = new Intent(EntryRequest.ACTION_NEXT);
-        intent.putExtras(bundle);
-        intent.setPackage(packageName);
-        requireContext().sendBroadcast(intent);
+        sendNext(bundle);
+    }
+
+    @Override
+    protected void onConfirmButtonClicked() {
+        getChildFragmentManager().setFragmentResult(REQUEST_KEY_CONFIRM, new Bundle());
     }
 }

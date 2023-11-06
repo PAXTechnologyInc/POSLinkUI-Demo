@@ -8,17 +8,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainerView;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
@@ -26,12 +21,18 @@ import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.pax.us.pay.ui.constant.status.BatchStatus;
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.InformationStatus;
-import com.pax.us.pay.ui.constant.status.StatusData;
 import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.R;
-import com.paxus.pay.poslinkui.demo.event.ResponseEvent;
+import com.paxus.pay.poslinkui.demo.status.StatusFragment;
+import com.paxus.pay.poslinkui.demo.status.TransCompletedStatusFragment;
+import com.paxus.pay.poslinkui.demo.utils.BundleMaker;
+import com.paxus.pay.poslinkui.demo.utils.EntryActivityActionBar;
+import com.paxus.pay.poslinkui.demo.utils.InterfaceHistory;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
+
+import java.util.Objects;
 
 /**
  * Use fragment to implement all UI (Activity and Dialog).
@@ -43,47 +44,38 @@ import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
  */
 public class EntryActivity extends AppCompatActivity{
 
-    private Toolbar toolbar;
-    private FragmentContainerView fragmentContainer;
-    private BroadcastReceiver receiver;
+    private StatusBroadcastReceiver statusBroadcastReceiver;
+    private ResponseBroadcastReceiver responseBroadcastReceiver;
 
     private String transType = "";
     private String transMode = "";
 
-    EntryViewModelFactory entryViewModelFactory = new EntryViewModelFactory();
+    TaskScheduler scheduler;
+    InterfaceHistory interfaceHistory;
+
+    EntryActivityActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Logger.d("EntryActivity onCreate");
+        Logger.d( getClass().getSimpleName() + " onCreate");
         super.onCreate(savedInstanceState);
+        interfaceHistory = new InterfaceHistory();
 
         setContentView(R.layout.activity_entry);
-        fragmentContainer = findViewById(R.id.fragment_placeholder);
-        toolbar = findViewById(R.id.toolbar);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        actionBar = new EntryActivityActionBar(this, getSupportActionBar());
 
         registerUIReceiver();
+        scheduler = new TaskScheduler(this);
+
         loadEntry(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Logger.d( getClass().getSimpleName() + " onNewIntent");
         super.onNewIntent(intent);
-        Logger.d(getClass().getSimpleName() +" onNewIntent");
-        //If activity is at the top of stack, startActivity will trigger onNewIntent. So you can load entry here.
         loadEntry(intent);
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Logger.d(getClass().getSimpleName() +" onSaveInstanceState");
-        //If EntryActivity is not at the top of stack, a new EntryActivity will be created. After that, the old one need kill itself.
-        unregisterUIReceiver();
-        this.finishAndRemoveTask();
+        scheduler.cancelTasks();
     }
 
     @Override
@@ -91,78 +83,94 @@ public class EntryActivity extends AppCompatActivity{
         super.onDestroy();
         Logger.d(getClass().getSimpleName() +" onDestroy");
         unregisterUIReceiver();
-        getViewModelStore().clear();
-    }
-
-    private void logIntentExtras(Intent intent){
-        Bundle bundle = intent.getExtras() != null ? intent.getExtras() : new Bundle();
-        StringBuilder extras = new StringBuilder();
-        for (String key : bundle.keySet()) {
-            extras.append(key).append(":\"").append(bundle.get(key)).append("\",");
-        }
-        Logger.i("Action Extras:{" + extras + "}");
+        scheduler.shutdown();
     }
 
     private void loadEntry(Intent intent){
-        logIntentExtras(intent);
-        Logger.i("Start Entry Action \"" + intent.getAction() + "\"");
+        setIntent(intent);
+        logIntent(intent);
+        interfaceHistory.add(intent.getStringExtra("interfaceID"), intent.getAction());
+
+        clearStatus();
+        setScheduledTaskListener();
+        enableDarkOverlay(false);
 
         updateTransMode(intent.getStringExtra(EntryExtraData.PARAM_TRANS_MODE));
 
-        Fragment fragment = UIFragmentHelper.createFragment(intent);
-        entryViewModelFactory.createViewModel(this, fragment);
-        Fragment frag = getSupportFragmentManager().findFragmentById(R.id.fragment_placeholder);
-
-        if (fragment != null) {
-            if (fragment instanceof DialogFragment) {
-                if (frag == null) {
-                    //To show dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE, hide tool bar.
-                    toolbar.setVisibility(View.GONE);
-                    fragmentContainer.setVisibility(View.GONE);
-                }
-                ((DialogFragment) fragment).show(getSupportFragmentManager(), "EntryDialog");
-            } else {
-                UIFragmentHelper.closeDialog(getSupportFragmentManager(), "EntryDialog");
-                updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
-                if (frag == null) {
-                    //Show tool bar
-                    toolbar.setVisibility(View.VISIBLE);
-                    fragmentContainer.setVisibility(View.VISIBLE);
-                }
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_placeholder, fragment);
-                ft.commit();
-            }
+        Fragment entryFragment = UIFragmentHelper.createFragment(intent);
+        if (entryFragment != null) {
+            updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
+            getSupportFragmentManager().executePendingTransactions();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, entryFragment).commit();
         } else {
             Toast.makeText(this, "NOT FOUND:" + intent.getAction(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void loadStatus(Intent intent) {
-        logIntentExtras(intent);
-        Logger.i("Receive Status Action \"" + intent.getAction() + "\"");
+    private void logIntent(Intent intent) {
+        Logger.d(getClass().getSimpleName() + " receives " + intent.getAction());
+        Logger.intent(intent);
+    }
 
-        String action = intent.getAction();
-        if (InformationStatus.TRANS_COMPLETED.equals(action)) {
-            String msg = intent.getStringExtra(StatusData.PARAM_MSG); //For POSLinkEntry, msg might be empty
-            long code = intent.getLongExtra(StatusData.PARAM_CODE, 0L);
-            if (TextUtils.isEmpty(msg) || code == -3) {//Transaction Cancelled
-                finishAndRemoveTask();
+    private void enableDarkOverlay(boolean show){
+        View view = findViewById(R.id.entry_dark_overlap);
+        if((view.getVisibility() == View.VISIBLE && show) || (view.getVisibility() == View.INVISIBLE && !show)) return;
+        view.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(show ? 0 : 1, show ? 1 : 0);
+        alphaAnimation.setDuration(100);
+        view.startAnimation(alphaAnimation);
+    }
+
+    private void setScheduledTaskListener() {
+        //Used to schedule tasks requested by child fragments
+        scheduler.cancelTasks();
+        getSupportFragmentManager().setFragmentResultListener(TaskScheduler.SCHEDULE, this, (requestKey, result) -> {
+            String taskType = result.getString(TaskScheduler.PARAM_TASK);
+            long delay = result.getLong(TaskScheduler.PARAM_DELAY);
+            long initTime = result.getLong(TaskScheduler.PARAM_INIT_TIME);
+            scheduler.schedule(TaskScheduler.TASK.valueOf(taskType), delay, initTime);
+        });
+    }
+
+    private void clearStatus() {
+        if(!isStatusPresent()) return;
+        getSupportFragmentManager().beginTransaction()
+            .setReorderingAllowed(true)
+            .setCustomAnimations(R.anim.anim_enter_from_bottom, R.anim.anim_exit_to_bottom)
+            .remove(Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.status_container)))
+            .commit();
+    }
+
+    private boolean isStatusPresent() {
+        return getSupportFragmentManager().findFragmentById(R.id.status_container) != null;
+    }
+
+    public void loadStatus(Intent intent) {
+        @NonNull StatusFragment statusFragment = InformationStatus.TRANS_COMPLETED.equals(intent.getAction()) ? new TransCompletedStatusFragment(intent, this) : new StatusFragment(intent, this);
+        getSupportFragmentManager().executePendingTransactions();
+
+        if(statusFragment.isConclusive()){
+            clearStatus();
+        } else if (statusFragment.isImmediateTerminationNeeded()) {
+            clearStatus();
+            scheduler.cancelTasks();
+            scheduler.schedule(TaskScheduler.TASK.FINISH, StatusFragment.DURATION_SHORT, System.currentTimeMillis());
+        } else {
+            if(statusFragment instanceof TransCompletedStatusFragment) {
+                scheduler.schedule(TaskScheduler.TASK.FINISH, ((TransCompletedStatusFragment) statusFragment).getDelay(), System.currentTimeMillis());
+            }
+
+            StatusFragment currentFragment = (StatusFragment) getSupportFragmentManager().findFragmentById(R.id.status_container);
+            if(statusFragment.sameAs(currentFragment)){
+                currentFragment.updateStatus(intent, this);
                 return;
             }
-            //Close Entry Dialog before prompt Trans Complete Dialog
-            UIFragmentHelper.closeDialog(getSupportFragmentManager(), "EntryDialog");
-        }
-        String dialogTag = UIFragmentHelper.createStatusDialogTag(action);
-        if(!TextUtils.isEmpty(dialogTag)) {
-            DialogFragment dialogFragment = UIFragmentHelper.createStatusDialogFragment(intent);
-            if (dialogFragment != null) {
-                UIFragmentHelper.showDialog(getSupportFragmentManager(), dialogFragment, dialogTag);
-            } else {
-                UIFragmentHelper.closeDialog(getSupportFragmentManager(),dialogTag);
+
+            if(!getSupportFragmentManager().isStateSaved()) {
+                getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.anim_enter_from_bottom, R.anim.anim_exit_to_bottom)
+                    .replace(R.id.status_container, statusFragment).commit();
             }
-        }else {
-            Logger.e("unsupported receive Status Action"+action);
         }
     }
 
@@ -197,114 +205,137 @@ public class EntryActivity extends AppCompatActivity{
     private void updateTransType(String transType){
         if(transType!= null && !transType.equals(this.transType)){
             this.transType = transType;
-
-            ActionBar actionBar = getSupportActionBar();
-            if(actionBar != null) {
-                actionBar.setTitle(transType);
-            }
+            actionBar.setTitle(transType);
         }
     }
-
 
     /**
      * Broadcast Receiver to receive status updates from BroadPOS Manager
      * void registerUIReceiver()
      * void unregisterUIReceiver()
-     * class POSLinkUIReceiver
      */
-
     private void registerUIReceiver(){
-        receiver = new POSLinkUIReceiver();
-        IntentFilter filter = new IntentFilter();
-        //----------------Entry Response-----------------
-        filter.addAction(EntryResponse.ACTION_ACCEPTED);
-        filter.addAction(EntryResponse.ACTION_DECLINED);
+        statusBroadcastReceiver = new StatusBroadcastReceiver();
+        this.registerReceiver(statusBroadcastReceiver, statusBroadcastReceiver.getFilter());
 
-        //-----------------Uncategory Status-----------------
-        filter.addAction(Uncategory.PRINT_STARTED);
-        filter.addAction(Uncategory.PRINT_COMPLETED);
-        filter.addAction(Uncategory.FILE_UPDATE_STARTED);
-        filter.addAction(Uncategory.FILE_UPDATE_COMPLETED);
-        filter.addAction(Uncategory.FCP_FILE_UPDATE_STARTED);
-        filter.addAction(Uncategory.FCP_FILE_UPDATE_COMPLETED);
-        filter.addAction(Uncategory.CAPK_UPDATE_STARTED);
-        filter.addAction(Uncategory.CAPK_UPDATE_COMPLETED);
-        filter.addAction(Uncategory.LOG_UPLOAD_STARTED);
-        filter.addAction(Uncategory.LOG_UPLOAD_CONNECTED);
-        filter.addAction(Uncategory.LOG_UPLOAD_UPLOADING);
-        filter.addAction(Uncategory.LOG_UPLOAD_COMPLETED);
-
-        //----------------Information Status-----------------
-        filter.addCategory(InformationStatus.CATEGORY);
-        filter.addAction(InformationStatus.DCC_ONLINE_STARTED);
-        filter.addAction(InformationStatus.DCC_ONLINE_FINISHED);
-        filter.addAction(InformationStatus.EMV_TRANS_ONLINE_STARTED);
-        filter.addAction(InformationStatus.EMV_TRANS_ONLINE_FINISHED);
-        filter.addAction(InformationStatus.TRANS_ONLINE_STARTED);
-        filter.addAction(InformationStatus.TRANS_ONLINE_FINISHED);
-        filter.addAction(InformationStatus.RKI_STARTED);
-        filter.addAction(InformationStatus.RKI_FINISHED);
-        filter.addAction(InformationStatus.PINPAD_CONNECTION_STARTED);
-        filter.addAction(InformationStatus.PINPAD_CONNECTION_FINISHED);
-        filter.addAction(InformationStatus.TRANS_COMPLETED);
-        filter.addAction(InformationStatus.ERROR);
-
-        //----------------Card Status-----------------
-        filter.addCategory(CardStatus.CATEGORY);
-        filter.addAction(CardStatus.CARD_REMOVED);
-        filter.addAction(CardStatus.CARD_REMOVAL_REQUIRED);
-        filter.addAction(CardStatus.CARD_QUICK_REMOVAL_REQUIRED);
-        filter.addAction(CardStatus.CARD_PROCESS_STARTED);
-        filter.addAction(CardStatus.CARD_PROCESS_COMPLETED);
-
-        //----------------Batch Status-----------------
-        filter.addCategory(BatchStatus.CATEGORY);
-        filter.addAction(BatchStatus.BATCH_SF_UPLOADING);
-        filter.addAction(BatchStatus.BATCH_SF_COMPLETED);
-        filter.addAction(BatchStatus.BATCH_CLOSE_UPLOADING);
-        filter.addAction(BatchStatus.BATCH_CLOSE_COMPLETED);
-
-        this.registerReceiver(receiver, filter);
+        responseBroadcastReceiver = new ResponseBroadcastReceiver();
+        this.registerReceiver(responseBroadcastReceiver, responseBroadcastReceiver.getFilter());
     }
     
     private void unregisterUIReceiver(){
-        if(receiver != null){
-            this.unregisterReceiver(receiver);
-            receiver = null;
+        if(statusBroadcastReceiver != null) {
+            this.unregisterReceiver(statusBroadcastReceiver);
+            statusBroadcastReceiver = null;
+        }
+        if(responseBroadcastReceiver != null) {
+            this.unregisterReceiver(responseBroadcastReceiver);
+            responseBroadcastReceiver = null;
         }
     }
 
-    /**
-     * Forwards key events to fragments using ViewModel.
-     * For BaseEntryFragment and BaseEntryDialogFragment, two different view models have been used
-     * EntryViewModelFactory chooses the appropriate one
-     */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        Logger.d(getClass().getSimpleName() +" dispatches KeyEvent. Code: " + event.getKeyCode() + " Action: " + event.getAction());
-        if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK){
-            if(event.getAction() == KeyEvent.ACTION_DOWN){
-                entryViewModelFactory.onKeyDown(event.getKeyCode());
-            }
+        if(isStatusPresent()) return true;
+
+        if( event.getAction() == KeyEvent.ACTION_UP &&
+                (event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_BACK) ){
+            Bundle response = new Bundle();
+            response.putInt("keyCode", event.getKeyCode());
+            getSupportFragmentManager().setFragmentResult("keyCode", response);
             return true;
         }
         return super.dispatchKeyEvent(event);
     }
+
     /**
      * Forwards Manager's broadcasts to fragments
      */
-    public class POSLinkUIReceiver extends BroadcastReceiver {
+    public class ResponseBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())){
-                entryViewModelFactory.setResponseEvent(new ResponseEvent(intent.getAction()));
-            }else if(EntryResponse.ACTION_DECLINED.equals(intent.getAction())){
-                long resultCode = intent.getLongExtra(EntryResponse.PARAM_CODE,0);
-                String message = intent.getStringExtra(EntryResponse.PARAM_MSG);
-                entryViewModelFactory.setResponseEvent(new ResponseEvent(intent.getAction(), resultCode, message));
-            }else{
-                loadStatus(intent);
+            logIntent(intent);
+
+            //Validation
+            boolean isValid = interfaceHistory.validate(intent.getStringExtra("interfaceID"), intent.getStringExtra("originatingAction"));
+            //if(!isValid) return; // Commented out until Manager supports interfaceID
+
+            //Acceptance needs to block the view
+            if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())) {
+                enableDarkOverlay(true);
             }
+
+            //For both acceptance and decline, forward response to BaseEntryFragment
+            Bundle responseBroadcastExtras = new BundleMaker()
+                    .addString("action", intent.getAction())
+                    .addBundle(intent.getExtras())
+                    .get();
+
+            getSupportFragmentManager().setFragmentResult("response", responseBroadcastExtras);
+        }
+
+        public IntentFilter getFilter(){
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(EntryResponse.ACTION_ACCEPTED);
+            filter.addAction(EntryResponse.ACTION_DECLINED);
+            return filter;
+        }
+    }
+
+    public class StatusBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            logIntent(intent);
+            loadStatus(intent);
+        }
+
+        public IntentFilter getFilter(){
+            IntentFilter filter = new IntentFilter();
+            //-----------------Uncategory Status-----------------
+            filter.addAction(Uncategory.PRINT_STARTED);
+            filter.addAction(Uncategory.PRINT_COMPLETED);
+            filter.addAction(Uncategory.FILE_UPDATE_STARTED);
+            filter.addAction(Uncategory.FILE_UPDATE_COMPLETED);
+            filter.addAction(Uncategory.FCP_FILE_UPDATE_STARTED);
+            filter.addAction(Uncategory.FCP_FILE_UPDATE_COMPLETED);
+            filter.addAction(Uncategory.CAPK_UPDATE_STARTED);
+            filter.addAction(Uncategory.CAPK_UPDATE_COMPLETED);
+            filter.addAction(Uncategory.LOG_UPLOAD_STARTED);
+            filter.addAction(Uncategory.LOG_UPLOAD_CONNECTED);
+            filter.addAction(Uncategory.LOG_UPLOAD_UPLOADING);
+            filter.addAction(Uncategory.LOG_UPLOAD_COMPLETED);
+
+            //----------------Information Status-----------------
+            filter.addCategory(InformationStatus.CATEGORY);
+            filter.addAction(InformationStatus.DCC_ONLINE_STARTED);
+            filter.addAction(InformationStatus.DCC_ONLINE_FINISHED);
+            filter.addAction(InformationStatus.EMV_TRANS_ONLINE_STARTED);
+            filter.addAction(InformationStatus.EMV_TRANS_ONLINE_FINISHED);
+            filter.addAction(InformationStatus.TRANS_ONLINE_STARTED);
+            filter.addAction(InformationStatus.TRANS_ONLINE_FINISHED);
+            filter.addAction(InformationStatus.RKI_STARTED);
+            filter.addAction(InformationStatus.RKI_FINISHED);
+            filter.addAction(InformationStatus.PINPAD_CONNECTION_STARTED);
+            filter.addAction(InformationStatus.PINPAD_CONNECTION_FINISHED);
+            filter.addAction(InformationStatus.TRANS_COMPLETED);
+            filter.addAction(InformationStatus.ERROR);
+            filter.addAction(InformationStatus.ENTER_PIN_STARTED);
+
+            //----------------Card Status-----------------
+            filter.addCategory(CardStatus.CATEGORY);
+            filter.addAction(CardStatus.CARD_REMOVED);
+            filter.addAction(CardStatus.CARD_REMOVAL_REQUIRED);
+            filter.addAction(CardStatus.CARD_QUICK_REMOVAL_REQUIRED);
+            filter.addAction(CardStatus.CARD_PROCESS_STARTED);
+            filter.addAction(CardStatus.CARD_PROCESS_COMPLETED);
+
+            //----------------Batch Status-----------------
+            filter.addCategory(BatchStatus.CATEGORY);
+            filter.addAction(BatchStatus.BATCH_UPLOADING);
+            filter.addAction(BatchStatus.BATCH_SF_COMPLETED);
+            filter.addAction(BatchStatus.BATCH_CLOSE_UPLOADING);
+            filter.addAction(BatchStatus.BATCH_CLOSE_COMPLETED);
+
+            return filter;
         }
     }
 }

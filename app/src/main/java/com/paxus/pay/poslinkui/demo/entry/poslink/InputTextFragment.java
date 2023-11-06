@@ -1,7 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -23,53 +22,27 @@ import com.pax.us.pay.ui.constant.entry.enumeration.ManageUIConst;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 
 /**
  * Implement text entry actions:<br>
  * {@value PoslinkEntry#ACTION_INPUT_TEXT}
- *
- * <p>
- *     UI Tips:
- *     If confirm button clicked, sendNext
- * </p>
  */
 public class InputTextFragment extends BaseEntryFragment {
     private static final String FORMAT_DATE = "MM/DD/YYYY";
     private static final String FORMAT_TIME = "HH:MM:SS";
     private static final String FORMAT_PHONE = "(XXX)XXX-XXXX";
     private static final String FORMAT_SSN = "XXX-XX-XXXX";
-    private String packageName;
-    private String action;
     private long timeOut;
     private int minLength;
     private int maxLength;
-    private String transMode;
     private String title;
     private boolean continuousScreen;
     private String inputType;
     private String defaultValue;
 
     private EditText editText;
-    private Handler handler;
-    private final Runnable timeoutRun = new Runnable() {
-        @Override
-        public void run() {
-            EntryRequestUtils.sendTimeout(requireContext(), packageName, action);
-        }
-    };
-
-
-    @Override
-    protected String getSenderPackageName() {
-        return packageName;
-    }
-
-    @Override
-    protected String getEntryAction() {
-        return action;
-    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -78,9 +51,6 @@ public class InputTextFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        action = bundle.getString(EntryRequest.PARAM_ACTION);
-        packageName = bundle.getString(EntryExtraData.PARAM_PACKAGE);
-        transMode = bundle.getString(EntryExtraData.PARAM_TRANS_MODE);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
@@ -102,7 +72,7 @@ public class InputTextFragment extends BaseEntryFragment {
         textView.setText(title);
 
         editText = rootView.findViewById(R.id.edit_text);
-        prepareEditTextsForSubmissionWithSoftKeyboard(editText);
+        focusableEditTexts = new EditText[]{editText};
         if ("1".equals(inputType)) {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             if(maxLength > 0 ) {
@@ -184,29 +154,18 @@ public class InputTextFragment extends BaseEntryFragment {
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
 
         if(timeOut > 0 ) {
-            handler = new Handler();
-            handler.postDelayed(timeoutRun, timeOut);
+            getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
         }
     }
 
     @Override
     protected void onEntryAccepted() {
         super.onEntryAccepted();
-
-        if(handler!= null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        if(handler != null) {
-            handler.removeCallbacks(timeoutRun);
-            handler = null;
-        }
     }
 
     @Override
@@ -215,13 +174,13 @@ public class InputTextFragment extends BaseEntryFragment {
         if (inputType.matches("[23467]")) {
             value = value.replaceAll("[^0-9]", "");
         }
-
-        sendNext(value);
-
+        submit(value);
     }
 
-    private void sendNext(String value){
-        EntryRequestUtils.sendNext(requireContext(), packageName, action, EntryRequest.PARAM_INPUT_VALUE, value);
+    private void submit(String value){
+        Bundle bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_INPUT_VALUE, value);
+        sendNext(bundle);
     }
 
     private static class FormatTextWatcher implements TextWatcher{
