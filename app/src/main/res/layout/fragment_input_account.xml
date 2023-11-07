@@ -164,116 +164,99 @@
         app:layout_constraintVertical_bias="1"
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
-    <GridLayout
+    <LinearLayout
         android:id="@+id/entry_mode_view"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-
-        android:columnCount="3"
-        android:rowCount="1"
-
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintVertical_bias="1"
         app:layout_constraintVertical_chainStyle="packed"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider2"
-        app:layout_constraintBottom_toTopOf="@id/contactless_logo_container"
-        >
+        app:layout_constraintBottom_toTopOf="@id/contactless_logo_container">
+
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
             android:id="@+id/insert"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:layout_margin="@dimen/margin_gap"
             android:scaleType="fitCenter"
+            tools:src="@mipmap/insert_card_a920" />
 
-            tools:src="@mipmap/insert_card_a920"
-
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            />
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
             android:id="@+id/tap"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:layout_margin="@dimen/margin_gap"
             android:scaleType="fitCenter"
-
-            tools:src="@mipmap/tap_card_a920"
-
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            />
+            tools:src="@mipmap/tap_card_a920" />
 
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
             android:id="@+id/swipe"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:layout_margin="@dimen/margin_gap"
             android:scaleType="fitCenter"
+            tools:src="@mipmap/swipe_card_a920" />
 
-            tools:src="@mipmap/swipe_card_a920"
+    </LinearLayout>
 
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            />
-    </GridLayout>
-
-
-    <GridLayout
-        android:id="@id/contactless_logo_container"
+    <LinearLayout
+        android:id="@+id/contactless_logo_container"
         android:layout_width="0dp"
         android:layout_height="@dimen/button_height"
-
+        android:orientation="horizontal"
         android:background="@drawable/rounded_corner_on_background"
-        android:columnCount="4"
-
-        android:rowCount="1"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-
         app:layout_constraintTop_toBottomOf="@id/entry_mode_view"
-
         app:layout_constraintVertical_bias="1"
         app:layout_constraintVertical_chainStyle="packed">
 
         <ImageView
             android:id="@+id/nfc"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:padding="@dimen/margin_gap"
             android:src="@mipmap/tap" />
 
         <ImageView
             android:id="@+id/google"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:padding="@dimen/margin_gap"
             android:src="@mipmap/google_pay" />
 
         <ImageView
             android:id="@+id/apple"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:padding="@dimen/margin_gap"
             android:src="@mipmap/apple_pay" />
 
         <ImageView
             android:id="@+id/samsung"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:padding="@dimen/margin_gap"
             android:src="@mipmap/samsung_pay" />
 
-    </GridLayout>
+    </LinearLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
