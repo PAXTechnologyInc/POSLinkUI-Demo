@@ -241,7 +241,7 @@ public abstract class BaseEntryFragment extends Fragment {
             Logger.d("Showing soft keyboard");
             Context context = (!(editTexts[0].getContext() instanceof Activity) && editTexts[0].getContext() instanceof ContextWrapper)
                     ? ((ContextWrapper) editTexts[0].getContext()).getBaseContext() : editTexts[0].getContext();
-            ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE| WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
             InputMethodManager inputMethodManager = (InputMethodManager) (context.getSystemService(Context.INPUT_METHOD_SERVICE));
             inputMethodManager.showSoftInput(editTexts[0], InputMethodManager.SHOW_FORCED);
         }

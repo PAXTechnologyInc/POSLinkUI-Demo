@@ -24,6 +24,7 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -81,6 +82,7 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
         text = bundle.getString(EntryExtraData.PARAM_TEXT);
         signBox = bundle.getLong(EntryExtraData.PARAM_SIGN_BOX);
+        countdownUpdateScheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
     @Override

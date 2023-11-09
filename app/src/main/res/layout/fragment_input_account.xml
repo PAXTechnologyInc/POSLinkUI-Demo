@@ -1,147 +1,262 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <com.paxus.pay.poslinkui.demo.view.ClssLightsView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".5"
-        android:id="@+id/clss_light"
-        android:layout_margin="5dp"/>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_margin="@dimen/default_gap">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.Group
         android:id="@+id/ly_merchant"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/space_between_textview">
-        <TextView
-            android:id="@+id/merchant"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:gravity="start"
-            android:text="@string/prompt_merchant" />
-        <TextView
-            android:id="@+id/merchantName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:gravity="end" />
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
+        app:constraint_referenced_ids="merchant, merchantName"
+        />
+
+    <TextView
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/space_between_textview">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/total_amount"
-            android:gravity="start"
-            android:text="@string/total_amount"
-            android:layout_alignParentStart="true"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/amount_view"
-            android:layout_alignParentEnd="true"
-            android:gravity="end"/>
-    </RelativeLayout>
+        android:id="@+id/merchant"
+        android:text="@string/prompt_merchant"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/merchantName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/total_amount"
+
+        tools:text="@string/prompt_merchant"
+        tools:textColor="@color/black"
+
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0"
+        />
+
+    <TextView
+        android:id="@+id/merchantName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="textEnd"
+
+        app:layout_constraintStart_toEndOf="@id/merchant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/merchant"
+        app:layout_constraintBottom_toBottomOf="@id/merchant"
+
+        tools:text="Merchant Name"
+        tools:textColor="@color/black"
+        />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/ly_total_amount"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="total_amount, amount_view"
+        />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/total_amount"
+        android:text="@string/total_amount"
+        android:textSize="@dimen/text_size_subtitle"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/amount_view"
+        app:layout_constraintTop_toBottomOf="@id/merchant"
+        app:layout_constraintBottom_toTopOf="@id/divider1"
+
+        tools:text="Total Amount"
+        tools:textColor="@color/black"
+        />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/amount_view"
+        android:textAlignment="textEnd"
+        android:textSize="@dimen/text_size_subtitle"
+
+        app:layout_constraintStart_toEndOf="@id/total_amount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/total_amount"
+        app:layout_constraintBottom_toBottomOf="@id/total_amount"
+
+        tools:textColor="@color/black"
+        tools:text="2645.00"
+        />
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        app:layout_constraintHeight_max="@dimen/button_height"
+
+        app:layout_constraintTop_toBottomOf="@id/total_amount"
+        app:layout_constraintBottom_toTopOf="@id/manual_message"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/layout_manual"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="manual_message, edit_account, confirm_button"
+        />
+
+    <TextView
+        android:id="@+id/manual_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider1"
+        app:layout_constraintBottom_toTopOf="@id/edit_account"
+
+        tools:text="Enter Card Number"
+        tools:textColor="@color/black"
+        />
+
+    <TextView
+        android:background="@drawable/rounded_corner_on_background"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height"
+        android:id="@+id/edit_account"
+        android:padding="@dimen/padding_vertical"
+        android:gravity="center_horizontal"
+        android:textColor="#FF9C27B0"
+        android:textSize="@dimen/text_size_subtitle"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/manual_message"
+        app:layout_constraintBottom_toTopOf="@id/confirm_button"
+        />
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height"
+        android:text="@string/confirm"
+        android:id="@+id/confirm_button"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_account"
+        app:layout_constraintBottom_toTopOf="@id/divider2"
+
+        app:layout_constraintVertical_chainStyle="spread_inside"
+        app:layout_constraintVertical_bias="0"
+        />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@id/confirm_button"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
 
     <LinearLayout
+        android:id="@+id/entry_mode_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4"
-        android:orientation="vertical"
-        android:id="@+id/layout_manual">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/manual_message"
-            android:textSize="14sp"
-            android:layout_marginVertical="@dimen/space_between_textview"/>
-        <TextView
-            android:background="@drawable/rounded_corner_on_background"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/edit_account"
-            android:padding="@dimen/padding_vertical"
-            android:gravity="center_horizontal"
-            android:textColor="#FF9C27B0"
-            android:textSize="20sp"/>
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/button_height"
-            android:text="@string/confirm"
-            android:id="@+id/confirm_button"/>
-    </LinearLayout>
+        android:layout_height="200dp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider2"
+        app:layout_constraintBottom_toTopOf="@id/contactless_logo_container">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4"
-        android:orientation="horizontal">
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
             android:id="@+id/insert"
-            android:layout_margin="5dp"
-            android:scaleType="fitCenter"/>
-        <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_margin="@dimen/margin_gap"
+            android:scaleType="fitCenter"
+            tools:src="@mipmap/insert_card_a920" />
+
+        <ImageView
             android:id="@+id/tap"
-            android:layout_margin="5dp"
-            android:scaleType="fitCenter"/>
-        <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_margin="@dimen/margin_gap"
+            android:scaleType="fitCenter"
+            tools:src="@mipmap/tap_card_a920" />
+
+        <ImageView
             android:id="@+id/swipe"
-            android:layout_margin="5dp"
-            android:scaleType="fitCenter"/>
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/margin_gap"
+            android:scaleType="fitCenter"
+            tools:src="@mipmap/swipe_card_a920" />
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/contactless_logo_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height"
         android:orientation="horizontal"
-        android:layout_weight="1"
-        android:background="@drawable/rounded_corner_on_background">
+        android:background="@drawable/rounded_corner_on_background"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/entry_mode_view"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintVertical_chainStyle="packed">
+
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
             android:id="@+id/nfc"
-            android:layout_margin="5dp"
-            android:scaleType="fitCenter"
-            android:src="@mipmap/tap"/>
-        <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:id="@+id/apple"
-            android:layout_margin="5dp"
-            android:scaleType="fitCenter"
-            android:src="@mipmap/apple_pay"/>
+            android:padding="@dimen/margin_gap"
+            android:src="@mipmap/tap" />
+
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
             android:id="@+id/google"
-            android:layout_margin="5dp"
-            android:scaleType="fitCenter"
-            android:src="@mipmap/google_pay"/>
-        <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:padding="@dimen/margin_gap"
+            android:src="@mipmap/google_pay" />
+
+        <ImageView
+            android:id="@+id/apple"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="@dimen/margin_gap"
+            android:src="@mipmap/apple_pay" />
+
+        <ImageView
             android:id="@+id/samsung"
-            android:layout_margin="5dp"
-            android:scaleType="fitCenter"
-            android:src="@mipmap/samsung_pay"/>
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="@dimen/margin_gap"
+            android:src="@mipmap/samsung_pay" />
+
     </LinearLayout>
-</LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

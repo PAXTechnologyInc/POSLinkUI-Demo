@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
+import com.pax.us.pay.ui.constant.status.POSLinkStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
@@ -40,6 +41,23 @@ public class ShowItemFragment extends BaseEntryFragment {
     private List<ItemDetailWrapper> itemWrapperList = new ArrayList<>();
 
     private RecyclerView.Adapter itemListAdapter;
+
+    //Interfaces of POSLink Category may need to listen to POSLinkStatus Broadcasts
+    private POSLinkStatusManager posLinkStatusManager;
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        posLinkStatusManager = new POSLinkStatusManager(getContext(), getViewLifecycleOwner());
+        posLinkStatusManager.registerHandler(POSLinkStatus.CLEAR_MESSAGE, this::clearMessage);
+        sendNext(null);
+    }
+
+    private void clearMessage() {
+        int itemCount = itemWrapperList.size();
+        itemWrapperList.clear();
+        itemListAdapter.notifyItemRangeRemoved(0, itemCount);
+    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -83,12 +101,6 @@ public class ShowItemFragment extends BaseEntryFragment {
             recyclerViewShowItem.setAdapter(itemListAdapter);
         }
 
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        sendNext(null);
     }
 
     private List<ItemDetailWrapper> parseItemList(String jsonString) {

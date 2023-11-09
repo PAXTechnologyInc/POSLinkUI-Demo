@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.IntRange;
 import androidx.annotation.Nullable;
 
+import com.pax.us.pay.ui.constant.status.ClssLightStatus;
 import com.paxus.pay.poslinkui.demo.R;
 
 /**
@@ -53,7 +54,7 @@ public class ClssLightsView extends LinearLayout {
         lights[3] = findViewById(R.id.light4);
     }
 
-    public void setLights(final @IntRange(from = -1, to = 3) int index, @ClssLight.STATUS int status) {
+    private void setLights(final @IntRange(from = -1, to = 3) int index, @ClssLight.STATUS int status) {
 
         for (int i = 0; i < lights.length; ++i) {
             if (index == i) {
@@ -66,6 +67,46 @@ public class ClssLightsView extends LinearLayout {
 
     public void setLight(final @IntRange(from = 0, to = 3) int index, @ClssLight.STATUS int status) {
         lights[index].setStatus(status, blinking);
+    }
+
+    public void updateStatus(String status) {
+        if (getVisibility() != View.VISIBLE) return;
+
+        switch (status) {
+            case ClssLightStatus.CLSS_LIGHT_COMPLETED:
+            case ClssLightStatus.CLSS_LIGHT_NOT_READY: //Fix ANBP-383, ANFDRC-319
+                setLights(-1, ClssLight.OFF);
+                return;
+            case ClssLightStatus.CLSS_LIGHT_ERROR:
+                setLight(0, ClssLight.OFF);
+                setLight(1, ClssLight.OFF);
+                setLight(2, ClssLight.OFF);
+                setLight(3, ClssLight.ON);
+                return;
+            case ClssLightStatus.CLSS_LIGHT_IDLE:
+                setLights(0, ClssLight.BLINK);
+                return;
+            case ClssLightStatus.CLSS_LIGHT_PROCESSING:
+                setLight(0, ClssLight.ON);
+                setLight(1, ClssLight.ON);
+                setLight(2, ClssLight.OFF);
+                setLight(3, ClssLight.OFF);
+                return;
+            case ClssLightStatus.CLSS_LIGHT_READY_FOR_TXN:
+                setLight(0, ClssLight.ON);
+                setLight(1, ClssLight.OFF);
+                setLight(2, ClssLight.OFF);
+                setLight(3, ClssLight.OFF);
+                return;
+            case ClssLightStatus.CLSS_LIGHT_REMOVE_CARD:
+                setLight(0, ClssLight.ON);
+                setLight(1, ClssLight.ON);
+                setLight(2, ClssLight.ON);
+                setLight(3, ClssLight.OFF);
+                return;
+            default:
+                break;
+        }
     }
 
 }
