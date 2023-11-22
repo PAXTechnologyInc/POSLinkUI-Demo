@@ -1,5 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.security;
 
+import android.bluetooth.BluetoothClass;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import com.pax.us.pay.ui.constant.status.SecurityStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
@@ -98,13 +100,7 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
 
     //1.When input box layout ready, send secure area location
     protected void onInputBoxLayoutReady() {
-        if (Build.MODEL.equals("A35")) {
-            new Handler().postDelayed(() -> {
-                sendSecurityArea(editText);
-            }, 100);
-        } else {
-            sendSecurityArea(editText);
-        }
+        new Handler().postDelayed(() -> sendSecurityArea(editText), DeviceUtils.brodcastProcessDelay());
     }
 
     @Override

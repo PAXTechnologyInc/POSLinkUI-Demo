@@ -25,6 +25,7 @@ import com.pax.us.pay.ui.constant.status.SecurityStatus;
 import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 
@@ -73,11 +74,7 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
     ClssLightsViewStatusManager clssLightsViewStatusManager;
 
     private void onPanInputBoxLayoutReady() {
-        if (Build.MODEL.equals("A35")) {
-            new Handler().postDelayed(() -> sendSecurityArea(panInputBox, "Card Number"), 100);
-        } else {
-            sendSecurityArea(panInputBox, "Card Number");
-        }
+        new Handler().postDelayed(() -> sendSecurityArea(panInputBox, "Card Number"), DeviceUtils.brodcastProcessDelay());
     }
 
     @Override

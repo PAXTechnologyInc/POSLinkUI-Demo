@@ -89,4 +89,18 @@
         <item name="android:backgroundDimAmount">.8</item>
     </style>
 
+    <style name="POSLinkUISecureKeyboardKey" parent="Widget.AppCompat.TextView">
+        <item name="android:background">@drawable/rounded_corner_on_background</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/pastel_text_color_on_light</item>
+        <item name="android:gravity">center</item>
+        <item name="android:height">@dimen/key_height</item>
+        <item name="android:layout_height">@dimen/key_height</item>
+        <item name="android:minHeight">@dimen/key_height</item>
+        <item name="android:maxHeight">@dimen/key_height</item>
+        <item name="autoSizeTextType">none</item>
+        <item name="android:textSize">@dimen/text_size_normal</item>
+        <item name="android:textViewStyle">@style/POSLinkUISecureKeyboardKey</item>
+    </style>
+
 </resources>

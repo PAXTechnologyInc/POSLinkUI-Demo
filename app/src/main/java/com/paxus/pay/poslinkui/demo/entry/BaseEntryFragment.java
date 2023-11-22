@@ -3,6 +3,7 @@ package com.paxus.pay.poslinkui.demo.entry;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -138,6 +139,18 @@ public abstract class BaseEntryFragment extends Fragment {
 
     private void executeEnterKeyEvent() {
         onConfirmButtonClicked();
+    }
+
+    protected void sendRequestBroadcast(String requestAction, Bundle bundle){
+        Logger.i("Send Request Broadcast " + requestAction + " from action  \""+action+"\"");
+        if(bundle == null) bundle = new Bundle();
+        bundle.putString(EntryRequest.PARAM_ACTION, action);
+
+        Intent intent = new Intent(requestAction);
+        intent.putExtras(bundle);
+        intent.setPackage(senderPackage);
+        Logger.intent(intent);
+        requireContext().sendBroadcast(intent);
     }
 
     protected void sendNext(Bundle bundle){

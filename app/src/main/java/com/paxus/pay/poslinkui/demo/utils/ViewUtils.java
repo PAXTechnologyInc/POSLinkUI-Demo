@@ -5,16 +5,20 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.paxus.pay.poslinkui.demo.R;
 
 /**
@@ -80,5 +84,37 @@ public class ViewUtils {
         bitmapDrawable.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         bitmapDrawable.setDither(true);
         return bitmapDrawable;
+    }
+
+    public static int getBarHeight(Activity activity){
+        int barHeight = 0;
+        boolean immersiveSticky = (activity.getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) > 0;
+        if (!immersiveSticky) {
+            Rect rect = new Rect();
+            activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+            barHeight = rect.top;
+        }
+        return barHeight;
+    }
+
+    public static Bundle generateInputTextAreaExtras(Activity hostActivity, TextView inputTextView, String hint){
+        Bundle bundle = new Bundle();
+
+        if(inputTextView == null) return bundle;
+
+        int[] location = new int[2];
+        inputTextView.getLocationInWindow(location);
+
+        int fontSize = (int) (inputTextView.getPaint().getTextSize() / inputTextView.getPaint().density);
+
+        bundle.putInt(EntryRequest.PARAM_X, location[0]);
+        bundle.putInt(EntryRequest.PARAM_Y, location[1] - getBarHeight(hostActivity));
+        bundle.putInt(EntryRequest.PARAM_WIDTH, inputTextView.getWidth());
+        bundle.putInt(EntryRequest.PARAM_HEIGHT, inputTextView.getHeight());
+        bundle.putInt(EntryRequest.PARAM_FONT_SIZE, fontSize);
+        bundle.putString(EntryRequest.PARAM_HINT, (hint != null && !hint.isEmpty()) ? hint : "");
+        bundle.putString(EntryRequest.PARAM_COLOR, String.format("%X", inputTextView.getCurrentTextColor()));
+
+        return bundle;
     }
 }

@@ -9,17 +9,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
+import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.PanStyles;
@@ -30,8 +32,10 @@ import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
+import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 
 /**
  * Implement security entry actions {@link SecurityEntry#ACTION_INPUT_ACCOUNT}
@@ -77,20 +81,63 @@ public class InputAccountFragment extends BaseEntryFragment {
     private int mOrigWidth;
     private int mOrigHeight;
 
+    private SecureKeyboardManager secureKeyboardManager;
     private ClssLightsViewStatusManager clssLightsViewStatusManager;
 
     private void onPanInputBoxLayoutReady(TextView inputTextView) {
-        Runnable securityAreaRequest = () -> sendSecurityArea(inputTextView, "Card Number");
-        if (Build.MODEL.equals("A35")) {
-            new Handler(Looper.myLooper()).postDelayed(securityAreaRequest, 100);
-        } else {
-            securityAreaRequest.run();
-        }
+        Runnable securityAreaRequest = () -> {
+            Bundle bundle = new Bundle();
+            bundle.putAll(getInputLocationBundle(inputTextView));
+            bundle.putBoolean(EntryRequest.PARAM_DISABLE_DEFAULT_SECURE_KEYBOARD, true);
+            sendRequestBroadcast(EntryRequest.ACTION_SECURITY_AREA, bundle);
+        };
+
+        new Handler(Looper.myLooper()).postDelayed(securityAreaRequest, DeviceUtils.brodcastProcessDelay());
+    }
+
+    private Bundle getInputLocationBundle(TextView inputTextView) {
+        Bundle bundle = new Bundle();
+
+        if (inputTextView == null) return bundle;
+
+        int[] location = new int[2];
+        inputTextView.getLocationInWindow(location);
+
+        int fontSize = (int) (inputTextView.getPaint().getTextSize() / inputTextView.getPaint().density);
+
+        bundle.putInt(EntryRequest.PARAM_X, location[0]);
+        bundle.putInt(EntryRequest.PARAM_Y, location[1] - ViewUtils.getBarHeight(getActivity()));
+        bundle.putInt(EntryRequest.PARAM_WIDTH, inputTextView.getWidth());
+        bundle.putInt(EntryRequest.PARAM_HEIGHT, inputTextView.getHeight());
+        bundle.putInt(EntryRequest.PARAM_FONT_SIZE, fontSize);
+        bundle.putString(EntryRequest.PARAM_HINT, "Account Number");
+        bundle.putString(EntryRequest.PARAM_COLOR, String.format("%X", inputTextView.getCurrentTextColor()));
+
+        return bundle;
     }
 
     @Override
     protected void onConfirmButtonClicked() {
         sendNext(null);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+
+        secureKeyboardManager = new SecureKeyboardManager(this, R.id.secure_keyboard_container);
+        secureKeyboardManager.registerBroadcastHandler(SecurityStatus.READY_FOR_KEYBOARD_LOCATION, intent -> {
+            secureKeyboardManager.showKeyboard(SecureKeyboardManager.INPUT_TYPE_NUMBER,
+                    () -> sendRequestBroadcast(EntryRequest.ACTION_ACTIVATE_SECURE_KEYBOARD, secureKeyboardManager.getKeyboardLocation()));
+        });
+
+        secureKeyboardManager.registerBroadcastHandler(SecurityStatus.SECURE_KEYBOARD_DEACTIVATED, intent -> {
+            secureKeyboardManager.processPayload(intent.getStringExtra(EntryRequest.PARAM_SECURE_KEYBOARD_PAYLOAD),
+                    () -> sendRequestBroadcast(EntryRequest.ACTION_ACTIVATE_SECURE_KEYBOARD, secureKeyboardManager.getKeyboardLocation()));
+        });
+
+        return view;
     }
 
     @Override
@@ -159,7 +206,6 @@ public class InputAccountFragment extends BaseEntryFragment {
                 public void onGlobalLayout() {
                     panInputBox.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     onPanInputBoxLayoutReady(panInputBox);
-                    mContentView = requireActivity().getWindow().findViewById(Window.ID_ANDROID_CONTENT);
                     if ("Q10A".equals(Build.MODEL)) {
                         panInputBox.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
                             Logger.d("Security EditText onLayoutChange:" + left + "," + top + "," + right + "," + bottom + "," + oldLeft + "," + oldTop + "," + oldRight + "," + oldBottom);
@@ -174,7 +220,8 @@ public class InputAccountFragment extends BaseEntryFragment {
             rootView.findViewById(R.id.layout_manual).setVisibility(View.GONE);
         }
 
-        if(clssLightsViewStatusManager == null) clssLightsViewStatusManager = new ClssLightsViewStatusManager(getContext(), this, getActivity().findViewById(R.id.action_bar_clss_light));
+        if (clssLightsViewStatusManager == null)
+            clssLightsViewStatusManager = new ClssLightsViewStatusManager(getContext(), this, getActivity().findViewById(R.id.action_bar_clss_light));
         clssLightsViewStatusManager.activate(enableContactlessLight && enableTap);
 
         int swipeId = R.drawable.selection_swipe_card_a920;
@@ -243,7 +290,7 @@ public class InputAccountFragment extends BaseEntryFragment {
         rootView.findViewById(R.id.contactless_logo_container)
                 .setVisibility(((supportNFC || supportApplePay || supportGooglePay || supportSamsungPay) && enableTap) ? View.VISIBLE : View.GONE);
 
-        if(receiver != null) {
+        if (receiver != null) {
             requireContext().unregisterReceiver(receiver);
         }
         receiver = new InputAccountFragment.Receiver();
@@ -293,7 +340,7 @@ public class InputAccountFragment extends BaseEntryFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.i("receive Status Action \"" + intent.getAction() + "\"");
+            Logger.intent(intent);
             switch (intent.getAction()) {
                 case InformationStatus.TRANS_AMOUNT_CHANGED_IN_CARD_PROCESSING:
                     //4.Update amount

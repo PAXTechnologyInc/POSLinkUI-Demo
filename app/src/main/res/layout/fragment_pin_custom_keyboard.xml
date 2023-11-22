@@ -21,7 +21,9 @@
             app:layout_columnWeight="1"
             android:background="#FFFFFF"
             android:textColor="@color/pastel_text_color_on_light"
+            android:tag="8"
             />
+        <!-- KeyEvent.KEYCODE_1 = 8 -->
         <TextView
             android:id="@+id/key_2"
             android:text="2"
@@ -29,7 +31,9 @@
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:background="#FFFFFF"
-            android:textColor="@color/pastel_text_color_on_light"/>
+            android:textColor="@color/pastel_text_color_on_light"
+            android:tag="9"
+            />
         <TextView
             android:id="@+id/key_3"
             android:text="3"
@@ -37,14 +41,18 @@
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:background="#FFFFFF"
-            android:textColor="@color/pastel_text_color_on_light"/>
+            android:textColor="@color/pastel_text_color_on_light"
+            android:tag="10"
+            />
         <TextView
             android:id="@+id/key_cancel"
             android:text="Cancel"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
-            android:background="@color/cancel"/>
+            android:background="@color/cancel"
+            android:tag="111"
+            />
         <TextView
             android:id="@+id/key_4"
             android:text="4"
@@ -53,6 +61,7 @@
             android:gravity="center"
             android:background="#FFFFFF"
             android:textColor="@color/pastel_text_color_on_light"
+            android:tag="11"
             />
         <TextView
             android:id="@+id/key_5"
@@ -61,7 +70,9 @@
             app:layout_rowWeight="1"
             android:gravity="center"
             android:background="#FFFFFF"
-            android:textColor="@color/pastel_text_color_on_light"/>
+            android:textColor="@color/pastel_text_color_on_light"
+            android:tag="12"
+            />
         <TextView
             android:id="@+id/key_6"
             android:text="6"
@@ -69,14 +80,18 @@
             app:layout_rowWeight="1"
             android:gravity="center"
             android:background="#FFFFFF"
-            android:textColor="@color/pastel_text_color_on_light"/>
+            android:textColor="@color/pastel_text_color_on_light"
+            android:tag="13"
+            />
         <TextView
             android:id="@+id/key_clear"
             android:text="Clear"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
             android:gravity="center"
-            android:background="@color/clear"/>
+            android:background="@color/clear"
+            android:tag="28"
+            />
         <TextView
             android:id="@+id/key_7"
             android:text="7"
@@ -85,6 +100,7 @@
             android:gravity="center"
             android:background="#FFFFFF"
             android:textColor="@color/pastel_text_color_on_light"
+            android:tag="14"
             />
         <TextView
             android:id="@+id/key_8"
@@ -93,7 +109,9 @@
             app:layout_rowWeight="1"
             android:gravity="center"
             android:background="#FFFFFF"
-            android:textColor="@color/pastel_text_color_on_light"/>
+            android:textColor="@color/pastel_text_color_on_light"
+            android:tag="15"
+            />
         <TextView
             android:id="@+id/key_9"
             android:text="9"
@@ -101,7 +119,9 @@
             app:layout_rowWeight="1"
             android:gravity="center"
             android:background="#FFFFFF"
-            android:textColor="@color/pastel_text_color_on_light"/>
+            android:textColor="@color/pastel_text_color_on_light"
+            android:tag="16"
+            />
         <TextView
             android:id="@+id/key_enter"
             android:text="Enter"
@@ -109,7 +129,9 @@
             app:layout_rowWeight="1"
             app:layout_rowSpan="2"
             android:gravity="center"
-            android:background="@color/enter"/>
+            android:background="@color/enter"
+            android:tag="66"
+            />
         <TextView
             android:text=""
             app:layout_columnWeight="1"
@@ -122,6 +144,8 @@
             app:layout_rowWeight="1"
             android:gravity="center"
             android:background="#FFFFFF"
-            android:textColor="@color/pastel_text_color_on_light"/>
+            android:textColor="@color/pastel_text_color_on_light"
+            android:tag="7"
+            />
     </androidx.gridlayout.widget.GridLayout>
 </LinearLayout>

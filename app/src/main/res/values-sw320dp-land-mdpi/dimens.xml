@@ -7,4 +7,6 @@
     <dimen name="margin_gap">0dp</dimen>
 
     <dimen name="toolbar_height">30dp</dimen>
+
+    <dimen name="key_height">30dp</dimen>
 </resources>

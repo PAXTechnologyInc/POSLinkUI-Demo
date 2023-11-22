@@ -262,6 +262,7 @@ public class EntryActivity extends AppCompatActivity{
             //Acceptance needs to block the view
             if(EntryResponse.ACTION_ACCEPTED.equals(intent.getAction())) {
                 enableDarkOverlay(true);
+                closeKeyboard();
             }
 
             //For both acceptance and decline, forward response to BaseEntryFragment
@@ -279,6 +280,14 @@ public class EntryActivity extends AppCompatActivity{
             filter.addAction(EntryResponse.ACTION_DECLINED);
             return filter;
         }
+    }
+
+    private void closeKeyboard() {
+        Fragment keyboardFragment = getSupportFragmentManager().findFragmentById(R.id.secure_keyboard_container);
+        if(keyboardFragment != null) {
+            getSupportFragmentManager().beginTransaction().remove(keyboardFragment).commit();
+        }
+        findViewById(R.id.secure_keyboard_container).setVisibility(View.GONE);
     }
 
     public class StatusBroadcastReceiver extends BroadcastReceiver {
