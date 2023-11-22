@@ -22,4 +22,6 @@
     <dimen name="text_size_hint">11sp</dimen>
 
     <dimen name="default_gap">3dp</dimen>
+
+    <dimen name="key_height">52dp</dimen>
 </resources>

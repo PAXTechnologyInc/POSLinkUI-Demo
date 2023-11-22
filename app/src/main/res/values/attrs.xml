@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="Key">
+        <attr name="code" format="string" />
+        <attr name="payload" format="string" />
+    </declare-styleable>
+</resources>

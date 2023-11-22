@@ -22,12 +22,28 @@
             android:id="@+id/fragment_placeholder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingHorizontal="@dimen/padding_horizontal"
             android:background="@color/pastel_background"
             android:keepScreenOn="true"
-            tools:layout="@layout/fragment_pin"
+            android:paddingHorizontal="@dimen/padding_horizontal"
             />
     </LinearLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/secure_keyboard_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        tools:layout="@layout/secure_keyboard_view_alphanumeric_lowercase"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        app:layout_constraintVertical_bias="1"
+
+        tools:visibility="invisible"
+        />
 
     <View
         android:id="@+id/entry_dark_overlap"
@@ -44,6 +60,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_chainStyle="spread"
         app:layout_constraintVertical_bias="1"
+
+        tools:visibility="invisible"
         />
 
     <androidx.fragment.app.FragmentContainerView
@@ -57,6 +75,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+
+        tools:visibility="invisible"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
