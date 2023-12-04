@@ -138,7 +138,8 @@ public class EntryActivity extends AppCompatActivity{
             .setReorderingAllowed(true)
             .setCustomAnimations(R.anim.anim_enter_from_bottom, R.anim.anim_exit_to_bottom)
             .remove(Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.status_container)))
-            .commit();
+            .commitAllowingStateLoss(); // POSUI-243
+
     }
 
     private boolean isStatusPresent() {
@@ -146,7 +147,10 @@ public class EntryActivity extends AppCompatActivity{
     }
 
     public void loadStatus(Intent intent) {
-        @NonNull StatusFragment statusFragment = InformationStatus.TRANS_COMPLETED.equals(intent.getAction()) ? new TransCompletedStatusFragment(intent, this) : new StatusFragment(intent, this);
+        @NonNull
+        StatusFragment statusFragment = InformationStatus.TRANS_COMPLETED.equals(intent.getAction())
+                ? new TransCompletedStatusFragment(intent, this)
+                : new StatusFragment(intent, this);
         getSupportFragmentManager().executePendingTransactions();
 
         if(statusFragment.isConclusive()){
