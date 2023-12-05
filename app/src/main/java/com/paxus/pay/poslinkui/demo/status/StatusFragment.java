@@ -33,6 +33,11 @@ public class StatusFragment extends Fragment {
 
     public static final long DURATION_DEFAULT = 5000, DURATION_SHORT = 1000;
 
+    // Default constructor
+    public StatusFragment() {
+        // Default initialization code here
+    }
+
     public StatusFragment(Intent intent, Context context) {
         this.intent = intent;
         Bundle bundle = new Bundle();
@@ -172,7 +177,7 @@ public class StatusFragment extends Fragment {
                 break;
             }
             default:
-                Logger.e("Unknown status action:" + action);
+                Logger.i("Status action: " + action);
                 break;
         }
 
