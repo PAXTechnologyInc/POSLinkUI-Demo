@@ -23,8 +23,8 @@ android {
     defaultConfig {
         applicationId "com.paxus.pay.poslinkui.demo"
         minSdk 22
-        targetSdk 30
-        versionCode 6
+        targetSdk 31
+        versionCode 7
         versionName VERSION_NAME
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
