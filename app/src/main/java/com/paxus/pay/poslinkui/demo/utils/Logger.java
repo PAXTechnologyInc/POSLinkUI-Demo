@@ -71,8 +71,16 @@ public final class Logger {
     }
 
 
-    public static void intent(Intent intent) {
+    public static void intent(Intent intent, String... headings) {
         StringBuilder intentBuilder = new StringBuilder();
+
+        if(headings != null){
+            for(String heading : headings){
+                intentBuilder.append(heading).append(System.lineSeparator());
+            }
+        }
+
+        intentBuilder.append("Intent: ").append(intent.getAction()).append(System.lineSeparator());
         if(intent.getExtras() != null){
             for(String key : intent.getExtras().keySet()){
                 intentBuilder.append(key).append(": ");
