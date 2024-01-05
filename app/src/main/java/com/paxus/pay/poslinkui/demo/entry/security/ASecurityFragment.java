@@ -174,11 +174,6 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
                     break;
             }
 
-            //3.Update confirm button status
-            if(confirmButton!=null) {
-                confirmButton.setEnabled(secureLength > 0);
-            }
-
         }
     }
 }
