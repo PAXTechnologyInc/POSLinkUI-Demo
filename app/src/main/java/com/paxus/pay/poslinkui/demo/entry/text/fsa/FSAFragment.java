@@ -209,7 +209,7 @@ public class FSAFragment extends BaseEntryFragment {
     }
 
     @Override
-    protected void onEntryDeclined(long errCode, String errMessage) {
+    protected void onEntryDeclined(int errCode, String errMessage) {
         super.onEntryDeclined(errCode, errMessage);
 
         //Re enter sub health care amount

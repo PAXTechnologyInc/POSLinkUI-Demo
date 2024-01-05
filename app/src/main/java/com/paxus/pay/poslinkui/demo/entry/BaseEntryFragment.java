@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +51,7 @@ import java.util.List;
 public abstract class BaseEntryFragment extends Fragment {
 
     private boolean active = false;
-
+    private Context appContext = getActivity();
     private String senderPackage, action;
     protected EditText[] focusableEditTexts = null;
 
@@ -197,9 +199,11 @@ public abstract class BaseEntryFragment extends Fragment {
      * @param errCode    Error Code
      * @param errMessage Error Message
      */
-    protected void onEntryDeclined(long errCode, String errMessage) {
+    protected void onEntryDeclined(int errCode, String errMessage) {
         Logger.i("Receive Response Broadcast ACTION_DECLINED for action \"" + action + "\" (" + errCode + "-" + errMessage + ")");
-        Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT).show();
+        // POSUI-244
+        Toast toast = Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT);
+        ToastUtils.adjustToastPosition(toast);
     }
 
     /**
@@ -243,7 +247,7 @@ public abstract class BaseEntryFragment extends Fragment {
                 break;
             case EntryResponse.ACTION_DECLINED:
                 EditabilityBlocker.getInstance().release();
-                onEntryDeclined(result.getLong(EntryResponse.PARAM_CODE), result.getString(EntryResponse.PARAM_MSG));
+                onEntryDeclined(result.getInt(EntryResponse.PARAM_CODE), result.getString(EntryResponse.PARAM_MSG)); //POSUI-244
                 break;
         }
     };
