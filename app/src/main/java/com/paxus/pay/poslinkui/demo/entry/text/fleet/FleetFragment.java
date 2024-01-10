@@ -138,7 +138,7 @@ public class FleetFragment extends BaseEntryFragment {
     }
 
     @Override
-    protected void onEntryDeclined(long errCode, String errMessage) {
+    protected void onEntryDeclined(int errCode, String errMessage) {
         super.onEntryDeclined(errCode, errMessage);
 
         //re enter if next request declined
