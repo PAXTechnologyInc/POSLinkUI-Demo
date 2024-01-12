@@ -47,7 +47,12 @@ public class ShowMessageFragment extends BaseEntryFragment {
         posLinkStatusManager.registerHandler(POSLinkStatus.CLEAR_MESSAGE, this::clearMessage);
     }
 
+    private void clearTitle() {
+        title = null;
+    }
+
     private void clearMessage() {
+        clearTitle(); // BPOSANDJAX-1283
         messages.clear();
         loadView(getView());
     }
