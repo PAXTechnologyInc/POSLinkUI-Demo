@@ -1,18 +1,20 @@
 {
-  "version": 2,
+  "version": 3,
   "artifactType": {
     "type": "APK",
     "kind": "Directory"
   },
   "applicationId": "com.paxus.pay.poslinkui.demo",
-  "variantName": "processReleaseResources",
+  "variantName": "release",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 1,
-      "versionName": "V1.01.00_20221014",
-      "outputFile": "POSLinkUI Demo_V1.01.00_20221014.apk"
+      "attributes": [],
+      "versionCode": 8,
+      "versionName": "V1.01.00_20240123",
+      "outputFile": "POSLinkUI Demo_V1.01.00_20240123.apk"
     }
-  ]
+  ],
+  "elementType": "File"
 }
