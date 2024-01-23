@@ -125,7 +125,7 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.i("receive Status Action \""+intent.getAction()+"\"");
+            Logger.intent(intent, "STATUS BROADCAST:\t" + intent.getAction());
             switch (intent.getAction()) {
                 case SecurityStatus.SECURITY_ENTER_CLEARED:{
                     secureLength = 0;
