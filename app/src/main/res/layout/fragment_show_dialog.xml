@@ -10,13 +10,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_centerInParent="true">
-            <TextView
+
+            <LinearLayout
+                android:id="@+id/show_dialog_title_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/title"
-                android:textSize="28sp"
-                android:maxLines="1"
-                android:gravity="center"/>
+                android:orientation="vertical" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

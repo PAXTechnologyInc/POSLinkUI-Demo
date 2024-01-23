@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,8 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
+
+import java.util.List;
 
 /**
  * Implement text entry actions:<br>
@@ -37,7 +40,7 @@ public class ShowDialogFragment extends BaseEntryFragment {
 
     @Override
     protected int getLayoutResourceId() {
-        return R.layout.fragment_show_dialog;
+        return R.layout.fragment_show_dialog_new;
     }
 
     @Override
@@ -45,6 +48,7 @@ public class ShowDialogFragment extends BaseEntryFragment {
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
 
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
+
         String[] options = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
         if(options!=null) {
             if (options.length >= 1) {
@@ -65,37 +69,12 @@ public class ShowDialogFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        TextView textView = rootView.findViewById(R.id.title);
-        textView.setText(title);
 
-        Button btn1 = rootView.findViewById(R.id.button1);
-        formatButton(btn1, button1, 1);
-
-        Button btn2 = rootView.findViewById(R.id.button2);
-        formatButton(btn2, button2, 2);
-
-        Button btn3 = rootView.findViewById(R.id.button3);
-        formatButton(btn3, button3, 3);
-
-        Button btn4 = rootView.findViewById(R.id.button4);
-        formatButton(btn4, button4, 4);
+        TextWithControlChar title = rootView.findViewById(R.id.show_dialog_title_container);
+        title.loadText(getContext(), this.title);
 
         if(timeOut > 0 ) {
             getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
-        }
-    }
-
-    private void formatButton(Button button, String message, int index){
-        if(!TextUtils.isEmpty(message)){
-            button.setText(message);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    submit(index);
-                }
-            });
-        }else{
-            button.setVisibility(View.GONE);
         }
     }
 

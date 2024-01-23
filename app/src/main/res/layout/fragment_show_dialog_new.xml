@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <com.paxus.pay.poslinkui.demo.entry.poslink.TextWithControlChar
+        android:id="@+id/show_dialog_title_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.2"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/show_dialog_content_container"
+        >
+        <TextView
+            android:id="@+id/left_line_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            tools:text="lkdfhglfdjgh"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/left_line_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/center_line_1"
+
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
+        <TextView
+            android:id="@+id/center_line_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            tools:text="lkdfhglfdjgh"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/center_line_2"
+            app:layout_constraintStart_toEndOf="@id/left_line_1"
+            app:layout_constraintEnd_toStartOf="@id/right_line_1"
+
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
+        <TextView
+            android:id="@+id/right_line_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            tools:text="lkdfhglfdjgh"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/right_line_2"
+            app:layout_constraintStart_toEndOf="@id/center_line_1"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
+
+        <TextView
+            android:id="@+id/left_line_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            tools:text="lkdfhglfdjgh"
+
+            app:layout_constraintTop_toBottomOf="@id/left_line_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/center_line_2"
+
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
+        <TextView
+            android:id="@+id/center_line_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            tools:text="lkdfhglfdjgh"
+
+            app:layout_constraintTop_toBottomOf="@id/center_line_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/left_line_2"
+            app:layout_constraintEnd_toStartOf="@id/right_line_2"
+
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
+        <TextView
+            android:id="@+id/right_line_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            tools:text="lkdfhglfdjgh"
+
+            app:layout_constraintTop_toBottomOf="@id/right_line_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/center_line_2"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
+
+    </com.paxus.pay.poslinkui.demo.entry.poslink.TextWithControlChar>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/show_dialog_content_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+
+        app:layout_constraintTop_toBottomOf="@id/show_dialog_title_container"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.paxus.pay.poslinkui.demo.entry.poslink.TextWithControlChar
+            android:id="@+id/show_dialog_button_1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/show_dialog_button_3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/show_dialog_button_2"
+            />
+        <com.paxus.pay.poslinkui.demo.entry.poslink.TextWithControlChar
+            android:id="@+id/show_dialog_button_2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/show_dialog_button_4"
+            app:layout_constraintStart_toEndOf="@id/show_dialog_button_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+        <com.paxus.pay.poslinkui.demo.entry.poslink.TextWithControlChar
+            android:id="@+id/show_dialog_button_3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            app:layout_constraintTop_toBottomOf="@id/show_dialog_button_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/show_dialog_button_4"
+            />
+        <com.paxus.pay.poslinkui.demo.entry.poslink.TextWithControlChar
+            android:id="@+id/show_dialog_button_4"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            app:layout_constraintTop_toBottomOf="@id/show_dialog_button_2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/show_dialog_button_3"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
