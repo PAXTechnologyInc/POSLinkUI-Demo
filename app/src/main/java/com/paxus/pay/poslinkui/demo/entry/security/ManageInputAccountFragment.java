@@ -284,7 +284,7 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.i("receive Status Action \"" + intent.getAction() + "\"");
+            Logger.intent(intent, "STATUS BROADCAST:\t" + intent.getAction());
             switch (intent.getAction()) {
                 case CardStatus.CARD_INSERT_REQUIRED:
                 case CardStatus.CARD_TAP_REQUIRED:

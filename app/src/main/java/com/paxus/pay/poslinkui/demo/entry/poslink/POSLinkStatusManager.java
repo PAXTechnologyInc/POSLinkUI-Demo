@@ -37,7 +37,7 @@ public class POSLinkStatusManager extends BroadcastReceiver implements Lifecycle
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Logger.d("Receiving Status Broadcast " + intent.getAction());
+        Logger.intent(intent, "STATUS BROADCAST:\t" + intent.getAction());
         if (handlerMap.containsKey(intent.getAction())) {
             handlerMap.get(intent.getAction()).run();
         }

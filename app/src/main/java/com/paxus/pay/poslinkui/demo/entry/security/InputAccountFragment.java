@@ -293,7 +293,7 @@ public class InputAccountFragment extends BaseEntryFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.i("receive Status Action \"" + intent.getAction() + "\"");
+            Logger.intent(intent, "STATUS BROADCAST:\t" + intent.getAction());
             switch (intent.getAction()) {
                 case InformationStatus.TRANS_AMOUNT_CHANGED_IN_CARD_PROCESSING:
                     //4.Update amount

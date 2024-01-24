@@ -13,6 +13,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.pax.us.pay.ui.constant.status.CardStatus;
 import com.pax.us.pay.ui.constant.status.ClssLightStatus;
+import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.view.ClssLightsView;
 
 public class ClssLightsViewStatusManager extends BroadcastReceiver implements LifecycleEventObserver {
@@ -31,7 +32,7 @@ public class ClssLightsViewStatusManager extends BroadcastReceiver implements Li
     public void onReceive(Context context, Intent intent) {
         if(clssLightsView == null) return;
         if(!isActive) return;
-
+        Logger.intent(intent, "STATUS BROADCAST:\t" + intent.getAction());
         clssLightsView.updateStatus(intent.getAction());
     }
 
