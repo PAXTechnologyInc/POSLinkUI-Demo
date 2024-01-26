@@ -1,12 +1,7 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -15,10 +10,7 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
-
-import java.util.List;
 
 /**
  * Implement text entry actions:<br>
@@ -71,7 +63,7 @@ public class ShowDialogFragment extends BaseEntryFragment {
     protected void loadView(View rootView) {
 
         TextWithControlChar title = rootView.findViewById(R.id.show_dialog_title_container);
-        title.loadText(getContext(), this.title);
+        title.setText(this.title);
 
         if(timeOut > 0 ) {
             getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));

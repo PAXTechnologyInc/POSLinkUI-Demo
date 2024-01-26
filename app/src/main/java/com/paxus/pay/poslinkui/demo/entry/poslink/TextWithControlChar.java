@@ -2,22 +2,23 @@ package com.paxus.pay.poslinkui.demo.entry.poslink;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+
+import com.paxus.pay.poslinkui.demo.R;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class TextWithControlChar extends ConstraintLayout{
+public class TextWithControlChar extends ConstraintLayout {
 
-    private static final String Line_Feed_Delimiter = "\\n";
+    private static final String Line_Feed_Delimiter = "\\\\n";
     private static final String Left_Align_Delimiter = "\\L";
     private static final String Right_Align_Delimiter = "\\R";
     private static final String Center_Align_Delimiter = "\\C";
@@ -35,85 +36,45 @@ public class TextWithControlChar extends ConstraintLayout{
         add(Center_Align_Delimiter);
     }};
 
-    public TextWithControlChar(@NonNull Context context) {
-        super(context);
-    }
+    public TextWithControlChar(@NonNull Context context) { this(context, null); }
 
-    public TextWithControlChar(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-    }
+    public TextWithControlChar(@NonNull Context context, @Nullable AttributeSet attrs) { this(context, attrs, 0); }
 
-    public TextWithControlChar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
+    public TextWithControlChar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) { this(context, attrs, defStyleAttr, 0); }
 
     public TextWithControlChar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        setBackgroundColor(getResources().getColor(R.color.clss_red));
     }
 
-    public void loadText(Context context, String text) {
-        List<Line> lines = parseLines(text);
+    public void setText(String text) {
+        Context context = this.getContext();
+
+        List<Line> lines = parseLines(context, text);
 
         for(int i=0; i<lines.size(); i++) {
             Line line = lines.get(i);
 
-            ConstraintLayout lineLayout = new ConstraintLayout(context);
-            lineLayout.setBackgroundColor(context.getResources().getColor(android.R.color.holo_red_dark));
+            LayoutParams lineLayoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 
-            ConstraintLayout.LayoutParams lineLayoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            lineLayoutParams.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-            lineLayoutParams.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
-            lineLayoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-            lineLayoutParams.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
-            lineLayout.setLayoutParams(lineLayoutParams);
+            lineLayoutParams.startToStart = ConstraintSet.PARENT_ID;
+            lineLayoutParams.endToEnd = ConstraintSet.PARENT_ID;
 
-            TextView left = mergePartialLinesToTextView(new TextView(context), line.leftPart);
-            left.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_dark));
-            TextView center = mergePartialLinesToTextView(new TextView(context), line.centerPart);
-            center.setBackgroundColor(context.getResources().getColor(android.R.color.holo_green_dark));
-            TextView right = mergePartialLinesToTextView(new TextView(context), line.rightPart);
-            right.setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
+            lineLayoutParams.topToTop = (i==0) ? ConstraintSet.PARENT_ID : ConstraintSet.UNSET;
+            lineLayoutParams.topToBottom = (i==0) ? ConstraintSet.UNSET : lines.get(i-1).getId();
+            lineLayoutParams.bottomToBottom = (i==lines.size()-1) ? ConstraintSet.PARENT_ID : ConstraintSet.UNSET;
+            lineLayoutParams.bottomToTop = (i==lines.size()-1) ? ConstraintSet.UNSET : lines.get(i+1).getId();
 
-            ConstraintLayout.LayoutParams leftLayoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_CONSTRAINT, ConstraintLayout.LayoutParams.MATCH_CONSTRAINT);
-            leftLayoutParams.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-            leftLayoutParams.endToStart = center.getId();
-            leftLayoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-            leftLayoutParams.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
-            left.setLayoutParams(leftLayoutParams);
+            lineLayoutParams.setMargins(0, 2, 0, 2);
+            lineLayoutParams.verticalChainStyle = ConstraintSet.CHAIN_PACKED;
 
-            ConstraintLayout.LayoutParams centerLayoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_CONSTRAINT, ConstraintLayout.LayoutParams.MATCH_CONSTRAINT);
-            centerLayoutParams.startToEnd = left.getId();
-            centerLayoutParams.endToStart = right.getId();
-            centerLayoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-            centerLayoutParams.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
-            center.setLayoutParams(centerLayoutParams);
+            line.setLayoutParams(lineLayoutParams);
 
-            ConstraintLayout.LayoutParams rightLayoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_CONSTRAINT, ConstraintLayout.LayoutParams.MATCH_CONSTRAINT);
-            rightLayoutParams.startToEnd = center.getId();
-            rightLayoutParams.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
-            rightLayoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-            rightLayoutParams.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
-            right.setLayoutParams(rightLayoutParams);
-
-            lineLayout.addView(left);
-            lineLayout.addView(center);
-            lineLayout.addView(right);
-            addView(lineLayout);
-
+            addView(line);
         }
     }
 
-    private TextView mergePartialLinesToTextView(TextView textView, List<PartialLine> partialLines) {
-        if(partialLines == null || partialLines.isEmpty()) return textView;
-
-        for(PartialLine partialLine : partialLines) {
-            textView.append(partialLine.text);
-        }
-        textView.setId(View.generateViewId());
-        return textView;
-    }
-
-    private List<Line> parseLines(String text) {
+    private List<Line> parseLines(Context context, String text) {
         List<Line> lines = new ArrayList<>();
 
         // \n defines new lines
@@ -123,75 +84,116 @@ public class TextWithControlChar extends ConstraintLayout{
             String[] separatedByBold = line.split(Bold_Delimiter);
             for(int i=0; i<separatedByBold.length; i++) {
                 if(!separatedByBold[i].isEmpty()) {
-                    lines.add(new Line(separatedByBold[i], i==0 ? false : true));
+                    lines.add(new Line(context, separatedByBold[i], i==0 ? false : true));
                 }
             }
         }
         return lines;
     }
 
-    private class Line {
-        private List<PartialLine> leftPart;
-        private List<PartialLine> centerPart;
-        private List<PartialLine> rightPart;
+    private class Line extends ConstraintLayout {
+        private PartialLine leftPart;
+        private PartialLine centerPart;
+        private PartialLine rightPart;
 
-        Line(String line, boolean bold) {
-            if (line.indexOf(Left_Align_Delimiter) > 0) {
-                String left = line.substring(line.indexOf(Left_Align_Delimiter) + Left_Align_Delimiter.length(), getEndOfSameAlign(line, Left_Align_Delimiter, line.indexOf(Left_Align_Delimiter)));
-                leftPart = parsePartialLine(left, bold);
-            }
-            if (line.indexOf(Center_Align_Delimiter) > 0) {
-                String center = line.substring(line.indexOf(Center_Align_Delimiter) + Center_Align_Delimiter.length(), getEndOfSameAlign(line, Center_Align_Delimiter, line.indexOf(Center_Align_Delimiter)));
-                centerPart = parsePartialLine(center, bold);
-            }
-            if (line.indexOf(Right_Align_Delimiter) > 0) {
-                String right = line.substring(line.indexOf(Right_Align_Delimiter) + Right_Align_Delimiter.length(), getEndOfSameAlign(line, Right_Align_Delimiter, line.indexOf(Right_Align_Delimiter)));
-                rightPart = parsePartialLine(right, bold);
-            }
+        public Line(@NonNull Context context) { this(context, null); }
+        public Line(@NonNull Context context, @Nullable AttributeSet attrs) { this(context, attrs, 0); }
+        public Line(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) { this(context, attrs, defStyleAttr, 0); }
+
+        public Line(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+            super(context, attrs, defStyleAttr, defStyleRes);
+            setLayoutParams(new ConstraintLayout.LayoutParams(LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            setBackgroundColor(getResources().getColor(R.color.clss_yellow));
+            setId(generateViewId());
         }
 
-        private List<PartialLine> parsePartialLine(String text, boolean bold) {
-            List<PartialLine> partialLines = new ArrayList<>();
-            String[] splitByEscape = text.split("\\\\");
-            for(int i=0; i<splitByEscape.length; i++) {
-                String partial = splitByEscape[i];
-                if(i == 0 && !partial.isEmpty()) {
-                    partialLines.add(new PartialLine(partial, bold, Fontsize_Normal));
-                }
-                else if(partial.startsWith("1")) {
-                    partialLines.add(new PartialLine(partial.substring(1), bold, Fontsize_Small));
-                }
-                else if(partial.startsWith("2")) {
-                    partialLines.add(new PartialLine(partial.substring(1), bold, Fontsize_Normal));
-                }
-                else if (partial.startsWith("3")) {
-                    partialLines.add(new PartialLine(partial.substring(1), bold, Fontsize_Big));
-                }
+        Line(Context context, String line, boolean bold) {
+            this(context);
+
+            //Will not allow multiple parts of same alignment. Will only take the first one.
+
+            if (line.indexOf(Left_Align_Delimiter) >= 0) {
+                String left = line.substring(line.indexOf(Left_Align_Delimiter) + Left_Align_Delimiter.length(), getEndOfSameAlign(line, Left_Align_Delimiter, line.indexOf(Left_Align_Delimiter)));
+                leftPart = new PartialLine(context, left, bold, PartialLine.LEFT_ALIGN);
             }
-            return partialLines;
+            if (line.indexOf(Center_Align_Delimiter) >= 0) {
+                String center = line.substring(line.indexOf(Center_Align_Delimiter) + Center_Align_Delimiter.length(), getEndOfSameAlign(line, Center_Align_Delimiter, line.indexOf(Center_Align_Delimiter)));
+                centerPart = new PartialLine(context, center, bold, PartialLine.CENTER_ALIGN);
+            }
+            if (line.indexOf(Right_Align_Delimiter) >= 0) {
+                String right = line.substring(line.indexOf(Right_Align_Delimiter) + Right_Align_Delimiter.length(), getEndOfSameAlign(line, Right_Align_Delimiter, line.indexOf(Right_Align_Delimiter)));
+                rightPart = new PartialLine(context, right, bold, PartialLine.RIGHT_ALIGN);
+            }
+
+            if(leftPart == null && centerPart == null && rightPart == null) {
+                leftPart = new PartialLine(context, line, bold, PartialLine.LEFT_ALIGN);
+            }
+
+            if(leftPart != null) addView(leftPart);
+            if(centerPart != null) addView(centerPart);
+            if(rightPart != null) addView(rightPart);
         }
 
         private int getEndOfSameAlign(String line, String thisDelimiter, int thisDelimiterIndex) {
             int endIndex = line.length();
             for(String delimiter : Alignment_Delimiters) {
-                if(line.indexOf(delimiter) > thisDelimiterIndex) {
-                    endIndex = line.indexOf(delimiter);
-                    break;
+                if(line.indexOf(delimiter, thisDelimiterIndex) > thisDelimiterIndex){
+                    endIndex = Math.min(endIndex, line.indexOf(delimiter, thisDelimiterIndex));
                 }
             }
             return endIndex;
         }
     }
-    private class PartialLine {
-        private String text;
-        private boolean bold;
-        private int fontSize;
+    private class PartialLine extends androidx.appcompat.widget.AppCompatTextView {
+        private static final float LEFT_ALIGN = 0.0f;
+        private static final float CENTER_ALIGN = 0.5f;
+        private static final float RIGHT_ALIGN = 1.0f;
 
-        public PartialLine(String text, boolean bold, int fontsize) {
-            this.text = text;
-            this.bold = bold;
-            this.fontSize = fontsize;
+        public PartialLine(Context context, String input, boolean bold, float align) {
+            this(context);
+            setText(input, bold);
+            setLayoutParams(align);
         }
+
+        private void setLayoutParams(float align) {
+            ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
+            params.topToTop = ConstraintSet.PARENT_ID;
+            params.bottomToBottom = ConstraintSet.PARENT_ID;
+            params.startToStart = ConstraintSet.PARENT_ID;
+            params.endToEnd = ConstraintSet.PARENT_ID;
+            params.horizontalBias = align;
+
+            setLayoutParams(params);
+        }
+
+        private void setText(String input, boolean bold) {
+            String text = "";
+            String[] splitByEscape = input.split("\\\\");
+            for(int i=0; i<splitByEscape.length; i++) {
+                String partial = splitByEscape[i];
+                if(i == 0 && !partial.isEmpty()) {
+                    text += partial;
+                }
+                else if(partial.startsWith("1")) {
+                    text += partial;
+                }
+                else if(partial.startsWith("2")) {
+                    text += partial;
+                }
+                else if (partial.startsWith("3")) {
+                    text += partial;
+                }
+            }
+
+            setText(input);
+        }
+
+        public PartialLine(@NonNull Context context) { this(context, null); }
+
+        public PartialLine(@NonNull Context context, @Nullable AttributeSet attrs) { this(context, attrs, 0); }
+
+        public PartialLine(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) { super(context, attrs, defStyleAttr); }
     }
 
 }
