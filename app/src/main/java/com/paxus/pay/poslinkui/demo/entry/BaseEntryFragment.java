@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -31,7 +29,7 @@ import com.pax.us.pay.ui.constant.entry.EntryResponse;
 import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
-import com.paxus.pay.poslinkui.demo.utils.ToastUtils;
+import com.paxus.pay.poslinkui.demo.utils.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -201,9 +199,7 @@ public abstract class BaseEntryFragment extends Fragment {
      */
     protected void onEntryDeclined(int errCode, String errMessage) {
         Logger.i("Receive Response Broadcast ACTION_DECLINED for action \"" + action + "\" (" + errCode + "-" + errMessage + ")");
-        // POSUI-244
-        Toast toast = Toast.makeText(requireActivity(), errMessage, Toast.LENGTH_SHORT);
-        ToastUtils.adjustToastPosition(toast);
+        new Toast(getActivity()).show(errMessage, Toast.TYPE.FAILURE);
     }
 
     /**
