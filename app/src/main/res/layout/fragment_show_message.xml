@@ -6,14 +6,12 @@
     android:orientation="vertical"
     android:padding="5dp">
 
-    <TextView
+    <com.paxus.pay.poslinkui.demo.entry.poslink.TextWithControlChar
         android:id="@+id/title_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="@dimen/text_size_title"
-        android:layout_marginTop="10dp"
         android:layout_alignParentTop="true"/>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -42,6 +40,7 @@
             android:id="@+id/tax_line"
             android:textSize="18sp"/>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

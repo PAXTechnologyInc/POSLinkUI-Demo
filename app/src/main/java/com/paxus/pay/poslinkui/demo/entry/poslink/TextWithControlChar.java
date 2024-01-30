@@ -63,6 +63,7 @@ public class TextWithControlChar extends ConstraintLayout {
 
     public TextWithControlChar setText(String text) {
         Context context = this.getContext();
+        if(text == null || text.isEmpty()) return this;
 
         List<Line> lines = parseLines(context, text);
 
