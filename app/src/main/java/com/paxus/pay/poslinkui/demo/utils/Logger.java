@@ -81,6 +81,9 @@ public final class Logger {
         }
 
         intentBuilder.append("Intent: ").append(intent.getAction()).append(System.lineSeparator());
+
+        if(intent.getPackage() != null) intentBuilder.append("Package: ").append(intent.getPackage()).append(System.lineSeparator());
+
         if(intent.getExtras() != null){
             for(String key : intent.getExtras().keySet()){
                 intentBuilder.append(key).append(": ");

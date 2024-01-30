@@ -12,6 +12,9 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Implement text entry actions:<br>
  * {@value PoslinkEntry#ACTION_SHOW_DIALOG}
@@ -25,10 +28,7 @@ import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 public class ShowDialogFragment extends BaseEntryFragment {
     private long timeOut;
     private String title;
-    private String button1;
-    private String button2;
-    private String button3;
-    private String button4;
+    private String[] options;
 
     @Override
     protected int getLayoutResourceId() {
@@ -37,26 +37,9 @@ public class ShowDialogFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
-
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
-
-        String[] options = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
-        if(options!=null) {
-            if (options.length >= 1) {
-                button1 = options[0];
-            }
-            if (options.length >= 2) {
-                button2 = options[1];
-            }
-            if (options.length >= 3) {
-                button3 = options[2];
-            }
-            if (options.length >= 4) {
-                button4 = options[3];
-            }
-        }
-
+        options = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
+        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
     }
 
     @Override
@@ -64,6 +47,23 @@ public class ShowDialogFragment extends BaseEntryFragment {
 
         TextWithControlChar title = rootView.findViewById(R.id.show_dialog_title_container);
         title.setText(this.title);
+
+        if(options != null) {
+            List<TextWithControlChar> texts = new ArrayList<>();
+            for(int i=0; i<options.length; i++) {
+                int indexInLayout = i+1;
+
+                TextWithControlChar option = rootView.findViewById(getResources().getIdentifier("show_dialog_option_" + indexInLayout, "id", getContext().getPackageName()));
+                option.setVisibility(View.VISIBLE);
+                option.setText(options[i]).setCheckable(true);
+                texts.add(option);
+
+                texts.get(i).setOnClickListener(v -> {
+                    for(int j=0; j<texts.size(); j++) texts.get(j).setChecked(false);
+                    submit(indexInLayout);
+                });
+            }
+        }
 
         if(timeOut > 0 ) {
             getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
