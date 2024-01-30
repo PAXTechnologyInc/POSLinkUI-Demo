@@ -32,7 +32,7 @@ public class ShowDialogFragment extends BaseEntryFragment {
 
     @Override
     protected int getLayoutResourceId() {
-        return R.layout.fragment_show_dialog_new;
+        return R.layout.fragment_show_dialog;
     }
 
     @Override
