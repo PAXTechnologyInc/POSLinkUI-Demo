@@ -24,7 +24,7 @@ android {
         applicationId "com.paxus.pay.poslinkui.demo"
         minSdk 22
         targetSdk 31
-        versionCode 8
+        versionCode 9
         versionName VERSION_NAME
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

@@ -5,11 +5,13 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
@@ -47,12 +49,8 @@ public class ShowMessageFragment extends BaseEntryFragment {
         posLinkStatusManager.registerHandler(POSLinkStatus.CLEAR_MESSAGE, this::clearMessage);
     }
 
-    private void clearTitle() {
-        title = null;
-    }
-
     private void clearMessage() {
-        clearTitle(); // BPOSANDJAX-1283
+        title = null;
         messages.clear();
         loadView(getView());
     }
@@ -78,23 +76,31 @@ public class ShowMessageFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        TextView textView = rootView.findViewById(R.id.title_view);
-        textView.setText(title);
+        TextWithControlChar titleView = rootView.findViewById(R.id.title_view);
+        titleView.setText(title);
 
         ListView listView = rootView.findViewById(R.id.list_view);
-        ArrayAdapter<MsgInfoWrapper> adapter = new ArrayAdapter<MsgInfoWrapper>(requireContext(),
-                android.R.layout.simple_list_item_2, android.R.id.text1, messages) {
+        ArrayAdapter<MsgInfoWrapper> adapter = new ArrayAdapter<MsgInfoWrapper>(requireContext(), R.layout.fragment_show_message) {
+            @NonNull
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                LinearLayout layout = new LinearLayout(getContext());
+                layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                layout.setOrientation(LinearLayout.VERTICAL);
 
-                text1.setText(messages.get(position).getMsgInfo().msg1);
-                text2.setText(messages.get(position).getMsgInfo().msg2);
-                return view;
+                TextWithControlChar message1 = new TextWithControlChar(getContext());
+                message1.setText(messages.get(position).getMsgInfo().msg1);
+
+                TextWithControlChar message2 = new TextWithControlChar(getContext());
+                message2.setText(messages.get(position).getMsgInfo().msg2);
+
+                layout.addView(message1);
+                layout.addView(message2);
+
+                return layout;
             }
         };
+
         listView.setAdapter(adapter);
 
         TextView taxLine = rootView.findViewById(R.id.tax_line);

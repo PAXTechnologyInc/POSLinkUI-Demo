@@ -1,11 +1,7 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -14,8 +10,10 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implement text entry actions:<br>
@@ -30,10 +28,7 @@ import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 public class ShowDialogFragment extends BaseEntryFragment {
     private long timeOut;
     private String title;
-    private String button1;
-    private String button2;
-    private String button3;
-    private String button4;
+    private String[] options;
 
     @Override
     protected int getLayoutResourceId() {
@@ -42,60 +37,36 @@ public class ShowDialogFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
-
         title = bundle.getString(EntryExtraData.PARAM_TITLE);
-        String[] options = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
-        if(options!=null) {
-            if (options.length >= 1) {
-                button1 = options[0];
-            }
-            if (options.length >= 2) {
-                button2 = options[1];
-            }
-            if (options.length >= 3) {
-                button3 = options[2];
-            }
-            if (options.length >= 4) {
-                button4 = options[3];
-            }
-        }
-
+        options = bundle.getStringArray(EntryExtraData.PARAM_OPTIONS);
+        timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
     }
 
     @Override
     protected void loadView(View rootView) {
-        TextView textView = rootView.findViewById(R.id.title);
-        textView.setText(title);
 
-        Button btn1 = rootView.findViewById(R.id.button1);
-        formatButton(btn1, button1, 1);
+        TextWithControlChar title = rootView.findViewById(R.id.show_dialog_title_container);
+        title.setText(this.title);
 
-        Button btn2 = rootView.findViewById(R.id.button2);
-        formatButton(btn2, button2, 2);
+        if(options != null) {
+            List<TextWithControlChar> texts = new ArrayList<>();
+            for(int i=0; i<options.length; i++) {
+                int indexInLayout = i+1;
 
-        Button btn3 = rootView.findViewById(R.id.button3);
-        formatButton(btn3, button3, 3);
+                TextWithControlChar option = rootView.findViewById(getResources().getIdentifier("show_dialog_option_" + indexInLayout, "id", getContext().getPackageName()));
+                option.setVisibility(View.VISIBLE);
+                option.setText(options[i]).setCheckable(true);
+                texts.add(option);
 
-        Button btn4 = rootView.findViewById(R.id.button4);
-        formatButton(btn4, button4, 4);
+                texts.get(i).setOnClickListener(v -> {
+                    for(int j=0; j<texts.size(); j++) texts.get(j).setChecked(false);
+                    submit(indexInLayout);
+                });
+            }
+        }
 
         if(timeOut > 0 ) {
             getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
-        }
-    }
-
-    private void formatButton(Button button, String message, int index){
-        if(!TextUtils.isEmpty(message)){
-            button.setText(message);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    submit(index);
-                }
-            });
-        }else{
-            button.setVisibility(View.GONE);
         }
     }
 
