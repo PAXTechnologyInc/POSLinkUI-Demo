@@ -129,6 +129,7 @@
         android:padding="@dimen/padding_vertical"
         android:gravity="center_horizontal"
         android:textColor="#FF9C27B0"
+        android:autoSizeTextType="none"
         android:textSize="@dimen/text_size_subtitle"
 
         app:layout_constraintStart_toStartOf="parent"

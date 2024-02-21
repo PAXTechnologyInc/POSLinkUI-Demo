@@ -1,0 +1,15 @@
+<resources>
+    <!-- For A30 use-->
+    <dimen name="version_name_text_size">20sp</dimen>
+
+    <dimen name="padding_horizontal">20dp</dimen>
+    <dimen name="padding_vertical">12dp</dimen>
+
+    <dimen name="toolbar_height">60dp</dimen>
+
+    <dimen name="text_size_supertitle">40sp</dimen>
+    <dimen name="text_size_title">30sp</dimen>
+    <dimen name="text_size_subtitle">24sp</dimen>
+    <dimen name="text_size_normal">18sp</dimen>
+    <dimen name="text_size_hint">15sp</dimen>
+</resources>
