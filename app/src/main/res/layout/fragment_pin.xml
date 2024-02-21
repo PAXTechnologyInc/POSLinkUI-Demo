@@ -1,70 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="@dimen/margin_gap">
 
-    <LinearLayout
-        android:id="@+id/info_layout"
+    <TextView
+        android:id="@+id/amount_name"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/total_amount"
+        android:textSize="@dimen/text_size_subtitle"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/total_amount"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/message"
+
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0"
+        />
+
+    <TextView
+        android:id="@+id/total_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom|end"
+        android:textSize="@dimen/text_size_subtitle"
+
+        tools:text="@string/amount_default"
+
+        app:layout_constraintStart_toEndOf="@id/amount_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/amount_name"
+        app:layout_constraintBottom_toBottomOf="@id/amount_name"
+        />
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_normal"
+        android:layout_marginVertical="@dimen/space_between_textview"
+
+        app:layout_constraintTop_toBottomOf="@id/amount_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/edit_pin"
+        />
+
+    <TextView
+        android:id="@+id/edit_pin"
+        android:background="@drawable/rounded_corner_on_background"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_gap"
+        android:gravity="center_horizontal"
+        android:padding="10dp"
+        android:textSize="@dimen/text_size_subtitle"
+        android:layout_marginVertical="10dp"
+        android:textColor="@color/pastel_text_color_on_light"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/message"
+        app:layout_constraintBottom_toTopOf="@id/bypass"
+        />
+
+    <TextView
+        android:id="@+id/bypass"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/prompt_no_pin"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_pin"
         app:layout_constraintBottom_toTopOf="@id/pinpad_layout"
 
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/ll_amount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/space_between_textview">
-
-            <TextView
-                android:id="@+id/amount_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/total_amount"
-                android:gravity="bottom"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/total_amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/amount_default"
-                android:gravity="bottom|end"
-                android:textSize="18sp"/>
-        </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/message"
-            android:textSize="18sp"
-            android:lines="3"
-            android:gravity="center"
-            android:layout_marginVertical="@dimen/space_between_textview"/>
-        <TextView
-            android:background="@drawable/rounded_corner_on_background"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/edit_pin"
-            android:layout_margin="@dimen/margin_gap"
-            android:gravity="center_horizontal"
-            android:padding="10dp"
-            android:textSize="20sp"
-            android:layout_marginVertical="10dp"
-            android:textColor="@color/pastel_text_color_on_light"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bypass"
-            android:gravity="center"
-            android:text="@string/prompt_no_pin"/>
-    </LinearLayout>
+        app:layout_constraintVertical_bias="0"
+        />
 
     <include layout="@layout/fragment_pin_custom_keyboard"
         android:id="@+id/pinpad_layout"
@@ -73,10 +90,12 @@
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/info_layout"
         app:layout_constraintBottom_toBottomOf="parent"
 
         android:layout_margin="@dimen/margin_gap"
+        app:layout_constraintHeight_percent="0.5"
+
+        app:layout_constraintVertical_bias="1"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
