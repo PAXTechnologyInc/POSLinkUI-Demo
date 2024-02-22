@@ -192,12 +192,12 @@ public class StatusFragment extends Fragment {
         return another != null && this.intent.getAction().equals(another.intent.getAction());
     }
 
-    public void updateStatus(Intent intent, Context context) {
+    public void updateStatusMessage(Intent intent, Context context) {
         this.intent = intent;
         Bundle bundle = new Bundle();
         bundle.putString(EntryRequest.PARAM_ACTION, intent.getAction());
         if(intent.getExtras() != null) bundle.putAll(intent.getExtras());
-        setArguments(bundle);
+
         this.message = generateStatusMessage(bundle, context);
         ((TextView)getView().findViewById(R.id.status_title)).setText(message);
     }
