@@ -163,7 +163,7 @@ public abstract class BaseEntryFragment extends Fragment {
             barHeight = rect.top;
         }
 
-        int fontSize = (int) (view.getPaint().getTextSize() / view.getPaint().density);
+        int fontSize = (int) view.getPaint().getTextSize();
         EntryRequestUtils.sendSecureArea(requireContext(), senderPackage, action, location[0], location[1] - barHeight,
                 view.getWidth(), view.getHeight(), fontSize,
                 (hint!=null && hint.length>0) ? hint[0] : "",
