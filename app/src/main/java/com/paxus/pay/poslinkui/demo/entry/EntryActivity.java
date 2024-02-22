@@ -153,7 +153,7 @@ public class EntryActivity extends AppCompatActivity{
 
             StatusFragment currentFragment = (StatusFragment) getSupportFragmentManager().findFragmentById(R.id.status_container);
             if(statusFragment.sameAs(currentFragment)){
-                currentFragment.updateStatus(intent, this);
+                currentFragment.updateStatusMessage(intent, this);
                 return;
             }
 
