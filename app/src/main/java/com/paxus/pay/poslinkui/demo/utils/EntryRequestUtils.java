@@ -141,7 +141,7 @@ public class EntryRequestUtils {
         bundle.putInt(EntryRequest.PARAM_Y, y);
         bundle.putInt(EntryRequest.PARAM_WIDTH, width);
         bundle.putInt(EntryRequest.PARAM_HEIGHT, height);
-        bundle.putInt(EntryRequest.PARAM_FONT_SIZE, fontSize);
+        //bundle.putInt(EntryRequest.PARAM_FONT_SIZE, fontSize); //Testing BroadPOS Default Font Size
         bundle.putString(EntryRequest.PARAM_HINT, hint);
         bundle.putString(EntryRequest.PARAM_COLOR, fontColor);
 

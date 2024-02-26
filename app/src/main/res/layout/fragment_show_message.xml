@@ -34,13 +34,13 @@
             android:textStyle="bold"
             android:gravity="start"
             android:text="@string/pete_tax"
-            android:textSize="18sp"/>
+            android:textSize="@dimen/text_size_subtitle"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
             android:id="@+id/tax_line"
-            android:textSize="18sp"/>
+            android:textSize="@dimen/text_size_subtitle"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,13 +54,13 @@
             android:textStyle="bold"
             android:gravity="start"
             android:text="@string/pete_total"
-            android:textSize="18sp"/>
+            android:textSize="@dimen/text_size_subtitle"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
             android:id="@+id/total_line"
-            android:textSize="18sp"/>
+            android:textSize="@dimen/text_size_subtitle"/>
     </LinearLayout>
 
 </RelativeLayout>
