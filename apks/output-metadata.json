@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 8,
-      "versionName": "V1.01.00_20240123",
-      "outputFile": "POSLinkUI Demo_V1.01.00_20240123.apk"
+      "versionCode": 14,
+      "versionName": "V1.01.00_20240223",
+      "outputFile": "POSLinkUI-Demo_V1.01.00_20240223.apk"
     }
   ],
   "elementType": "File"

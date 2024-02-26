@@ -52,8 +52,7 @@
     </style>
 
     <style name="POSLinkUIPastelTextView" parent="android:Widget.Material.TextView">
-        <item name="autoSizeTextType">uniform</item>
-        <item name="autoSizePresetSizes">@array/text_auto_size_valid_sizes</item>
+        <item name="android:textSize">@dimen/text_size_normal</item>
     </style>
 
     <style name="POSLinkUIPastelEditText" parent="android:Widget.Material.EditText">

@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/base_amount"
-        android:textSize="18sp"
+        android:textSize="@dimen/text_size_subtitle"
         android:paddingVertical="10dp"
         android:gravity="center"
         />
@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tip_name"
-        android:textSize="18sp"
+        android:textSize="@dimen/text_size_subtitle"
         android:paddingBottom="10dp"
         android:gravity="center"
         />
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/message"
-        android:textSize="18sp"
+        android:textSize="@dimen/text_size_title"
         />
     <EditText
         android:layout_width="match_parent"

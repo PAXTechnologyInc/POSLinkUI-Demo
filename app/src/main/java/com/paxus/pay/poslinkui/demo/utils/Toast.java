@@ -41,9 +41,13 @@ public class Toast {
 
         //remove toast fragment after defined duration
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            activity.getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                    .remove(toastFragment).commit();
+            try {
+                activity.getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                        .remove(toastFragment).commit();
+            } catch (IllegalStateException e) {
+                Logger.e(e.getMessage());
+            }
         }, DURATION_DEFAULT);
     }
 }

@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
 
         tools:text="Credit Sale"
-        android:autoSizeTextType="none"
         android:textSize="@dimen/text_size_normal"
         android:textStyle="bold"
 

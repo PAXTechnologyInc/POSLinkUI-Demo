@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/prompt_input_cashback"
-        android:textSize="@dimen/text_size_subtitle"
+        android:textSize="@dimen/text_size_title"
         android:layout_marginVertical="@dimen/margin_gap"
 
         app:layout_constraintStart_toStartOf="parent"
