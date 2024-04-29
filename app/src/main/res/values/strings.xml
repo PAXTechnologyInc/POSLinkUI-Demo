@@ -178,6 +178,7 @@
     <string name="select_merchant">Please Select Merchant</string>
     <string name="select_orig_currency">Please Select Orig Trans Currency</string>
     <string name="select_cof_initiator">Please Select COF Initiator</string>
+    <string name="select_cash_discount">Please Select Payment Type</string>
 
     <string name="pls_input_clerk_id">Please Enter Clerk ID</string>
     <string name="pls_input_server_id">Please Enter Server ID</string>
@@ -581,6 +582,7 @@
     <string name="confirm_online_retry_offline">Retry Online Or Offline, Retry Online?</string>
     <string name="confirm_total_amount_message">Total Amount: %1$s.\nDo you wish to continue?</string>
     <string name="confirm_balance_message">Balance: %1$s.\nDo you wish to continue?</string>
+    <string name="confirm_cash_payment_message">Please pay merchant cash amount of %1$s.</string>
 
     <string name="prompt_printer_out_of_paper">Printer Out Of Paper, Retry?</string>
     <string name="confirm_printer_over_hot">Printer Over Hot, Retry?</string>

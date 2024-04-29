@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -13,14 +14,19 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.OptionEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.view.SelectOptionsView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract class for all option entry actions defined in {@link OptionEntry}
  */
 public abstract class AOptionEntryFragment extends BaseEntryFragment {
 
-    protected ListView listView;
-    private String[] options;
+    protected SelectOptionsView selectOptionsView;
+    private List<SelectOptionsView.Option> options;
+    private int selectedIndex = -1;
 
     @Override
     protected int getLayoutResourceId() {
@@ -29,7 +35,17 @@ public abstract class AOptionEntryFragment extends BaseEntryFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        options = bundle.containsKey(EntryExtraData.PARAM_OPTIONS) ? bundle.getStringArray(EntryExtraData.PARAM_OPTIONS) : new String[]{};
+        options = generateOptions(bundle);
+    }
+
+
+    protected List<SelectOptionsView.Option> generateOptions(Bundle bundle) {
+        List<SelectOptionsView.Option> options = new ArrayList<>();
+        String[] tempOptions = bundle.containsKey(EntryExtraData.PARAM_OPTIONS) ? bundle.getStringArray(EntryExtraData.PARAM_OPTIONS) : new String[]{};
+        for(int i=0; i<tempOptions.length; i++){
+            options.add(new SelectOptionsView.Option(i, tempOptions[i], null, i));
+        }
+        return options;
     }
 
     @Override
@@ -37,30 +53,21 @@ public abstract class AOptionEntryFragment extends BaseEntryFragment {
         TextView titleView = rootView.findViewById(R.id.title_view);
         titleView.setText(formatTitle());
 
-        listView = rootView.findViewById(R.id.list_view);
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.option_list_item, getOptions());
-        listView.setAdapter(adapter);
-
-        Button cancelButton = rootView.findViewById(R.id.cancel_button);
-        cancelButton.setOnClickListener(v-> onCancelButtonClicked());
-
-        Button confirmButton = rootView.findViewById(R.id.confirm_button);
-        confirmButton.setOnClickListener(v->onConfirmButtonClicked());
+        selectOptionsView = rootView.findViewById(R.id.list_view);
+        selectOptionsView.initialize(getActivity(), 1, options, optionSelectCallback);
     }
 
-    protected @NonNull String[] getOptions() {
-        return options;
-    }
-
-    private void onCancelButtonClicked() {
-        sendAbort();
-    }
+    private SelectOptionsView.OptionSelectListener optionSelectCallback = option -> {
+        this.selectedIndex = (int) option.getValue();
+        onConfirmButtonClicked();
+    };
 
     @Override
     protected void onConfirmButtonClicked() {
-        if (listView.getCheckedItemPosition() >= 0) {
-            submit(listView.getCheckedItemPosition());
+        if (selectedIndex>=0 && selectedIndex<options.size()) {
+            submit(selectedIndex);
+        } else {
+            Toast.makeText(requireContext(), "No option selected.", Toast.LENGTH_SHORT).show();
         }
     }
 

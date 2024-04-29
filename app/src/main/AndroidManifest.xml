@@ -251,6 +251,13 @@
             </intent-filter>
         </activity-alias>
 
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_CASH_PAYMENT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_CASH_PAYMENT"/>
+            </intent-filter>
+        </activity-alias>
+
         <activity-alias android:name=".CONFIRMATION.START_UI" android:targetActivity=".entry.EntryActivity">
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
@@ -311,6 +318,13 @@
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="com.pax.us.pay.ui.category.OPTION"/>
                 <action android:name="com.pax.us.pay.action.SELECT_CASHBACK_AMOUNT"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".OPTION.SELECT_CASH_DISCOUNT" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_CASH_DISCOUNT"/>
             </intent-filter>
         </activity-alias>
 
