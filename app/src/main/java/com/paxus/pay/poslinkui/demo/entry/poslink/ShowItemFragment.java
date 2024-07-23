@@ -1,6 +1,7 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -79,7 +80,25 @@ public class ShowItemFragment extends BaseEntryFragment {
         LinearLayout titleLayout = rootView.findViewById(R.id.tv_title_show_item);
         TextView tvTotalLineShowItem = rootView.findViewById(R.id.tv_total_line_show_item);
         TextView tvTaxLineShowItem = rootView.findViewById(R.id.tv_tax_line_show_item);
+        TextView tvTotalLineTitle = rootView.findViewById(R.id.total_line_title);
+        TextView tvTaxLineTitle = rootView.findViewById(R.id.tax_line_title);
         RecyclerView recyclerViewShowItem = rootView.findViewById(R.id.recycler_View_show_item);
+
+        if (!TextUtils.isEmpty(taxLine)) {
+            tvTaxLineTitle.setVisibility(View.VISIBLE);
+            tvTaxLineShowItem.setVisibility(View.VISIBLE);
+        } else {
+            tvTaxLineTitle.setVisibility(View.GONE);
+            tvTaxLineShowItem.setVisibility(View.GONE);
+        }
+
+        if (!TextUtils.isEmpty(totalLine)) {
+            tvTotalLineTitle.setVisibility(View.VISIBLE);
+            tvTotalLineShowItem.setVisibility(View.VISIBLE);
+        } else {
+            tvTotalLineTitle.setVisibility(View.GONE);
+            tvTotalLineShowItem.setVisibility(View.GONE);
+        }
 
         if (title == null || title.isEmpty()) {
             titleLayout.setVisibility(View.GONE);
