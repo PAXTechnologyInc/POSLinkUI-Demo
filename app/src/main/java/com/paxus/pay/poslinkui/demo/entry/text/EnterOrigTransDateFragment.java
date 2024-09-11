@@ -13,9 +13,13 @@ import androidx.annotation.NonNull;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
+import com.pax.us.pay.ui.constant.entry.enumeration.DateFormat;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_ORIG_DATE}<br>
@@ -24,6 +28,7 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 public class EnterOrigTransDateFragment extends BaseEntryFragment {
     private long timeOut;
     private String message = "";
+    private String dateFormat;
     private EditText editText;
 
     @Override
@@ -31,12 +36,18 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
         return R.layout.fragment_orig_trans_date;
     }
 
+    private Map<String, String> hintMap = new HashMap<String, String>() {{
+        put(DateFormat.MMYY, "MM/YY");
+        put(DateFormat.MMDD, "MM/DD");
+        put(DateFormat.YYYYMMDD, "YYYY/MM/DD");
+    }};
+
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
         message = getString(R.string.pls_input_orig_trans_date);
-
+        dateFormat = bundle.getString(EntryExtraData.PARAM_DATE_FORMAT, DateFormat.YYYYMMDD);
     }
 
     @Override
@@ -47,52 +58,9 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
 
         editText = rootView.findViewById(R.id.edit_expiry);
         focusableEditTexts = new EditText[]{editText};
+        editText.setHint(hintMap.get(dateFormat));
         editText.setSelection(editText.getEditableText().length());
-        editText.addTextChangedListener(new TextWatcher() {
-            protected boolean mEditing;
-            private String mPreStr;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if (!mEditing) {
-                    mPreStr = s.toString();
-                }
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (!mEditing) {
-                    mEditing = true;
-                    String value = s.toString().replaceAll("[^0-9]", "");
-                    StringBuilder sb = new StringBuilder(value);
-                    if (sb.length() > 8) {
-                        s.replace(0, s.length(), mPreStr);
-                    } else {
-                        if (sb.length() >= 6) {
-                            if (sb.length() > 6) {
-                                sb = sb.insert(6, "/");
-                            } else {
-                                sb.append("/");
-                            }
-                            sb = sb.insert(4, "/");
-                        } else if (sb.length() >= 4) {
-                            sb = sb.insert(4, "/");
-                        }
-
-                        if (mPreStr.equals(sb.toString())) {
-                            sb.delete(sb.length() - 2, sb.length());
-                        }
-
-                        s.replace(0, s.length(), sb.toString());
-                    }
-                    mEditing = false;
-                }
-            }
-        });
+        editText.addTextChangedListener(new DateTextWatcher(dateFormat));
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
@@ -102,9 +70,7 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
     protected void onConfirmButtonClicked() {
         String value = editText.getText().toString();
         value = value.replaceAll("[^0-9]", "");
-        if (value.length() == 8) {
-            submit(value);
-        }
+        submit(value);
     }
 
     private void submit(String value) {
@@ -113,3 +79,81 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
         sendNext(bundle);
     }
 }
+
+
+class DateTextWatcher implements TextWatcher {
+    protected boolean mEditing;
+    private String mPreStr = "";
+    private String format;
+
+    public DateTextWatcher(String format) {
+        this.format = format;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        if (!mEditing) {
+            mPreStr = s.toString();
+        }
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        // Do nothing here
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        if (!mEditing) {
+            mEditing = true;
+            String value = s.toString().replaceAll("[^0-9]", ""); // Remove non-digits
+            StringBuilder sb = new StringBuilder(value);
+
+            int[] formatSections = getFormatSections(format);
+            int maxLength = getMaxLength(formatSections);
+
+            if (value.length() > maxLength) {
+                s.clear();
+                s.append(mPreStr);
+            } else {
+                for (int i = 0; i < formatSections.length; i++) {
+                    int pos = sum(formatSections, i);
+                    if (value.length() > pos) {
+                        sb.insert(pos+i, "/");
+                    }
+                }
+                s.replace(0, s.length(), sb.toString());
+            }
+            mEditing = false;
+        }
+    }
+
+    private int[] getFormatSections(String format) {
+        switch (format) {
+            case DateFormat.YYYYMMDD:
+                return new int[]{4, 2, 2};
+            case DateFormat.MMYY:
+            case DateFormat.MMDD:
+                return new int[]{2, 2};
+            default:
+                throw new IllegalArgumentException("Unknown format");
+        }
+    }
+
+    private int getMaxLength(int[] formatSections) {
+        int length = 0;
+        for (int section : formatSections) {
+            length += section;
+        }
+        return length;
+    }
+
+    private int sum(int[] array, int index) {
+        int sum = 0;
+        for (int i = 0; i <= index; i++) {
+            sum += array[i];
+        }
+        return sum;
+    }
+}
+
