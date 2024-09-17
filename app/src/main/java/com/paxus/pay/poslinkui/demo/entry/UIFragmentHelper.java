@@ -101,6 +101,7 @@ import com.paxus.pay.poslinkui.demo.entry.text.amount.TotalAmountFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.fleet.FleetFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.fsa.FSAFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.CsPhoneNumberFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.number.EnterTicketNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.GuestNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.MerchantTaxIdFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.PhoneNumberFragment;
@@ -173,6 +174,7 @@ public class UIFragmentHelper {
             put(TextEntry.ACTION_ENTER_FLEET_DATA, FleetFragment.class);
             put(TextEntry.ACTION_ENTER_ORIG_DATE, EnterOrigTransDateFragment.class);
             put(TextEntry.ACTION_ENTER_ORIGINAL_TRANSACTION_IDENTIFIER, OrigTransIdentifierFragment.class);
+            put(TextEntry.ACTION_ENTER_TICKET_NUMBER, EnterTicketNumberFragment.class);
         }
     };
 

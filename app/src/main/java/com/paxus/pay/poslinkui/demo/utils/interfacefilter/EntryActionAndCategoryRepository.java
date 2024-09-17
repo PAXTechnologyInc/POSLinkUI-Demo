@@ -76,6 +76,7 @@ class EntryActionAndCategoryRepository {
         put(TextEntry.ACTION_ENTER_ORIGINAL_TRANSACTION_IDENTIFIER, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_ORIGINAL_TRANSACTION_IDENTIFIER, "Enter Original Transaction Identifier", ".TEXT.ENTER_ORIGINAL_TRANSACTION_IDENTIFIER", true));
         put(TextEntry.ACTION_ENTER_VISA_INSTALLMENT_TRANSACTIONID, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_VISA_INSTALLMENT_TRANSACTIONID, "Enter Visa Installment Transaction ID", ".TEXT.ENTER_VISA_INSTALLMENT_TRANSACTIONID", true));
         put(TextEntry.ACTION_ENTER_VISA_INSTALLMENT_PLAN_ACCEPTANCE_ID, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_VISA_INSTALLMENT_PLAN_ACCEPTANCE_ID, "Enter Visa Installment Plan Acceptance ID", ".TEXT.ENTER_VISA_INSTALLMENT_PLAN_ACCEPTANCE_ID", true));
+        put(TextEntry.ACTION_ENTER_TICKET_NUMBER, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_TICKET_NUMBER, "Enter Ticket Number", ".TEXT.ENTER_TICKET_NUMBER", true));
 
         // Option Entry
         put(OptionEntry.ACTION_SELECT_EBT_TYPE, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_EBT_TYPE, "Select EBT Type", ".OPTION.SELECT_EBT_TYPE", true));
