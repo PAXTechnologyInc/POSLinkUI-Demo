@@ -51,8 +51,14 @@ public class ShowMessageFragment extends BaseEntryFragment {
         title = null;
     }
 
+    private void clearTaxandTotal() {
+        tax = null;
+        total = null;
+    }
+
     private void clearMessage() {
         clearTitle(); // BPOSANDJAX-1283
+        clearTaxandTotal(); // POSUI-294
         messages.clear();
         loadView(getView());
     }
