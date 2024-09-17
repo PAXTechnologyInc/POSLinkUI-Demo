@@ -611,4 +611,7 @@
     <string name="prompt_input_vision_amount">Please Enter Vision Amount</string>
     <string name="prompt_input_otc_amount">Please Enter OTC Amount</string>
 
+    <!-- Value pattern -->
+    <string name="min_length_verification">The length must be greater than %1$d</string>
+
 </resources>

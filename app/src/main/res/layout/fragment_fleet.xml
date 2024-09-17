@@ -3,11 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <FrameLayout
-        android:id="@+id/fragment_placeholder"
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white">
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:id="@+id/message"
+        android:textSize="@dimen/text_size_title"
+        android:layout_marginVertical="@dimen/space_between_textview"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_number_text"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:id="@+id/confirm_button"
+        android:text="@string/confirm"/>
+
 
 </LinearLayout>
