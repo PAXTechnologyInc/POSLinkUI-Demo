@@ -3,6 +3,7 @@ package com.paxus.pay.poslinkui.demo.entry.poslink;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -79,6 +80,32 @@ public class ShowDialogFragment extends BaseEntryFragment {
 
         Button btn4 = rootView.findViewById(R.id.button4);
         formatButton(btn4, button4, 4);
+
+        rootView.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                if(keyCode == KeyEvent.KEYCODE_1 && btn1.getVisibility() == View.VISIBLE) {
+                    btn1.callOnClick();
+                    return true;
+                }
+                if(keyCode == KeyEvent.KEYCODE_2 && btn2.getVisibility() == View.VISIBLE) {
+                    btn2.callOnClick();
+                    return true;
+                }
+                if(keyCode == KeyEvent.KEYCODE_3 && btn3.getVisibility() == View.VISIBLE) {
+                    btn3.callOnClick();
+                    return true;
+                }
+                if(keyCode == KeyEvent.KEYCODE_4 && btn4.getVisibility() == View.VISIBLE) {
+                    btn4.callOnClick();
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        });
+
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
 
         if(timeOut > 0 ) {
             getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));

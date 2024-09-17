@@ -3,9 +3,7 @@ package com.paxus.pay.poslinkui.demo.entry;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -15,10 +13,6 @@ import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
 import com.pax.us.pay.ui.constant.entry.SignatureEntry;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
-import com.pax.us.pay.ui.constant.status.BatchStatus;
-import com.pax.us.pay.ui.constant.status.CardStatus;
-import com.pax.us.pay.ui.constant.status.InformationStatus;
-import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.CheckCardPresentFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.CheckDeactivateWarnFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ConfirmAdjustTipFragment;
@@ -98,7 +92,7 @@ import com.paxus.pay.poslinkui.demo.entry.text.amount.FuelAmountFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.amount.TaxAmountFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.amount.TipFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.amount.TotalAmountFragment;
-import com.paxus.pay.poslinkui.demo.entry.text.fleet.FleetFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.fleet.EnterFleetDataFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.fsa.FSAFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.CsPhoneNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.GuestNumberFragment;
@@ -170,7 +164,7 @@ public class UIFragmentHelper {
             put(TextEntry.ACTION_ENTER_AVS_DATA, AVSFragment.class);
             put(TextEntry.ACTION_ENTER_EXPIRY_DATE, ExpiryFragment.class);
             put(TextEntry.ACTION_ENTER_FSA_DATA, FSAFragment.class);
-            put(TextEntry.ACTION_ENTER_FLEET_DATA, FleetFragment.class);
+            put(TextEntry.ACTION_ENTER_FLEET_DATA, EnterFleetDataFragment.class);
             put(TextEntry.ACTION_ENTER_ORIG_DATE, EnterOrigTransDateFragment.class);
             put(TextEntry.ACTION_ENTER_ORIGINAL_TRANSACTION_IDENTIFIER, OrigTransIdentifierFragment.class);
         }
