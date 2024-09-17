@@ -454,6 +454,13 @@
             </intent-filter>
         </activity-alias>
 
+        <activity-alias android:name=".OPTION.SELECT_BATCH_REPORT_TYPE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_BATCH_REPORT_TYPE"/>
+            </intent-filter>
+        </activity-alias>
+
         <activity-alias android:name=".POSLINK.INPUT_TEXT" android:targetActivity=".entry.EntryActivity">
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="com.pax.us.pay.ui.category.POSLINK"/>

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
+import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.OptionEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
@@ -77,7 +78,9 @@ public abstract class AOptionEntryFragment extends BaseEntryFragment {
         sendNext(bundle);
     }
 
-    protected abstract String getRequestedParamName();
+    protected String getRequestedParamName() {
+        return EntryRequest.PARAM_INDEX;
+    }
 
     protected abstract String formatTitle();
 

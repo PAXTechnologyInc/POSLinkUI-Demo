@@ -53,6 +53,7 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.SupplementPartialApproval
 import com.paxus.pay.poslinkui.demo.entry.information.DisplayTransInfoFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectAccountTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectAidFragment;
+import com.paxus.pay.poslinkui.demo.entry.option.SelectBatchReportTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectBatchTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectByPassFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectCardTypeFragment;
@@ -275,6 +276,7 @@ public class UIFragmentHelper {
             put(OptionEntry.ACTION_SELECT_EBT_TYPE, SelectEbtTypeFragment.class);
             put(OptionEntry.ACTION_SELECT_COF_INITIATOR, SelectCofInitiatorFragment.class);
             put(OptionEntry.ACTION_SELECT_CASH_DISCOUNT, SelectCashDiscountFragment.class);
+            put(OptionEntry.ACTION_SELECT_BATCH_REPORT_TYPE, SelectBatchReportTypeFragment.class);
         }
     };
 
