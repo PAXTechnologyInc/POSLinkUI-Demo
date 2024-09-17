@@ -74,6 +74,9 @@ public class ShowMessageFragment extends BaseEntryFragment {
         if(messageList != null) {
             messages = parseMessageList(messageList);
         }
+        else {
+            messages = new ArrayList<>();  // POSUI-300
+        }
     }
 
     @Override
