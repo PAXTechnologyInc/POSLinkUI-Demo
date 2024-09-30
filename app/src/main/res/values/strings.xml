@@ -194,6 +194,7 @@
     <string name="pls_input_cs_phone_number">Please Enter Customer Service Phone</string>
     <string name="prompt_merchant_tax_id">Please Enter Merchant Tax ID</string>
     <string name="please_input_visa_installment_plan_acceptance_id">Please Enter Plan Acceptance ID</string>
+    <string name="enter_ticket_number">Please Enter Ticket Number</string>
 
     <!--prompt for fleet trans data-->
     <string name="prompt_input_prompt_code_for_wex">Please Enter Prompt Code</string>
