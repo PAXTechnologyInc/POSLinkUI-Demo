@@ -832,6 +832,13 @@
             </intent-filter>
         </activity-alias>
 
+        <activity-alias android:name=".TEXT.ENTER_TICKET_NUMBER" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.TEXT"/>
+                <action android:name="com.pax.us.pay.action.ENTER_TICKET_NUMBER"/>
+            </intent-filter>
+        </activity-alias>
+
 
 
     </application>
