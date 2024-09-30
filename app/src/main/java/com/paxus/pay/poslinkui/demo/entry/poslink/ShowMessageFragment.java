@@ -51,8 +51,14 @@ public class ShowMessageFragment extends BaseEntryFragment {
         title = null;
     }
 
+    private void clearTaxandTotal() {
+        tax = null;
+        total = null;
+    }
+
     private void clearMessage() {
         clearTitle(); // BPOSANDJAX-1283
+        clearTaxandTotal(); // POSUI-294
         messages.clear();
         loadView(getView());
     }
@@ -73,6 +79,9 @@ public class ShowMessageFragment extends BaseEntryFragment {
         String messageList = bundle.getString(EntryExtraData.PARAM_MESSAGE_LIST);
         if(messageList != null) {
             messages = parseMessageList(messageList);
+        }
+        else {
+            messages = new ArrayList<>();  // POSUI-300
         }
     }
 
