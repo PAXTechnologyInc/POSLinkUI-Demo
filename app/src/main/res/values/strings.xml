@@ -179,6 +179,7 @@
     <string name="select_orig_currency">Please Select Orig Trans Currency</string>
     <string name="select_cof_initiator">Please Select COF Initiator</string>
     <string name="select_cash_discount">Please Select Payment Type</string>
+    <string name="select_batch_report_type">Please Select Batch Report Type</string>
 
     <string name="pls_input_clerk_id">Please Enter Clerk ID</string>
     <string name="pls_input_server_id">Please Enter Server ID</string>
