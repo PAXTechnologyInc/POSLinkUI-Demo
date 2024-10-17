@@ -151,15 +151,6 @@ public class TipFragment extends BaseEntryFragment {
             focusableEditTexts = new EditText[]{tipInputEditText};
         }
 
-        //Enter Tip or Enter Other Tip
-        tipInputEditText.addTextChangedListener(new AmountTextWatcher(maxLength, currency){
-            @Override public void afterTextChanged(Editable s) {
-                super.afterTextChanged(s);
-                tip = CurrencyUtils.parse(s.toString());
-            }
-        });
-        tipInputEditText.setText("0"); // Initializing TextChangedListener
-
         //No Tip Option
         SelectOptionsView noTipOptionView = rootView.findViewById(R.id.select_view_no_tip);
         if(isNoTipSelectionAllowed) {
@@ -171,6 +162,15 @@ public class TipFragment extends BaseEntryFragment {
             });
             if(isSelectTipEnabled) tipOptionsView.append(noTipOptionView);
         }
+
+        //Enter Tip or Enter Other Tip
+        tipInputEditText.addTextChangedListener(new AmountTextWatcher(maxLength, currency){
+            @Override public void afterTextChanged(Editable s) {
+                super.afterTextChanged(s);
+                tip = CurrencyUtils.parse(s.toString());
+            }
+        });
+        tipInputEditText.setText(String.valueOf(tip)); //Initialize TextWatcher with Default Tip Value
 
         //Confirm
         Button confirmButton = rootView.findViewById(R.id.button_confirm);
@@ -230,7 +230,11 @@ public class TipFragment extends BaseEntryFragment {
 
     private void submit(long value) {
         Bundle bundle = new Bundle();
-        if(value>=0) bundle.putLong(EntryRequest.PARAM_TIP, value);
+
+        if(value>=0) {
+            bundle.putLong(EntryRequest.PARAM_TIP, value);
+        }
+
         sendNext(bundle);
     }
 }
