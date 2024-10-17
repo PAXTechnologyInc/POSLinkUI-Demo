@@ -123,9 +123,8 @@ public class ShowItemFragment extends BaseEntryFragment {
         if (itemWrapperList != null) {
             itemListAdapter = new ItemListAdapter(requireContext(), topDown ? itemWrapperList : reverseList(itemWrapperList), currencySymbol);
             recyclerViewShowItem.setAdapter(itemListAdapter);
+            recyclerViewShowItem.scrollToPosition(topDown ? itemWrapperList.size() - 1 : 0);
         }
-
-        recyclerViewShowItem.scrollToPosition(topDown ? itemWrapperList.size() - 1 : 0);
 
         ConstraintLayout.LayoutParams recyclerViewLayoutParams = (ConstraintLayout.LayoutParams) recyclerViewShowItem.getLayoutParams();
         recyclerViewLayoutParams.verticalBias = topDown ? 0.0f : 1.0f;

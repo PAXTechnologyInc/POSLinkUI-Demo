@@ -54,7 +54,7 @@ public class SelectCashDiscountFragment extends AOptionEntryFragment {
                     options.add(new SelectOptionsView.Option(i, title, amount>0 ? CurrencyUtils.convert(amount, currency) : null, i));
                 }
             }
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
             Logger.e(e);
         }
 
