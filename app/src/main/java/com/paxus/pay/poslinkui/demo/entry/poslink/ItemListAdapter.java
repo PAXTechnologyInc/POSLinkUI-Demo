@@ -62,7 +62,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
                 quantityDesc = itemDetail.getQuantity() + "ft";
                 break;
         }
-        holder.tvProductName.setText((position + 1) + "." + itemDetail.getProductName());
+        holder.tvProductName.setText((position + 1) + ". " + itemDetail.getProductName());
 
         RelativeLayout.LayoutParams productNameLps = (RelativeLayout.LayoutParams)holder.tvProductName.getLayoutParams();
         if (!TextUtils.isEmpty(itemDetail.getQuantity())) {
