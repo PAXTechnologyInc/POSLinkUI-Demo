@@ -1,8 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -14,7 +12,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckedTextView;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
@@ -26,10 +23,10 @@ import androidx.fragment.app.FragmentResultListener;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
-import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.Toast;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +48,6 @@ public abstract class BaseEntryFragment extends Fragment {
     private boolean active = false;
     private Context appContext = getActivity();
     private String senderPackage, action;
-    protected EditText[] focusableEditTexts = null;
 
     @Nullable
     @Override
@@ -68,26 +64,35 @@ public abstract class BaseEntryFragment extends Fragment {
             Logger.e(this.getClass().getSimpleName() + " arguments missing!!!");
         }
 
-        focusableEditTexts = null;
 
         View view = inflater.inflate(getLayoutResourceId(), container, false);
         loadView(view);
+        setupFocusableTextFields(focusableTextFields(), view);
         activate();
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Logger.d("onStart " + getClass().getSimpleName());
-        prepareEditTextsForSubmissionWithSoftKeyboard(focusableEditTexts);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Logger.d("onStop " + getClass().getSimpleName());
-        prepareEditTextsForSubmissionWithSoftKeyboard();
+    private void setupFocusableTextFields(TextField[] textFields, View view) {
+        if(textFields!= null && textFields.length > 0) {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            for (int i = 0; i < textFields.length - 1; i++) {
+                textFields[i].attachToLifecycle(getViewLifecycleOwner().getLifecycle());
+                textFields[i].setImeOptions(textFields[i].getImeOptions() | EditorInfo.IME_ACTION_NEXT);
+                textFields[i].setNextFocusDownId(textFields[i + 1].getId());
+            }
+            textFields[textFields.length - 1].attachToLifecycle(getViewLifecycleOwner().getLifecycle());
+            textFields[textFields.length - 1].setImeOptions(textFields[textFields.length - 1].getImeOptions() | EditorInfo.IME_ACTION_DONE);
+            textFields[textFields.length - 1].setOnEditorActionListener((textView, i, keyEvent) -> {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    executeEnterKeyEvent();
+                }
+                return true;
+            });
+        } else {
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY|InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     @Override
@@ -142,7 +147,6 @@ public abstract class BaseEntryFragment extends Fragment {
 
     protected void sendNext(Bundle bundle){
         EditabilityBlocker.getInstance().block((ViewGroup) getView());
-        prepareEditTextsForSubmissionWithSoftKeyboard();
         EntryRequestUtils.sendNext(requireContext(), senderPackage, action, bundle);
     }
 
@@ -183,6 +187,8 @@ public abstract class BaseEntryFragment extends Fragment {
         sendAbort();
     }
 
+    protected abstract TextField[] focusableTextFields();
+
     /**
      * Entry Accepted means BroadPOS accepts the output from ACTION_NEXT
      */
@@ -200,39 +206,6 @@ public abstract class BaseEntryFragment extends Fragment {
     protected void onEntryDeclined(int errCode, String errMessage) {
         Logger.i("Receive Response Broadcast ACTION_DECLINED for action \"" + action + "\" (" + errCode + "-" + errMessage + ")");
         new Toast(getActivity()).show(errMessage, Toast.TYPE.FAILURE);
-    }
-
-    /**
-     * Changes IME_ACTION of soft keyboard. All but the last EditText will focus the next one. Last one will submit.
-     */
-    private void prepareEditTextsForSubmissionWithSoftKeyboard(EditText... editTexts) {
-        if (editTexts == null || editTexts.length == 0 || !isActive()) {
-            requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-            InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY|InputMethodManager.HIDE_NOT_ALWAYS);
-            return;
-        }
-        for (int i = 0; i < editTexts.length - 1; i++) {
-            editTexts[i].setImeOptions(editTexts[i].getImeOptions() | EditorInfo.IME_ACTION_NEXT);
-            editTexts[i].setNextFocusDownId(editTexts[i + 1].getId());
-        }
-        editTexts[editTexts.length - 1].setImeOptions(editTexts[editTexts.length - 1].getImeOptions() | EditorInfo.IME_ACTION_DONE);
-        editTexts[editTexts.length - 1].setOnEditorActionListener((textView, i, keyEvent) -> {
-            if (i == EditorInfo.IME_ACTION_DONE) {
-                executeEnterKeyEvent();
-            }
-            return true;
-        });
-        editTexts[0].requestFocus();
-        if(!DeviceUtils.hasPhysicalKeyboard()){
-            Logger.d("Showing soft keyboard");
-            Context context = (!(editTexts[0].getContext() instanceof Activity) && editTexts[0].getContext() instanceof ContextWrapper)
-                    ? ((ContextWrapper) editTexts[0].getContext()).getBaseContext() : editTexts[0].getContext();
-            ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE| WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-            InputMethodManager inputMethodManager = (InputMethodManager) (context.getSystemService(Context.INPUT_METHOD_SERVICE));
-            inputMethodManager.showSoftInput(editTexts[0], InputMethodManager.SHOW_FORCED);
-        }
-
     }
 
     //Used to get response broadcast from activity
@@ -280,7 +253,7 @@ public abstract class BaseEntryFragment extends Fragment {
         }
         public void block(ViewGroup parent){
             for(int i=0; i<parent.getChildCount(); i++){
-                if (parent.getChildAt(i) instanceof EditText || parent.getChildAt(i) instanceof Button) {
+                if (parent.getChildAt(i) instanceof TextField || parent.getChildAt(i) instanceof Button) {
                     if(parent.getChildAt(i).getVisibility() == View.VISIBLE && parent.getChildAt(i).isEnabled()){
                         parent.getChildAt(i).setEnabled(false);
                         blockedViews.add(parent.getChildAt(i));

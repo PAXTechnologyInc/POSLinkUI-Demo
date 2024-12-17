@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement text entry actions:<br>
@@ -25,7 +25,7 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
  */
 public abstract class ANumFragment extends BaseEntryFragment {
 
-    protected EditText editText;
+    protected TextField textField;
 
     @Override
     protected int getLayoutResourceId() {
@@ -38,11 +38,10 @@ public abstract class ANumFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        editText = rootView.findViewById(R.id.edit_number);
-        focusableEditTexts = new EditText[]{editText};
+        textField = rootView.findViewById(R.id.edit_number);
         int maxLength = getMaxLength();
         if (maxLength > 0) {
-            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+            textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
         }
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
@@ -55,7 +54,7 @@ public abstract class ANumFragment extends BaseEntryFragment {
 
     @Override
     protected void onConfirmButtonClicked() {
-        String value = editText.getText().toString();
+        String value = textField.getText().toString();
         submit(value);
     }
 
@@ -63,6 +62,11 @@ public abstract class ANumFragment extends BaseEntryFragment {
         Bundle bundle = new Bundle();
         bundle.putString(getRequestedParamName(), value);
         sendNext(bundle);
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return new TextField[]{textField};
     }
 
     protected abstract String getRequestedParamName();

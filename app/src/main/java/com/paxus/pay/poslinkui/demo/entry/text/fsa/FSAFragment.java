@@ -15,6 +15,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.FSAType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.util.Arrays;
 import java.util.List;
@@ -268,5 +269,10 @@ public class FSAFragment extends BaseEntryFragment {
     @Override
     protected void onConfirmButtonClicked() {
         getChildFragmentManager().setFragmentResult(REQUEST_KEY_CONFIRM, new Bundle());
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 }

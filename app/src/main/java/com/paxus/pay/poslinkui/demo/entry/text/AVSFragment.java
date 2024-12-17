@@ -5,7 +5,6 @@ import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 
@@ -15,8 +14,8 @@ import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.InputType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_AVS_DATA}<br>
@@ -29,8 +28,8 @@ public class AVSFragment extends BaseEntryFragment {
     private int maxLengthZip;
     private boolean zipText;
 
-    private EditText editTextAddr;
-    private EditText editTextZip;
+    private TextField editTextAddr;
+    private TextField editTextZip;
 
     @Override
     protected int getLayoutResourceId() {
@@ -62,7 +61,6 @@ public class AVSFragment extends BaseEntryFragment {
     protected void loadView(View rootView) {
         editTextAddr = rootView.findViewById(R.id.edit_address);
         editTextZip = rootView.findViewById(R.id.edit_zip);
-        focusableEditTexts = new EditText[]{editTextAddr, editTextZip};
 
         if(maxLengthAddr > 0 ) editTextAddr.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthAddr)});
         if(maxLengthZip > 0 ) editTextZip.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLengthZip)});
@@ -87,5 +85,10 @@ public class AVSFragment extends BaseEntryFragment {
         bundle.putString(EntryRequest.PARAM_ADDRESS, addr);
         bundle.putString(EntryRequest.PARAM_ZIP_CODE, zip);
         sendNext(bundle);
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return new TextField[]{editTextZip, editTextAddr};
     }
 }

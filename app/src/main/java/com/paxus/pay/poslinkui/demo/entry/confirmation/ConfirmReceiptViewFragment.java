@@ -24,6 +24,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.io.IOException;
 
@@ -115,5 +116,10 @@ public class ConfirmReceiptViewFragment extends BaseEntryFragment {
         Bundle bundle = new Bundle();
         bundle.putBoolean(EntryRequest.PARAM_CONFIRMED, true);
         sendNext(bundle);
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 }

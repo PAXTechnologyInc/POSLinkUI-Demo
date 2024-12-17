@@ -20,6 +20,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.util.Hashtable;
 
@@ -109,5 +110,10 @@ public class DisplayQRCodeReceiptFragment extends BaseEntryFragment {
     @Override
     protected void executeBackPressEvent() {
         sendNext(null);
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 }

@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement confirmation entry action {@value ConfirmationEntry#ACTION_START_UI}
@@ -33,5 +34,10 @@ public class StartUIFragment extends BaseEntryFragment {
 
     @Override protected void executeBackPressEvent() {
         return;
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 }

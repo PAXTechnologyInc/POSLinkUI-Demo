@@ -9,9 +9,10 @@
         android:id="@+id/message"
         android:textSize="@dimen/text_size_title"
         android:layout_marginVertical="@dimen/space_between_textview"/>
-    <EditText
+
+    <com.paxus.pay.poslinkui.demo.view.TextField
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/button_height"
         android:id="@+id/edit_number_text"
         />
     <Button
