@@ -1,4 +1,4 @@
-package com.paxus.pay.poslinkui.demo.entry.text.numbertext;
+package com.paxus.pay.poslinkui.demo.entry.text.text;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -8,52 +8,42 @@ import androidx.annotation.NonNull;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
-import com.pax.us.pay.ui.constant.entry.enumeration.InputType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 
 /**
- * Implement text entry action {@value TextEntry#ACTION_ENTER_REFERENCE_NUMBER}<br>
+ * Implements {@value TextEntry#ACTION_ENTER_GLOBAL_UID}<br>
  */
 
-public class ReferenceNumberFragment extends ANumTextFragment {
+public class EnterGlobalUIDFragment extends ATextFragment {
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    private String message = "";
-    protected boolean allText;
 
     @Override
-    protected int getMaxLength() {
+    public int getMaxLength() {
         return maxLength;
-    }
-
-    @Override
-    protected boolean allowText() {
-        return allText;
     }
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
-        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "1-32");
-        if (!TextUtils.isEmpty(valuePatten)) {
+        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "64");
+
+        if(!TextUtils.isEmpty(valuePatten)){
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
-
-        allText = InputType.ALLTEXT.equals(bundle.getString(EntryExtraData.PARAM_EINPUT_TYPE));
     }
 
     @Override
     protected String formatMessage() {
-        return getString(R.string.pls_input_reference_number);
+        return getString(R.string.enter_global_uid);
     }
 
     @Override
     protected String getRequestedParamName() {
-        return EntryRequest.PARAM_REFERENCE_NUMBER;
+        return EntryRequest.PARAM_GLOBAL_UID;
     }
-
 }
