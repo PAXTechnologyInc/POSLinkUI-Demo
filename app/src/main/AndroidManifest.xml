@@ -39,6 +39,7 @@
             android:launchMode="singleTop"
             android:autoRemoveFromRecents="true"
             android:clearTaskOnLaunch="true"
+            android:windowSoftInputMode="adjustNothing"
             />
 
         <activity-alias android:name=".CONFIRMATION.CONFIRM_ADJUST_TIP" android:targetActivity=".entry.EntryActivity">

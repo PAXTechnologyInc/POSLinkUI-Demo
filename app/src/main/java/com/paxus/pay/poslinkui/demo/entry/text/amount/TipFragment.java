@@ -9,10 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CheckedTextView;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,6 +28,7 @@ import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 import com.paxus.pay.poslinkui.demo.view.SelectOptionsView;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +50,8 @@ public class TipFragment extends BaseEntryFragment {
 
     private List<SelectOptionsView.Option> tipOptionList = new ArrayList<>();
     private List<TipInfo> tipInfoList = new ArrayList<>();
+
+    private TextField tipInputEditText;
 
     long tip = 0;
 
@@ -131,7 +131,7 @@ public class TipFragment extends BaseEntryFragment {
 
         //Select and Enter Tip
         SelectOptionsView tipOptionsView = rootView.findViewById(R.id.select_view_tip_options);
-        EditText tipInputEditText = rootView.findViewById(R.id.edit_text_tip_entry);
+        tipInputEditText = rootView.findViewById(R.id.edit_text_tip_entry);
         if(isSelectTipEnabled){
             tipOptionsView.setVisibility(View.VISIBLE);
             tipOptionsView.initialize(getActivity(), tipOptionList.size(), tipOptionList, option -> {
@@ -147,8 +147,6 @@ public class TipFragment extends BaseEntryFragment {
                 if (actionId == EditorInfo.IME_ACTION_DONE) onConfirmButtonClicked();
                 return true;
             });
-        } else {
-            focusableEditTexts = new EditText[]{tipInputEditText};
         }
 
         //No Tip Option
@@ -171,6 +169,7 @@ public class TipFragment extends BaseEntryFragment {
             }
         });
         tipInputEditText.setText(String.valueOf(tip)); //Initialize TextWatcher with Default Tip Value
+        tipInputEditText.setSelection(tipInputEditText.getEditableText().length());
 
         //Confirm
         Button confirmButton = rootView.findViewById(R.id.button_confirm);
@@ -236,5 +235,10 @@ public class TipFragment extends BaseEntryFragment {
         }
 
         sendNext(bundle);
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return isSelectTipEnabled ? null : new TextField[]{tipInputEditText};
     }
 }

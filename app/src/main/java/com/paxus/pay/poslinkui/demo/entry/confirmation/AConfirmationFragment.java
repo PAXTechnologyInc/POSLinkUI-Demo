@@ -14,6 +14,7 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Abstract class for all entry actions defined in {@link ConfirmationEntry} <br>
@@ -78,4 +79,8 @@ public abstract class AConfirmationFragment extends BaseEntryFragment {
         return (options != null && options.length>1) ? options[1] : null;
     }
 
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
+    }
 }

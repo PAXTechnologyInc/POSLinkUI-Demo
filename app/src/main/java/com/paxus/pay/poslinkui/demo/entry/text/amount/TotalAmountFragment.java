@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +17,7 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_TOTAL_AMOUNT}<br>
@@ -39,7 +39,7 @@ public class TotalAmountFragment extends BaseEntryFragment {
     private boolean noTipEnabled;
     private String tipName;
 
-    private EditText editText;
+    private TextField textField;
 
     @Override
     protected int getLayoutResourceId() {
@@ -70,12 +70,11 @@ public class TotalAmountFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        editText = rootView.findViewById(R.id.edit_amount);
-        focusableEditTexts = new EditText[]{editText};
-        editText.setSelected(false);
-        editText.setText(CurrencyUtils.convert(0,currency));
-        editText.setSelection(editText.getEditableText().length());
-        editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
+        textField = rootView.findViewById(R.id.edit_amount);
+        textField.setSelected(false);
+        textField.setText(CurrencyUtils.convert(0,currency));
+        textField.setSelection(textField.getEditableText().length());
+        textField.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
@@ -110,7 +109,12 @@ public class TotalAmountFragment extends BaseEntryFragment {
 
     @Override
     protected void onConfirmButtonClicked(){
-        long value = CurrencyUtils.parse(editText.getText().toString());
+        long value = CurrencyUtils.parse(textField.getText().toString());
         submit(value);
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return new TextField[]{textField};
     }
 }

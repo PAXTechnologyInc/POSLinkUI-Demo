@@ -19,6 +19,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.AdminPasswordType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.util.Locale;
 
@@ -91,5 +92,10 @@ public class AdministratorPasswordFragment extends BaseEntryFragment {
         } else {
             sendSecurityArea(inputTextView);
         }
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 }

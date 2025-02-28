@@ -159,8 +159,10 @@ public class EntryActivity extends AppCompatActivity{
 
             if(!getSupportFragmentManager().isStateSaved()) {
                 getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.anim_enter_from_bottom, R.anim.anim_exit_to_bottom)
-                    .replace(R.id.status_container, statusFragment).commit();
+                        .setCustomAnimations(R.anim.anim_enter_from_right, R.anim.anim_exit_to_left, R.anim.anim_enter_from_right, R.anim.anim_exit_to_left)
+                        .replace(R.id.fragment_placeholder, EmptyFragment.newInstance(getIntent().getStringExtra(EntryExtraData.PARAM_PACKAGE), getIntent().getAction()))
+                        .setCustomAnimations(R.anim.anim_enter_from_bottom, R.anim.anim_exit_to_bottom)
+                        .replace(R.id.status_container, statusFragment).commit();
             }
         }
     }

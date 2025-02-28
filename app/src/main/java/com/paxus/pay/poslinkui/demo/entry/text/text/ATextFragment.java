@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement text entry actions:<br>
@@ -22,7 +22,7 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
  */
 public abstract class ATextFragment extends BaseEntryFragment {
 
-    protected EditText editText;
+    protected TextField textField;
 
     @Override
     protected int getLayoutResourceId() {
@@ -34,15 +34,14 @@ public abstract class ATextFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(formatMessage());
 
-        editText = rootView.findViewById(R.id.edit_text);
+        textField = rootView.findViewById(R.id.edit_text);
         int maxLength = getMaxLength();
         if (maxLength > 0) {
-            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+            textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
         }
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
-        focusableEditTexts = new EditText[]{editText};
     }
 
     protected abstract int getMaxLength();
@@ -51,7 +50,7 @@ public abstract class ATextFragment extends BaseEntryFragment {
 
     @Override
     protected void onConfirmButtonClicked() {
-        String value = editText.getText().toString();
+        String value = textField.getText().toString();
         submit(value);
     }
 
@@ -62,4 +61,9 @@ public abstract class ATextFragment extends BaseEntryFragment {
     }
 
     protected abstract String getRequestedParamName();
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return new TextField[]{textField};
+    }
 }

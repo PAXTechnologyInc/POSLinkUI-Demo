@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement text entry actions:<br>
@@ -23,7 +23,7 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
  */
 public abstract class ANumTextFragment extends BaseEntryFragment {
 
-    protected EditText editText;
+    protected TextField textField;
 
     @Override
     protected int getLayoutResourceId() {
@@ -37,16 +37,15 @@ public abstract class ANumTextFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        editText = rootView.findViewById(R.id.edit_number_text);
-        focusableEditTexts = new EditText[]{editText};
+        textField = rootView.findViewById(R.id.edit_number_text);
         int maxLength = getMaxLength();
         if (maxLength > 0) {
-            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+            textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
         }
         if (allowText()) {
-            editText.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
+            textField.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
         } else {
-            editText.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+            textField.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         }
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
@@ -55,7 +54,7 @@ public abstract class ANumTextFragment extends BaseEntryFragment {
 
     @Override
     protected void onConfirmButtonClicked() {
-        String value = editText.getText().toString();
+        String value = textField.getText().toString();
         submit(value);
     }
 
@@ -66,6 +65,11 @@ public abstract class ANumTextFragment extends BaseEntryFragment {
     protected abstract String formatMessage();
 
     protected abstract String getRequestedParamName();
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return new TextField[]{textField};
+    }
 
     protected void submit(String value) {
         Bundle bundle = new Bundle();

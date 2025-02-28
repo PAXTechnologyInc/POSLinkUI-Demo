@@ -32,6 +32,7 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement security entry actions {@link SecurityEntry#ACTION_INPUT_ACCOUNT}
@@ -91,6 +92,11 @@ public class InputAccountFragment extends BaseEntryFragment {
     @Override
     protected void onConfirmButtonClicked() {
         sendNext(null);
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 
     @Override
@@ -162,7 +168,7 @@ public class InputAccountFragment extends BaseEntryFragment {
                     mContentView = requireActivity().getWindow().findViewById(Window.ID_ANDROID_CONTENT);
                     if ("Q10A".equals(Build.MODEL)) {
                         panInputBox.addOnLayoutChangeListener((view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-                            Logger.d("Security EditText onLayoutChange:" + left + "," + top + "," + right + "," + bottom + "," + oldLeft + "," + oldTop + "," + oldRight + "," + oldBottom);
+                            Logger.d("Security Widget onLayoutChange:" + left + "," + top + "," + right + "," + bottom + "," + oldLeft + "," + oldTop + "," + oldRight + "," + oldBottom);
                             if (right != oldRight) {
                                 onPanInputBoxLayoutReady(panInputBox);
                             }

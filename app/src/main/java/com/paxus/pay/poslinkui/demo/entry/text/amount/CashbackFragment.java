@@ -6,11 +6,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.CheckedTextView;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,10 +19,10 @@ import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 import com.paxus.pay.poslinkui.demo.view.SelectOptionsView;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +41,8 @@ public class CashbackFragment extends BaseEntryFragment {
     private List<SelectOptionsView.Option> optionList = new ArrayList<>();
 
     private long cashback = 0;
+
+    TextField editCashback;
 
     @Override
     protected int getLayoutResourceId() {
@@ -82,7 +81,7 @@ public class CashbackFragment extends BaseEntryFragment {
         boolean isSelectCashbackEnabled = !optionList.isEmpty();
 
         SelectOptionsView cashbackOptionsView = rootView.findViewById(R.id.options_layout);
-        EditText editCashback = rootView.findViewById(R.id.edit_cashback);
+        editCashback = rootView.findViewById(R.id.edit_cashback);
 
         if(isSelectCashbackEnabled) {
             ((TextView)rootView.findViewById(R.id.message)).setText(getString(R.string.select_cashback_amount));
@@ -100,7 +99,6 @@ public class CashbackFragment extends BaseEntryFragment {
             }
         } else {
             editCashback.setVisibility(View.VISIBLE);
-            focusableEditTexts = new EditText[]{editCashback};
         }
         if(editCashback.getVisibility() == View.VISIBLE){
             editCashback.addTextChangedListener(new CashbackEditTextWatcher(maxLength,currency, value -> this.cashback = value));
@@ -145,5 +143,10 @@ public class CashbackFragment extends BaseEntryFragment {
         Bundle bundle = new Bundle();
         bundle.putLong(EntryRequest.PARAM_CASHBACK_AMOUNT, value);
         sendNext(bundle);
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return optionList.isEmpty() ? new TextField[]{editCashback} : null;
     }
 }
