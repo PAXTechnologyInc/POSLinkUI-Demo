@@ -15,8 +15,6 @@ import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 public class TransCompletedStatusFragment extends StatusFragment {
     private long code, delay;
 
-    private static final long TRANS_RESULT_CODE_FOR_INSTANT_TERMINATION = -3;
-
     public TransCompletedStatusFragment(Intent intent, Context context) {
         super(intent, context);
         this.code = getArguments().getLong(StatusData.PARAM_CODE);
@@ -36,6 +34,7 @@ public class TransCompletedStatusFragment extends StatusFragment {
 
     @Override
     public boolean isImmediateTerminationNeeded() {
-        return this.message == null || this.message.isEmpty() || this.code == TRANS_RESULT_CODE_FOR_INSTANT_TERMINATION;
+        // [BPOSANDJAX-1246]  regardless of whether the POSLink UI is installed BroadPOS must display the prompt “ABORTED” when a transaction is canceled.
+        return this.message == null || this.message.isEmpty();
     }
 }
