@@ -280,6 +280,13 @@
             </intent-filter>
         </activity-alias>
 
+        <activity-alias android:name=".INFORMATION.DISPLAY_APPROVE_MESSAGE" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.DETAILS"/>
+                <action android:name="com.pax.us.pay.action.DISPLAY_APPROVE_MESSAGE"/>
+            </intent-filter>
+        </activity-alias>
+
         <activity-alias android:name=".OPTION.SELECT_ACCOUNT_TYPE" android:targetActivity=".entry.EntryActivity">
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="com.pax.us.pay.ui.category.OPTION"/>
