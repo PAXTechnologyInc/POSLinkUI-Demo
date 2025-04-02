@@ -151,6 +151,18 @@ public class TipFragment extends BaseEntryFragment {
             focusableEditTexts = new EditText[]{tipInputEditText};
         }
 
+        //No Tip Option
+        SelectOptionsView noTipOptionView = rootView.findViewById(R.id.select_view_no_tip);
+        if(isNoTipSelectionAllowed) {
+            noTipOptionView.setVisibility(View.VISIBLE);
+            List<SelectOptionsView.Option> noTipOptionList = new ArrayList<>(Arrays.asList(new SelectOptionsView.Option(null, "No Tip", null, -1L)));
+            noTipOptionView.initialize(getActivity(), 1, noTipOptionList, option -> {
+                tip = (long) option.getValue();
+                onConfirmButtonClicked();
+            });
+            if(isSelectTipEnabled) tipOptionsView.append(noTipOptionView);
+        }
+
         //Enter Tip or Enter Other Tip
         tipInputEditText.addTextChangedListener(new AmountTextWatcher(maxLength, currency){
             @Override public void afterTextChanged(Editable s) {
@@ -158,19 +170,7 @@ public class TipFragment extends BaseEntryFragment {
                 tip = CurrencyUtils.parse(s.toString());
             }
         });
-        tipInputEditText.setText("0"); // Initializing TextChangedListener
-
-        //No Tip Option
-        SelectOptionsView noTipOptionView = rootView.findViewById(R.id.select_view_no_tip);
-        if(isNoTipSelectionAllowed) {
-            noTipOptionView.setVisibility(View.VISIBLE);
-            List<SelectOptionsView.Option> noTipOptionList = new ArrayList<>(Arrays.asList(new SelectOptionsView.Option(null, "No Tip", null, 0L)));
-            noTipOptionView.initialize(getActivity(), 1, noTipOptionList, option -> {
-                tip = (long) option.getValue();
-                onConfirmButtonClicked();
-            });
-            if(isSelectTipEnabled) tipOptionsView.append(noTipOptionView);
-        }
+        tipInputEditText.setText(String.valueOf(tip)); //Initialize TextWatcher with Default Tip Value
 
         //Confirm
         Button confirmButton = rootView.findViewById(R.id.button_confirm);
@@ -230,7 +230,11 @@ public class TipFragment extends BaseEntryFragment {
 
     private void submit(long value) {
         Bundle bundle = new Bundle();
-        bundle.putLong(EntryRequest.PARAM_TIP, value);
+
+        if(value>=0) {
+            bundle.putLong(EntryRequest.PARAM_TIP, value);
+        }
+
         sendNext(bundle);
     }
 }

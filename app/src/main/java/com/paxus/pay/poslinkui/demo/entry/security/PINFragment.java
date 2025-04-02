@@ -191,7 +191,7 @@ public class PINFragment extends BaseEntryFragment {
                     pinBox.setText(text + "*");
                     break;
                 case PINStatus.PIN_ENTER_CLEARED:
-                    if(text.length() > 0) pinBox.setText(text.substring(0,text.length()-1));
+                    pinBox.setText("");
                     break;
                 case PINStatus.PIN_ENTER_ABORTED:
                     break;

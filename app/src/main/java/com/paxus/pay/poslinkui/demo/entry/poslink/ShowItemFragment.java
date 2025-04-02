@@ -1,12 +1,15 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,6 +42,7 @@ public class ShowItemFragment extends BaseEntryFragment {
     private String taxLine;
     private String totalLine;
     private String currencySymbol;
+    private boolean topDown;
     private List<ItemDetailWrapper> itemWrapperList = new ArrayList<>();
 
     private RecyclerView.Adapter itemListAdapter;
@@ -70,6 +75,7 @@ public class ShowItemFragment extends BaseEntryFragment {
         taxLine = bundle.getString(EntryExtraData.PARAM_TAX_LINE);
         totalLine = bundle.getString(EntryExtraData.PARAM_TOTAL_LINE);
         currencySymbol = bundle.getString(EntryExtraData.PARAM_CURRENCY_SYMBOL);
+        topDown = bundle.getBoolean(EntryExtraData.PARAM_TOP_DOWN, true);
 
         itemWrapperList = parseItemList(bundle.getString(EntryExtraData.PARAM_MESSAGE_LIST));
     }
@@ -79,7 +85,25 @@ public class ShowItemFragment extends BaseEntryFragment {
         LinearLayout titleLayout = rootView.findViewById(R.id.tv_title_show_item);
         TextView tvTotalLineShowItem = rootView.findViewById(R.id.tv_total_line_show_item);
         TextView tvTaxLineShowItem = rootView.findViewById(R.id.tv_tax_line_show_item);
+        TextView tvTotalLineTitle = rootView.findViewById(R.id.total_line_title);
+        TextView tvTaxLineTitle = rootView.findViewById(R.id.tax_line_title);
         RecyclerView recyclerViewShowItem = rootView.findViewById(R.id.recycler_View_show_item);
+
+        if (!TextUtils.isEmpty(taxLine)) {
+            tvTaxLineTitle.setVisibility(View.VISIBLE);
+            tvTaxLineShowItem.setVisibility(View.VISIBLE);
+        } else {
+            tvTaxLineTitle.setVisibility(View.GONE);
+            tvTaxLineShowItem.setVisibility(View.GONE);
+        }
+
+        if (!TextUtils.isEmpty(totalLine)) {
+            tvTotalLineTitle.setVisibility(View.VISIBLE);
+            tvTotalLineShowItem.setVisibility(View.VISIBLE);
+        } else {
+            tvTotalLineTitle.setVisibility(View.GONE);
+            tvTotalLineShowItem.setVisibility(View.GONE);
+        }
 
         if (title == null || title.isEmpty()) {
             titleLayout.setVisibility(View.GONE);
@@ -99,8 +123,18 @@ public class ShowItemFragment extends BaseEntryFragment {
         if (itemWrapperList != null) {
             itemListAdapter = new ItemListAdapter(requireContext(), itemWrapperList, currencySymbol);
             recyclerViewShowItem.setAdapter(itemListAdapter);
+            recyclerViewShowItem.scrollToPosition(topDown ? 0 : itemWrapperList.size() - 1);
         }
 
+        ConstraintLayout.LayoutParams recyclerViewLayoutParams = (ConstraintLayout.LayoutParams) recyclerViewShowItem.getLayoutParams();
+        recyclerViewLayoutParams.verticalBias = topDown ? 0.0f : 1.0f;
+        recyclerViewShowItem.setLayoutParams(recyclerViewLayoutParams);
+    }
+
+    private List<ItemDetailWrapper> reverseList(List<ItemDetailWrapper> itemWrapperList) {
+        List<ItemDetailWrapper> reversedList = new ArrayList<>(itemWrapperList);
+        Collections.reverse(reversedList);
+        return reversedList;
     }
 
     private List<ItemDetailWrapper> parseItemList(String jsonString) {
