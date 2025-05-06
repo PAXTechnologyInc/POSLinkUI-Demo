@@ -116,6 +116,7 @@ import com.paxus.pay.poslinkui.demo.entry.text.numbertext.ZipcodeFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.AddressFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.AuthFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.CustomerCodeFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.text.EnterGlobalUIDFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.OrderNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.OrigTransIdentifierFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.text.PoNumberFragment;
@@ -171,6 +172,7 @@ public class UIFragmentHelper {
             put(TextEntry.ACTION_ENTER_ORIG_DATE, EnterOrigTransDateFragment.class);
             put(TextEntry.ACTION_ENTER_ORIGINAL_TRANSACTION_IDENTIFIER, OrigTransIdentifierFragment.class);
             put(TextEntry.ACTION_ENTER_TICKET_NUMBER, EnterTicketNumberFragment.class);
+            put(TextEntry.ACTION_ENTER_GLOBAL_UID, EnterGlobalUIDFragment.class);
         }
     };
 
