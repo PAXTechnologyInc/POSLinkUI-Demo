@@ -16,6 +16,7 @@ import com.pax.us.pay.ui.constant.entry.OptionEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.view.SelectOptionsView;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,4 +85,8 @@ public abstract class AOptionEntryFragment extends BaseEntryFragment {
 
     protected abstract String formatTitle();
 
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
+    }
 }

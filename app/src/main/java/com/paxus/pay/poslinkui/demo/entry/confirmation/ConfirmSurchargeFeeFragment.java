@@ -13,6 +13,7 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_SURCHARGE_FEE}
@@ -86,5 +87,10 @@ public class ConfirmSurchargeFeeFragment extends BaseEntryFragment {
         Bundle bundle = new Bundle();
         bundle.putBoolean(EntryRequest.PARAM_CONFIRMED, confirm);
         sendNext(bundle);
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 }

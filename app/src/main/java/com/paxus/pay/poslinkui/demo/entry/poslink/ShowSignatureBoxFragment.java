@@ -22,6 +22,7 @@ import com.paxus.pay.poslinkui.demo.entry.signature.ElectronicSignatureView;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -188,5 +189,10 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
         countdownFuture.cancel(true);
         countdownUpdateScheduler.shutdownNow();
         super.onDestroy();
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 }

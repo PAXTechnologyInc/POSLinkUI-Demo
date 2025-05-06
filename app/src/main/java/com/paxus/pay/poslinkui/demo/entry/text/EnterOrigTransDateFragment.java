@@ -5,7 +5,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,7 +15,7 @@ import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.DateFormat;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +28,7 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
     private long timeOut;
     private String message = "";
     private String dateFormat;
-    private EditText editText;
+    private TextField textField;
 
     @Override
     protected int getLayoutResourceId() {
@@ -56,19 +55,23 @@ public class EnterOrigTransDateFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        editText = rootView.findViewById(R.id.edit_expiry);
-        focusableEditTexts = new EditText[]{editText};
-        editText.setHint(hintMap.get(dateFormat));
-        editText.setSelection(editText.getEditableText().length());
-        editText.addTextChangedListener(new DateTextWatcher(dateFormat));
+        textField = rootView.findViewById(R.id.edit_expiry);
+        textField.setHint(hintMap.get(dateFormat));
+        textField.setSelection(textField.getEditableText().length());
+        textField.addTextChangedListener(new DateTextWatcher(dateFormat));
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
     }
 
     @Override
+    protected TextField[] focusableTextFields() {
+        return new TextField[]{textField};
+    }
+
+    @Override
     protected void onConfirmButtonClicked() {
-        String value = editText.getText().toString();
+        String value = textField.getText().toString();
         value = value.replaceAll("[^0-9]", "");
         submit(value);
     }

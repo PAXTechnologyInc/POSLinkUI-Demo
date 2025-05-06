@@ -199,7 +199,7 @@ public class SelectOptionsView extends RecyclerView {
             public void bindListener(final Option option, final OptionSelectListener listener) {
                 itemView.setOnClickListener(view -> {
                     InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.hideSoftInputFromWindow(context.getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+//                    inputMethodManager.hideSoftInputFromWindow(context.getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     listener.onSelect(option);
                     clear();
                     ((CheckedTextView) text).setChecked(true);

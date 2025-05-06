@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +16,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Fragment which used to input fsa amount
@@ -38,7 +38,7 @@ public class FSAAmountFragment extends Fragment {
     private String currency = "";
     private long totalAmount = 0;
 
-    private EditText editText;
+    private TextField textField;
 
 
 
@@ -90,14 +90,14 @@ public class FSAAmountFragment extends Fragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        editText = rootView.findViewById(R.id.edit_amount);
-        editText.setSelected(false);
-        editText.setText(CurrencyUtils.convert(0,currency));
-        editText.setSelection(editText.getEditableText().length());
+        textField = rootView.findViewById(R.id.edit_amount);
+        textField.setSelected(false);
+        textField.setText(CurrencyUtils.convert(0,currency));
+        textField.setSelection(textField.getEditableText().length());
 
-        editText.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
-        editText.requestFocus();
-        editText.requestFocusFromTouch();
+        textField.addTextChangedListener(new AmountTextWatcher(maxLength, currency));
+        textField.requestFocus();
+        textField.requestFocusFromTouch();
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
@@ -106,7 +106,7 @@ public class FSAAmountFragment extends Fragment {
     }
 
     private void onConfirmButtonClicked() {
-        long value = CurrencyUtils.parse(editText.getText().toString());
+        long value = CurrencyUtils.parse(textField.getText().toString());
         Bundle bundle = new Bundle();
         bundle.putLong(VALUE, value);
         getParentFragmentManager().setFragmentResult(RESULT, bundle);

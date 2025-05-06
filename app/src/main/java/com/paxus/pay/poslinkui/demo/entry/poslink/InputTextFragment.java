@@ -9,7 +9,6 @@ import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,6 +22,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.lang.ref.WeakReference;
 
@@ -43,7 +43,7 @@ public class InputTextFragment extends BaseEntryFragment {
     private String inputType;
     private String defaultValue;
 
-    private EditText editText;
+    private TextField textField;
 
     @Override
     protected int getLayoutResourceId() {
@@ -72,88 +72,87 @@ public class InputTextFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(title);
 
-        editText = rootView.findViewById(R.id.edit_text);
-        focusableEditTexts = new EditText[]{editText};
+        textField = rootView.findViewById(R.id.edit_text);
 
         if ("1".equals(inputType)) {
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            textField.setInputType(InputType.TYPE_CLASS_NUMBER);
             if(maxLength > 0 ) {
-                editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+                textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
             }
-            editText.setText(defaultValue);
+            textField.setText(defaultValue);
 
         } else if("2".equals(inputType)) {//Date
             minLength = 8;
             maxLength = 8;
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            editText.setHint(FORMAT_DATE);
-            editText.setTextIsSelectable(false);
-            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(editText.getHint().length())});
-            editText.setKeyListener(DigitsKeyListener.getInstance("0123456789/"));
-            editText.addTextChangedListener(new FormatTextWatcher(FORMAT_DATE));
-            editText.setText(defaultValue);
+            textField.setInputType(InputType.TYPE_CLASS_NUMBER);
+            textField.setHint(FORMAT_DATE);
+            textField.setTextIsSelectable(false);
+            textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
+            textField.setKeyListener(DigitsKeyListener.getInstance("0123456789/"));
+            textField.addTextChangedListener(new FormatTextWatcher(FORMAT_DATE));
+            textField.setText(defaultValue);
 
         } else if("3".equals(inputType)) {//Time
             minLength = 6;
             maxLength = 6;
-            editText.setTextIsSelectable(false);
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            editText.setHint(FORMAT_TIME);
-            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(editText.getHint().length())});
-            editText.setKeyListener(DigitsKeyListener.getInstance("0123456789:"));
-            editText.addTextChangedListener(new FormatTextWatcher(FORMAT_TIME));
-            editText.setText(defaultValue);
+            textField.setTextIsSelectable(false);
+            textField.setInputType(InputType.TYPE_CLASS_NUMBER);
+            textField.setHint(FORMAT_TIME);
+            textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
+            textField.setKeyListener(DigitsKeyListener.getInstance("0123456789:"));
+            textField.addTextChangedListener(new FormatTextWatcher(FORMAT_TIME));
+            textField.setText(defaultValue);
 
         } else if("4".equals(inputType)) {//Amount
-            editText.setTextIsSelectable(false);
-            editText.addTextChangedListener(new CurrencyTextWatcher(editText, CurrencyType.USD, maxLength));
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
-            editText.setKeyListener(DigitsKeyListener.getInstance("0123456789,.$€£"));
-            editText.setHint(CurrencyUtils.CURRENCY_SYMBOL_MAP.get(CurrencyType.USD) + "0.00");
+            textField.setTextIsSelectable(false);
+            textField.addTextChangedListener(new CurrencyTextWatcher(textField, CurrencyType.USD, maxLength));
+            textField.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
+            textField.setKeyListener(DigitsKeyListener.getInstance("0123456789,.$€£"));
+            textField.setHint(CurrencyUtils.CURRENCY_SYMBOL_MAP.get(CurrencyType.USD) + "0.00");
 
             if(defaultValue != null) {
                 String def = defaultValue.replaceAll("[^0-9]","");
                 if(!TextUtils.isEmpty(def)) {
-                    editText.setText(CurrencyUtils.convert(Long.parseLong(def), CurrencyType.USD));
+                    textField.setText(CurrencyUtils.convert(Long.parseLong(def), CurrencyType.USD));
                 }
             }
 
         } else if("5".equals(inputType)) {//password
-            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            textField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             if(maxLength > 0 ) {
-                editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+                textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
             }
-            editText.setText(defaultValue);
+            textField.setText(defaultValue);
 
         } else if("6".equals(inputType)) {//Phone
             minLength = 10;
             maxLength = 10;
 
-            editText.setTextIsSelectable(false);
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            editText.setHint(FORMAT_PHONE);
-            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(editText.getHint().length())});
-            editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-()"));
-            editText.addTextChangedListener(new FormatTextWatcher(FORMAT_PHONE));
-            editText.setText(defaultValue);
+            textField.setTextIsSelectable(false);
+            textField.setInputType(InputType.TYPE_CLASS_NUMBER);
+            textField.setHint(FORMAT_PHONE);
+            textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
+            textField.setKeyListener(DigitsKeyListener.getInstance("0123456789-()"));
+            textField.addTextChangedListener(new FormatTextWatcher(FORMAT_PHONE));
+            textField.setText(defaultValue);
 
         } else if("7".equals(inputType)) {//SSN
             minLength = 9;
             maxLength = 9;
-            editText.setTextIsSelectable(false);
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            editText.setHint(FORMAT_SSN);
-            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(editText.getHint().length())});
-            editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-            editText.addTextChangedListener(new FormatTextWatcher(FORMAT_SSN));
-            editText.setText(defaultValue);
+            textField.setTextIsSelectable(false);
+            textField.setInputType(InputType.TYPE_CLASS_NUMBER);
+            textField.setHint(FORMAT_SSN);
+            textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
+            textField.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+            textField.addTextChangedListener(new FormatTextWatcher(FORMAT_SSN));
+            textField.setText(defaultValue);
 
         } else {
-            editText.setInputType(InputType.TYPE_CLASS_TEXT);
+            textField.setInputType(InputType.TYPE_CLASS_TEXT);
             if(maxLength > 0 ) {
-                editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+                textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
             }
-            editText.setText(defaultValue);
+            textField.setText(defaultValue);
 
         }
 
@@ -163,6 +162,11 @@ public class InputTextFragment extends BaseEntryFragment {
         if(timeOut > 0 ) {
             getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
         }
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return new TextField[]{textField};
     }
 
     @Override
@@ -177,7 +181,7 @@ public class InputTextFragment extends BaseEntryFragment {
 
     @Override
     protected void onConfirmButtonClicked() {
-        String value = editText.getText().toString();
+        String value = textField.getText().toString();
         if (inputType.matches("[23467]")) {
             value = value.replaceAll("[^0-9]", "");
         }
@@ -262,13 +266,13 @@ public class InputTextFragment extends BaseEntryFragment {
     }
 
     private class CurrencyTextWatcher implements TextWatcher {
-        private final WeakReference<EditText> editTextWeakReference;
+        private final WeakReference<TextField> editTextWeakReference;
         private String currencyType;
         private int maxLength;
 
         private String valueBeforeTextChange;
-        public CurrencyTextWatcher(EditText editText, String currencyType, int maxLength) {
-            this.editTextWeakReference = new WeakReference<>(editText);
+        public CurrencyTextWatcher(TextField textField, String currencyType, int maxLength) {
+            this.editTextWeakReference = new WeakReference<>(textField);
             this.currencyType = currencyType;
             this.maxLength = maxLength;
         }

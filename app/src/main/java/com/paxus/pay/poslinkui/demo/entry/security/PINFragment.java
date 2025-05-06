@@ -26,6 +26,7 @@ import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -201,5 +202,8 @@ public class PINFragment extends BaseEntryFragment {
         }
     }
 
-
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
+    }
 }

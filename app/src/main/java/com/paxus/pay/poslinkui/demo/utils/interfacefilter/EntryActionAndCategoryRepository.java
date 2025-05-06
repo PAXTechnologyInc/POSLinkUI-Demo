@@ -144,6 +144,7 @@ class EntryActionAndCategoryRepository {
 
         // Information Entry
         put(InformationEntry.ACTION_DISPLAY_TRANS_INFORMATION, new EntryAction(InformationEntry.CATEGORY, InformationEntry.ACTION_DISPLAY_TRANS_INFORMATION, "Display Transaction Information", ".INFORMATION.DISPLAY_TRANS_INFORMATION", true));
+        put(InformationEntry.ACTION_DISPLAY_APPROVE_MESSAGE, new EntryAction(InformationEntry.CATEGORY, InformationEntry.ACTION_DISPLAY_APPROVE_MESSAGE, "Display Approve Message", ".INFORMATION.DISPLAY_APPROVE_MESSAGE", true));
 
         // Signature Entry
         put(SignatureEntry.ACTION_SIGNATURE, new EntryAction(SignatureEntry.CATEGORY, SignatureEntry.ACTION_SIGNATURE, "Signature", ".SIGNATURE.SIGNATURE", true));

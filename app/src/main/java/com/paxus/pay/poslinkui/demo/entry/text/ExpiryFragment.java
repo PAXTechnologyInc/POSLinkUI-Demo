@@ -5,7 +5,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +15,7 @@ import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_EXPIRY_DATE}<br>
@@ -24,7 +24,7 @@ public class ExpiryFragment extends BaseEntryFragment {
     private long timeOut;
     private String message = "";
 
-    private EditText editText;
+    private TextField textField;
 
     @Override
     protected int getLayoutResourceId() {
@@ -44,10 +44,10 @@ public class ExpiryFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(message);
 
-        editText = rootView.findViewById(R.id.edit_expiry);
+        textField = rootView.findViewById(R.id.edit_expiry);
 
-        editText.setSelection(editText.getEditableText().length());
-        editText.addTextChangedListener(new TextWatcher() {
+        textField.setSelection(textField.getEditableText().length());
+        textField.addTextChangedListener(new TextWatcher() {
             protected boolean mEditing;
             private String mPreStr;
 
@@ -87,17 +87,20 @@ public class ExpiryFragment extends BaseEntryFragment {
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
-
-        focusableEditTexts = new EditText[]{editText};
     }
 
     @Override
     protected void onConfirmButtonClicked() {
-        String value = editText.getText().toString();
+        String value = textField.getText().toString();
         value = value.replaceAll("[^0-9]", "");
         if (value.length() == 4) {
             submit(value);
         }
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return new TextField[]{textField};
     }
 
     private void submit(String value) {
@@ -109,6 +112,6 @@ public class ExpiryFragment extends BaseEntryFragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        editText.clearFocus();
+        textField.clearFocus();
     }
 }

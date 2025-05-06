@@ -17,6 +17,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement text entry actions:<br>
@@ -132,4 +133,8 @@ public class ShowDialogFragment extends BaseEntryFragment {
         sendNext(bundle);
     }
 
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
+    }
 }

@@ -74,7 +74,7 @@
         app:layout_constraintBottom_toTopOf="@id/edit_text_tip_entry"
         />
 
-    <EditText
+    <com.paxus.pay.poslinkui.demo.view.TextField
         android:id="@+id/edit_text_tip_entry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

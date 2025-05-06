@@ -11,6 +11,7 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.InformationEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement information entry action {@value InformationEntry#ACTION_DISPLAY_TRANS_INFORMATION}
@@ -55,5 +56,10 @@ public class DisplayTransInfoFragment extends BaseEntryFragment {
     @Override
     protected void onConfirmButtonClicked(){
         sendNext(null);
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 }

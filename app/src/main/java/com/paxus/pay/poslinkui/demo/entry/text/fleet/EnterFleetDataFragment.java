@@ -5,8 +5,6 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +16,7 @@ import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ public class EnterFleetDataFragment extends BaseEntryFragment {
     private Bundle output;
 
     private TextView title;
-    private EditText editText;
+    private TextField textField;
     private Button confirm;
 
     @Override
@@ -135,7 +134,7 @@ public class EnterFleetDataFragment extends BaseEntryFragment {
     protected void loadView(View rootView) {
         title = rootView.findViewById(R.id.message);
 
-        editText = rootView.findViewById(R.id.edit_number_text);
+        textField = rootView.findViewById(R.id.edit_number_text);
 
         confirm = rootView.findViewById(R.id.confirm_button);
         confirm.setOnClickListener(v -> onConfirmButtonClicked());
@@ -146,10 +145,14 @@ public class EnterFleetDataFragment extends BaseEntryFragment {
 
     private void setCurrentFleetData() {
         title.setText(currentFleetData.title);
-        editText.setInputType(currentFleetData.inputType);
-        editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(ValuePatternUtils.getMaxLength(currentFleetData.valuePattern))});
-        editText.setText("");
-        focusableEditTexts = new EditText[]{editText};
+        textField.setInputType(currentFleetData.inputType);
+        textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(ValuePatternUtils.getMaxLength(currentFleetData.valuePattern))});
+        textField.setText("");
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return new TextField[]{textField};
     }
 
     private void resetFleetData() {
@@ -161,14 +164,13 @@ public class EnterFleetDataFragment extends BaseEntryFragment {
 
     @Override
     protected void onConfirmButtonClicked() {
-        if(editText.getText().toString().length() < ValuePatternUtils.getMinLength(currentFleetData.valuePattern)){
+        if(textField.getText().toString().length() < ValuePatternUtils.getMinLength(currentFleetData.valuePattern)){
             Toast.makeText(requireContext(), getString(R.string.min_length_verification, ValuePatternUtils.getMinLength(currentFleetData.valuePattern)), Toast.LENGTH_SHORT).show();
             return;
         }
 
-        currentFleetData.outputValue = editText.getText().toString();
+        currentFleetData.outputValue = textField.getText().toString();
         output.putString(currentFleetData.outputKey, currentFleetData.outputValue);
-        focusableEditTexts = null;
 
         boolean completed = true;
         for(IndividualFleetData fleetData: fleetDataList){

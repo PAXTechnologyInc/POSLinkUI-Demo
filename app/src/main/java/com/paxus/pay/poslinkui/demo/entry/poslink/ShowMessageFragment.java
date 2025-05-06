@@ -17,6 +17,7 @@ import com.pax.us.pay.ui.constant.status.POSLinkStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -188,5 +189,10 @@ public class ShowMessageFragment extends BaseEntryFragment {
             this.msg1 = msg1;
             this.msg2 = msg2;
         }
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 }

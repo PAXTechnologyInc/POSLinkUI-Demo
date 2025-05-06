@@ -27,6 +27,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement security entry actions {@link SecurityEntry#ACTION_MANAGE_INPUT_ACCOUNT}
@@ -83,6 +84,11 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
     @Override
     protected void onConfirmButtonClicked() {
         sendNext(null);
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 
     private void onUpdateEntryMode(Intent intent) {
@@ -168,7 +174,7 @@ public class ManageInputAccountFragment extends BaseEntryFragment {
                                                        int oldTop,
                                                        int oldRight,
                                                        int oldBottom) {
-                                Logger.d("Security EditText onLayoutChange:" + left + "," + top + "," + right + "," + bottom + "," + oldLeft + "," + oldTop + "," + oldRight + "," + oldBottom);
+                                Logger.d("Security Widget onLayoutChange:" + left + "," + top + "," + right + "," + bottom + "," + oldLeft + "," + oldTop + "," + oldRight + "," + oldBottom);
                                 if (right != oldRight) {
                                     onPanInputBoxLayoutReady();
                                 }

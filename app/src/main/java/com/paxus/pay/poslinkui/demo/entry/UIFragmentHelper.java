@@ -44,6 +44,7 @@ import com.paxus.pay.poslinkui.demo.entry.confirmation.DisplayQRCodeReceiptFragm
 import com.paxus.pay.poslinkui.demo.entry.confirmation.ReversePartialApprovalFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.StartUIFragment;
 import com.paxus.pay.poslinkui.demo.entry.confirmation.SupplementPartialApprovalFragment;
+import com.paxus.pay.poslinkui.demo.entry.information.DisplayApproveMessageFragment;
 import com.paxus.pay.poslinkui.demo.entry.information.DisplayTransInfoFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectAccountTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectAidFragment;
@@ -191,6 +192,7 @@ public class UIFragmentHelper {
     private static final Map<String, Class<? extends Fragment>> INFORMATION_FRAGMENT_MAP = new HashMap<String, Class<? extends Fragment>>() {
         {
             put(InformationEntry.ACTION_DISPLAY_TRANS_INFORMATION, DisplayTransInfoFragment.class);
+            put(InformationEntry.ACTION_DISPLAY_APPROVE_MESSAGE, DisplayApproveMessageFragment.class);
         }
     };
 

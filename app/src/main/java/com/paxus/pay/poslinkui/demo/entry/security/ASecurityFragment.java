@@ -23,6 +23,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement security entry actions:<br>
@@ -39,7 +40,7 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
  */
 public abstract class ASecurityFragment extends BaseEntryFragment {
 
-    protected TextView editText;
+    protected TextView textField;
     protected Button confirmButton;
     protected int secureLength;
     protected BroadcastReceiver receiver;
@@ -57,20 +58,20 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
         TextView textView = rootView.findViewById(R.id.message);
         textView.setText(formatMessage());
 
-        editText = rootView.findViewById(R.id.edit_security);
-        ViewTreeObserver observer = editText.getViewTreeObserver();
+        textField = rootView.findViewById(R.id.edit_security);
+        ViewTreeObserver observer = textField.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                editText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                textField.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 onInputBoxLayoutReady();
                 mContentView = requireActivity().getWindow().findViewById(Window.ID_ANDROID_CONTENT);
                 if ("Q10A".equals(Build.MODEL)) {
-                    editText.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                    textField.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                         @Override
                         public void onLayoutChange(View view, int left, int top, int right, int bottom,
                                                    int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                            Logger.d("Security EditText onLayoutChange:" + left + "," + top + "," + right + "," + bottom + "," + oldLeft + "," + oldTop + "," + oldRight + "," + oldBottom);
+                            Logger.d("Security Widget onLayoutChange:" + left + "," + top + "," + right + "," + bottom + "," + oldLeft + "," + oldTop + "," + oldRight + "," + oldBottom);
                             if (right != oldRight) {
                                 onInputBoxLayoutReady();
                             }
@@ -100,10 +101,10 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
     protected void onInputBoxLayoutReady() {
         if (Build.MODEL.equals("A35")) {
             new Handler().postDelayed(() -> {
-                sendSecurityArea(editText);
+                sendSecurityArea(textField);
             }, 100);
         } else {
-            sendSecurityArea(editText);
+            sendSecurityArea(textField);
         }
     }
 
@@ -175,6 +176,11 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
             }
 
         }
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 }
 

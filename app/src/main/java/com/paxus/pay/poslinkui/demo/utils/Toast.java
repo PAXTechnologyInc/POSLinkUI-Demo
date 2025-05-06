@@ -36,7 +36,7 @@ public class Toast {
         //add toast fragment
         activity.getSupportFragmentManager().executePendingTransactions();
         activity.getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.anim_enter_from_right, R.anim.anim_exit_to_left)
+                .setCustomAnimations(R.anim.anim_enter_from_right, android.R.anim.fade_out)
                 .replace(R.id.toast_container, toastFragment).commit();
 
         //remove toast fragment after defined duration

@@ -22,6 +22,7 @@ import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -196,5 +197,10 @@ public class SignatureFragment extends BaseEntryFragment {
         countdownFuture.cancel(true);
         countdownUpdateScheduler.shutdownNow();
         super.onDestroy();
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 }

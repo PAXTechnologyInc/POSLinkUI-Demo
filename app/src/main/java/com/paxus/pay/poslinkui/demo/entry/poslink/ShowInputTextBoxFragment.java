@@ -10,7 +10,6 @@ import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -29,6 +28,7 @@ import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement text entry actions:<br>
@@ -50,7 +50,7 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
     private String inputType;
     private String defaultValue;
 
-    private EditText editText;
+    private TextField textField;
     private LinearLayout textLayout;
 
     //Interfaces of POSLink Category may need to listen to POSLinkStatus Broadcasts
@@ -107,82 +107,82 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
             textLayout.setVisibility(View.VISIBLE);
         }
 
-        editText = rootView.findViewById(R.id.edit_text);
-        focusableEditTexts = new EditText[]{editText};
+        textField = rootView.findViewById(R.id.edit_text);
+
         if ("1".equals(inputType)) {
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            textField.setInputType(InputType.TYPE_CLASS_NUMBER);
             if(maxLength > 0 ) {
-                editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+                textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
             }
-            editText.setText(defaultValue);
+            textField.setText(defaultValue);
         }else if("2".equals(inputType)){//Date
             minLength = 8;
             maxLength = 8;
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            editText.setHint(FORMAT_DATE);
-            editText.setTextIsSelectable(false);
-            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(editText.getHint().length())});
-            editText.setKeyListener(DigitsKeyListener.getInstance("0123456789/"));
-            editText.addTextChangedListener(new ShowInputTextBoxFragment.FormatTextWatcher(FORMAT_DATE));
-            editText.setText(defaultValue);
+            textField.setInputType(InputType.TYPE_CLASS_NUMBER);
+            textField.setHint(FORMAT_DATE);
+            textField.setTextIsSelectable(false);
+            textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
+            textField.setKeyListener(DigitsKeyListener.getInstance("0123456789/"));
+            textField.addTextChangedListener(new ShowInputTextBoxFragment.FormatTextWatcher(FORMAT_DATE));
+            textField.setText(defaultValue);
 
         }else if("3".equals(inputType)){//Time
             minLength = 6;
             maxLength = 6;
-            editText.setTextIsSelectable(false);
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            editText.setHint(FORMAT_TIME);
-            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(editText.getHint().length())});
-            editText.setKeyListener(DigitsKeyListener.getInstance("0123456789:"));
-            editText.addTextChangedListener(new ShowInputTextBoxFragment.FormatTextWatcher(FORMAT_TIME));
-            editText.setText(defaultValue);
+            textField.setTextIsSelectable(false);
+            textField.setInputType(InputType.TYPE_CLASS_NUMBER);
+            textField.setHint(FORMAT_TIME);
+            textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
+            textField.setKeyListener(DigitsKeyListener.getInstance("0123456789:"));
+            textField.addTextChangedListener(new ShowInputTextBoxFragment.FormatTextWatcher(FORMAT_TIME));
+            textField.setText(defaultValue);
 
         }else if("4".equals(inputType)){//Amount
-            editText.setTextIsSelectable(false);
+            textField.setTextIsSelectable(false);
             if(defaultValue != null) {
                 String def = defaultValue.replaceAll("[^0-9]","");
                 if(!TextUtils.isEmpty(def)) {
-                    editText.setText(CurrencyUtils.convert(Long.parseLong(def), CurrencyType.USD));
+                    textField.setText(CurrencyUtils.convert(Long.parseLong(def), CurrencyType.USD));
                 }
 
             }
-            editText.addTextChangedListener(new AmountTextWatcher(maxLength, CurrencyType.USD));
+            textField.addTextChangedListener(new AmountTextWatcher(maxLength, CurrencyType.USD));
         }else if("5".equals(inputType)){//password
-            editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            textField.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
             if(maxLength > 0 ) {
-                editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+                textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
             }
-            editText.setText(defaultValue);
+            textField.setText(defaultValue);
 
         }else if("6".equals(inputType)){//Phone
             minLength = 10;
             maxLength = 10;
 
-            editText.setTextIsSelectable(false);
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            editText.setHint(FORMAT_PHONE);
-            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(editText.getHint().length())});
-            editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-()"));
-            editText.addTextChangedListener(new ShowInputTextBoxFragment.FormatTextWatcher(FORMAT_PHONE));
-            editText.setText(defaultValue);
+            textField.setTextIsSelectable(false);
+            textField.setInputType(InputType.TYPE_CLASS_NUMBER);
+            textField.setHint(FORMAT_PHONE);
+            textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
+            textField.setKeyListener(DigitsKeyListener.getInstance("0123456789-()"));
+            textField.addTextChangedListener(new ShowInputTextBoxFragment.FormatTextWatcher(FORMAT_PHONE));
+            textField.setText(defaultValue);
 
         }else if("7".equals(inputType)){//SSN
             minLength = 9;
             maxLength = 9;
-            editText.setTextIsSelectable(false);
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            editText.setHint(FORMAT_SSN);
-            editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(editText.getHint().length())});
-            editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-            editText.addTextChangedListener(new ShowInputTextBoxFragment.FormatTextWatcher(FORMAT_SSN));
-            editText.setText(defaultValue);
+            textField.setTextIsSelectable(false);
+            textField.setInputType(InputType.TYPE_CLASS_NUMBER);
+            textField.setHint(FORMAT_SSN);
+            textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
+            textField.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+            textField.addTextChangedListener(new ShowInputTextBoxFragment.FormatTextWatcher(FORMAT_SSN));
+            textField.setText(defaultValue);
 
         }else {
-            editText.setInputType(InputType.TYPE_CLASS_TEXT);
+            textField.setInputType(InputType.TYPE_CLASS_TEXT);
             if(maxLength > 0 ) {
-                editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+                textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
             }
-            editText.setText(defaultValue);
+            textField.setText(defaultValue);
 
         }
 
@@ -195,8 +195,13 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
     }
 
     @Override
+    protected TextField[] focusableTextFields() {
+        return new TextField[]{textField};
+    }
+
+    @Override
     protected void onConfirmButtonClicked(){
-        String value = editText.getText().toString();
+        String value = textField.getText().toString();
         if(inputType.matches("[23467]")){
             value = value.replaceAll("[^0-9]","");
         }
