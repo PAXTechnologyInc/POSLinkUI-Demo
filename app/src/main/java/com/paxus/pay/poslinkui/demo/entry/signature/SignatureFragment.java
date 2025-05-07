@@ -134,7 +134,10 @@ public class SignatureFragment extends BaseEntryFragment {
 
             return false;
         });
-        getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
+
+        if (timeOut > 0) {
+            getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
+        }
 
         timeoutView = rootView.findViewById(R.id.timeout);
         countdownFuture = countdownUpdateScheduler.scheduleAtFixedRate(updateCountdown, 0, intervalMilis, TimeUnit.MILLISECONDS);
@@ -149,7 +152,10 @@ public class SignatureFragment extends BaseEntryFragment {
     private void onClearButtonClicked(){
         mSignatureView.clear();
         tempTimeout = timeOut;
-        getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
+        if (timeOut > 0) {
+            getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
+        }
+
     }
 
     @Override
