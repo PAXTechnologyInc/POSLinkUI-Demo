@@ -13,6 +13,7 @@ import com.pax.us.pay.ui.constant.entry.InformationEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.Toast;
+import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
  * Implement information entry action {@value InformationEntry#ACTION_DISPLAY_APPROVE_MESSAGE}
@@ -34,6 +35,11 @@ public class DisplayApproveMessageFragment extends BaseEntryFragment {
     @Override
     protected void loadView(View rootView) {
         new DisplayApprovalUtils().getApprovalStrategy(cardType).displayApproval(getContext(), (ConstraintLayout) rootView, cardType, () -> sendNext(null));
+    }
+
+    @Override
+    protected TextField[] focusableTextFields() {
+        return null;
     }
 
 }
