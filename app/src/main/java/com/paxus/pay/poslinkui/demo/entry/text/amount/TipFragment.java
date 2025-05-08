@@ -132,6 +132,7 @@ public class TipFragment extends BaseEntryFragment {
         //Select and Enter Tip
         SelectOptionsView tipOptionsView = rootView.findViewById(R.id.select_view_tip_options);
         tipInputEditText = rootView.findViewById(R.id.edit_text_tip_entry);
+        tipInputEditText.requestFocus();
         if(isSelectTipEnabled){
             tipOptionsView.setVisibility(View.VISIBLE);
             tipOptionsView.initialize(getActivity(), tipOptionList.size(), tipOptionList, option -> {
