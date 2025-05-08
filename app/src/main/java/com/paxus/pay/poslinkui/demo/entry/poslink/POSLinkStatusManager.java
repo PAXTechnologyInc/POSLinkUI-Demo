@@ -46,10 +46,10 @@ public class POSLinkStatusManager extends BroadcastReceiver implements Lifecycle
     @Override
     public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
         switch (event) {
-            case ON_START:
+            case ON_CREATE:
                 fragmentContext.registerReceiver(this, getIntentFilter());
                 break;
-            case ON_STOP:
+            case ON_DESTROY:
                 fragmentContext.unregisterReceiver(this);
                 break;
         }
