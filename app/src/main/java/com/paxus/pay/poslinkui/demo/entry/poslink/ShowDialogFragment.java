@@ -1,11 +1,13 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -67,8 +69,11 @@ public class ShowDialogFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        TextView textView = rootView.findViewById(R.id.title);
-        textView.setText(title);
+        LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_dialog);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))) {
+            titleLayout.addView(textView);
+        }
 
         Button btn1 = rootView.findViewById(R.id.button1);
         formatButton(btn1, button1, 1);

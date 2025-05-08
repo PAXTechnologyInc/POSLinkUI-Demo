@@ -1,5 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -88,8 +90,12 @@ public class ShowDialogFormRadioFragment extends Fragment {
     }
 
     protected void loadView(View rootView) {
-        TextView textView = rootView.findViewById(R.id.title);
-        textView.setText(title);
+
+        LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_dialog_from_radio);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
+            titleLayout.addView(textView);
+        }
 
         RadioButton btn1 = rootView.findViewById(R.id.button1);
         formatButton(btn1, button1, 1);

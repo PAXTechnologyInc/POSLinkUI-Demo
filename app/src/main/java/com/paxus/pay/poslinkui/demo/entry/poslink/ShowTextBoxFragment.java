@@ -117,8 +117,12 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        TextView titleView = rootView.findViewById(R.id.title_view);
-        titleView.setText(title);
+        LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_text_box);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
+            titleLayout.addView(textView);
+        }
+
         textLayout = rootView.findViewById(R.id.text_view);
 
         //POSUI-245
@@ -128,8 +132,21 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
             textLayout.setVisibility(View.GONE);
         } else {
             if (!noText) { // text
-                for(TextView tv: TextShowingUtils.getTextViewList(requireContext(),text)){
-                    textLayout.addView(tv);
+
+                LinearLayout tempTextLayout = new LinearLayout(requireContext());
+                tempTextLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                tempTextLayout.setLayoutParams(layoutParams);
+
+                for(TextView tv: TextShowingUtils.getTitleViewList(requireContext(), text, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))){
+                    tempTextLayout.addView(tv);
+                }
+
+                if (tempTextLayout.getChildCount() > 0) {
+                    textLayout.addView(tempTextLayout);
                 }
             }
             if (!noBard) { // qr code
