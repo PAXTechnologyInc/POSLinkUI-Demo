@@ -45,7 +45,7 @@ public class InvoiceNumberFragment extends ANumTextFragment {
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
 
-        allText = InputType.ALLTEXT.equals(bundle.getString(EntryExtraData.PARAM_EINPUT_TYPE));
+        allText = InputType.ALLTEXT.equals(bundle.getString(EntryExtraData.PARAM_EINPUT_TYPE, InputType.ALLTEXT));
     }
 
     @Override
