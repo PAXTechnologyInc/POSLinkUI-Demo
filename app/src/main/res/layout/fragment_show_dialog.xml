@@ -10,13 +10,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_centerInParent="true">
-            <TextView
+            <LinearLayout
+                android:id="@+id/title_layout_show_dialog"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/title"
-                android:textSize="@dimen/text_size_supertitle"
-                android:maxLines="1"
-                android:gravity="center"/>
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

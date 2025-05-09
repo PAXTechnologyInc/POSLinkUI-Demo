@@ -1,9 +1,11 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -52,14 +54,22 @@ public class ShowThankYouFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        TextView textView = rootView.findViewById(R.id.title);
-        formatTextView(textView, title);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
 
-        TextView msg1View = rootView.findViewById(R.id.message1);
-        formatTextView(msg1View, message1);
+        LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_thank_you);
+        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
+            titleLayout.addView(textView);
+        }
 
-        TextView msg2View = rootView.findViewById(R.id.message2);
-        formatTextView(msg2View, message2);
+        LinearLayout msg1Layout = rootView.findViewById(R.id.message1_layout_show_thank_you);
+        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), message1, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))) {
+            msg1Layout.addView(textView);
+        }
+
+        LinearLayout msg2Layout = rootView.findViewById(R.id.message2_layout_show_thank_you);
+        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), message2, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))) {
+            msg2Layout.addView(textView);
+        }
 
         if(timeOut > 0 ) {
             getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));

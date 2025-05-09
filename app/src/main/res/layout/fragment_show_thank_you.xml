@@ -7,22 +7,25 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_centerInParent="true">
-        <TextView
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/title"
+            android:id="@+id/title_layout_show_thank_you"
             android:textSize="@dimen/text_size_title"
             android:maxLines="1"/>
-        <TextView
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/message1"
+            android:id="@+id/message1_layout_show_thank_you"
             android:textSize="@dimen/text_size_subtitle"
             android:maxLines="1"/>
-        <TextView
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/message2"
+            android:id="@+id/message2_layout_show_thank_you"
             android:textSize="@dimen/text_size_subtitle"
             android:maxLines="1"/>
     </LinearLayout>

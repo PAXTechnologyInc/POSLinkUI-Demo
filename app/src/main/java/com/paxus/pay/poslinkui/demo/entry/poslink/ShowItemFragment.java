@@ -1,5 +1,6 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -109,7 +110,8 @@ public class ShowItemFragment extends BaseEntryFragment {
         if (title == null || title.isEmpty()) {
             titleLayout.setVisibility(View.GONE);
         } else {
-            for (TextView textView : TextShowingUtils.getTextViewList(requireContext(), title)) {
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+            for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))) {
                 titleLayout.addView(textView);
             }
             titleLayout.setVisibility(View.VISIBLE);

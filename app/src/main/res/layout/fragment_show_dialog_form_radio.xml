@@ -11,10 +11,11 @@
             android:orientation="vertical"
             android:layout_alignParentTop="true"
             android:layout_marginTop="20dp">
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/title"
+                android:id="@+id/title_layout_show_dialog_from_radio"
                 android:textSize="@dimen/text_size_title"
                 android:maxLines="1"
                 android:gravity="center"/>

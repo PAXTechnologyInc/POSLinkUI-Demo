@@ -1,10 +1,12 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -88,8 +90,11 @@ public class ShowMessageFragment extends BaseEntryFragment {
 
     @Override
     protected void loadView(View rootView) {
-        TextView textView = rootView.findViewById(R.id.title_view);
-        textView.setText(title);
+        LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_message);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
+            titleLayout.addView(textView);
+        }
 
         ListView listView = rootView.findViewById(R.id.list_view);
         ArrayAdapter<MsgInfoWrapper> adapter = new ArrayAdapter<MsgInfoWrapper>(requireContext(),
