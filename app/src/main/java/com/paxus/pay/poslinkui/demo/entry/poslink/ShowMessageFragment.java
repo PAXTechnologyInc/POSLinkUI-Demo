@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.pax.us.pay.ui.constant.status.POSLinkStatus;
@@ -124,6 +126,26 @@ public class ShowMessageFragment extends BaseEntryFragment {
             totalLine.setText(total);
         }else {
             rootView.findViewById(R.id.total_layout).setVisibility(View.INVISIBLE);
+        }
+
+
+        ImageView msgImgView = rootView.findViewById(R.id.img_view_show_message);
+        LinearLayout llDescMsgLayout = rootView.findViewById(R.id.ll_desc_list_show_message);
+
+        if (!TextUtils.isEmpty(imgUrl)) {
+            msgImgView.setVisibility(View.VISIBLE);
+            Glide.with(this).load(imgUrl).into(msgImgView);
+            if (!TextUtils.isEmpty(imgDesc)) {
+                llDescMsgLayout.setVisibility(View.VISIBLE);
+                for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))) {
+                    titleLayout.addView(textView);
+                }
+            } else {
+                llDescMsgLayout.setVisibility(View.GONE);
+            }
+        } else {
+            llDescMsgLayout.setVisibility(View.GONE);
+            msgImgView.setVisibility(View.GONE);
         }
     }
 
