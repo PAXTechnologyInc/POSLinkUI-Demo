@@ -30,7 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:id="@+id/button_layout"
-        android:layout_margin="5dp">
+        android:layout_margin="5dp"
+        android:baselineAligned="false">
         <Button
             android:layout_width="0dp"
             android:layout_height="@dimen/button_height"
