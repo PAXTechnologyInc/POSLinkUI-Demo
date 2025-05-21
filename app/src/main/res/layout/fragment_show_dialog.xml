@@ -21,16 +21,21 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <Button
+
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="@dimen/button_height"
                     android:id="@+id/button1"
+                    style="@style/show_dialog_button"
                     android:layout_margin="5dp"
+                    android:visibility="gone"
                     android:layout_weight="1"/>
-                <Button
+                <LinearLayout
+                    style="@style/show_dialog_button"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/button_height"
                     android:id="@+id/button2"
+                    android:visibility="gone"
                     android:layout_margin="5dp"
                     android:layout_weight="1"/>
             </LinearLayout>
@@ -38,16 +43,20 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <Button
+                <LinearLayout
+                    style="@style/show_dialog_button"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/button_height"
+                    android:visibility="gone"
                     android:id="@+id/button3"
                     android:layout_margin="5dp"
                     android:layout_weight="1"/>
-                <Button
+                <LinearLayout
+                    style="@style/show_dialog_button"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/button_height"
                     android:id="@+id/button4"
+                    android:visibility="gone"
                     android:layout_margin="5dp"
                     android:layout_weight="1"/>
             </LinearLayout>

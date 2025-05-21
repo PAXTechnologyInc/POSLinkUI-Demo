@@ -4,8 +4,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -99,21 +97,9 @@ public class ShowMessageFragment extends BaseEntryFragment {
         }
 
         ListView listView = rootView.findViewById(R.id.list_view);
-        ArrayAdapter<MsgInfoWrapper> adapter = new ArrayAdapter<MsgInfoWrapper>(requireContext(),
-                android.R.layout.simple_list_item_2, android.R.id.text1, messages) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 
-                text1.setText(messages.get(position).getMsgInfo().msg1);
-                text2.setText(messages.get(position).getMsgInfo().msg2);
-                return view;
-            }
-        };
+        MessageItemAdapter adapter = new MessageItemAdapter(requireContext(), R.layout.item_layout_msg_list, messages);
         listView.setAdapter(adapter);
-
         TextView taxLine = rootView.findViewById(R.id.tax_line);
         if(!TextUtils.isEmpty(tax)) {
             taxLine.setText(tax);
@@ -185,7 +171,7 @@ public class ShowMessageFragment extends BaseEntryFragment {
     }
 
     //[{"index":null,"MsgInfo":{"msg1":"","msg2":"8654"}},{"index":null,"MsgInfo":{"msg1":"","msg2":"8654"}},{"index":null,"MsgInfo":{"msg1":"","msg2":"8654"}},{"index":null,"MsgInfo":{"msg1":"","msg2":"8654"}},{"index":null,"MsgInfo":{"msg1":"","msg2":"8654"}},{"index":null,"MsgInfo":{"msg1":"976&","msg2":"8654"}},{"index":null,"MsgInfo":{"msg1":"976&","msg2":"8654"}},{"index":null,"MsgInfo":{"msg1":"976&","msg2":"8654"}},{"index":null,"MsgInfo":{"msg1":"976&","msg2":"8654"}},{"index":null,"MsgInfo":{"msg1":"976&","msg2":"8654"}},{"index":null,"MsgInfo":{"msg1":"976&","msg2":"8654"}}]
-    private static class MsgInfoWrapper {
+    public static class MsgInfoWrapper {
         private String index;
         private MsgInfo msgInfo;
 
@@ -209,7 +195,7 @@ public class ShowMessageFragment extends BaseEntryFragment {
         }
     }
 
-    private static class MsgInfo{
+    public static class MsgInfo{
         public String msg1;
         public String msg2;
         public MsgInfo(String msg1,String msg2){
