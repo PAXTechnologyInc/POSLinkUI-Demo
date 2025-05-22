@@ -4,7 +4,6 @@ package com.paxus.pay.poslinkui.demo.entry.poslink;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,17 +16,14 @@ import com.paxus.pay.poslinkui.demo.utils.StringUtils;
 
 import java.util.List;
 
-public class MessageItemAdapter extends ArrayAdapter<ShowMessageFragment.MsgInfoWrapper> {
+public class MessageItemAdapter extends ArrayAdapter<MsgInfoWrapper> {
 
     private final Context context;
     private final int layoutResourceId;
-    private List<ShowMessageFragment.MsgInfoWrapper> dataList;
-
-    public MessageItemAdapter(Context context, int layoutResourceId, List<ShowMessageFragment.MsgInfoWrapper> dataList) {
+    public MessageItemAdapter(Context context, int layoutResourceId, List<MsgInfoWrapper> dataList) {
         super(context, layoutResourceId, dataList);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
-        this.dataList = dataList;
     }
 
     @Override
@@ -46,9 +42,9 @@ public class MessageItemAdapter extends ArrayAdapter<ShowMessageFragment.MsgInfo
             holder.llMsg1.removeAllViews();
             holder.llMsg2.removeAllViews();
         }
-        ShowMessageFragment.MsgInfoWrapper currentItem = getItem(position);
-        String msg1 = currentItem.getMsgInfo().msg1;
-        String msg2 = currentItem.getMsgInfo().msg2;
+        MsgInfoWrapper currentItem = getItem(position);
+        String msg1 = currentItem.getMsgInfo().getMsg1();
+        String msg2 = currentItem.getMsgInfo().getMsg2();
         LinearLayout.LayoutParams msgLp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
         if (TextUtils.isEmpty(msg1) && TextUtils.isEmpty(msg2)) {
             setMsgView(TextShowingUtils.getViewList(context, " ", msgLp, Color.WHITE, R.dimen.text_size_normal), holder.llMsg1);
