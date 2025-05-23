@@ -155,9 +155,9 @@ public class ShowItemFragment extends BaseEntryFragment {
                 item.setItemDetail(new ItemDetailWrapper.ItemDetail(
                         msgObj.optString("productName"),
                         msgObj.optString("plUcode"),
-                        msgObj.optDouble("price"),
+                        msgObj.optString("price"),
                         msgObj.optString("unit"),
-                        msgObj.optDouble("unitPrice"),
+                        msgObj.optString("unitPrice"),
                         msgObj.optString("tax"),
                         msgObj.optString("quantity"),
                         msgObj.optString("productImgUri"),

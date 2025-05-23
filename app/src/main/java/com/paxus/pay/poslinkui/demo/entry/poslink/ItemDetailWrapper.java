@@ -37,16 +37,16 @@ class ItemDetailWrapper {
 
         private String productName;
         private String plUcode;
-        private double price;
+        private String price;
         private String unit;
-        private double unitPrice;
+        private String unitPrice;
         private String tax;
         private String quantity;
         private String productImgUri;
         private String productImgDesc;
 
 
-        public ItemDetail(String productName, String plUcode, double price, String unit, double unitPrice, String tax, String quantity, String productImgUri, String productImgDesc) {
+        public ItemDetail(String productName, String plUcode, String price, String unit, String unitPrice, String tax, String quantity, String productImgUri, String productImgDesc) {
             this.productName = productName;
             this.plUcode = plUcode;
             this.price = price;
@@ -74,11 +74,11 @@ class ItemDetailWrapper {
             this.plUcode = plUcode;
         }
 
-        public double getPrice() {
+        public String getPrice() {
             return price;
         }
 
-        public void setPrice(double price) {
+        public void setPrice(String price) {
             this.price = price;
         }
 
@@ -90,11 +90,11 @@ class ItemDetailWrapper {
             this.unit = unit;
         }
 
-        public double getUnitPrice() {
+        public String getUnitPrice() {
             return unitPrice;
         }
 
-        public void setUnitPrice(double unitPrice) {
+        public void setUnitPrice(String unitPrice) {
             this.unitPrice = unitPrice;
         }
 
