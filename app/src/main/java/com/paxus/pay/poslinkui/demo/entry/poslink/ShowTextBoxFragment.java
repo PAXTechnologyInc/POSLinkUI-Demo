@@ -272,8 +272,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         int r = Integer.valueOf(color.substring(0, 2),16);
         int g = Integer.valueOf(color.substring(2, 4),16);
         int b = Integer.valueOf(color.substring(4),16);
-        //浅色
-        //深色
+        // Light colors return false, dark colors return true.
         return !(r * 0.299 + g * 0.578 + b * 0.114 >= 192);
     }
 

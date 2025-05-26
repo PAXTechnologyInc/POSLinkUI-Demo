@@ -38,7 +38,7 @@ public class MessageItemAdapter extends ArrayAdapter<MsgInfoWrapper> {
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
-            // 移除之前动态添加的 TextView，避免重复添加
+            //  Remove previously added TextViews to avoid duplication."
             holder.llMsg1.removeAllViews();
             holder.llMsg2.removeAllViews();
         }

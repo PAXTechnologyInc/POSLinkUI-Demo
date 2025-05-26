@@ -152,13 +152,4 @@ public class ShowTextBoxController {
         containerLayout.addView(oneLineLayout);
         printDataItemList.clear();
     }
-
-//    private static void showFirstLineTexts(Context context, LinearLayout linearLayout, List<PrintDataItem> printDataItemList, LinearLayout.LayoutParams lp) {
-//        printDataItemList = TextShowingUtils.sortList(printDataItemList);
-//        for (int i = 0; i < printDataItemList.size(); i++) {
-//            TextView textView = TextShowingUtils.getTextView(context, printDataItemList.get(i), lp);
-//            textView.setTextColor(Color.BLACK);
-//            linearLayout.addView(textView, lp);
-//        }
-//    }
 }
