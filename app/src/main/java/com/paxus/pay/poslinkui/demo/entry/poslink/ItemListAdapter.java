@@ -67,9 +67,9 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
         RelativeLayout.LayoutParams productNameLps = (RelativeLayout.LayoutParams)holder.tvProductName.getLayoutParams();
         if (!TextUtils.isEmpty(itemDetail.getQuantity())) {
             if (!"x".equals(itemDetail.getUnit())) {
-                holder.tvQuantityUnit.setText(quantityDesc + "  @"+ currencySymbol + String.format("%.2f", itemDetail.getUnitPrice()) + "/" + itemDetail.getUnit());
+                holder.tvQuantityUnit.setText(quantityDesc + "  @"+ currencySymbol + String.format("%.2s", itemDetail.getUnitPrice()) + "/" + itemDetail.getUnit());
             }else {
-                holder.tvQuantityUnit.setText(quantityDesc + "  @"+ currencySymbol + String.format("%.2f", itemDetail.getUnitPrice()));
+                holder.tvQuantityUnit.setText(quantityDesc + "  @"+ currencySymbol + String.format("%.2s", itemDetail.getUnitPrice()));
             }
             productNameLps.removeRule(RelativeLayout.CENTER_VERTICAL);
             holder.tvProductName.setLayoutParams(productNameLps);
@@ -78,7 +78,13 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
             holder.tvProductName.setLayoutParams(productNameLps);
         }
 
-        holder.tvTotalPrice.setText(String.format(Locale.ENGLISH,"%1$s%2$.2f", currencySymbol, itemDetail.getPrice()));
+        if ('0' <= itemDetail.getPrice().charAt(0) && itemDetail.getPrice().charAt(0) <= '9'){
+            holder.tvTotalPrice.setText(currencySymbol + itemDetail.getPrice());
+        } else {
+            StringBuilder formatPrice = new StringBuilder (itemDetail.getPrice());
+            formatPrice.insert(1, currencySymbol);
+            holder.tvTotalPrice.setText(formatPrice);
+        }
     }
 
     @Override
