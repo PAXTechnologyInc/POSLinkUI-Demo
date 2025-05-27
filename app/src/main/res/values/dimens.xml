@@ -4,6 +4,7 @@
     <dimen name="paint_width">5dp</dimen>
     <dimen name="corner_radius">8dp</dimen>
     <dimen name="space_between_textview">12dp</dimen>
+    <dimen name="default_gap">4dp</dimen>
 
     <!-- display dependent dimensions. fallback use.-->
     <dimen name="version_name_text_size">20sp</dimen>

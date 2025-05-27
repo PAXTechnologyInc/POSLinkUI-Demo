@@ -15,8 +15,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
+import com.pax.us.pay.ui.constant.entry.enumeration.ManageUIConst;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 
@@ -28,24 +32,26 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
  *
  * </p>
  */
-public class ShowDialogFormRadioFragment extends Fragment {
+public class ShowDialogFormRadioFragment extends Fragment implements LabelAdapter.SelectCallback {
     public static final String ARG_TITLE = "title";
     public static final String ARG_OPTIONS = "options";
     public static final String RESULT = "result";
     public static final String INDEX = "index";
 
     private String title;
-    private String button1;
-    private String button2;
-    private String button3;
-    private String button4;
     private int checkedIndex = -1;
+
+    RecyclerView recyclerView;
+    private LabelAdapter adapter;
+
+    private Bundle reqBundle;
 
     public static Fragment newInstance(String title, String[] options){
         ShowDialogFormRadioFragment fragment = new ShowDialogFormRadioFragment();
         Bundle bundle = new Bundle();
         bundle.putString(ARG_TITLE, title);
         bundle.putStringArray(ARG_OPTIONS, options);
+        bundle.putString(EntryExtraData.PARAM_BUTTON_TYPE, ManageUIConst.ButtonType.RADIO_BUTTON);
 
         fragment.setArguments(bundle);
         return fragment;
@@ -69,24 +75,8 @@ public class ShowDialogFormRadioFragment extends Fragment {
     }
 
     protected void loadArgument(@NonNull Bundle bundle) {
-
+        reqBundle = bundle;
         title = bundle.getString(ARG_TITLE);
-        String[] options = bundle.getStringArray(ARG_OPTIONS);
-        if(options!=null) {
-            if (options.length >= 1) {
-                button1 = options[0];
-            }
-            if (options.length >= 2) {
-                button2 = options[1];
-            }
-            if (options.length >= 3) {
-                button3 = options[2];
-            }
-            if (options.length >= 4) {
-                button4 = options[3];
-            }
-        }
-
     }
 
     protected void loadView(View rootView) {
@@ -96,38 +86,20 @@ public class ShowDialogFormRadioFragment extends Fragment {
         for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
             titleLayout.addView(textView);
         }
-
-        RadioButton btn1 = rootView.findViewById(R.id.button1);
-        formatButton(btn1, button1, 1);
-
-        RadioButton btn2 = rootView.findViewById(R.id.button2);
-        formatButton(btn2, button2, 2);
-
-        RadioButton btn3 = rootView.findViewById(R.id.button3);
-        formatButton(btn3, button3, 3);
-
-        RadioButton btn4 = rootView.findViewById(R.id.button4);
-        formatButton(btn4, button4, 4);
-
+        recyclerView = rootView.findViewById(R.id.my_recycler_view);
+        setupRecyclerView(recyclerView);
         Button confirmButton = rootView.findViewById(R.id.confirm_button);
         confirmButton.setOnClickListener(v -> onConfirmButtonClicked());
     }
 
-    private void formatButton(RadioButton button, String message, int index){
-        if(!TextUtils.isEmpty(message)){
-            button.setText(message);
-            button.setChecked(false);
-            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
-                        checkedIndex = index;
-                    }
-                }
-            });
-        }else{
-            button.setVisibility(View.GONE);
-        }
+
+    private void setupRecyclerView(RecyclerView recyclerView) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setItemViewCacheSize(4);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_AUTO);
+        adapter = new LabelAdapter(requireContext(),reqBundle,this);
+        recyclerView.setAdapter(adapter);
     }
 
     private void onConfirmButtonClicked(){
@@ -138,4 +110,8 @@ public class ShowDialogFormRadioFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onItemSelect(int labelId) {
+        checkedIndex = labelId;
+    }
 }

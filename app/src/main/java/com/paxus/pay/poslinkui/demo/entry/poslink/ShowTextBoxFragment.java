@@ -4,12 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,11 +27,11 @@ import com.pax.us.pay.ui.constant.entry.enumeration.ManageUIConst;
 import com.pax.us.pay.ui.constant.status.POSLinkStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.view.TextField;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -69,7 +68,11 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
 
     //Interfaces of POSLink Category may need to listen to POSLinkStatus Broadcasts
     private POSLinkStatusManager posLinkStatusManager;
-    
+
+    private LinearLayout llButton1;
+    private LinearLayout llButton2;
+    private LinearLayout llButton3;
+    private ArrayList<ButtonInfo> buttonInfos = new ArrayList<>();
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -102,6 +105,9 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         button3Name = bundle.getString(EntryExtraData.PARAM_BUTTON_3_NAME);
         button3Color = bundle.getString(EntryExtraData.PARAM_BUTTON_3_COLOR);
         button3Key = bundle.getString(EntryExtraData.PARAM_BUTTON_3_KEY);
+        buttonInfos.add(new ButtonInfo(button1Name,button1Color));
+        buttonInfos.add(new ButtonInfo(button2Name,button2Color));
+        buttonInfos.add(new ButtonInfo(button3Name,button3Color));
         enableHardKey = bundle.getString(EntryExtraData.PARAM_ENABLE_HARD_KEY, "0").equals("1");
         if(enableHardKey) {
             String keyList = bundle.getString(EntryExtraData.PARAM_HARD_KEY_LIST);
@@ -120,6 +126,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_text_box);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
         for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
+            textView.setElegantTextHeight(true);
             titleLayout.addView(textView);
         }
 
@@ -142,6 +149,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
                 tempTextLayout.setLayoutParams(layoutParams);
 
                 for(TextView tv: TextShowingUtils.getTitleViewList(requireContext(), text, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))){
+                    tv.setElegantTextHeight(true);
                     tempTextLayout.addView(tv);
                 }
 
@@ -162,15 +170,10 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
             textLayout.setVisibility(View.VISIBLE);
         }
 
-        Button btn1 = rootView.findViewById(R.id.button1);
-        formatButton(btn1, button1Name, button1Color, "1");
-
-        Button btn2 = rootView.findViewById(R.id.button2);
-        formatButton(btn2, button2Name, button2Color, "2");
-
-        Button btn3 = rootView.findViewById(R.id.button3);
-        formatButton(btn3, button3Name, button3Color, "3");
-
+        llButton1 = rootView.findViewById(R.id.button1);
+        llButton2 = rootView.findViewById(R.id.button2);
+        llButton3 = rootView.findViewById(R.id.button3);
+        showButtons();
         if(timeOut > 0 ) {
             getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
         }
@@ -225,25 +228,52 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
     }
 
 
-    private void formatButton(Button button, String message, String color, String index){
-        if(!TextUtils.isEmpty(message)){
-            button.setText(message);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    sendNext(index);
-                }
-            });
-            if(!TextUtils.isEmpty(color)){
-                try{
-                    button.setBackgroundColor(Color.parseColor("#"+color));
-                }catch (Exception e){
-                    Logger.e(e);
-                }
+    private void showButtons(){
+        List<LinearLayout> disPlayButtons = Arrays.asList(llButton1, llButton2, llButton3);
+        for (int i = 0; i < buttonInfos.size(); i++) {
+            if(!TextUtils.isEmpty(buttonInfos.get(i).buttonName)){
+                disPlayButtons.get(i).setVisibility(View.VISIBLE);
+                setButtonView(disPlayButtons.get(i), buttonInfos.get(i).buttonName, buttonInfos.get(i).buttonColor);
+                int index = i + 1;
+                disPlayButtons.get(i).setOnClickListener(v -> {
+                    sendNext(String.valueOf(index));
+                });
+            }else{
+                disPlayButtons.get(i).setVisibility(View.GONE);
             }
-        }else{
-            button.setVisibility(View.GONE);
         }
+
+    }
+
+    private void setButtonView(LinearLayout layoutBtn, String btnName, String btnColor) {
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+        List<TextView> viewList = TextShowingUtils.getViewList(requireContext(), btnName, lp,Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle));
+        for (TextView view : viewList) {
+            if (!TextUtils.isEmpty(btnColor) && getColor(btnColor)) {
+                view.setTextColor(Color.WHITE);
+            }
+            LinearLayout.LayoutParams lps = (LinearLayout.LayoutParams) view.getLayoutParams();
+            lps.gravity = Gravity.CENTER;
+            view.setGravity(lps.gravity);
+            view.setLayoutParams(lps);
+            layoutBtn.addView(view);
+
+        }
+        if (!TextUtils.isEmpty(btnColor)) {
+            try {
+                layoutBtn.setBackgroundColor(Color.parseColor("#" + btnColor));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public boolean getColor(String color) {
+        int r = Integer.valueOf(color.substring(0, 2),16);
+        int g = Integer.valueOf(color.substring(2, 4),16);
+        int b = Integer.valueOf(color.substring(4),16);
+        // Light colors return false, dark colors return true.
+        return !(r * 0.299 + g * 0.578 + b * 0.114 >= 192);
     }
 
     private void sendNext(String index){
@@ -302,5 +332,13 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
     @Override
     protected TextField[] focusableTextFields() {
         return null;
+    }
+    public static class ButtonInfo{
+        public String buttonName;
+        public String buttonColor;
+        public ButtonInfo(String buttonName,String buttonColor){
+            this.buttonName = buttonName;
+            this.buttonColor = buttonColor;
+        }
     }
 }

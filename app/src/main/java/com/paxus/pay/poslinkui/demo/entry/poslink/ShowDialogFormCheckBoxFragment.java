@@ -14,11 +14,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
 import com.pax.us.pay.ui.constant.entry.enumeration.ManageUIConst;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+
+import java.util.List;
 
 /**
  * Used by {@value PoslinkEntry#ACTION_SHOW_DIALOG_FORM}
@@ -28,7 +33,7 @@ import com.paxus.pay.poslinkui.demo.utils.Logger;
  *
  * </p>
  */
-public class ShowDialogFormCheckBoxFragment extends Fragment {
+public class ShowDialogFormCheckBoxFragment extends Fragment{
     public static final String ARG_TITLE = "title";
     public static final String ARG_OPTIONS = "options";
     public static final String ARG_OPTIONS_CHECKED = "options_checked";
@@ -37,21 +42,10 @@ public class ShowDialogFormCheckBoxFragment extends Fragment {
     public static final String CHECKED_INDEX = "checked_index";
 
     private String title;
-    private String button1;
-    private String button2;
-    private String button3;
-    private String button4;
+    RecyclerView recyclerView;
+    private LabelAdapter adapter;
 
-    private boolean button1Check;
-    private boolean button2Check;
-    private boolean button3Check;
-    private boolean button4Check;
-
-    private CheckBox btn1;
-    private CheckBox btn2;
-    private CheckBox btn3;
-    private CheckBox btn4;
-
+    private Bundle reqBundle;
 
     public static Fragment newInstance(String title, String[] options, String[] optionsChecked){
         ShowDialogFormCheckBoxFragment fragment = new ShowDialogFormCheckBoxFragment();
@@ -59,6 +53,7 @@ public class ShowDialogFormCheckBoxFragment extends Fragment {
         bundle.putString(ARG_TITLE, title);
         bundle.putStringArray(ARG_OPTIONS, options);
         bundle.putStringArray(ARG_OPTIONS_CHECKED, optionsChecked);
+        bundle.putString(EntryExtraData.PARAM_BUTTON_TYPE, ManageUIConst.ButtonType.CHECK_BOX);
 
         fragment.setArguments(bundle);
         return fragment;
@@ -82,41 +77,8 @@ public class ShowDialogFormCheckBoxFragment extends Fragment {
     }
 
     protected void loadArgument(@NonNull Bundle bundle) {
-
+        reqBundle = bundle;
         title = bundle.getString(ARG_TITLE);
-        String[] options = bundle.getStringArray(ARG_OPTIONS);
-        String[] optionsChecked = bundle.getStringArray(ARG_OPTIONS_CHECKED);
-
-        if(options!=null) {
-            if (options.length >= 1) {
-                button1 = options[0];
-            }
-            if (options.length >= 2) {
-                button2 = options[1];
-            }
-            if (options.length >= 3) {
-                button3 = options[2];
-            }
-            if (options.length >= 4) {
-                button4 = options[3];
-            }
-        }
-
-        if(optionsChecked!=null) {
-            if (optionsChecked.length >= 1) {
-                button1Check = ManageUIConst.LabelProperty.CHECKED.equals(optionsChecked[0]);
-            }
-            if (optionsChecked.length >= 2) {
-                button2Check = ManageUIConst.LabelProperty.CHECKED.equals(optionsChecked[1]);
-            }
-            if (optionsChecked.length >= 3) {
-                button3Check = ManageUIConst.LabelProperty.CHECKED.equals(optionsChecked[2]);
-            }
-            if (optionsChecked.length >= 4) {
-                button4Check = ManageUIConst.LabelProperty.CHECKED.equals(optionsChecked[3]);
-            }
-        }
-
     }
 
     protected void loadView(View rootView) {
@@ -125,18 +87,8 @@ public class ShowDialogFormCheckBoxFragment extends Fragment {
         for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
             titleLayout.addView(textView);
         }
-
-        btn1 = rootView.findViewById(R.id.button1);
-        formatButton(btn1, button1, button1Check);
-
-        btn2 = rootView.findViewById(R.id.button2);
-        formatButton(btn2, button2,  button2Check);
-
-        btn3 = rootView.findViewById(R.id.button3);
-        formatButton(btn3, button3,  button3Check);
-
-        btn4 = rootView.findViewById(R.id.button4);
-        formatButton(btn4, button4, button4Check);
+        recyclerView = rootView.findViewById(R.id.my_recycler_view);
+        setupRecyclerView(recyclerView);
 
         Button confirmButton = rootView.findViewById(R.id.confirm_button);
         confirmButton.setOnClickListener(v -> onConfirmButtonClicked());
@@ -145,43 +97,32 @@ public class ShowDialogFormCheckBoxFragment extends Fragment {
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btn1.setChecked(false);
-                btn2.setChecked(false);
-                btn3.setChecked(false);
-                btn4.setChecked(false);
+                adapter.clearCheckedItems();
             }
         });
     }
 
-    private void formatButton(CheckBox button, String message, boolean checked){
-        if(!TextUtils.isEmpty(message)){
-            button.setText(message);
-            button.setChecked(checked);
-        }else{
-            button.setVisibility(View.GONE);
-        }
+    private void setupRecyclerView(RecyclerView recyclerView) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setItemViewCacheSize(4);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_AUTO);
+        adapter = new LabelAdapter(requireContext(),reqBundle,null);
+        recyclerView.setAdapter(adapter);
     }
 
     private void onConfirmButtonClicked(){
-        StringBuilder ret = new StringBuilder();
-        if(btn1.isChecked()){
-            ret.append("1,");
+        StringBuilder sb = new StringBuilder();
+        List<LabelAdapter.MyItem> itemList = adapter.getAllSelectedItems();
+        for(LabelAdapter.MyItem item:itemList){
+            sb.append(item.getLabelId()).append(",");
         }
-        if(btn2.isChecked()){
-            ret.append("2,");
-        }
-        if(btn3.isChecked()){
-            ret.append("3,");
-        }
-        if(btn4.isChecked()){
-            ret.append("4,");
-        }
-
-        if(!TextUtils.isEmpty(ret)){
-            ret.deleteCharAt(ret.length()-1);
-
+        String selectItem = sb.toString();
+        if (selectItem.endsWith(","))
+            selectItem = selectItem.substring(0, selectItem.length() - 1);
+        if (!TextUtils.isEmpty(selectItem)){
             Bundle bundle = new Bundle();
-            bundle.putString(CHECKED_INDEX, ret.toString());
+            bundle.putString(CHECKED_INDEX, selectItem.toString());
             getParentFragmentManager().setFragmentResult(RESULT, bundle);
         }
     }

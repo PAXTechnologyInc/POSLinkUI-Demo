@@ -11,7 +11,6 @@ import static com.paxus.pay.poslinkui.demo.utils.format.PrintDataItem.RIGHT_ALIG
 import static com.paxus.pay.poslinkui.demo.utils.format.PrintDataItem.SMALL_FONT;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -22,7 +21,6 @@ import android.widget.TextView;
 import androidx.annotation.ColorInt;
 
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
-import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.format.PrintDataConverter;
 import com.paxus.pay.poslinkui.demo.utils.format.PrintDataItem;
 import com.paxus.pay.poslinkui.demo.utils.format.PrintDataItemContainer;
@@ -33,8 +31,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -132,6 +128,7 @@ public class TextShowingUtils {
                 }
 
                 TextView textView = getTitleTextView(context, printDataItem, layoutParams, color, textSize);
+                customizeFontSize(textView, printDataItem);
                 textViewList.add(textView);
             } else {
                 for (int i = 0; i < printDataItemList.size(); i++) {
@@ -142,9 +139,11 @@ public class TextShowingUtils {
                     //not support "\n", as a common char.
                     if (!printDataItem.getCmds().contains(LINE_SEP)) {
                         textView = getTitleTextView(context, printDataItem, layoutParams, color, textSize);
+                        customizeFontSize(textView, printDataItem);
                     } else if (!TextUtils.isEmpty(printDataItem.getContent())) {
                         printDataItem.setContent("\\n" + printDataItem.getContent());
                         textView = getTitleTextView(context, printDataItem, layoutParams, color, textSize);
+                        customizeFontSize(textView, printDataItem);
                     }
 
                     if (textView != null) {
@@ -213,40 +212,7 @@ public class TextShowingUtils {
     }
 
     public static TextView getTitleTextView(Context context, PrintDataItem printDataItem, LinearLayout.LayoutParams layoutParams, @ColorInt int color, float textSize) {
-        TextView textView = new TextView(context);
-        List<String> cmds = printDataItem.getCmds();
-        for (String cmd : cmds) {
-            switch (cmd) {
-                case LEFT_ALIGN:
-                    layoutParams.gravity = Gravity.LEFT;
-                    textView.setGravity(Gravity.START);
-                    break;
-                case RIGHT_ALIGN:
-                    layoutParams.gravity = Gravity.RIGHT;
-                    textView.setGravity(Gravity.END);
-
-                    break;
-
-                case CENTER_ALIGN:
-                    layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
-                    textView.setGravity(Gravity.CENTER_HORIZONTAL);
-                    break;
-
-                case BOLD:
-                    TextPaint textPaint = textView.getPaint();
-                    textPaint.setFakeBoldText(true);
-                    break;
-
-            }
-        }
-
-        textView.setLayoutParams(layoutParams);
-//        textView.setTextSize(context.getResources().getDimension(R.dimen.text_size_subtitle));
-        textView.setTextSize(textSize);
-        textView.setText(printDataItem.getContent());
-        textView.setTextColor(color);
-
-        return textView;
+        return generateTextView(context, printDataItem, layoutParams, color, textSize);
     }
 
     public static List<PrintDataItem> sortList(List<PrintDataItem> list) {
@@ -332,4 +298,82 @@ public class TextShowingUtils {
         }
         return tempList;
     }
+
+
+    public static void customizeFontSize(TextView textView, PrintDataItem printDataItem) {
+        float textSize = TextShowingUtils.FONT_NORMAL_SP;
+        if (printDataItem.getCmds().contains(PrintDataItem.BIG_FONT)) {
+            textSize = TextShowingUtils.FONT_BIG_SP;
+        } else if (printDataItem.getCmds().contains(PrintDataItem.SMALL_FONT)) {
+            textSize = TextShowingUtils.FONT_SMALL_SP;
+        }
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+    }
+
+
+    public static List<TextView> getViewList(Context context, String data, LinearLayout.LayoutParams layoutParams, @ColorInt int color, float textSize) {
+        if (TextUtils.isEmpty(data))
+            data = "";
+
+        List<TextView> textViewList = new ArrayList<>();
+
+        try {
+            PrintDataItemContainer printDataItemContainer = PrintDataConverter.parse(data, false);
+
+            List<PrintDataItem> printDataItemList = filterItems(printDataItemContainer.getPrintDataItems(), PrintDataItem.LEFT_ALIGN);
+
+            for (int i = 0; i < printDataItemList.size(); i++) {
+
+                //If item contain' cmds contain "\\n",filtered.
+                if (!printDataItemList.get(i).getCmds().contains(PrintDataItem.LINE_SEP)) {
+                    TextView textView = generateTextView(context, printDataItemList.get(i), layoutParams, color, textSize);
+                    customizeFontSize(textView, printDataItemList.get(i));
+                    textViewList.add(textView);
+                    textView.setSingleLine();
+                }
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+        return textViewList;
+    }
+
+    public static TextView generateTextView(Context context, PrintDataItem printDataItem, LinearLayout.LayoutParams layoutParams, @ColorInt int color, float textSize) {
+        TextView textView = new TextView(context);
+        List<String> cmds = printDataItem.getCmds();
+        for (String cmd : cmds) {
+            switch (cmd) {
+                case LEFT_ALIGN:
+                    layoutParams.gravity = Gravity.LEFT;
+                    textView.setGravity(Gravity.LEFT);
+                    break;
+                case RIGHT_ALIGN:
+                    layoutParams.gravity = Gravity.RIGHT;
+                    textView.setGravity(Gravity.RIGHT);
+
+                    break;
+
+                case CENTER_ALIGN:
+                    layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
+                    textView.setGravity(Gravity.CENTER_HORIZONTAL);
+                    break;
+
+                case BOLD:
+                    TextPaint textPaint = textView.getPaint();
+                    textPaint.setFakeBoldText(true);
+                    break;
+
+            }
+        }
+
+        textView.setLayoutParams(layoutParams);
+//        textView.setTextSize(context.getResources().getDimension(R.dimen.text_size_subtitle));
+        textView.setTextSize(textSize);
+        textView.setText(printDataItem.getContent());
+        textView.setTextColor(color);
+        return textView;
+    }
+
 }

@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="clss_blue">#3F51B5</color>
+    <color name="clss_blue_dark">#303F9F</color>
     <color name="clss_yellow">#C5C53F</color>
     <color name="clss_green">#51B53F</color>
     <color name="clss_red">#F44336</color>
