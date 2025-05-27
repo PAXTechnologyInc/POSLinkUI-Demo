@@ -60,6 +60,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
     private String button3Color;
     private String button3Key;
     private boolean enableHardKey;
+    private boolean hasPhyKeyboard;
     private List<String> hardKeyList;
     private String barcodeType;
     private String barcodeData;
@@ -108,6 +109,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         buttonInfos.add(new ButtonInfo(button1Name,button1Color));
         buttonInfos.add(new ButtonInfo(button2Name,button2Color));
         buttonInfos.add(new ButtonInfo(button3Name,button3Color));
+        hasPhyKeyboard = bundle.getBoolean(EntryExtraData.PARAM_HAS_PHYSICAL_KEYBOARD, false);
         enableHardKey = bundle.getString(EntryExtraData.PARAM_ENABLE_HARD_KEY, "0").equals("1");
         if(enableHardKey) {
             String keyList = bundle.getString(EntryExtraData.PARAM_HARD_KEY_LIST);
@@ -173,22 +175,24 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         llButton1 = rootView.findViewById(R.id.button1);
         llButton2 = rootView.findViewById(R.id.button2);
         llButton3 = rootView.findViewById(R.id.button3);
-        showButtons();
+        if (!hasPhyKeyboard || !enableHardKey) {
+            showButtons();
+        }
         if(timeOut > 0 ) {
             getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
         }
 
-        if(enableHardKey) {
-            rootView.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(event.getAction() == KeyEvent.ACTION_DOWN){
-                        return onKeyDown(keyCode);
-                    }
-                    return false;
+        rootView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(event.getAction() == KeyEvent.ACTION_DOWN){
+                    return onKeyDown(keyCode);
                 }
-            });
-        }
+                return false;
+            }
+        });
+        rootView.setFocusableInTouchMode(true);
+        rootView.requestFocus();
     }
 
     private boolean onKeyDown(int keyCode){
@@ -214,13 +218,13 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
         if(keyName != null
                 && (hardKeyList == null || hardKeyList.isEmpty() || hardKeyList.contains(keyName))){
             if(keyName.equals(button1Key)){
-                sendNext("1");
+                sendNext(enableHardKey ? keyName : "1");
                 return true;
             }else if(keyName.equals(button2Key)){
-                sendNext("2");
+                sendNext(enableHardKey ? keyName : "2");
                 return true;
             }else if(keyName.equals(button3Key)){
-                sendNext("3");
+                sendNext(enableHardKey ? keyName : "2");
                 return true;
             }
         }
