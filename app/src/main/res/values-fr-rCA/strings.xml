@@ -1,0 +1,6 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- AccountType -->
+    <string name="acc_type_saving">SAVING \\ EPARGNE</string>
+    <string name="acc_type_checking">CHECKING \\ CHEQUE</string>
+    <string name="select_account_type">Please Select Debit Account \\ Veuillez sélectionner un compte de débit</string>
+</resources>
