@@ -448,12 +448,12 @@
             </intent-filter>
         </activity-alias>
 
-        <activity-alias android:name=".OPTION.SELECT_TRANS_FOR_ADJUST" android:targetActivity=".entry.EntryActivity">
-            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
-                <action android:name="com.pax.us.pay.action.SELECT_TRANS_FOR_ADJUST"/>
-            </intent-filter>
-        </activity-alias>
+<!--        <activity-alias android:name=".OPTION.SELECT_TRANS_FOR_ADJUST" android:targetActivity=".entry.EntryActivity">-->
+<!--            <intent-filter><category android:name="android.intent.category.DEFAULT"/>-->
+<!--                <category android:name="com.pax.us.pay.ui.category.OPTION"/>-->
+<!--                <action android:name="com.pax.us.pay.action.SELECT_TRANS_FOR_ADJUST"/>-->
+<!--            </intent-filter>-->
+<!--        </activity-alias>-->
 
         <activity-alias android:name=".OPTION.SELECT_TRANS_TYPE" android:targetActivity=".entry.EntryActivity">
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
