@@ -72,7 +72,7 @@ public class CashbackFragment extends BaseEntryFragment {
             }
         }
 
-        promptOther = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_OTHER_PROMPT) | true;
+        promptOther = bundle.getBoolean(EntryExtraData.PARAM_ENABLE_OTHER_PROMPT, false);
     }
 
 

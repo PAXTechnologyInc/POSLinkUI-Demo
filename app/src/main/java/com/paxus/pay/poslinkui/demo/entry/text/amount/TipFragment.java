@@ -54,6 +54,7 @@ public class TipFragment extends BaseEntryFragment {
     private TextField tipInputEditText;
 
     long tip = 0;
+    Boolean tipFieldModified;
 
     @Override
     protected int getLayoutResourceId() {
@@ -71,7 +72,7 @@ public class TipFragment extends BaseEntryFragment {
         }
         baseAmount = bundle.getLong(EntryExtraData.PARAM_BASE_AMOUNT, -1);
 
-        tipName = bundle.getString(EntryExtraData.PARAM_TIP_NAME);
+        tipName = bundle.getString(EntryExtraData.PARAM_TIP_NAME, getString(R.string.tip_name));
         String tipUnit = bundle.getString(EntryExtraData.PARAM_TIP_UNIT, UnitType.CENT);
 
         //Tip Summary
@@ -99,7 +100,7 @@ public class TipFragment extends BaseEntryFragment {
                 try{
                     tipAmount = Long.parseLong(tipOptions[i]) * (tipUnit.equals(UnitType.DOLLAR) ? 100 : 1);
                     tipRate = tipRateOptions[i];
-                } catch (NumberFormatException | IndexOutOfBoundsException e){
+                } catch (NumberFormatException | IndexOutOfBoundsException ignored){
                 }
                 tipOptionList.add(new SelectOptionsView.Option(null, CurrencyUtils.convert(tipAmount, currency), tipRate, tipAmount));
             }
@@ -167,10 +168,12 @@ public class TipFragment extends BaseEntryFragment {
             @Override public void afterTextChanged(Editable s) {
                 super.afterTextChanged(s);
                 tip = CurrencyUtils.parse(s.toString());
+                tipFieldModified = true;
             }
         });
         tipInputEditText.setText(String.valueOf(tip)); //Initialize TextWatcher with Default Tip Value
         tipInputEditText.setSelection(tipInputEditText.getEditableText().length());
+        tipFieldModified = false;
 
         //Confirm
         Button confirmButton = rootView.findViewById(R.id.button_confirm);
@@ -231,11 +234,13 @@ public class TipFragment extends BaseEntryFragment {
     private void submit(long value) {
         Bundle bundle = new Bundle();
 
-        if(value>=0) {
+        // If user intentionally decides not to tip (Press NoTip or enter 0), do not submit PARAM_TIP.
+        if( (value == -1L) || (value == 0L && tipFieldModified)) {
+            sendNext(bundle);
+        } else {
             bundle.putLong(EntryRequest.PARAM_TIP, value);
+            sendNext(bundle);
         }
-
-        sendNext(bundle);
     }
 
     @Override
