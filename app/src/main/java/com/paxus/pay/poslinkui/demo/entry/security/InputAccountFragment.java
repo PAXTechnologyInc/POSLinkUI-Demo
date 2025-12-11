@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.SecurityEntry;
@@ -33,6 +34,7 @@ import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.TextField;
+import com.paxus.pay.poslinkui.demo.viewmodel.SecondScreenInfoViewModel;
 
 /**
  * Implement security entry actions {@link SecurityEntry#ACTION_INPUT_ACCOUNT}
@@ -77,6 +79,7 @@ public class InputAccountFragment extends BaseEntryFragment {
     private View mContentView;
     private int mOrigWidth;
     private int mOrigHeight;
+    protected Long transAmount;
 
     private ClssLightsViewStatusManager clssLightsViewStatusManager;
 
@@ -143,6 +146,10 @@ public class InputAccountFragment extends BaseEntryFragment {
         merchantName = bundle.getString(EntryExtraData.PARAM_MERCHANT_NAME);
         if (bundle.containsKey(EntryExtraData.PARAM_TOTAL_AMOUNT)) {
             totalAmount = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
+            currencyType = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
+        }
+        if (bundle.containsKey(EntryExtraData.PARAM_TRANS_AMOUNT)) {
+            transAmount = bundle.getLong(EntryExtraData.PARAM_TRANS_AMOUNT);
             currencyType = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
         }
     }
@@ -293,6 +300,14 @@ public class InputAccountFragment extends BaseEntryFragment {
             amountTv.setVisibility(View.GONE);
         }
         onResume();
+
+        // need to show tap image in second screen when tap is enable.
+        viewModel = new ViewModelProvider(requireActivity()).get(SecondScreenInfoViewModel.class);
+        viewModel.updateAllData(transAmount != null? CurrencyUtils.convert(transAmount, currencyType) :"",
+                enableTap ? "" : getResources().getString(R.string.second_screen_please_wait),
+                "",
+                enableTap ? R.mipmap.tap_white: null,
+                "");
     }
 
     private class Receiver extends BroadcastReceiver {

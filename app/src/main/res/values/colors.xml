@@ -21,6 +21,8 @@
 
     <color name="success">#46B54B</color>
     <color name="fail">#FB3A3A</color>
+    <color name="partially_success">#BB893F</color>
+    <color name="normal_background">#172D4A</color>
 
     <color name="pastel_on_background">#DBD4D9</color>
     <color name="pastel_background">#041D3C</color>

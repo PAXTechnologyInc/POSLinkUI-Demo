@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
@@ -14,6 +15,7 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
 import com.paxus.pay.poslinkui.demo.view.TextField;
+import com.paxus.pay.poslinkui.demo.viewmodel.SecondScreenInfoViewModel;
 
 /**
  * Implement confirmation entry action {@value ConfirmationEntry#ACTION_CONFIRM_SURCHARGE_FEE}
@@ -68,6 +70,9 @@ public class ConfirmSurchargeFeeFragment extends BaseEntryFragment {
         } else {
             bypass.setVisibility(View.GONE);
         }
+
+        // should show feeName as title in PCI7 screen when confirm surcharge fee.
+        viewModel.updateTitle(feeName);
     }
 
     @Override
