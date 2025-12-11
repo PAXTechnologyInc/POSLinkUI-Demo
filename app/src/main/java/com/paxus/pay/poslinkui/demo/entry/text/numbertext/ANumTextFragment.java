@@ -2,14 +2,24 @@ package com.paxus.pay.poslinkui.demo.entry.text.numbertext;
 
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
+import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
+import com.pax.us.pay.ui.constant.entry.enumeration.InputType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.utils.Toast;
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.TextField;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Implement text entry actions:<br>
@@ -24,10 +34,19 @@ import com.paxus.pay.poslinkui.demo.view.TextField;
 public abstract class ANumTextFragment extends BaseEntryFragment {
 
     protected TextField textField;
+    protected boolean allowPassword;
+    protected boolean allowText;
+    protected String valuePatten;
 
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_base_num_text;
+    }
+
+    @Override
+    protected void loadArgument(@NonNull Bundle bundle) {
+        allowText = Arrays.asList(InputType.ALLTEXT, InputType.PASSWORD).contains(bundle.getString(EntryExtraData.PARAM_EINPUT_TYPE));
+        allowPassword = Arrays.asList(InputType.PASSWORD, InputType.PASSCODE).contains(bundle.getString(EntryExtraData.PARAM_EINPUT_TYPE));
     }
 
     @Override
@@ -42,10 +61,15 @@ public abstract class ANumTextFragment extends BaseEntryFragment {
         if (maxLength > 0) {
             textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
         }
-        if (allowText()) {
+        if (allowText) {
             textField.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
         } else {
             textField.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        }
+        if (allowPassword) {
+            textField.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        } else {
+            textField.setTransformationMethod(null);
         }
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
@@ -55,12 +79,18 @@ public abstract class ANumTextFragment extends BaseEntryFragment {
     @Override
     protected void onConfirmButtonClicked() {
         String value = textField.getText().toString();
-        submit(value);
+        List<Integer> lengthList = ValuePatternUtils.getLengthList(valuePatten);
+        //For patterns like "0,2" which means 0 or 2, when the input length is 1,
+        // we cannot immediately validate its effectiveness during the input process.
+        // Therefore, we need to check before submission.
+        if (lengthList.contains(value.length())) {
+            submit(value);
+        } else {
+            new Toast(getActivity()).show(getString(R.string.prompt_input_length, valuePatten), Toast.TYPE.FAILURE);
+        }
     }
 
     protected abstract int getMaxLength();
-
-    protected abstract boolean allowText();
 
     protected abstract String formatMessage();
 

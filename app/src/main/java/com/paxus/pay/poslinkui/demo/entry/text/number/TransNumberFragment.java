@@ -25,7 +25,7 @@ public class TransNumberFragment extends ANumFragment {
     protected void loadArgument(@NonNull Bundle bundle) {
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
-        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "1-4");
+        valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "1-4");
         if (!TextUtils.isEmpty(valuePatten)) {
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);

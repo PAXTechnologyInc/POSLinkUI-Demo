@@ -9,7 +9,11 @@ import android.widget.TextView;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
+import com.paxus.pay.poslinkui.demo.utils.Toast;
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.TextField;
+
+import java.util.List;
 
 /**
  * Implement text entry actions:<br>
@@ -26,6 +30,7 @@ import com.paxus.pay.poslinkui.demo.view.TextField;
 public abstract class ANumFragment extends BaseEntryFragment {
 
     protected TextField textField;
+    protected String valuePatten;
 
     @Override
     protected int getLayoutResourceId() {
@@ -55,7 +60,15 @@ public abstract class ANumFragment extends BaseEntryFragment {
     @Override
     protected void onConfirmButtonClicked() {
         String value = textField.getText().toString();
-        submit(value);
+        List<Integer> lengthList = ValuePatternUtils.getLengthList(valuePatten);
+        //For patterns like "0,2" which means 0 or 2, when the input length is 1,
+        // we cannot immediately validate its effectiveness during the input process.
+        // Therefore, we need to check before submission.
+        if (lengthList.contains(value.length())) {
+            submit(value);
+        } else {
+            new Toast(getActivity()).show(getString(R.string.prompt_input_length, valuePatten), Toast.TYPE.FAILURE);
+        }
     }
 
     protected void submit(String value) {

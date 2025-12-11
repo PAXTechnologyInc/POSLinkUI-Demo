@@ -78,6 +78,28 @@ class EntryActionAndCategoryRepository {
         put(TextEntry.ACTION_ENTER_VISA_INSTALLMENT_PLAN_ACCEPTANCE_ID, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_VISA_INSTALLMENT_PLAN_ACCEPTANCE_ID, "Enter Visa Installment Plan Acceptance ID", ".TEXT.ENTER_VISA_INSTALLMENT_PLAN_ACCEPTANCE_ID", true));
         put(TextEntry.ACTION_ENTER_TICKET_NUMBER, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_TICKET_NUMBER, "Enter Ticket Number", ".TEXT.ENTER_TICKET_NUMBER", true));
         put(TextEntry.ACTION_ENTER_GLOBAL_UID, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_GLOBAL_UID, "Enter Global UID", ".TEXT.ENTER_GLOBAL_UID", true));
+        put(TextEntry.ACTION_ENTER_CUSTOMER_DATA, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_CUSTOMER_DATA, "Enter Customer data", ".TEXT.ENTER_CUSTOMER_DATA", true));
+        put(TextEntry.ACTION_ENTER_DEPARTMENT_NUMBER, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_DEPARTMENT_NUMBER, "Enter Department Number", ".TEXT.ENTER_DEPARTMENT_NUMBER", true));
+        put(TextEntry.ACTION_ENTER_DRIVER_ID, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_DRIVER_ID, "Enter Driver Id", ".TEXT.ENTER_DRIVER_ID", true));
+        put(TextEntry.ACTION_ENTER_EMPLOYEE_NUMBER, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_EMPLOYEE_NUMBER, "Enter Employee Number", ".TEXT.ENTER_EMPLOYEE_NUMBER", true));
+        put(TextEntry.ACTION_ENTER_FLEET_PROMPT_CODE, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_FLEET_PROMPT_CODE, "Enter Fleet Prompt Code", ".TEXT.ENTER_FLEET_PROMPT_CODE", true));
+        put(TextEntry.ACTION_ENTER_HUBOMETER, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_HUBOMETER, "Enter Hubometer", ".TEXT.ENTER_HUBOMETER", true));
+        put(TextEntry.ACTION_ENTER_JOB_ID, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_JOB_ID, "Enter Job Id", ".TEXT.ENTER_JOB_ID", true));
+        put(TextEntry.ACTION_ENTER_LICENSE_NUMBER, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_LICENSE_NUMBER, "Enter License Number", ".TEXT.ENTER_LICENSE_NUMBER", true));
+        put(TextEntry.ACTION_ENTER_MAINTENANCE_ID, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_MAINTENANCE_ID, "Enter Maintenance Id", ".TEXT.ENTER_MAINTENANCE_ID", true));
+        put(TextEntry.ACTION_ENTER_ODOMETER, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_ODOMETER, "Enter Odometer", ".TEXT.ENTER_ODOMETER", true));
+        put(TextEntry.ACTION_ENTER_FLEET_PO_NUMBER, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_FLEET_PO_NUMBER, "Enter Fleet Po Number", ".TEXT.ENTER_FLEET_PO_NUMBER", true));
+        put(TextEntry.ACTION_ENTER_REEFER_HOURS, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_REEFER_HOURS, "Enter Reefer Hours", ".TEXT.ENTER_REEFER_HOURS", true));
+        put(TextEntry.ACTION_ENTER_TRAILER_ID, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_TRAILER_ID, "Enter Trailer Id", ".TEXT.ENTER_TRAILER_ID", true));
+        put(TextEntry.ACTION_ENTER_TRIP_NUMBER, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_TRIP_NUMBER, "Enter Trip Number", ".TEXT.ENTER_TRIP_NUMBER", true));
+        put(TextEntry.ACTION_ENTER_UNIT_ID, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_UNIT_ID, "Enter Unit Id", ".TEXT.ENTER_UNIT_ID", true));
+        put(TextEntry.ACTION_ENTER_USER_ID, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_USER_ID, "Enter User Id", ".TEXT.ENTER_USER_ID", true));
+        put(TextEntry.ACTION_ENTER_VEHICLE_ID, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_VEHICLE_ID, "Enter Vehicle Id", ".TEXT.ENTER_VEHICLE_ID", true));
+        put(TextEntry.ACTION_ENTER_VEHICLE_NUMBER, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_VEHICLE_NUMBER, "Enter Vehicle Number", ".TEXT.ENTER_VEHICLE_NUMBER", true));
+        put(TextEntry.ACTION_ENTER_ADDITIONAL_FLEET_DATA_1, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_ADDITIONAL_FLEET_DATA_1, "Enter Additional Fleet Data 1", ".TEXT.ENTER_ADDITIONAL_FLEET_DATA_1", true));
+        put(TextEntry.ACTION_ENTER_ADDITIONAL_FLEET_DATA_2, new EntryAction(TextEntry.CATEGORY, TextEntry.ACTION_ENTER_ADDITIONAL_FLEET_DATA_2, "Enter Additional Fleet Data 2", ".TEXT.ENTER_ADDITIONAL_FLEET_DATA_2", true));
+
+
 
         // Option Entry
         put(OptionEntry.ACTION_SELECT_EBT_TYPE, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_EBT_TYPE, "Select EBT Type", ".OPTION.SELECT_EBT_TYPE", true));

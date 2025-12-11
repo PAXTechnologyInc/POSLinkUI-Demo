@@ -25,6 +25,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.UnitType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.Toast;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 import com.paxus.pay.poslinkui.demo.view.SelectOptionsView;
@@ -55,7 +56,7 @@ public class TipFragment extends BaseEntryFragment {
 
     long tip = 0;
     Boolean tipFieldModified;
-
+    private String valuePatten;
     @Override
     protected int getLayoutResourceId() {
         return R.layout.fragment_tip;
@@ -65,7 +66,7 @@ public class TipFragment extends BaseEntryFragment {
     protected void loadArgument(@NonNull Bundle bundle) {
         currency =  bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
 
-        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-12");
+        valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"0-12");
         if(!TextUtils.isEmpty(valuePatten)){
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
@@ -228,7 +229,13 @@ public class TipFragment extends BaseEntryFragment {
 
     @Override
     protected void onConfirmButtonClicked(){
-        submit(tip);
+        List<Integer> lengthList = ValuePatternUtils.getLengthList(valuePatten);
+        // if value is 0 and pattern does not contains 0, that means it can not be skipped, show error message
+        if (tip == 0 && !lengthList.contains(0)) {
+            new Toast(getActivity()).show(getString(R.string.prompt_input), Toast.TYPE.FAILURE);
+        } else {
+            submit(tip);
+        }
     }
 
     private void submit(long value) {

@@ -21,29 +21,23 @@ public class ServerIdFragment extends ANumTextFragment {
     protected long timeOut;
     protected int minLength;
     protected int maxLength;
-    protected boolean allText;
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
+        super.loadArgument(bundle);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
-        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-4");
+        valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-4");
 
         if (!TextUtils.isEmpty(valuePatten)) {
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
-        allText = InputType.ALLTEXT.equals(bundle.getString(EntryExtraData.PARAM_EINPUT_TYPE));
     }
 
     @Override
     protected int getMaxLength() {
         return maxLength;
-    }
-
-    @Override
-    protected boolean allowText() {
-        return allText;
     }
 
     @Override

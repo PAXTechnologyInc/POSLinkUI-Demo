@@ -27,18 +27,36 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
-
+Properties gradleProps = new Properties()
+File file = rootProject.file('gradle.properties')
+if (file.exists()) {
+    FileInputStream inStream = new FileInputStream(file)
+    try{
+        gradleProps.load(inStream)
+    }finally {
+        inStream.close()
+    }
+}
+Boolean mavenLocalFirst = gradleProps.getProperty("maven.local.first").toBoolean()
+println("maven.local.first: $mavenLocalFirst")
 allprojects {
     repositories {
+        if(mavenLocalFirst) {
+            // Project local maven repo
+            maven {
+                url new File(project.rootDir, "maven")
+            }
+        } else {
+            maven {
+                url 'https://maven.pkg.github.com/PAXTechnologyInc/POSLink-UI'
+                credentials {
+                    username = GITHUB_USER_NAME
+                    password = GITHUB_USER_TOKEN
+                }
+            }
+        }
         google()
         mavenCentral()
-//        maven {
-//            url 'https://maven.pkg.github.com/PAXTechnologyInc/POSLink-UI'
-//            credentials {
-//                username = GITHUB_USER_NAME
-//                password = GITHUB_USER_TOKEN
-//            }
-//        }
         mavenLocal()
     }
 

@@ -17,7 +17,7 @@ public class EnterTicketNumberFragment extends ANumFragment {
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
-        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-8");
+        valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-8");
         if (!TextUtils.isEmpty(valuePatten)) {
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
