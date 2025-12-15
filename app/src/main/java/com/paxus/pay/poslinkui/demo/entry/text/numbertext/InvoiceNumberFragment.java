@@ -22,30 +22,25 @@ public class InvoiceNumberFragment extends ANumTextFragment {
     protected int minLength;
     protected int maxLength;
     private String message = "";
-    protected boolean allText;
 
     @Override
     protected int getMaxLength() {
         return maxLength;
     }
 
-    @Override
-    protected boolean allowText() {
-        return allText;
-    }
 
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
+        super.loadArgument(bundle);
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
-        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-20");
+        valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-20");
 
         if(!TextUtils.isEmpty(valuePatten)){
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
         }
 
-        allText = InputType.ALLTEXT.equals(bundle.getString(EntryExtraData.PARAM_EINPUT_TYPE, InputType.ALLTEXT));
     }
 
     @Override

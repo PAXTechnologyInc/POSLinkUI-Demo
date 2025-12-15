@@ -154,6 +154,8 @@
     <string name="pls_input_pin_again">PIN Error, Please Retry\n\nPlease Enter PIN</string>
     <string name="pls_input_pin_last">Last PIN Attempt\n\nPlease Enter PIN</string>
     <string name="pls_input_dest_zip_code">Please Enter Destination Zip Code</string>
+    <string name="prompt_input_length">Please Enter %s Characters</string>
+    <string name="prompt_input">Please Enter</string>
 
     <string name="select_emv_aid">Please Select Application</string>
     <string name="select_sub_trans_type">Please Select Transaction Type</string>
@@ -196,6 +198,26 @@
     <string name="please_input_visa_installment_plan_acceptance_id">Please Enter Plan Acceptance ID</string>
     <string name="enter_ticket_number">Please Enter Ticket Number</string>
     <string name="enter_global_uid">Please Enter Global UID</string>
+    <string name="enter_customer_data">Please Enter Customer Data</string>
+    <string name="enter_department_number">Please Enter Department Number</string>
+    <string name="enter_driver_id">Please Enter Driver Id</string>
+    <string name="enter_employee_number">Please Enter Employee Number</string>
+    <string name="enter_fleet_prompt_code">Please Enter Fleet Prompt Code</string>
+    <string name="enter_hubometer">Please Enter Hubometer</string>
+    <string name="enter_job_id">Please Enter Job Id</string>
+    <string name="enter_license_number">Please Enter License Number</string>
+    <string name="enter_maintenance_id">Please Enter Maintenance Id</string>
+    <string name="enter_odometer">Please Enter Odometer</string>
+    <string name="enter_fleet_po_number">Please Enter Fleet Po Number</string>
+    <string name="enter_reefer_hours">Please Enter Reefer Hours</string>
+    <string name="enter_trailer_id">Please Enter Trailer Id</string>
+    <string name="enter_trip_number">Please Enter Trip Number</string>
+    <string name="enter_unit_id">Please Enter Unit Id</string>
+    <string name="enter_user_id">Please Enter User Id</string>
+    <string name="enter_vehicle_id">Please Enter Vehicle Id</string>
+    <string name="enter_vehicle_number">Please Enter Vehicle Number</string>
+    <string name="enter_additional_fleet_data_1">Please Enter Additional Fleet Data 1</string>
+    <string name="enter_additional_fleet_data_2">Please Enter Additional Fleet Data 2</string>
 
     <!--prompt for fleet trans data-->
     <string name="prompt_input_prompt_code_for_wex">Please Enter Prompt Code</string>

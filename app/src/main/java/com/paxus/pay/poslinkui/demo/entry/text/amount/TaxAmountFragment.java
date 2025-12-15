@@ -28,7 +28,7 @@ public class TaxAmountFragment extends AAmountFragment {
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
         currency = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
 
-        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-12");
+        valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-12");
         if (!TextUtils.isEmpty(valuePatten)) {
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);

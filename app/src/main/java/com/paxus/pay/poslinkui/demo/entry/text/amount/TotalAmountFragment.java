@@ -15,9 +15,12 @@ import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.Toast;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 import com.paxus.pay.poslinkui.demo.view.TextField;
+
+import java.util.List;
 
 /**
  * Implement text entry action {@value TextEntry#ACTION_ENTER_TOTAL_AMOUNT}<br>
@@ -40,6 +43,7 @@ public class TotalAmountFragment extends BaseEntryFragment {
     private String tipName;
 
     private TextField textField;
+    private String valuePatten;
 
     @Override
     protected int getLayoutResourceId() {
@@ -51,7 +55,7 @@ public class TotalAmountFragment extends BaseEntryFragment {
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT,30000);
         currency =  bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
 
-        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"1-12");
+        valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN,"1-12");
         message = getString(R.string.prompt_input_total_amount);
 
         if(!TextUtils.isEmpty(valuePatten)){
@@ -104,7 +108,13 @@ public class TotalAmountFragment extends BaseEntryFragment {
     //-----------Click Callback for buttons-----------
     //If click no tip button, send next with base amount
     private void onNoTipButtonClicked(){
-        submit(baseAmount);
+        List<Integer> lengthList = ValuePatternUtils.getLengthList(valuePatten);
+        // if value is 0 and pattern does not contains 0, that means it can not be skipped, show error message
+        if (baseAmount == 0 && !lengthList.contains(0)) {
+            new Toast(getActivity()).show(getString(R.string.prompt_input), Toast.TYPE.FAILURE);
+        } else {
+            submit(baseAmount);
+        }
     }
 
     @Override

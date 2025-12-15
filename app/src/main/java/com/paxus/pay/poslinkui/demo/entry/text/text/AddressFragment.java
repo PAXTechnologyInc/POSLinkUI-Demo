@@ -30,7 +30,7 @@ public class AddressFragment extends ATextFragment {
     protected void loadArgument(@NonNull Bundle bundle) {
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
-        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-30");
+        valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-30");
         if(!TextUtils.isEmpty(valuePatten)){
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);

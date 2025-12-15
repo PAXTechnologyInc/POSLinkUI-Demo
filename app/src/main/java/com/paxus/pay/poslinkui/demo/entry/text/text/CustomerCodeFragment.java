@@ -31,7 +31,7 @@ public class CustomerCodeFragment extends ATextFragment {
     protected void loadArgument(@NonNull Bundle bundle) {
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
 
-        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-25");
+        valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "0-25");
 
         if(!TextUtils.isEmpty(valuePatten)){
             minLength = ValuePatternUtils.getMinLength(valuePatten);

@@ -105,6 +105,7 @@ import com.paxus.pay.poslinkui.demo.entry.text.number.PromptRestrictionCodeFragm
 import com.paxus.pay.poslinkui.demo.entry.text.number.TableNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.number.TransNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.numbertext.ClerkIdFragment;
+import com.paxus.pay.poslinkui.demo.entry.text.fleet.NewEnterFleetDataFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.numbertext.DestZipcodeFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.numbertext.InvoiceNumberFragment;
 import com.paxus.pay.poslinkui.demo.entry.text.numbertext.MerchantReferenceNumberFragment;
@@ -173,6 +174,27 @@ public class UIFragmentHelper {
             put(TextEntry.ACTION_ENTER_ORIGINAL_TRANSACTION_IDENTIFIER, OrigTransIdentifierFragment.class);
             put(TextEntry.ACTION_ENTER_TICKET_NUMBER, EnterTicketNumberFragment.class);
             put(TextEntry.ACTION_ENTER_GLOBAL_UID, EnterGlobalUIDFragment.class);
+            put(TextEntry.ACTION_ENTER_CUSTOMER_DATA, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_DEPARTMENT_NUMBER, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_DRIVER_ID, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_EMPLOYEE_NUMBER, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_FLEET_PROMPT_CODE, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_HUBOMETER, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_JOB_ID, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_LICENSE_NUMBER, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_MAINTENANCE_ID, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_ODOMETER, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_FLEET_PO_NUMBER, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_REEFER_HOURS, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_TRAILER_ID, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_TRIP_NUMBER, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_UNIT_ID, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_USER_ID, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_VEHICLE_ID, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_VEHICLE_NUMBER, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_ADDITIONAL_FLEET_DATA_1, NewEnterFleetDataFragment.class);
+            put(TextEntry.ACTION_ENTER_ADDITIONAL_FLEET_DATA_2, NewEnterFleetDataFragment.class);
+
         }
     };
 

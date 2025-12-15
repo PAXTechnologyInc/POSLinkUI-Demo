@@ -143,10 +143,16 @@ POSLinkUI library is published on Github Maven. You can integrate it as this DEM
 ### 1.Config Maven
 In build.gradle of root project, we add maven repository of POSLinkUI.
 ```
-    allprojects {
-        repositories {
-            google()
-            mavenCentral()
+Boolean mavenLocalFirst = gradleProps.getProperty("maven.local.first").toBoolean()
+println("maven.local.first: $mavenLocalFirst")
+allprojects {
+    repositories {
+        if(mavenLocalFirst) {
+            // Project local maven repo
+            maven {
+                url new File(project.rootDir, "maven")
+            }
+        } else {
             maven {
                 url 'https://maven.pkg.github.com/PAXTechnologyInc/POSLink-UI'
                 credentials {
@@ -154,13 +160,24 @@ In build.gradle of root project, we add maven repository of POSLinkUI.
                     password = GITHUB_USER_TOKEN
                 }
             }
-            mavenLocal()
         }
-
+        google()
+        mavenCentral()
+        mavenLocal()
     }
+
 ```
 
-You can login your github credential by 2 ways:
+You can modify the value of "maven.local.first" in the gradle.properties. Default value is true, so the project will get POSLinkUI from local maven, if you want to get POSLinkUI from remote maven, set this value to false
+
+```
+maven.local.first=true
+```
+
+If maven.local.first=false, you need to get credentials from github
+
+ You can login your github credential by 2 ways:
+
 1. Settings->Version Control->Github->Log In using token
 2. Add github user name and token to local.properties. Example:
 ```

@@ -11,8 +11,12 @@ import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.Toast;
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
 import com.paxus.pay.poslinkui.demo.view.TextField;
+
+import java.util.List;
 
 /**
  * Implement text entry actions:<br>
@@ -24,7 +28,7 @@ import com.paxus.pay.poslinkui.demo.view.TextField;
 public abstract class AAmountFragment extends BaseEntryFragment {
 
     private TextField textField;
-
+    protected String valuePatten;
     @Override
     protected @LayoutRes
     int getLayoutResourceId() {
@@ -48,7 +52,14 @@ public abstract class AAmountFragment extends BaseEntryFragment {
 
     @Override
     protected void onConfirmButtonClicked() {
-        submit(CurrencyUtils.parse(textField.getText().toString()));
+        long value = CurrencyUtils.parse(textField.getText().toString());
+        List<Integer> lengthList = ValuePatternUtils.getLengthList(valuePatten);
+        // if value is 0 and pattern does not contains 0, that means it can not be skipped, show error message
+        if (value == 0 && !lengthList.contains(0)) {
+            new Toast(getActivity()).show(getString(R.string.prompt_input), Toast.TYPE.FAILURE);
+        } else {
+            submit(value);
+        }
     }
 
     protected void submit(long value) {

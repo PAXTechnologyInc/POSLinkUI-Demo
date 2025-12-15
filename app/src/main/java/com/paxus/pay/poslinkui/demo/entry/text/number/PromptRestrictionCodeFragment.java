@@ -24,7 +24,7 @@ public class PromptRestrictionCodeFragment extends ANumFragment {
     @Override
     protected void loadArgument(@NonNull Bundle bundle) {
         timeOut = bundle.getLong(EntryExtraData.PARAM_TIMEOUT, 30000);
-        String valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "2-2");
+        valuePatten = bundle.getString(EntryExtraData.PARAM_VALUE_PATTERN, "2-2");
         if (!TextUtils.isEmpty(valuePatten)) {
             minLength = ValuePatternUtils.getMinLength(valuePatten);
             maxLength = ValuePatternUtils.getMaxLength(valuePatten);
