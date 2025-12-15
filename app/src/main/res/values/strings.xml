@@ -450,6 +450,8 @@
     <string name="please_tap_card">Please Tap Card!</string>
     <string name="please_see_phone">Please See Phone!</string>
     <string name="info_emv_trans_online">Do Not Remove Your Card Please!\nProcessing Online&#8230;</string>
+    <string name="second_screen_processing">Processing ...</string>
+    <string name="second_screen_please_wait">Please Wait ...</string>
     <string name="info_trans_online">Processing, Please Wait...</string>
     <string name="start_ui">Processing, Please Wait...</string>
     <string name="download_emv_capk">Downloading EMV CAPK\nPlease Wait...</string>
@@ -638,5 +640,10 @@
 
     <!-- Value pattern -->
     <string name="min_length_verification">The length must be greater than %1$d</string>
+    
+<!--    pci7 screen status-->
+    <string name="status_msg_approved">Transaction Approved</string>
+    <string name="status_msg_declined">Transaction Declined</string>
+    <string name="status_msg_partially_approved">Partially Approved</string>
 
 </resources>

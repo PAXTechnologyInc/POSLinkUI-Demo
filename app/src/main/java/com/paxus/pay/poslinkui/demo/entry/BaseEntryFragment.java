@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
@@ -27,6 +28,7 @@ import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.Toast;
 import com.paxus.pay.poslinkui.demo.view.TextField;
+import com.paxus.pay.poslinkui.demo.viewmodel.SecondScreenInfoViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +50,14 @@ public abstract class BaseEntryFragment extends Fragment {
     private boolean active = false;
     private Context appContext = getActivity();
     private String senderPackage, action;
+    protected SecondScreenInfoViewModel viewModel;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Logger.d(this.getClass().getSimpleName() + " onCreateView");
+        viewModel = new ViewModelProvider(requireActivity()).get(SecondScreenInfoViewModel.class);
 
         //1. Load layout in onCreateView (getLayoutResourceId, loadParameter, loadView)
         Bundle bundle = getArguments();

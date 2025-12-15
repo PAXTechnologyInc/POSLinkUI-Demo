@@ -6,15 +6,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
+import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.pax.us.pay.ui.constant.entry.enumeration.TransMode;
 import com.pax.us.pay.ui.constant.status.BatchStatus;
 import com.pax.us.pay.ui.constant.status.CardStatus;
@@ -24,11 +27,14 @@ import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.status.StatusFragment;
 import com.paxus.pay.poslinkui.demo.status.TransCompletedStatusFragment;
 import com.paxus.pay.poslinkui.demo.utils.BundleMaker;
+import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryActivityActionBar;
 import com.paxus.pay.poslinkui.demo.utils.InterfaceHistory;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
+import com.paxus.pay.poslinkui.demo.viewmodel.SecondScreenInfoViewModel;
 
 import java.util.Objects;
 
@@ -53,6 +59,9 @@ public class EntryActivity extends AppCompatActivity{
 
     EntryActivityActionBar actionBar;
 
+    private TransactionPresentation presentation;
+    private SecondScreenInfoViewModel viewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Logger.d( getClass().getSimpleName() + " onCreate");
@@ -65,6 +74,8 @@ public class EntryActivity extends AppCompatActivity{
         registerUIReceiver();
         scheduler = new TaskScheduler(this);
 
+        // inti ViewModel
+        viewModel = new ViewModelProvider(this).get(SecondScreenInfoViewModel.class);
         loadEntry(getIntent());
     }
 
@@ -77,11 +88,18 @@ public class EntryActivity extends AppCompatActivity{
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        dismissPresentation();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         Logger.d(getClass().getSimpleName() +" onDestroy");
         unregisterUIReceiver();
         scheduler.shutdown();
+        dismissPresentation();
     }
 
     private void loadEntry(Intent intent){
@@ -96,6 +114,8 @@ public class EntryActivity extends AppCompatActivity{
 
         Fragment entryFragment = UIFragmentHelper.createFragment(intent);
         if (entryFragment != null) {
+            // show second screen
+            createPresentation(intent);
             updateTransType(intent.getStringExtra(EntryExtraData.PARAM_TRANS_TYPE));
             getSupportFragmentManager().executePendingTransactions();
             getSupportFragmentManager().beginTransaction()
@@ -104,6 +124,36 @@ public class EntryActivity extends AppCompatActivity{
                     .commit();
         } else {
             Toast.makeText(this, "NOT FOUND:" + intent.getAction(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void createPresentation(Intent intent) {
+        Display secondDisplay = DeviceUtils.getSecondDisplay(this);
+        if (secondDisplay != null) {
+            // show second screen msg
+            viewModel.updateMessage(getResources().getString(R.string.second_screen_please_wait));
+            Bundle bundle = new Bundle();
+            bundle.putAll(intent.getExtras()!=null ? intent.getExtras() : new Bundle());
+            // get trans amount and update on second screen.
+            if (bundle.containsKey(EntryExtraData.PARAM_TRANS_AMOUNT)) {
+                String amount = CurrencyUtils.convert(
+                        bundle.getLong(EntryExtraData.PARAM_TRANS_AMOUNT),
+                        bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD)
+                );
+                // update second screen amount
+                viewModel.updateAmount(amount);
+            }
+            if (presentation == null) {
+                presentation = new TransactionPresentation(this, secondDisplay, intent, viewModel);
+                presentation.show();
+            }
+        }
+    }
+
+    private void dismissPresentation(){
+        if (presentation != null) {
+            presentation.dismiss();
+            presentation = null;
         }
     }
 

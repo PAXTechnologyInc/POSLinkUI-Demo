@@ -3,15 +3,16 @@ package com.paxus.pay.poslinkui.demo.entry.confirmation;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
+import com.pax.us.pay.ui.constant.entry.enumeration.TransactionStatus;
+import com.pax.us.pay.ui.constant.status.StatusData;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-
-import java.util.Arrays;
-import java.util.List;
+import com.paxus.pay.poslinkui.demo.viewmodel.SecondScreenInfoViewModel;
 
 /**
  * Implement confirmation entry action {@value ConfirmationEntry#ACTION_SUPPLEMENT_PARTIAL_APPROVAL}
@@ -32,6 +33,8 @@ public class SupplementPartialApprovalFragment extends AConfirmationFragment {
         currency = bundle.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD);
         approvedAmt = bundle.getLong(EntryExtraData.PARAM_APPROVED_AMOUNT);
         total = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
+        // partial approve
+        viewModel.updateAllData("","", TransactionStatus.PARTIALLY_APPROVED.name(), null, bundle.getString(StatusData.PARAM_MSG_PRIMARY, ""));
     }
 
     @Override

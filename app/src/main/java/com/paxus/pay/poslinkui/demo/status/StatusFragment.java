@@ -10,7 +10,9 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.enumeration.SFType;
 import com.pax.us.pay.ui.constant.status.BatchStatus;
@@ -20,6 +22,7 @@ import com.pax.us.pay.ui.constant.status.StatusData;
 import com.pax.us.pay.ui.constant.status.Uncategory;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
+import com.paxus.pay.poslinkui.demo.viewmodel.SecondScreenInfoViewModel;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +32,10 @@ public class StatusFragment extends Fragment {
     protected Intent intent;
     protected  String message;
 
+    private SecondScreenInfoViewModel viewModel;
+    private String transactionStatus;
+    private String screenStatusMessage;
+    private String screenStatusTitle;
     public static final long DURATION_DEFAULT = 5000, DURATION_SHORT = 1000;
 
     // Default constructor
@@ -43,6 +50,8 @@ public class StatusFragment extends Fragment {
         if (intent.getExtras() != null) bundle.putAll(intent.getExtras());
         setArguments(bundle);
         message = generateStatusMessage(bundle, context);
+        transactionStatus = bundle.getString(EntryExtraData.PARAM_TRANS_STATUS, "");
+        screenStatusTitle = bundle.getString(StatusData.PARAM_MSG_PRIMARY, "");
     }
 
     @Override
@@ -51,6 +60,14 @@ public class StatusFragment extends Fragment {
 
         TextView titleTextView = view.findViewById(R.id.status_title);
         titleTextView.setText(message);
+        viewModel = new ViewModelProvider(requireActivity()).get(SecondScreenInfoViewModel.class);
+        if (transactionStatus.isEmpty()) {
+            // default status
+            viewModel.updateAllData("",screenStatusMessage,"", null, "");
+        } else {
+            // trans status - approved / declined / partially approved
+            viewModel.updateAllData("", "",transactionStatus, null, screenStatusTitle);
+        }
         return view;
     }
 
@@ -84,12 +101,15 @@ public class StatusFragment extends Fragment {
     private String generateStatusMessage(Bundle bundle, Context context) {
         String action = bundle.getString(EntryRequest.PARAM_ACTION);
         String message = "";
+        screenStatusMessage = context.getResources().getString(R.string.second_screen_please_wait);
         switch (action) {
             case InformationStatus.TRANS_ONLINE_STARTED:
                 message = context.getResources().getString(R.string.info_trans_online);
+                screenStatusMessage = context.getResources().getString(R.string.second_screen_processing);
                 break;
             case InformationStatus.EMV_TRANS_ONLINE_STARTED:
                 message = context.getResources().getString(R.string.info_emv_trans_online);
+                screenStatusMessage = context.getResources().getString(R.string.second_screen_processing);
                 break;
             case InformationStatus.DCC_ONLINE_STARTED:
                 message = context.getResources().getString(R.string.info_dcc_online_start);
@@ -105,6 +125,7 @@ public class StatusFragment extends Fragment {
                 break;
             case CardStatus.CARD_REMOVAL_REQUIRED:
                 message = context.getResources().getString(R.string.please_remove_card);
+                screenStatusMessage = context.getResources().getString(R.string.please_remove_card);
                 break;
             case CardStatus.CARD_QUICK_REMOVAL_REQUIRED:
                 message = context.getResources().getString(R.string.please_remove_card_quickly);
@@ -193,6 +214,11 @@ public class StatusFragment extends Fragment {
         if(intent.getExtras() != null) bundle.putAll(intent.getExtras());
 
         this.message = generateStatusMessage(bundle, context);
+        if (transactionStatus.isEmpty()) {
+            viewModel.updateAllData("",screenStatusMessage,"", null, "");
+        } else {
+            viewModel.updateAllData("", "",transactionStatus, null, screenStatusMessage);
+        }
         ((TextView)getView().findViewById(R.id.status_title)).setText(message);
     }
 }
