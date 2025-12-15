@@ -6,7 +6,7 @@ plugins {
 def releaseTime() {
     return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
 }
-def VERSION_NAME = "V1.02.00_" + releaseTime()
+def VERSION_NAME = "V1.03.00_" + releaseTime()
 def ARCHIVES_BASE_NAME = "POSLinkUI-Demo_" + VERSION_NAME
 
 android {
@@ -25,7 +25,7 @@ android {
         applicationId "com.paxus.pay.poslinkui.demo"
         minSdk 22
         targetSdk 31
-        versionCode 18
+        versionCode 19
         versionName VERSION_NAME
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
