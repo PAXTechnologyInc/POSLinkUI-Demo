@@ -123,8 +123,8 @@ public class ShowMessageFragment extends BaseEntryFragment {
             Glide.with(this).load(imgUrl).into(msgImgView);
             if (!TextUtils.isEmpty(imgDesc)) {
                 llDescMsgLayout.setVisibility(View.VISIBLE);
-                for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))) {
-                    titleLayout.addView(textView);
+                for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), imgDesc, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))) {
+                    llDescMsgLayout.addView(textView);
                 }
             } else {
                 llDescMsgLayout.setVisibility(View.GONE);
