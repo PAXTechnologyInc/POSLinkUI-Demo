@@ -307,6 +307,7 @@ public class InputAccountFragment extends BaseEntryFragment {
                 enableTap ? "" : getResources().getString(R.string.second_screen_please_wait),
                 "",
                 enableTap ? R.mipmap.tap_white: null,
+                "",
                 "");
     }
 

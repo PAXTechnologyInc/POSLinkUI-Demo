@@ -130,8 +130,9 @@ public class EntryActivity extends AppCompatActivity{
     private void createPresentation(Intent intent) {
         Display secondDisplay = DeviceUtils.getSecondDisplay(this);
         if (secondDisplay != null) {
-            // show second screen msg
-            viewModel.updateMessage(getResources().getString(R.string.second_screen_please_wait));
+            // show second screen, init msg data
+            viewModel.updateAllData("", getResources().getString(R.string.second_screen_please_wait), "", null, "",""
+            );
             Bundle bundle = new Bundle();
             bundle.putAll(intent.getExtras()!=null ? intent.getExtras() : new Bundle());
             // get trans amount and update on second screen.

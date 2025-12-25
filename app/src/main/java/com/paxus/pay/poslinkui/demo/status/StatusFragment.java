@@ -63,10 +63,10 @@ public class StatusFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(SecondScreenInfoViewModel.class);
         if (transactionStatus.isEmpty()) {
             // default status
-            viewModel.updateAllData("",screenStatusMessage,"", null, "");
+            viewModel.updateAllData("",screenStatusMessage,"", null, "", "");
         } else {
             // trans status - approved / declined / partially approved
-            viewModel.updateAllData("", "",transactionStatus, null, screenStatusTitle);
+            viewModel.updateAllData("", "",transactionStatus, null, screenStatusTitle, "");
         }
         return view;
     }
@@ -215,9 +215,9 @@ public class StatusFragment extends Fragment {
 
         this.message = generateStatusMessage(bundle, context);
         if (transactionStatus.isEmpty()) {
-            viewModel.updateAllData("",screenStatusMessage,"", null, "");
+            viewModel.updateAllData("",screenStatusMessage,"", null, "", "");
         } else {
-            viewModel.updateAllData("", "",transactionStatus, null, screenStatusMessage);
+            viewModel.updateAllData("", "",transactionStatus, null, screenStatusMessage, "");
         }
         ((TextView)getView().findViewById(R.id.status_title)).setText(message);
     }

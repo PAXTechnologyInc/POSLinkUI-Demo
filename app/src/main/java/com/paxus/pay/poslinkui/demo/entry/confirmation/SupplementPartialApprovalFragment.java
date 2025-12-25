@@ -34,7 +34,7 @@ public class SupplementPartialApprovalFragment extends AConfirmationFragment {
         approvedAmt = bundle.getLong(EntryExtraData.PARAM_APPROVED_AMOUNT);
         total = bundle.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT);
         // partial approve
-        viewModel.updateAllData("","", TransactionStatus.PARTIALLY_APPROVED.name(), null, bundle.getString(StatusData.PARAM_MSG_PRIMARY, ""));
+        viewModel.updateAllData("","", TransactionStatus.PARTIALLY_APPROVED.name(), null, bundle.getString(StatusData.PARAM_MSG_PRIMARY, ""), "");
     }
 
     @Override

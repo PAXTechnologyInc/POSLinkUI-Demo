@@ -59,12 +59,13 @@ public class SecondScreenInfoViewModel extends ViewModel {
     }
 
     //  update second screen info
-    public void updateAllData(String newAmount, String newMsg, String newStatus, Integer newImageResourceId, String newStatusTitle) {
+    public void updateAllData(String newAmount, String newMsg, String newStatus, Integer newImageResourceId, String newStatusTitle, String newTitle) {
         amount.setValue(newAmount);
         msg.setValue(newMsg);
         status.setValue(newStatus);
         imageResourceId.setValue(newImageResourceId);
         statusTitle.setValue(newStatusTitle);
+        title.setValue(newTitle);
     }
 
     public static class ScreenInfo {

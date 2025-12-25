@@ -32,7 +32,7 @@ public class DisplayApproveMessageFragment extends BaseEntryFragment {
     protected void loadArgument(@NonNull Bundle bundle) {
         cardType = bundle.getString(EntryExtraData.PARAM_CARD_TYPE);
         // update trans status in second screen.
-        viewModel.updateAllData("","", TransactionStatus.APPROVED.name(), null, bundle.getString(StatusData.PARAM_MSG_PRIMARY, ""));
+        viewModel.updateAllData("","", TransactionStatus.APPROVED.name(), null, bundle.getString(StatusData.PARAM_MSG_PRIMARY, ""), "");
     }
 
     @Override
