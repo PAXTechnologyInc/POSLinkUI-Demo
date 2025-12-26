@@ -8,6 +8,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -108,7 +109,7 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
         }
 
         textField = rootView.findViewById(R.id.edit_text);
-
+        textField.setTransformationMethod(null);
         if ("1".equals(inputType)) {
             textField.setInputType(InputType.TYPE_CLASS_NUMBER);
             if(maxLength > 0 ) {
@@ -139,16 +140,22 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
 
         }else if("4".equals(inputType)){//Amount
             textField.setTextIsSelectable(false);
-            if(defaultValue != null) {
+            // for amount, only allow "0123456789,.$€"
+            textField.setKeyListener(DigitsKeyListener.getInstance("0123456789,.$€"));
+            if(defaultValue != null && !defaultValue.isEmpty()) {
                 String def = defaultValue.replaceAll("[^0-9]","");
                 if(!TextUtils.isEmpty(def)) {
                     textField.setText(CurrencyUtils.convert(Long.parseLong(def), CurrencyType.USD));
                 }
 
+            } else {
+                textField.setText(CurrencyUtils.convert(0, CurrencyType.USD));
             }
+            textField.setSelection(textField.getEditableText().length());
             textField.addTextChangedListener(new AmountTextWatcher(maxLength, CurrencyType.USD));
         }else if("5".equals(inputType)){//password
             textField.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            textField.setTransformationMethod(PasswordTransformationMethod.getInstance());
             if(maxLength > 0 ) {
                 textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
             }
