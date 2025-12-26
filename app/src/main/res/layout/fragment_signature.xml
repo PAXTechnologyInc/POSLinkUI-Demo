@@ -53,11 +53,20 @@
             android:id="@+id/sign_line2"/>
     </LinearLayout>
 
-    <com.paxus.pay.poslinkui.demo.entry.signature.ElectronicSignatureView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:id="@+id/signature_board"
-        app:layout_constraintTop_toBottomOf="@id/sign_line_layout"/>
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sign_line_layout"
+        app:layout_constraintBottom_toTopOf="@+id/button_layout">
+        <com.paxus.pay.poslinkui.demo.entry.signature.ElectronicSignatureView
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:id="@+id/signature_board"
+            />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
