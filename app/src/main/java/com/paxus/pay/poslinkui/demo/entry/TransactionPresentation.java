@@ -116,7 +116,7 @@ public class TransactionPresentation extends Presentation {
         //show trans status
         imageView.setVisibility(View.GONE);
         backgroundView.setBackgroundColor(color);
-        setupAutoScaleTextView(statusMessageTextView, 40, 2, Typeface.BOLD);
+        setupAutoScaleTextView(statusMessageTextView, 40, 3, Typeface.BOLD);
         showContent("", "", "", null, statusMsg);
     }
 
