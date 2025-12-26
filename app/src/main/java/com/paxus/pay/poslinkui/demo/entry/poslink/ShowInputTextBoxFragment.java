@@ -95,7 +95,7 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
     @Override
     protected void loadView(View rootView) {
         TextView titleView = rootView.findViewById(R.id.title_view);
-        titleView.setText(inputTextTitle);
+        titleView.setText(title);
 
         textLayout = rootView.findViewById(R.id.text_view);
         if(text == null || text.isEmpty()){
