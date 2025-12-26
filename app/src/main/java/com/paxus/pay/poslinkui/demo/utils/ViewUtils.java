@@ -11,9 +11,13 @@ import android.graphics.drawable.Drawable;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.core.widget.TextViewCompat;
 
 import com.paxus.pay.poslinkui.demo.R;
 
@@ -80,5 +84,26 @@ public class ViewUtils {
         bitmapDrawable.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         bitmapDrawable.setDither(true);
         return bitmapDrawable;
+    }
+
+    public static void setupAutoScaleTextView(TextView textView, int normalSize, int maxLines, int fontBold, int minSize) {
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, normalSize);
+        textView.setMaxLines(maxLines);
+        textView.setEllipsize(null);
+        textView.setTypeface(textView.getTypeface(), fontBold);
+
+        // adjust font size to show StatusData.PARAM_MSG_PRIMARY.
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(
+                textView,
+                TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM
+        );
+
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                textView,
+                minSize,
+                normalSize,
+                1,
+                TypedValue.COMPLEX_UNIT_SP
+        );
     }
 }

@@ -1,5 +1,7 @@
 package com.paxus.pay.poslinkui.demo.entry;
 
+import static com.paxus.pay.poslinkui.demo.utils.ViewUtils.setupAutoScaleTextView;
+
 import android.app.Presentation;
 import android.content.Context;
 import android.content.Intent;
@@ -108,6 +110,8 @@ public class TransactionPresentation extends Presentation {
             imageView.setVisibility(View.VISIBLE);
             backgroundView.setBackgroundColor(getResources().getColor(R.color.normal_background));
             messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+            //[POSUI-359] Limit the title line to display at most one line.
+            setupAutoScaleTextView(titleTextView, 26, 1, Typeface.NORMAL, 20);
             showContent(info.title, info.amount, info.msg, info.imageResourceId, "");
         }
     }
@@ -116,29 +120,8 @@ public class TransactionPresentation extends Presentation {
         //show trans status
         imageView.setVisibility(View.GONE);
         backgroundView.setBackgroundColor(color);
-        setupAutoScaleTextView(statusMessageTextView, 40, 3, Typeface.BOLD);
+        setupAutoScaleTextView(statusMessageTextView, 40, 3, Typeface.BOLD, 26);
         showContent("", "", "", null, statusMsg);
-    }
-
-    private void setupAutoScaleTextView(TextView textView, int normalSize, int maxLines, int fontBold) {
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, normalSize);
-        textView.setMaxLines(maxLines);
-        textView.setEllipsize(null);
-        textView.setTypeface(textView.getTypeface(), fontBold);
-
-        // adjust font size to show StatusData.PARAM_MSG_PRIMARY.
-        TextViewCompat.setAutoSizeTextTypeWithDefaults(
-                textView,
-                TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM
-        );
-
-        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-                textView,
-                26,
-                normalSize,
-                1,
-                TypedValue.COMPLEX_UNIT_SP
-        );
     }
 
     public void showContent(String title,
