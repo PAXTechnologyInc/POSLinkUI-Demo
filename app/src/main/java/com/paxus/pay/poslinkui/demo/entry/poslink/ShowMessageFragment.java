@@ -58,10 +58,15 @@ public class ShowMessageFragment extends BaseEntryFragment {
         tax = null;
         total = null;
     }
+    private void clearImageAndDesc() {
+        imgUrl = null;
+        imgDesc = null;
+    }
 
     private void clearMessage() {
         clearTitle(); // BPOSANDJAX-1283
         clearTaxandTotal(); // POSUI-294
+        clearImageAndDesc();
         messages.clear();
         loadView(getView());
     }
@@ -91,6 +96,7 @@ public class ShowMessageFragment extends BaseEntryFragment {
     @Override
     protected void loadView(View rootView) {
         LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_message);
+        titleLayout.removeAllViews();
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
         for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
             titleLayout.addView(textView);
