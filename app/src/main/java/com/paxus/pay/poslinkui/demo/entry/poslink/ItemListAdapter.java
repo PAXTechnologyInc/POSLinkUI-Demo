@@ -66,10 +66,11 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
 
         RelativeLayout.LayoutParams productNameLps = (RelativeLayout.LayoutParams)holder.tvProductName.getLayoutParams();
         if (!TextUtils.isEmpty(itemDetail.getQuantity())) {
+            String formatUnitPrice = formatToTwoDecimals(itemDetail.getUnitPrice());
             if (!"x".equals(itemDetail.getUnit())) {
-                holder.tvQuantityUnit.setText(quantityDesc + "  @"+ currencySymbol + String.format("%.2s", itemDetail.getUnitPrice()) + "/" + itemDetail.getUnit());
+                holder.tvQuantityUnit.setText(String.format("%s  @%s%s/%s", quantityDesc, currencySymbol, formatUnitPrice, itemDetail.getUnit()));
             }else {
-                holder.tvQuantityUnit.setText(quantityDesc + "  @"+ currencySymbol + String.format("%.2s", itemDetail.getUnitPrice()));
+                holder.tvQuantityUnit.setText(String.format("%s  @%s%s", quantityDesc, currencySymbol, formatUnitPrice));
             }
             productNameLps.removeRule(RelativeLayout.CENTER_VERTICAL);
             holder.tvProductName.setLayoutParams(productNameLps);
@@ -77,9 +78,9 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
             productNameLps.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
             holder.tvProductName.setLayoutParams(productNameLps);
         }
-
-        if ('0' <= itemDetail.getPrice().charAt(0) && itemDetail.getPrice().charAt(0) <= '9'){
-            holder.tvTotalPrice.setText(currencySymbol + itemDetail.getPrice());
+        String price = formatToTwoDecimals(itemDetail.getPrice());
+        if (!price.isEmpty()){
+            holder.tvTotalPrice.setText(String.format("%s%s", currencySymbol,price));
         } else {
             StringBuilder formatPrice = new StringBuilder (itemDetail.getPrice());
             formatPrice.insert(1, currencySymbol);
@@ -109,4 +110,19 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
             tvTotalPrice = view.findViewById(R.id.tv_total_price_show_item);
         }
     }
+    private static String formatToTwoDecimals(String priceStr) {
+        String formatPrice = "";
+        try {
+            Double price = Double.parseDouble(priceStr);
+            formatPrice = formatToTwoDecimals(price);
+        } catch (Exception e) {
+            Logger.e(e, "parse price error");
+        }
+        return formatPrice;
+    }
+
+    private static String formatToTwoDecimals(Double price) {
+        return String.format(Locale.getDefault(), "%.2f", price);
+    }
+
 }
