@@ -91,7 +91,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
 
-        app:layout_constraintHeight_max="@dimen/button_height"
+        app:layout_constraintHeight_max="@dimen/margin_gap"
 
         app:layout_constraintTop_toBottomOf="@id/total_amount"
         app:layout_constraintBottom_toTopOf="@id/manual_message"
@@ -148,28 +148,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/edit_account"
-        app:layout_constraintBottom_toTopOf="@id/divider2"
 
         app:layout_constraintVertical_chainStyle="spread_inside"
         app:layout_constraintVertical_bias="0"
         />
 
-    <View
-        android:id="@+id/divider2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@id/confirm_button"
-        app:layout_constraintVertical_bias="1"
-        app:layout_constraintVertical_chainStyle="spread_inside" />
 
     <LinearLayout
         android:id="@+id/entry_mode_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="horizontal"
         android:weightSum="3"
         android:layout_marginTop="8dp"
@@ -178,35 +167,54 @@
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider2"
+        app:layout_constraintTop_toBottomOf="@id/confirm_button"
         app:layout_constraintBottom_toTopOf="@id/contactless_logo_container">
 
-        <ImageView
-            android:id="@+id/insert"
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_margin="@dimen/margin_gap"
-            android:scaleType="fitCenter"
-            tools:src="@mipmap/insert_card_a920" />
+            android:layout_marginStart="@dimen/margin_gap"
+            android:layout_marginEnd="@dimen/margin_gap">
 
-        <ImageView
-            android:id="@+id/tap"
+            <ImageView
+                android:id="@+id/insert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:layout_gravity="bottom"
+                tools:src="@mipmap/insert_card_a920" />
+        </FrameLayout>
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_margin="@dimen/margin_gap"
-            android:scaleType="fitCenter"
-            tools:src="@mipmap/tap_card_a920" />
+            android:layout_marginStart="@dimen/margin_gap"
+            android:layout_marginEnd="@dimen/margin_gap">
 
-        <ImageView
-            android:id="@+id/swipe"
+            <ImageView
+                android:id="@+id/tap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:layout_gravity="bottom"
+                tools:src="@mipmap/tap_card_a920" />
+        </FrameLayout>
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_margin="@dimen/margin_gap"
-            android:scaleType="fitCenter"
-            tools:src="@mipmap/swipe_card_a920" />
+            android:layout_marginStart="@dimen/margin_gap"
+            android:layout_marginEnd="@dimen/margin_gap">
+
+            <ImageView
+                android:id="@+id/swipe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:layout_gravity="bottom"
+                tools:src="@mipmap/swipe_card_a920" />
+        </FrameLayout>
 
     </LinearLayout>
 
