@@ -71,8 +71,9 @@ public class ConfirmSurchargeFeeFragment extends BaseEntryFragment {
             bypass.setVisibility(View.GONE);
         }
 
-        // should show feeName as title in PCI7 screen when confirm surcharge fee.
+        // should show feeName as title in second screen when confirm surcharge fee.
         viewModel.updateTitle(feeName);
+        viewModel.updateAmount(CurrencyUtils.convert(feeAmount, currency));
     }
 
     @Override
