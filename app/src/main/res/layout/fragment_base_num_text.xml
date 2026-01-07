@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <TextView
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/message"
-        android:textSize="@dimen/text_size_title"
-        android:layout_marginVertical="@dimen/space_between_textview"/>
+        android:orientation="vertical">
 
-    <com.paxus.pay.poslinkui.demo.view.TextField
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/button_height"
-        android:id="@+id/edit_number_text"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/message"
+            android:textSize="@dimen/text_size_title"
+            android:layout_marginVertical="@dimen/space_between_textview"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/button_height"
-        android:id="@+id/confirm_button"
-        android:text="@string/confirm"/>
+        <com.paxus.pay.poslinkui.demo.view.TextField
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:id="@+id/edit_number_text"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:id="@+id/confirm_button"
+            android:text="@string/confirm"/>
 
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
