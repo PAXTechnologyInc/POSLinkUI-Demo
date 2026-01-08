@@ -83,7 +83,7 @@ public class ShowDialogFormRadioFragment extends Fragment implements LabelAdapte
 
         LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_dialog_from_radio);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
+        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title),true)) {
             titleLayout.addView(textView);
         }
         recyclerView = rootView.findViewById(R.id.my_recycler_view);

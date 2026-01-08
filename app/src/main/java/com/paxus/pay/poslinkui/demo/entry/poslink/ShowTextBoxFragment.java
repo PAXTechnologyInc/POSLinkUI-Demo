@@ -127,7 +127,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
     protected void loadView(View rootView) {
         LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_text_box);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
+        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title),true)) {
             textView.setElegantTextHeight(true);
             titleLayout.addView(textView);
         }
@@ -150,7 +150,7 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
 
                 tempTextLayout.setLayoutParams(layoutParams);
 
-                for(TextView tv: TextShowingUtils.getTitleViewList(requireContext(), text, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))){
+                for(TextView tv: TextShowingUtils.getTitleViewList(requireContext(), text, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle),true)){
                     tv.setElegantTextHeight(true);
                     tempTextLayout.addView(tv);
                 }

@@ -98,7 +98,7 @@ public class ShowMessageFragment extends BaseEntryFragment {
         LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_message);
         titleLayout.removeAllViews();
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
+        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title),true)) {
             titleLayout.addView(textView);
         }
 
@@ -129,7 +129,7 @@ public class ShowMessageFragment extends BaseEntryFragment {
             Glide.with(this).load(imgUrl).into(msgImgView);
             if (!TextUtils.isEmpty(imgDesc)) {
                 llDescMsgLayout.setVisibility(View.VISIBLE);
-                for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), imgDesc, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))) {
+                for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), imgDesc, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle),true)) {
                     llDescMsgLayout.addView(textView);
                 }
             } else {

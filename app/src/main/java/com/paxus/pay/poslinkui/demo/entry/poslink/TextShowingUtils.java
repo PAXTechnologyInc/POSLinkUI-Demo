@@ -103,7 +103,13 @@ public class TextShowingUtils {
         return textView;
     }
 
+    // overload func,add supportLineSep param
     public static List<TextView> getTitleViewList(Context context, String data, LinearLayout.LayoutParams layoutParams, @ColorInt int color, float textSize) {
+        return getTitleViewList(context, data, layoutParams, color, textSize, false);
+    }
+
+    // impl
+    public static List<TextView> getTitleViewList(Context context, String data, LinearLayout.LayoutParams layoutParams, @ColorInt int color, float textSize, boolean supportLineSep) {
         if (TextUtils.isEmpty(data))
             data = "";
 
@@ -115,9 +121,28 @@ public class TextShowingUtils {
         };
 
         try {
-            PrintDataItemContainer printDataItemContainer = PrintDataConverter.parse(data, map, false);
+            // according supportLineSep
+            PrintDataItemContainer printDataItemContainer = PrintDataConverter.parse(data, map, supportLineSep);
 
-            List<PrintDataItem> printDataItemList = filterItems(printDataItemContainer.getPrintDataItems(), CENTER_ALIGN);
+            List<PrintDataItem> parsedItems = printDataItemContainer.getPrintDataItems();
+
+            if (supportLineSep && containsLineBreak(parsedItems)) {
+                StringBuilder mergedText = new StringBuilder();
+                for (PrintDataItem item : parsedItems) {
+                    if (item.getCmds().contains(LINE)) {
+                        mergedText.append("\n");
+                    } else if (!TextUtils.isEmpty(item.getContent())) {
+                        mergedText.append(item.getContent());
+                    }
+                }
+                PrintDataItem mergedItem = new PrintDataItem(mergedText.toString(), Arrays.asList(CENTER_ALIGN));
+                TextView textView = getTitleTextView(context, mergedItem, layoutParams, color, textSize);
+                customizeFontSize(textView, mergedItem);
+                textViewList.add(textView);
+                return textViewList;
+            }
+
+            List<PrintDataItem> printDataItemList = filterItems(parsedItems, CENTER_ALIGN);
             //If just one item for title, default make it on center
             if (printDataItemList.size() == 1) {
                 PrintDataItem printDataItem = printDataItemList.get(0);
@@ -147,7 +172,9 @@ public class TextShowingUtils {
                     }
 
                     if (textView != null) {
-                        textView.setSingleLine();
+                        if (!supportLineSep) {
+                            textView.setSingleLine();
+                        }
                         textViewList.add(textView);
                     }
                 }
@@ -211,6 +238,14 @@ public class TextShowingUtils {
                 || printDataItem.getCmds().contains(CENTER_ALIGN);
     }
 
+    private static boolean containsLineBreak(List<PrintDataItem> items) {
+        for (PrintDataItem item : items) {
+            if (item.getCmds().contains(LINE)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public static TextView getTitleTextView(Context context, PrintDataItem printDataItem, LinearLayout.LayoutParams layoutParams, @ColorInt int color, float textSize) {
         return generateTextView(context, printDataItem, layoutParams, color, textSize);
     }
@@ -311,16 +346,40 @@ public class TextShowingUtils {
     }
 
 
+    // overload func,add supportLineSep param
     public static List<TextView> getViewList(Context context, String data, LinearLayout.LayoutParams layoutParams, @ColorInt int color, float textSize) {
+        return getViewList(context, data, layoutParams, color, textSize, false);
+    }
+
+    // impl
+    public static List<TextView> getViewList(Context context, String data, LinearLayout.LayoutParams layoutParams, @ColorInt int color, float textSize, boolean supportLineSep) {
         if (TextUtils.isEmpty(data))
             data = "";
 
         List<TextView> textViewList = new ArrayList<>();
 
         try {
-            PrintDataItemContainer printDataItemContainer = PrintDataConverter.parse(data, false);
+            PrintDataItemContainer printDataItemContainer = PrintDataConverter.parse(data, supportLineSep);
 
-            List<PrintDataItem> printDataItemList = filterItems(printDataItemContainer.getPrintDataItems(), PrintDataItem.LEFT_ALIGN);
+            List<PrintDataItem> parsedItems = printDataItemContainer.getPrintDataItems();
+
+            if (supportLineSep && containsLineBreak(parsedItems)) {
+                StringBuilder mergedText = new StringBuilder();
+                for (PrintDataItem item : parsedItems) {
+                    if (item.getCmds().contains(LINE)) {
+                        mergedText.append("\n");
+                    } else if (!TextUtils.isEmpty(item.getContent())) {
+                        mergedText.append(item.getContent());
+                    }
+                }
+                PrintDataItem mergedItem = new PrintDataItem(mergedText.toString(), Arrays.asList(LEFT_ALIGN));
+                TextView textView = generateTextView(context, mergedItem, layoutParams, color, textSize);
+                customizeFontSize(textView, mergedItem);
+                textViewList.add(textView);
+                return textViewList;
+            }
+
+            List<PrintDataItem> printDataItemList = filterItems(parsedItems, PrintDataItem.LEFT_ALIGN);
 
             for (int i = 0; i < printDataItemList.size(); i++) {
 
