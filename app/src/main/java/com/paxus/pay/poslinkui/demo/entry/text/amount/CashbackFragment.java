@@ -93,6 +93,7 @@ public class CashbackFragment extends BaseEntryFragment {
             if(promptOther) {
                 rootView.findViewById(R.id.text_view_other_cashback).setVisibility(View.VISIBLE);
                 editCashback.setVisibility(View.VISIBLE);
+                editCashback.requestFocus();
                 editCashback.setImeOptions(editCashback.getImeOptions() | EditorInfo.IME_ACTION_DONE);
                 editCashback.setOnEditorActionListener((v, actionId, event) -> {
                     if (actionId == EditorInfo.IME_ACTION_DONE) onConfirmButtonClicked();
@@ -101,6 +102,7 @@ public class CashbackFragment extends BaseEntryFragment {
             }
         } else {
             editCashback.setVisibility(View.VISIBLE);
+            editCashback.requestFocus();
         }
         if(editCashback.getVisibility() == View.VISIBLE){
             editCashback.addTextChangedListener(new CashbackEditTextWatcher(maxLength,currency, value -> this.cashback = value));
