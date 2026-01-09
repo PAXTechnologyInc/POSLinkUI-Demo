@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.EntryResponse;
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.Toast;
@@ -79,7 +80,14 @@ public abstract class BaseEntryFragment extends Fragment {
 
     private void setupFocusableTextFields(TextField[] textFields, View view) {
         if(textFields!= null && textFields.length > 0) {
-            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            textFields[0].requestFocus();
+            // if devices have physical keyboard, hide keyboard at the beginning.
+            // Otherwise, the keyboard is prone to abruptly dismiss.
+            if (DeviceUtils.hasPhysicalKeyboard()) {
+                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            } else {
+                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
             for (int i = 0; i < textFields.length - 1; i++) {
                 textFields[i].attachToLifecycle(getViewLifecycleOwner().getLifecycle());
                 textFields[i].setImeOptions(textFields[i].getImeOptions() | EditorInfo.IME_ACTION_NEXT);
