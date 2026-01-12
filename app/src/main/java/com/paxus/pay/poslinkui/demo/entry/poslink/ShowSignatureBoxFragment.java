@@ -16,10 +16,10 @@ import androidx.annotation.NonNull;
 import com.pax.us.pay.ui.constant.entry.EntryExtraData;
 import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
+import com.pax.us.pay.ui.constant.entry.enumeration.ManageUIConst;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.entry.signature.ElectronicSignatureView;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
 import com.paxus.pay.poslinkui.demo.view.TextField;
@@ -72,7 +72,11 @@ public class ShowSignatureBoxFragment extends BaseEntryFragment {
 
     @Override
     protected int getLayoutResourceId() {
-        return R.layout.fragment_show_signature_box;
+        if (signBox == ManageUIConst.SignatureBox.VERTICAL_SIGNATURE_BOX) {
+            return R.layout.fragment_show_vertical_signature_box;
+        } else {
+            return R.layout.fragment_show_signature_box;
+        }
     }
 
     @Override
