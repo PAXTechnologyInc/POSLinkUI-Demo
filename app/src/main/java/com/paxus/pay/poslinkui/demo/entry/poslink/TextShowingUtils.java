@@ -121,57 +121,38 @@ public class TextShowingUtils {
         };
 
         try {
-            // according supportLineSep
+            // Parse according to supportLineSep parameter
             PrintDataItemContainer printDataItemContainer = PrintDataConverter.parse(data, map, supportLineSep);
 
             List<PrintDataItem> parsedItems = printDataItemContainer.getPrintDataItems();
 
-            if (supportLineSep && containsLineBreak(parsedItems)) {
-                StringBuilder mergedText = new StringBuilder();
-                for (PrintDataItem item : parsedItems) {
-                    if (item.getCmds().contains(LINE)) {
-                        mergedText.append("\n");
-                    } else if (!TextUtils.isEmpty(item.getContent())) {
-                        mergedText.append(item.getContent());
-                    }
-                }
-                PrintDataItem mergedItem = new PrintDataItem(mergedText.toString(), Arrays.asList(CENTER_ALIGN));
-                TextView textView = getTitleTextView(context, mergedItem, layoutParams, color, textSize);
-                customizeFontSize(textView, mergedItem);
-                textViewList.add(textView);
-                return textViewList;
+            // If line break is supported, merge consecutive non-alignment items (preserve line breaks)
+            if (supportLineSep) {
+                parsedItems = mergeItemsWithLineBreak(parsedItems);
             }
 
             List<PrintDataItem> printDataItemList = filterItems(parsedItems, CENTER_ALIGN);
-            //If just one item for title, default make it on center
+
+            // If there's only one item
             if (printDataItemList.size() == 1) {
                 PrintDataItem printDataItem = printDataItemList.get(0);
                 if (printDataItem.getCmds().size() == 0 || (printDataItem.getCmds().size() == 1
                         && printDataItem.getCmds().get(0).equals(BOLD))) {
                     printDataItem.getCmds().add(CENTER_ALIGN);
-
                 }
 
                 TextView textView = getTitleTextView(context, printDataItem, layoutParams, color, textSize);
                 customizeFontSize(textView, printDataItem);
                 textViewList.add(textView);
             } else {
+                // Multiple items
                 for (int i = 0; i < printDataItemList.size(); i++) {
-
                     PrintDataItem printDataItem = printDataItemList.get(i);
-                    TextView textView = null;
-
-                    //not support "\n", as a common char.
-                    if (!printDataItem.getCmds().contains(LINE_SEP)) {
-                        textView = getTitleTextView(context, printDataItem, layoutParams, color, textSize);
-                        customizeFontSize(textView, printDataItem);
-                    } else if (!TextUtils.isEmpty(printDataItem.getContent())) {
-                        printDataItem.setContent("\\n" + printDataItem.getContent());
-                        textView = getTitleTextView(context, printDataItem, layoutParams, color, textSize);
-                        customizeFontSize(textView, printDataItem);
-                    }
+                    TextView textView = getTitleTextView(context, printDataItem, layoutParams, color, textSize);
+                    customizeFontSize(textView, printDataItem);
 
                     if (textView != null) {
+                        // If line break is supported, don't set single line; otherwise set single line
                         if (!supportLineSep) {
                             textView.setSingleLine();
                         }
@@ -184,6 +165,63 @@ public class TextShowingUtils {
             e.printStackTrace();
         }
         return textViewList;
+    }
+
+    /**
+     * Merge items containing line breaks, combining content before and after line breaks into the same item
+     * But preserve alignment commands as split points
+     */
+    private static List<PrintDataItem> mergeItemsWithLineBreak(List<PrintDataItem> items) {
+        List<PrintDataItem> result = new ArrayList<>();
+        StringBuilder contentBuilder = new StringBuilder();
+        List<String> currentCmds = new ArrayList<>();
+
+        for (int i = 0; i < items.size(); i++) {
+            PrintDataItem item = items.get(i);
+
+            // If contains alignment command, need to create new TextView
+            if (containsAlign(item)) {
+                // Save previously accumulated content first
+                if (contentBuilder.length() > 0 || !currentCmds.isEmpty()) {
+                    result.add(new PrintDataItem(contentBuilder.toString(), new ArrayList<>(currentCmds)));
+                    contentBuilder.setLength(0);
+                    currentCmds.clear();
+                }
+
+                // Collect current item's commands (except LINE)
+                for (String cmd : item.getCmds()) {
+                    if (!cmd.equals(LINE) && !currentCmds.contains(cmd)) {
+                        currentCmds.add(cmd);
+                    }
+                }
+
+                // Add content
+                if (!TextUtils.isEmpty(item.getContent())) {
+                    contentBuilder.append(item.getContent());
+                }
+            } else if (item.getCmds().contains(LINE)) {
+                // Line break: add to current content
+                contentBuilder.append("\n");
+            } else {
+                // Normal content or font command: add to current content
+                if (!TextUtils.isEmpty(item.getContent())) {
+                    contentBuilder.append(item.getContent());
+                }
+                // Collect non-alignment commands
+                for (String cmd : item.getCmds()) {
+                    if (!cmd.equals(LINE) && !currentCmds.contains(cmd)) {
+                        currentCmds.add(cmd);
+                    }
+                }
+            }
+        }
+
+        // Add the last item
+        if (contentBuilder.length() > 0 || !currentCmds.isEmpty()) {
+            result.add(new PrintDataItem(contentBuilder.toString(), currentCmds));
+        }
+
+        return result;
     }
 
     public static List<PrintDataItem> filterItems(List<PrintDataItem> printDataItems, String defaultAlign) {
@@ -337,12 +375,42 @@ public class TextShowingUtils {
 
     public static void customizeFontSize(TextView textView, PrintDataItem printDataItem) {
         float textSize = TextShowingUtils.FONT_NORMAL_SP;
+        int topPadding = 0;  // Default: no padding
+
+        float density = textView.getContext().getResources().getDisplayMetrics().density;
+
         if (printDataItem.getCmds().contains(PrintDataItem.BIG_FONT)) {
+            // Big font (28sp): no padding needed, use as baseline
             textSize = TextShowingUtils.FONT_BIG_SP;
+            topPadding = 0;
         } else if (printDataItem.getCmds().contains(PrintDataItem.SMALL_FONT)) {
+            // Small font (20sp): need more padding to align with big font bottom
             textSize = TextShowingUtils.FONT_SMALL_SP;
+            // Calculate required padding: (28-20) * density
+            topPadding = (int) ((FONT_BIG_SP - FONT_SMALL_SP) * density);
+        } else {
+            // Normal font (24sp): need some padding
+            textSize = TextShowingUtils.FONT_NORMAL_SP;
+            // Calculate required padding: (28-24) * density
+            topPadding = (int) ((FONT_BIG_SP - FONT_NORMAL_SP) * density);
         }
+
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+
+        // Key: set uniform line spacing to make all TextView line heights consistent
+        // Use big font line height as standard
+        float standardLineHeight = FONT_BIG_SP * density * 1.3f;  // 28sp * 1.3 = 36.4sp
+        float currentLineHeight = textSize * density * 1.3f;
+        float extraSpacing = standardLineHeight - currentLineHeight;
+
+        // Set line spacing: extra pixels + multiplier
+        textView.setLineSpacing(extraSpacing, 1.0f);
+
+        // Set topPadding to align small and normal font bottom with big font
+        int left = textView.getPaddingLeft();
+        int right = textView.getPaddingRight();
+        int bottom = textView.getPaddingBottom();
+        textView.setPadding(left, topPadding, right, bottom);
     }
 
 
@@ -401,6 +469,8 @@ public class TextShowingUtils {
 
     public static TextView generateTextView(Context context, PrintDataItem printDataItem, LinearLayout.LayoutParams layoutParams, @ColorInt int color, float textSize) {
         TextView textView = new TextView(context);
+        textView.setIncludeFontPadding(false);
+
         List<String> cmds = printDataItem.getCmds();
         for (String cmd : cmds) {
             switch (cmd) {
@@ -432,6 +502,10 @@ public class TextShowingUtils {
         textView.setTextSize(textSize);
         textView.setText(printDataItem.getContent());
         textView.setTextColor(color);
+
+        // Set fixed line height to big font's line height to ensure all TextViews align at bottom
+        textView.setLineSpacing(0, 1.2f);  // Line spacing multiplier
+
         return textView;
     }
 
