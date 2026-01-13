@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -127,10 +129,15 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
     protected void loadView(View rootView) {
         LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_text_box);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
-            textView.setElegantTextHeight(true);
-            titleLayout.addView(textView);
-        }
+        TextShowingUtils.getTitleViewListAsync(
+                requireContext(),
+                title,
+                lp,
+                Color.WHITE,
+                requireContext().getResources().getDimension(R.dimen.text_size_subtitle),
+                true,
+                titleLayout
+        );
 
         textLayout = rootView.findViewById(R.id.text_view);
 
@@ -150,10 +157,12 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
 
                 tempTextLayout.setLayoutParams(layoutParams);
 
-                for(TextView tv: TextShowingUtils.getTitleViewList(requireContext(), text, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))){
-                    tv.setElegantTextHeight(true);
-                    tempTextLayout.addView(tv);
-                }
+                new Handler(Looper.getMainLooper()).post(()->{
+                    for(TextView tv: TextShowingUtils.getTitleViewList(requireContext(), text, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle),true)){
+                        tv.setElegantTextHeight(true);
+                        tempTextLayout.addView(tv);
+                    }
+                });
 
                 if (tempTextLayout.getChildCount() > 0) {
                     textLayout.addView(tempTextLayout);

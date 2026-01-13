@@ -2,6 +2,8 @@ package com.paxus.pay.poslinkui.demo.entry.poslink;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,9 +85,15 @@ public class ShowDialogFormRadioFragment extends Fragment implements LabelAdapte
 
         LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_dialog_from_radio);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
-            titleLayout.addView(textView);
-        }
+        TextShowingUtils.getTitleViewListAsync(
+                requireContext(),
+                title,
+                lp,
+                Color.WHITE,
+                requireContext().getResources().getDimension(R.dimen.text_size_subtitle),
+                true,
+                titleLayout
+        );
         recyclerView = rootView.findViewById(R.id.my_recycler_view);
         setupRecyclerView(recyclerView);
         Button confirmButton = rootView.findViewById(R.id.confirm_button);

@@ -2,6 +2,8 @@ package com.paxus.pay.poslinkui.demo.entry.poslink;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -98,9 +100,15 @@ public class ShowMessageFragment extends BaseEntryFragment {
         LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_message);
         titleLayout.removeAllViews();
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title))) {
-            titleLayout.addView(textView);
-        }
+        TextShowingUtils.getTitleViewListAsync(
+                requireContext(),
+                title,
+                lp,
+                Color.WHITE,
+                requireContext().getResources().getDimension(R.dimen.text_size_subtitle),
+                true,
+                titleLayout
+        );
 
         ListView listView = rootView.findViewById(R.id.list_view);
 
@@ -129,9 +137,11 @@ public class ShowMessageFragment extends BaseEntryFragment {
             Glide.with(this).load(imgUrl).into(msgImgView);
             if (!TextUtils.isEmpty(imgDesc)) {
                 llDescMsgLayout.setVisibility(View.VISIBLE);
-                for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), imgDesc, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle))) {
-                    llDescMsgLayout.addView(textView);
-                }
+                new Handler(Looper.getMainLooper()).post(()->{
+                    for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), imgDesc, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle),true)) {
+                        llDescMsgLayout.addView(textView);
+                    }
+                });
             } else {
                 llDescMsgLayout.setVisibility(View.GONE);
             }
