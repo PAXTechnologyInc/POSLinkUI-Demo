@@ -60,11 +60,9 @@ public class ShowThankYouFragment extends BaseEntryFragment {
         LinearLayout msg2Layout = rootView.findViewById(R.id.message2_layout_show_thank_you);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        new Handler(Looper.getMainLooper()).post(() -> {
-            setTextView(TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title), true), titleLayout, title);
-            setTextView(TextShowingUtils.getViewList(requireContext(), message1, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle), true), msg1Layout, message1);
-            setTextView(TextShowingUtils.getViewList(requireContext(), message2, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle), true), msg2Layout, message2);
-        });
+        setTextView(TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title), true), titleLayout, title);
+        setTextView(TextShowingUtils.getViewList(requireContext(), message1, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle), true), msg1Layout, message1);
+        setTextView(TextShowingUtils.getViewList(requireContext(), message2, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle), true), msg2Layout, message2);
         if (timeOut > 0) {
             getParentFragmentManager().setFragmentResult(TaskScheduler.SCHEDULE, TaskScheduler.generateTaskRequestBundle(TaskScheduler.TASK.TIMEOUT, timeOut));
         }
