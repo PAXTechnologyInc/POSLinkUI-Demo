@@ -15,6 +15,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -53,7 +54,6 @@ public class TextShowingUtils {
         }
         return list;
     }
-
     public static TextView getTextView(Context context, String line) {
         line = line.replaceAll(LINE_SEP, LINE);
         TextView textView = new TextView(context);
@@ -165,6 +165,47 @@ public class TextShowingUtils {
             e.printStackTrace();
         }
         return textViewList;
+    }
+
+    // new thread due with func:getTitleViewList
+    public static void getTitleViewListAsync(
+            Context context,
+            String data,
+            LinearLayout.LayoutParams layoutParams,
+            @ColorInt int color,
+            float textSize,
+            boolean supportLineSep,
+            ViewGroup targetLayout) {  // add targetLayout  param
+
+        new Thread(() -> {
+            Map<String, List<String>> map = new HashMap<String, List<String>>() {{
+                put(PrintDataConverter.TEXT_SHOWING_LIST, PrintDataItem.TEXT_SHOWING_LIST);
+            }};
+
+            PrintDataItemContainer container = PrintDataConverter.parse(data, map, supportLineSep);
+            List<PrintDataItem> parsedItems = container.getPrintDataItems();
+
+            if (supportLineSep) {
+                parsedItems = mergeItemsWithLineBreak(parsedItems);
+            }
+
+            List<PrintDataItem> filtered = filterItems(parsedItems, CENTER_ALIGN);
+
+            // create View
+            targetLayout.post(() -> {
+                for (PrintDataItem item : filtered) {
+                    TextView tv = generateTextView(context, item, layoutParams, color, textSize);
+                    customizeFontSize(tv, item);
+
+                    if (!supportLineSep && filtered.size() > 1) {
+                        tv.setSingleLine();
+                    }
+
+                    targetLayout.addView(tv);
+                }
+            });
+
+        }).start();
     }
 
     /**

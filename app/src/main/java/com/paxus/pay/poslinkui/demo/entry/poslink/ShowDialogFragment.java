@@ -63,11 +63,15 @@ public class ShowDialogFragment extends BaseEntryFragment {
     protected void loadView(View rootView) {
         LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_dialog);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        new Handler(Looper.getMainLooper()).post(()->{
-            for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle),true)) {
-                titleLayout.addView(textView);
-            }
-        });
+        TextShowingUtils.getTitleViewListAsync(
+                requireContext(),
+                title,
+                lp,
+                Color.WHITE,
+                requireContext().getResources().getDimension(R.dimen.text_size_subtitle),
+                true,
+                titleLayout
+        );
         llButton1 = rootView.findViewById(R.id.button1);
 
         llButton2 = rootView.findViewById(R.id.button2);
