@@ -2,6 +2,8 @@ package com.paxus.pay.poslinkui.demo.entry.poslink;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,9 +86,11 @@ public class ShowDialogFormCheckBoxFragment extends Fragment{
     protected void loadView(View rootView) {
         LinearLayout titleLayout = rootView.findViewById(R.id.title_layout_show_dialog_form_checkout);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title),true)) {
-            titleLayout.addView(textView);
-        }
+        new Handler(Looper.getMainLooper()).post(()->{
+            for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), title, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_title),true)) {
+                titleLayout.addView(textView);
+            }
+        });
         recyclerView = rootView.findViewById(R.id.my_recycler_view);
         setupRecyclerView(recyclerView);
 
