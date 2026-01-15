@@ -3,6 +3,8 @@ package com.paxus.pay.poslinkui.demo.entry;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,12 +82,15 @@ public abstract class BaseEntryFragment extends Fragment {
 
     private void setupFocusableTextFields(TextField[] textFields, View view) {
         if(textFields!= null && textFields.length > 0) {
-            textFields[0].requestFocus();
             // if devices have physical keyboard, hide keyboard at the beginning.
             // Otherwise, the keyboard is prone to abruptly dismiss.
             if (DeviceUtils.hasPhysicalKeyboard()) {
+                // delay after the view is ready
+                textFields[0].postDelayed(() -> textFields[0].requestFocus(), 200);
                 getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             } else {
+                // for A3700, it need to requestFocus in the beginning, preventing the scrollview from obtaining the focus first
+                textFields[0].requestFocus();
                 getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
             for (int i = 0; i < textFields.length - 1; i++) {
