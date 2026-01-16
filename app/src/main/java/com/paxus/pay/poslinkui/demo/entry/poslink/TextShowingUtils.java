@@ -22,6 +22,7 @@ import android.widget.TextView;
 import androidx.annotation.ColorInt;
 
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry;
+import com.paxus.pay.poslinkui.demo.utils.ThreadPoolManager;
 import com.paxus.pay.poslinkui.demo.utils.format.PrintDataConverter;
 import com.paxus.pay.poslinkui.demo.utils.format.PrintDataItem;
 import com.paxus.pay.poslinkui.demo.utils.format.PrintDataItemContainer;
@@ -177,7 +178,7 @@ public class TextShowingUtils {
             boolean supportLineSep,
             ViewGroup targetLayout) {  // add targetLayout  param
 
-        new Thread(() -> {
+        ThreadPoolManager.getInstance().execute(() -> {
             // check null pointer
             String safeData = data == null ? "" : data;
             Map<String, List<String>> map = new HashMap<String, List<String>>() {{
@@ -207,7 +208,7 @@ public class TextShowingUtils {
                 }
             });
 
-        }).start();
+        });
     }
 
     /**

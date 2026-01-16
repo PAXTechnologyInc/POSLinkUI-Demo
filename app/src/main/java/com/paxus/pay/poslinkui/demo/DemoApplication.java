@@ -5,6 +5,7 @@ import android.app.Application;
 import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.PrettyFormatStrategy;
 import com.paxus.pay.poslinkui.demo.utils.FileLogAdapter;
+import com.paxus.pay.poslinkui.demo.utils.ThreadPoolManager;
 
 /**
  * Created by Yanina.Yang on 5/11/2022.
@@ -27,5 +28,11 @@ public class DemoApplication extends Application {
         com.orhanobut.logger.Logger.addLogAdapter(new FileLogAdapter(formatStrategy,
                 getExternalFilesDir(null).getAbsolutePath(), "POSLinkUILog"));
 
+    }
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        // relase thread pool resources
+        ThreadPoolManager.getInstance().shutdownGracefully();
     }
 }
