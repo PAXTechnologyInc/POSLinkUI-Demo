@@ -22,7 +22,8 @@
 
 
     <style name="POSLinkUIPastel" parent="Theme.MaterialComponents.DayNight">
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Set it as the primary background color to avoid the brief appearance of the desktop background during the activity and soft keyboard rendering process.-->
+        <item name="android:windowBackground">@color/pastel_background</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@style/NoAnimation</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
