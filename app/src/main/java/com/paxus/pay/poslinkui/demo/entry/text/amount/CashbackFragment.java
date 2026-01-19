@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -85,6 +86,7 @@ public class CashbackFragment extends BaseEntryFragment {
 
         SelectOptionsView cashbackOptionsView = rootView.findViewById(R.id.options_layout);
         editCashback = rootView.findViewById(R.id.edit_cashback);
+        Button confirmBtn = rootView.findViewById(R.id.confirm_button);
 
         if(isSelectCashbackEnabled) {
             ((TextView)rootView.findViewById(R.id.message)).setText(getString(R.string.select_cashback_amount));
@@ -105,15 +107,14 @@ public class CashbackFragment extends BaseEntryFragment {
         }
         if(editCashback.getVisibility() == View.VISIBLE){
             editCashback.addTextChangedListener(new CashbackEditTextWatcher(maxLength,currency, value -> this.cashback = value));
-        }
-
+            confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
+        } else
+            confirmBtn.setVisibility(View.INVISIBLE);
         SelectOptionsView noCashbackOptionsView = rootView.findViewById(R.id.no_thanks_options_layout);
         List<SelectOptionsView.Option> noCashbackOptionList = new ArrayList<>(Arrays.asList(new SelectOptionsView.Option(null, "No Thanks!!", null, 0L)));
         noCashbackOptionsView.initialize(getActivity(), 1, noCashbackOptionList, cashbackSelectCallback);
 
         if(isSelectCashbackEnabled) cashbackOptionsView.append(noCashbackOptionsView);
-
-        rootView.findViewById(R.id.confirm_button).setOnClickListener(v -> onConfirmButtonClicked());
     }
 
     private SelectOptionsView.OptionSelectListener cashbackSelectCallback = option -> {
