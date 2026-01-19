@@ -107,6 +107,9 @@ public class CashbackFragment extends BaseEntryFragment {
         }
         if(editCashback.getVisibility() == View.VISIBLE){
             editCashback.addTextChangedListener(new CashbackEditTextWatcher(maxLength,currency, value -> this.cashback = value));
+            //Initialize TextWatcher with Default Cashback Value
+            editCashback.setText(String.valueOf(cashback));
+            editCashback.setSelection(editCashback.getEditableText().length());
             confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
         } else
             confirmBtn.setVisibility(View.INVISIBLE);
