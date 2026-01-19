@@ -19,6 +19,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.Toast;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
@@ -93,7 +94,6 @@ public class CashbackFragment extends BaseEntryFragment {
             if(promptOther) {
                 rootView.findViewById(R.id.text_view_other_cashback).setVisibility(View.VISIBLE);
                 editCashback.setVisibility(View.VISIBLE);
-                editCashback.requestFocus();
                 editCashback.setImeOptions(editCashback.getImeOptions() | EditorInfo.IME_ACTION_DONE);
                 editCashback.setOnEditorActionListener((v, actionId, event) -> {
                     if (actionId == EditorInfo.IME_ACTION_DONE) onConfirmButtonClicked();
@@ -102,7 +102,6 @@ public class CashbackFragment extends BaseEntryFragment {
             }
         } else {
             editCashback.setVisibility(View.VISIBLE);
-            editCashback.requestFocus();
         }
         if(editCashback.getVisibility() == View.VISIBLE){
             editCashback.addTextChangedListener(new CashbackEditTextWatcher(maxLength,currency, value -> this.cashback = value));
@@ -157,6 +156,11 @@ public class CashbackFragment extends BaseEntryFragment {
 
     @Override
     protected TextField[] focusableTextFields() {
-        return optionList.isEmpty() ? new TextField[]{editCashback} : null;
+        // if it has physical keyboard and enable promptOther
+        // or cashbackOptionList is empty the editText should be requested focus when show page.
+        if (DeviceUtils.hasPhysicalKeyboard() && promptOther || optionList.isEmpty()) {
+            return new TextField[]{editCashback};
+        } else
+            return null;
     }
 }
