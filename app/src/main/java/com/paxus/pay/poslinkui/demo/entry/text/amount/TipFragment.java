@@ -25,6 +25,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.UnitType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.Toast;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
@@ -134,7 +135,6 @@ public class TipFragment extends BaseEntryFragment {
         //Select and Enter Tip
         SelectOptionsView tipOptionsView = rootView.findViewById(R.id.select_view_tip_options);
         tipInputEditText = rootView.findViewById(R.id.edit_text_tip_entry);
-        tipInputEditText.requestFocus();
         if(isSelectTipEnabled){
             tipOptionsView.setVisibility(View.VISIBLE);
             tipOptionsView.initialize(getActivity(), tipOptionList.size(), tipOptionList, option -> {
@@ -252,6 +252,11 @@ public class TipFragment extends BaseEntryFragment {
 
     @Override
     protected TextField[] focusableTextFields() {
-        return isSelectTipEnabled ? null : new TextField[]{tipInputEditText};
+        // if it has physical keyboard or tipOptionList is empty the editText should be requested focus when show page.
+        // else should focus only when input manually.
+        if (DeviceUtils.hasPhysicalKeyboard() || !isSelectTipEnabled) {
+           return new TextField[]{tipInputEditText};
+        } else
+            return null;
     }
 }

@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils;
 import com.paxus.pay.poslinkui.demo.utils.Toast;
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
@@ -84,6 +86,7 @@ public class CashbackFragment extends BaseEntryFragment {
 
         SelectOptionsView cashbackOptionsView = rootView.findViewById(R.id.options_layout);
         editCashback = rootView.findViewById(R.id.edit_cashback);
+        Button confirmBtn = rootView.findViewById(R.id.confirm_button);
 
         if(isSelectCashbackEnabled) {
             ((TextView)rootView.findViewById(R.id.message)).setText(getString(R.string.select_cashback_amount));
@@ -93,7 +96,6 @@ public class CashbackFragment extends BaseEntryFragment {
             if(promptOther) {
                 rootView.findViewById(R.id.text_view_other_cashback).setVisibility(View.VISIBLE);
                 editCashback.setVisibility(View.VISIBLE);
-                editCashback.requestFocus();
                 editCashback.setImeOptions(editCashback.getImeOptions() | EditorInfo.IME_ACTION_DONE);
                 editCashback.setOnEditorActionListener((v, actionId, event) -> {
                     if (actionId == EditorInfo.IME_ACTION_DONE) onConfirmButtonClicked();
@@ -102,19 +104,20 @@ public class CashbackFragment extends BaseEntryFragment {
             }
         } else {
             editCashback.setVisibility(View.VISIBLE);
-            editCashback.requestFocus();
         }
         if(editCashback.getVisibility() == View.VISIBLE){
             editCashback.addTextChangedListener(new CashbackEditTextWatcher(maxLength,currency, value -> this.cashback = value));
-        }
-
+            //Initialize TextWatcher with Default Cashback Value
+            editCashback.setText(String.valueOf(cashback));
+            editCashback.setSelection(editCashback.getEditableText().length());
+            confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
+        } else
+            confirmBtn.setVisibility(View.INVISIBLE);
         SelectOptionsView noCashbackOptionsView = rootView.findViewById(R.id.no_thanks_options_layout);
         List<SelectOptionsView.Option> noCashbackOptionList = new ArrayList<>(Arrays.asList(new SelectOptionsView.Option(null, "No Thanks!!", null, 0L)));
         noCashbackOptionsView.initialize(getActivity(), 1, noCashbackOptionList, cashbackSelectCallback);
 
         if(isSelectCashbackEnabled) cashbackOptionsView.append(noCashbackOptionsView);
-
-        rootView.findViewById(R.id.confirm_button).setOnClickListener(v -> onConfirmButtonClicked());
     }
 
     private SelectOptionsView.OptionSelectListener cashbackSelectCallback = option -> {
@@ -157,6 +160,11 @@ public class CashbackFragment extends BaseEntryFragment {
 
     @Override
     protected TextField[] focusableTextFields() {
-        return optionList.isEmpty() ? new TextField[]{editCashback} : null;
+        // if it has physical keyboard and enable promptOther
+        // or cashbackOptionList is empty the editText should be requested focus when show page.
+        if (DeviceUtils.hasPhysicalKeyboard() && promptOther || optionList.isEmpty()) {
+            return new TextField[]{editCashback};
+        } else
+            return null;
     }
 }
