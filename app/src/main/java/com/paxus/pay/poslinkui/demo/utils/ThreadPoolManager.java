@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -116,36 +117,70 @@ public class ThreadPoolManager {
     }
 
     /**
-     * Execute task
+     * Ensures the thread pool is initialized and active.
+     * If the pool has been shut down or is null, it triggers re-initialization.
+     */
+    private void ensurePoolActive() {
+        if (threadPool == null || threadPool.isShutdown() || threadPool.isTerminated()) {
+            synchronized (ThreadPoolManager.class) {
+                // Double-checked locking to prevent redundant initializations
+                if (threadPool == null || threadPool.isShutdown() || threadPool.isTerminated()) {
+                    Logger.d("ThreadPoolManager", "Thread pool is inactive. Re-initializing pool instance.");
+                    initializeThreadPool();
+                }
+            }
+        }
+    }
+
+    /**
+     * Executes a task. Re-initializes the pool automatically if needed.
      */
     public void execute(Runnable task) {
         if (task == null) {
-            throw new IllegalArgumentException("Task cannot be null");
+            Logger.e("ThreadPoolManager", "Cannot execute a null task");
+            return;
         }
-        Logger.d("ThreadPoolManager", "Executing task: " + task.getClass().getSimpleName());
-        threadPool.execute(task);
+
+        ensurePoolActive();
+
+        try {
+            threadPool.execute(task);
+        } catch (RejectedExecutionException e) {
+            Logger.e("ThreadPoolManager", "Task rejected: " + e.getMessage());
+            task.run(); // Fallback to current thread
+        }
     }
 
     /**
-     * Submit task and return Future
+     * Submits a Callable task. Re-initializes the pool automatically if needed.
      */
     public <T> Future<T> submit(Callable<T> task) {
-        if (task == null) {
-            throw new IllegalArgumentException("Task cannot be null");
+        if (task == null) return null;
+
+        ensurePoolActive();
+
+        try {
+            return threadPool.submit(task);
+        } catch (RejectedExecutionException e) {
+            Logger.e("ThreadPoolManager", "Callable task rejected: " + e.getMessage());
+            return null;
         }
-        Logger.d("ThreadPoolManager", "Submitting callable task: " + task.getClass().getSimpleName());
-        return threadPool.submit(task);
     }
 
     /**
-     * Submit Runnable task and return Future
+     * Submits a Runnable task. Re-initializes the pool automatically if needed.
      */
     public Future<?> submit(Runnable task) {
-        if (task == null) {
-            throw new IllegalArgumentException("Task cannot be null");
+        if (task == null) return null;
+
+        ensurePoolActive();
+
+        try {
+            return threadPool.submit(task);
+        } catch (RejectedExecutionException e) {
+            Logger.e("ThreadPoolManager", "Runnable task rejected: " + e.getMessage());
+            return null;
         }
-        Logger.d("ThreadPoolManager", "Submitting runnable task: " + task.getClass().getSimpleName());
-        return threadPool.submit(task);
     }
 
     /**

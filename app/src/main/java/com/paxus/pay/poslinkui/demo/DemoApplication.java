@@ -29,10 +29,4 @@ public class DemoApplication extends Application {
                 getExternalFilesDir(null).getAbsolutePath(), "POSLinkUILog"));
 
     }
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
-        // relase thread pool resources
-        ThreadPoolManager.getInstance().shutdownGracefully();
-    }
 }
