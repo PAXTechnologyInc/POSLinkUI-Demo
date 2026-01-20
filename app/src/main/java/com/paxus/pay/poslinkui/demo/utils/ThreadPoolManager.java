@@ -72,65 +72,6 @@ public class ThreadPoolManager {
         Logger.d("ThreadPoolManager", "Thread pool created successfully");
     }
 
-    /**
-     * Initialize with custom configuration
-     *
-     * @param corePoolSize Core thread count
-     * @param maximumPoolSize Maximum thread count
-     * @param keepAliveTime Keep alive time for idle threads
-     * @param unit Time unit
-     * @param queueSize Queue size
-     */
-    public static void initializeWithCustomConfig(int corePoolSize, int maximumPoolSize,
-                                                  long keepAliveTime, TimeUnit unit, int queueSize) {
-        if (instance != null) {
-            throw new IllegalStateException("ThreadPoolManager already initialized");
-        }
-
-        synchronized (ThreadPoolManager.class) {
-            if (instance == null) {
-                Logger.d("ThreadPoolManager", "Initializing with custom configuration: core=" + corePoolSize + ", max=" + maximumPoolSize + ", keepAlive=" + keepAliveTime + ", queueSize=" + queueSize);
-                instance = new ThreadPoolManager(corePoolSize, maximumPoolSize,
-                        keepAliveTime, unit, queueSize);
-                Logger.d("ThreadPoolManager", "Custom configuration initialized successfully");
-            }
-        }
-    }
-
-    /**
-     * Private constructor - for custom configuration
-     */
-    private ThreadPoolManager(int corePoolSize, int maximumPoolSize,
-                              long keepAliveTime, TimeUnit unit, int queueSize) {
-        BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(queueSize);
-
-        threadPool = new ThreadPoolExecutor(
-                corePoolSize,
-                maximumPoolSize,
-                keepAliveTime,
-                unit,
-                workQueue,
-                new PriorityThreadFactory("custom-io-pool"),
-                new ThreadPoolExecutor.CallerRunsPolicy()
-        );
-        Logger.d("ThreadPoolManager", "Custom thread pool created with core=" + corePoolSize + ", max=" + maximumPoolSize + ", keepAlive=" + keepAliveTime + ", queueSize=" + queueSize);
-    }
-
-    /**
-     * Ensures the thread pool is initialized and active.
-     * If the pool has been shut down or is null, it triggers re-initialization.
-     */
-    private void ensurePoolActive() {
-        if (threadPool == null || threadPool.isShutdown() || threadPool.isTerminated()) {
-            synchronized (ThreadPoolManager.class) {
-                // Double-checked locking to prevent redundant initializations
-                if (threadPool == null || threadPool.isShutdown() || threadPool.isTerminated()) {
-                    Logger.d("ThreadPoolManager", "Thread pool is inactive. Re-initializing pool instance.");
-                    initializeThreadPool();
-                }
-            }
-        }
-    }
 
     /**
      * Executes a task. Re-initializes the pool automatically if needed.
@@ -140,8 +81,6 @@ public class ThreadPoolManager {
             Logger.e("ThreadPoolManager", "Cannot execute a null task");
             return;
         }
-
-        ensurePoolActive();
 
         try {
             threadPool.execute(task);
@@ -157,7 +96,6 @@ public class ThreadPoolManager {
     public <T> Future<T> submit(Callable<T> task) {
         if (task == null) return null;
 
-        ensurePoolActive();
 
         try {
             return threadPool.submit(task);
@@ -173,8 +111,6 @@ public class ThreadPoolManager {
     public Future<?> submit(Runnable task) {
         if (task == null) return null;
 
-        ensurePoolActive();
-
         try {
             return threadPool.submit(task);
         } catch (RejectedExecutionException e) {
@@ -183,66 +119,6 @@ public class ThreadPoolManager {
         }
     }
 
-    /**
-     * Graceful shutdown - Stop accepting new tasks, wait for submitted tasks to complete
-     */
-    public void shutdownGracefully() {
-        Logger.d("ThreadPoolManager", "Starting graceful shutdown");
-        if (threadPool != null && !threadPool.isShutdown()) {
-            threadPool.shutdown();
-            Logger.d("ThreadPoolManager", "Thread pool shutdown initiated");
-        } else {
-            Logger.d("ThreadPoolManager", "Thread pool already shutdown or null");
-        }
-    }
-
-    /**
-     * Immediate shutdown - Attempt to interrupt executing tasks
-     */
-    public void shutdownNow() {
-        Logger.d("ThreadPoolManager", "Starting immediate shutdown");
-        if (threadPool != null && !threadPool.isShutdown()) {
-            threadPool.shutdownNow();
-            Logger.d("ThreadPoolManager", "Thread pool shutdownNow initiated");
-        } else {
-            Logger.d("ThreadPoolManager", "Thread pool already shutdown or null");
-        }
-    }
-
-    /**
-     * Check if terminated
-     */
-    public boolean isTerminated() {
-        boolean isTerminated = threadPool != null && threadPool.isTerminated();
-        Logger.d("ThreadPoolManager", "Thread pool is terminated: " + isTerminated);
-        return isTerminated;
-    }
-
-    /**
-     * Get active thread count
-     */
-    public int getActiveCount() {
-        if (threadPool instanceof ThreadPoolExecutor) {
-            int activeCount = ((ThreadPoolExecutor) threadPool).getActiveCount();
-            Logger.d("ThreadPoolManager", "Active thread count: " + activeCount);
-            return activeCount;
-        }
-        Logger.d("ThreadPoolManager", "Thread pool is not a ThreadPoolExecutor, returning 0");
-        return 0;
-    }
-
-    /**
-     * Get pool size
-     */
-    public int getPoolSize() {
-        if (threadPool instanceof ThreadPoolExecutor) {
-            int poolSize = ((ThreadPoolExecutor) threadPool).getPoolSize();
-            Logger.d("ThreadPoolManager", "Pool size: " + poolSize);
-            return poolSize;
-        }
-        Logger.d("ThreadPoolManager", "Thread pool is not a ThreadPoolExecutor, returning 0");
-        return 0;
-    }
 
     /**
      * Custom thread factory - Set thread priority

@@ -100,7 +100,6 @@ public class EntryActivity extends AppCompatActivity{
         Logger.d(getClass().getSimpleName() +" onDestroy");
         unregisterUIReceiver();
         scheduler.shutdown();
-        ThreadPoolManager.getInstance().shutdownGracefully();
         dismissPresentation();
     }
 
