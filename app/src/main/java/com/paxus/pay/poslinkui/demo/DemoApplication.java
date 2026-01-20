@@ -5,7 +5,6 @@ import android.app.Application;
 import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.PrettyFormatStrategy;
 import com.paxus.pay.poslinkui.demo.utils.FileLogAdapter;
-import com.paxus.pay.poslinkui.demo.utils.ThreadPoolManager;
 
 /**
  * Created by Yanina.Yang on 5/11/2022.

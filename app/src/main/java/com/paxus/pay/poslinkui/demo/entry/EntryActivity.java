@@ -33,7 +33,6 @@ import com.paxus.pay.poslinkui.demo.utils.EntryActivityActionBar;
 import com.paxus.pay.poslinkui.demo.utils.InterfaceHistory;
 import com.paxus.pay.poslinkui.demo.utils.Logger;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
-import com.paxus.pay.poslinkui.demo.utils.ThreadPoolManager;
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils;
 import com.paxus.pay.poslinkui.demo.viewmodel.SecondScreenInfoViewModel;
 
