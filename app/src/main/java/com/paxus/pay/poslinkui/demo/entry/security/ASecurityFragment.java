@@ -151,22 +151,20 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
                             int height = extra.getInt(StatusData.PARAM_HEIGHT);
 
                             Logger.d("SECURITY_KEYBOARD_LOCATION:" + x + "," + y + "," + width + "," + height);
+                            ViewGroup.LayoutParams params = mContentView.getLayoutParams();
+                            // Here need obtain the current weight and height of the window.
+                            // If the current width and height are not obtained, the width and height will be 0.
+                            // When requesting the layout again, it will cause the page to appear as if it has disappeared.
+                            mOrigWidth = mContentView.getMeasuredWidth();
+                            mOrigHeight = mContentView.getMeasuredHeight();
+                            params.height = mOrigHeight;
                             if (x > 0) {
-                                ViewGroup.LayoutParams params = mContentView.getLayoutParams();
-                                mOrigWidth = mContentView.getMeasuredWidth();
-                                mOrigHeight = mContentView.getMeasuredHeight();
-
-                                params.height = mOrigHeight;
                                 params.width = mOrigWidth - width;
-                                mContentView.setLayoutParams(params);
-                                mContentView.requestLayout();
                             } else {
-                                ViewGroup.LayoutParams params = mContentView.getLayoutParams();
-                                params.height = mOrigHeight;
                                 params.width = mOrigWidth;
-                                mContentView.setLayoutParams(params);
-                                mContentView.requestLayout();
                             }
+                            mContentView.setLayoutParams(params);
+                            mContentView.requestLayout();
                         }
                         break;
                     }
