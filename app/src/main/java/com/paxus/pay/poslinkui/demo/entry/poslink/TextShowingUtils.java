@@ -127,11 +127,6 @@ public class TextShowingUtils {
 
             List<PrintDataItem> parsedItems = printDataItemContainer.getPrintDataItems();
 
-            // If line break is supported, merge consecutive non-alignment items (preserve line breaks)
-            if (supportLineSep) {
-                parsedItems = mergeItemsWithLineBreak(parsedItems);
-            }
-
             List<PrintDataItem> printDataItemList = filterItems(parsedItems, CENTER_ALIGN);
 
             // If there's only one item
@@ -188,10 +183,6 @@ public class TextShowingUtils {
             PrintDataItemContainer container = PrintDataConverter.parse(safeData, map, supportLineSep);
             List<PrintDataItem> parsedItems = container.getPrintDataItems();
 
-            if (supportLineSep) {
-                parsedItems = mergeItemsWithLineBreak(parsedItems);
-            }
-
             List<PrintDataItem> filtered = filterItems(parsedItems, CENTER_ALIGN);
 
             // create View
@@ -209,63 +200,6 @@ public class TextShowingUtils {
             });
 
         });
-    }
-
-    /**
-     * Merge items containing line breaks, combining content before and after line breaks into the same item
-     * But preserve alignment commands as split points
-     */
-    private static List<PrintDataItem> mergeItemsWithLineBreak(List<PrintDataItem> items) {
-        List<PrintDataItem> result = new ArrayList<>();
-        StringBuilder contentBuilder = new StringBuilder();
-        List<String> currentCmds = new ArrayList<>();
-
-        for (int i = 0; i < items.size(); i++) {
-            PrintDataItem item = items.get(i);
-
-            // If contains alignment command, need to create new TextView
-            if (containsAlign(item)) {
-                // Save previously accumulated content first
-                if (contentBuilder.length() > 0 || !currentCmds.isEmpty()) {
-                    result.add(new PrintDataItem(contentBuilder.toString(), new ArrayList<>(currentCmds)));
-                    contentBuilder.setLength(0);
-                    currentCmds.clear();
-                }
-
-                // Collect current item's commands (except LINE)
-                for (String cmd : item.getCmds()) {
-                    if (!cmd.equals(LINE) && !currentCmds.contains(cmd)) {
-                        currentCmds.add(cmd);
-                    }
-                }
-
-                // Add content
-                if (!TextUtils.isEmpty(item.getContent())) {
-                    contentBuilder.append(item.getContent());
-                }
-            } else if (item.getCmds().contains(LINE)) {
-                // Line break: add to current content
-                contentBuilder.append("\n");
-            } else {
-                // Normal content or font command: add to current content
-                if (!TextUtils.isEmpty(item.getContent())) {
-                    contentBuilder.append(item.getContent());
-                }
-                // Collect non-alignment commands
-                for (String cmd : item.getCmds()) {
-                    if (!cmd.equals(LINE) && !currentCmds.contains(cmd)) {
-                        currentCmds.add(cmd);
-                    }
-                }
-            }
-        }
-
-        // Add the last item
-        if (contentBuilder.length() > 0 || !currentCmds.isEmpty()) {
-            result.add(new PrintDataItem(contentBuilder.toString(), currentCmds));
-        }
-
-        return result;
     }
 
     public static List<PrintDataItem> filterItems(List<PrintDataItem> printDataItems, String defaultAlign) {
