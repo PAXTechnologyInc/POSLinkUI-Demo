@@ -1,12 +1,9 @@
 package com.paxus.pay.poslinkui.demo.entry.poslink;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
@@ -26,9 +23,11 @@ import com.pax.us.pay.ui.constant.status.POSLinkStatus;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.utils.DateUtils;
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler;
+import com.paxus.pay.poslinkui.demo.utils.Toast;
 import com.paxus.pay.poslinkui.demo.view.AmountTextWatcher;
+import com.paxus.pay.poslinkui.demo.view.FormatTextWatcher;
 import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
@@ -124,7 +123,7 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
             textField.setTextIsSelectable(false);
             textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
             textField.setKeyListener(DigitsKeyListener.getInstance("0123456789/"));
-            textField.addTextChangedListener(new ShowInputTextBoxFragment.FormatTextWatcher(FORMAT_DATE));
+            textField.addTextChangedListener(new FormatTextWatcher(FORMAT_DATE));
             textField.setText(defaultValue);
 
         }else if("3".equals(inputType)){//Time
@@ -135,7 +134,7 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
             textField.setHint(FORMAT_TIME);
             textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
             textField.setKeyListener(DigitsKeyListener.getInstance("0123456789:"));
-            textField.addTextChangedListener(new ShowInputTextBoxFragment.FormatTextWatcher(FORMAT_TIME));
+            textField.addTextChangedListener(new FormatTextWatcher(FORMAT_TIME));
             textField.setText(defaultValue);
 
         }else if("4".equals(inputType)){//Amount
@@ -170,7 +169,7 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
             textField.setHint(FORMAT_PHONE);
             textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
             textField.setKeyListener(DigitsKeyListener.getInstance("0123456789-()"));
-            textField.addTextChangedListener(new ShowInputTextBoxFragment.FormatTextWatcher(FORMAT_PHONE));
+            textField.addTextChangedListener(new FormatTextWatcher(FORMAT_PHONE));
             textField.setText(defaultValue);
 
         }else if("7".equals(inputType)){//SSN
@@ -181,7 +180,7 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
             textField.setHint(FORMAT_SSN);
             textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
             textField.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-            textField.addTextChangedListener(new ShowInputTextBoxFragment.FormatTextWatcher(FORMAT_SSN));
+            textField.addTextChangedListener(new FormatTextWatcher(FORMAT_SSN));
             textField.setText(defaultValue);
 
         }else {
@@ -212,6 +211,39 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
         if(inputType.matches("[23467]")){
             value = value.replaceAll("[^0-9]","");
         }
+        //when input type is amount, only validate if non-null, not min length
+        if ("4".equals(inputType)) {
+            long amount = CurrencyUtils.parse(value);
+            if (minLength > 0 && amount <=0) {
+                new Toast(getActivity()).show(getString(R.string.prompt_input), Toast.TYPE.FAILURE);
+                return;
+            }
+            submit(amount);
+            return;
+        }
+        // add the validation of minValue when it is not amount type
+        if (value.length() < minLength && !"4".equals(inputType)){
+            String errMsg = minLength == maxLength ? getString(R.string.prompt_input_type) :
+                    getString(R.string.prompt_input_length, minLength + "-" + maxLength);
+            new Toast(getActivity()).show(errMsg, Toast.TYPE.FAILURE);
+            return;
+        }
+        // validate date
+        if ("2".equals(inputType)){
+            if (DateUtils.isValidateDate(value))
+                submit(value);
+            else
+                new Toast(getActivity()).show(getString(R.string.prompt_invalid_date), Toast.TYPE.FAILURE);
+            return;
+        }
+        // validate time
+        if ("3".equals(inputType)){
+            if (DateUtils.isValidateTime(value))
+                submit(value);
+            else
+                new Toast(getActivity()).show(getString(R.string.prompt_invalid_time), Toast.TYPE.FAILURE);
+            return;
+        }
         submit(value);
     }
 
@@ -221,74 +253,9 @@ public class ShowInputTextBoxFragment extends BaseEntryFragment {
         sendNext(bundle);
     }
 
-    private static class FormatTextWatcher implements TextWatcher {
-
-        private String format;
-        public FormatTextWatcher(String format){
-            this.format = format;
-        }
-
-        boolean editing;
-        int deleteIndex = -1;
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after){
-            boolean needDelete = count == 1 && after == 0 && (s.charAt(start)<'0' ||s.charAt(start)>'9');
-            if(needDelete){
-                deleteIndex = start;
-            }else {
-                deleteIndex = -1;
-            }
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            if(!editing) {
-                editing = true;
-                if(deleteIndex>0){
-                    editable.delete(deleteIndex-1, deleteIndex);
-                }
-                StringBuilder value = new StringBuilder(editable.toString().replaceAll("[^0-9]", ""));
-                if(FORMAT_DATE.equals(format)) {
-                    if (value.length() >= 2) {
-                        value.insert(2, "/");
-                    }
-                    if (value.length() >= 5) {
-                        value.insert(5, "/");
-                    }
-                }else if(FORMAT_TIME.equals(format)){
-                    if (value.length() >= 2) {
-                        value.insert(2, ":");
-                    }
-                    if (value.length() >= 5) {
-                        value.insert(5, ":");
-                    }
-                }else if(FORMAT_PHONE.equals(format)){
-                    if (value.length() > 0) {
-                        value.insert(0, "(");
-                    }
-                    if (value.length() >= 4) {
-                        value.insert(4, ")");
-                    }
-                    if (value.length() >= 8) {
-                        value.insert(8, "-");
-                    }
-                }else if(FORMAT_SSN.equals(format)){
-                    if (value.length() >= 3) {
-                        value.insert(3, "-");
-                    }
-                    if (value.length() >= 6) {
-                        value.insert(6, "-");
-                    }
-                }
-                editable.replace(0, editable.length(), value);
-                editing = false;
-            }
-        }
+    private void submit(long value){
+        Bundle bundle = new Bundle();
+        bundle.putLong(EntryRequest.PARAM_INPUT_VALUE, value);
+        sendNext(bundle);
     }
 }

@@ -1,8 +1,7 @@
 package com.paxus.pay.poslinkui.demo.entry.text;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.InputFilter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,7 +13,7 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest;
 import com.pax.us.pay.ui.constant.entry.TextEntry;
 import com.paxus.pay.poslinkui.demo.R;
 import com.paxus.pay.poslinkui.demo.entry.BaseEntryFragment;
-import com.paxus.pay.poslinkui.demo.utils.EntryRequestUtils;
+import com.paxus.pay.poslinkui.demo.view.FormatTextWatcher;
 import com.paxus.pay.poslinkui.demo.view.TextField;
 
 /**
@@ -25,6 +24,7 @@ public class ExpiryFragment extends BaseEntryFragment {
     private String message = "";
 
     private TextField textField;
+    private static final String FORMAT_EXPIRY = "MM/YY";
 
     @Override
     protected int getLayoutResourceId() {
@@ -47,43 +47,9 @@ public class ExpiryFragment extends BaseEntryFragment {
         textField = rootView.findViewById(R.id.edit_expiry);
 
         textField.setSelection(textField.getEditableText().length());
-        textField.addTextChangedListener(new TextWatcher() {
-            protected boolean mEditing;
-            private String mPreStr;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if (!mEditing) {
-                    mPreStr = s.toString();
-                }
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (!mEditing) {
-                    mEditing = true;
-                    String value = s.toString().replaceAll("[^0-9]", "");
-                    StringBuilder sb = new StringBuilder(value);
-                    if (sb.length() > 4) {
-                        s.replace(0, s.length(), mPreStr);
-                    } else {
-                        if (sb.length() >= 2) {
-                            if (sb.length() == 2 && mPreStr.equals(sb + "/")) {
-                                sb.delete(sb.length() - 1, sb.length());
-                            } else {
-                                sb.insert(2, "/");
-                            }
-                        }
-                        s.replace(0, s.length(), sb.toString());
-                    }
-                    mEditing = false;
-                }
-            }
-        });
+        textField.setHint(FORMAT_EXPIRY);
+        textField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.getHint().length())});
+        textField.addTextChangedListener(new FormatTextWatcher(FORMAT_EXPIRY));
 
         Button confirmBtn = rootView.findViewById(R.id.confirm_button);
         confirmBtn.setOnClickListener(v -> onConfirmButtonClicked());
@@ -93,9 +59,9 @@ public class ExpiryFragment extends BaseEntryFragment {
     protected void onConfirmButtonClicked() {
         String value = textField.getText().toString();
         value = value.replaceAll("[^0-9]", "");
-        if (value.length() == 4) {
-            submit(value);
-        }
+        // for this page, the validation of this action will be handle by host.
+        // so we don't need to validate the length of number
+        submit(value);
     }
 
     @Override
