@@ -2,8 +2,6 @@ package com.paxus.pay.poslinkui.demo.entry.poslink;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -137,11 +135,9 @@ public class ShowMessageFragment extends BaseEntryFragment {
             Glide.with(this).load(imgUrl).into(msgImgView);
             if (!TextUtils.isEmpty(imgDesc)) {
                 llDescMsgLayout.setVisibility(View.VISIBLE);
-                new Handler(Looper.getMainLooper()).post(()->{
-                    for (TextView textView: TextShowingUtils.getTitleViewList(requireContext(), imgDesc, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle),true)) {
-                        llDescMsgLayout.addView(textView);
-                    }
-                });
+                for (TextView textView : TextShowingUtils.getTitleViewList(requireContext(), imgDesc, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle), true)) {
+                    llDescMsgLayout.addView(textView);
+                }
             } else {
                 llDescMsgLayout.setVisibility(View.GONE);
             }

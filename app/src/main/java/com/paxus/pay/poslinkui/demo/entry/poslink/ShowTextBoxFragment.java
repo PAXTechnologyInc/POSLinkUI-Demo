@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -156,17 +154,15 @@ public class ShowTextBoxFragment extends BaseEntryFragment {
                         ViewGroup.LayoutParams.WRAP_CONTENT);
 
                 tempTextLayout.setLayoutParams(layoutParams);
-
-                new Handler(Looper.getMainLooper()).post(()->{
-                    for(TextView tv: TextShowingUtils.getTitleViewList(requireContext(), text, lp, Color.WHITE, requireContext().getResources().getDimension(R.dimen.text_size_subtitle),true)){
-                        tv.setElegantTextHeight(true);
-                        tempTextLayout.addView(tv);
-                    }
-                });
-
-                if (tempTextLayout.getChildCount() > 0) {
-                    textLayout.addView(tempTextLayout);
-                }
+                TextShowingUtils.getTitleViewListAsync(
+                        requireContext(),
+                        text,
+                        lp,
+                        Color.WHITE,
+                        requireContext().getResources().getDimension(R.dimen.text_size_subtitle),
+                        true,
+                        tempTextLayout);
+                textLayout.addView(tempTextLayout);
             }
             if (!noBard) { // qr code
                 ImageView imageView = new ImageView(requireContext());
