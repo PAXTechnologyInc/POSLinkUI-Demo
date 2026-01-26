@@ -46,7 +46,6 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
     protected BroadcastReceiver receiver;
     private View mContentView;
     private int mOrigWidth;
-    private int mOrigHeight;
 
     @Override
     protected int getLayoutResourceId() {
@@ -66,6 +65,11 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
                 textField.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 onInputBoxLayoutReady();
                 mContentView = requireActivity().getWindow().findViewById(Window.ID_ANDROID_CONTENT);
+                // When the keyboard is closed or when moving to the next page, the original width needs to be restored.
+                // so here need obtain the current weight of the window in the beginning.
+                // If the current width are not obtained, the width will be 0.
+                // When requesting the layout again, it will cause the page to appear as if it has disappeared.
+                mOrigWidth = mContentView.getMeasuredWidth();
                 if ("Q10A".equals(Build.MODEL)) {
                     textField.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                         @Override
@@ -152,12 +156,7 @@ public abstract class ASecurityFragment extends BaseEntryFragment {
 
                             Logger.d("SECURITY_KEYBOARD_LOCATION:" + x + "," + y + "," + width + "," + height);
                             ViewGroup.LayoutParams params = mContentView.getLayoutParams();
-                            // Here need obtain the current weight and height of the window.
-                            // If the current width and height are not obtained, the width and height will be 0.
-                            // When requesting the layout again, it will cause the page to appear as if it has disappeared.
-                            mOrigWidth = mContentView.getMeasuredWidth();
-                            mOrigHeight = mContentView.getMeasuredHeight();
-                            params.height = mOrigHeight;
+                            // Only the width was changed, so only set the width. Setting the height would cause scrolling effects of other pages' ScrollView to fail.
                             if (x > 0) {
                                 params.width = mOrigWidth - width;
                             } else {
