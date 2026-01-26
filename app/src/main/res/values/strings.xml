@@ -155,6 +155,10 @@
     <string name="pls_input_pin_last">Last PIN Attempt\n\nPlease Enter PIN</string>
     <string name="pls_input_dest_zip_code">Please Enter Destination Zip Code</string>
     <string name="prompt_input_length">Please Enter %s Characters</string>
+    <string name="prompt_input_type">Please Enter Correct Format Of Input Type</string>
+
+    <string name="prompt_invalid_date">Invalid Date. Please enter again.</string>
+    <string name="prompt_invalid_time">Invalid Time. Please enter again.</string>
     <string name="prompt_input">Please Enter</string>
 
     <string name="select_emv_aid">Please Select Application</string>

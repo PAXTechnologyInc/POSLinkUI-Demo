@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edit_expiry"
-            android:hint="MM/YY"
             android:inputType="numberSigned"
             android:digits="0123456789/"/>
         <Button
