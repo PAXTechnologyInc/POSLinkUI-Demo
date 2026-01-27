@@ -127,6 +127,11 @@ public class TextShowingUtils {
 
             List<PrintDataItem> parsedItems = printDataItemContainer.getPrintDataItems();
 
+            // --- NEW: Merge LINE items into text content ---
+            if (supportLineSep) {
+                parsedItems = mergeLineBreaksContent(parsedItems);
+            }
+
             List<PrintDataItem> printDataItemList = filterItems(parsedItems, CENTER_ALIGN);
 
             // If there's only one item
@@ -163,6 +168,66 @@ public class TextShowingUtils {
         return textViewList;
     }
 
+    /**
+     * Merge LINE items into the preceding content as actual newline characters (\n).
+     * This ensures that text before and after \n appears in the same TextView.
+     *
+     * Logic:
+     * - When encountering a LINE item, convert it to "\n" and append to current content
+     * - Only create a new PrintDataItem when alignment commands (\L \R \C \R, \1 \2 \3) are detected
+     *
+     * Target: support \n
+     * @param items Original parsed PrintDataItems from PrintDataConverter
+     * @return Merged list where LINE items are converted to newline characters in text content
+     */
+    private static List<PrintDataItem> mergeLineBreaksContent(List<PrintDataItem> items) {
+        if (items == null || items.isEmpty()) return items;
+
+        List<PrintDataItem> result = new ArrayList<>();
+        PrintDataItem currentItem = null;
+
+        for (PrintDataItem item : items) {
+            List<String> cmds = item.getCmds();
+            boolean isLine = cmds.contains(PrintDataItem.LINE);
+
+            // A "splitting" command is any command that isn't a line break.
+            // These commands (Align, Font Size, Bold) should trigger a new TextView.
+            boolean hasSplittingCmds = false;
+            for (String cmd : cmds) {
+                if (!cmd.equals(PrintDataItem.LINE) && !cmd.equals(PrintDataItem.LINE_SEP)) {
+                    hasSplittingCmds = true;
+                    break;
+                }
+            }
+
+            if (currentItem == null) {
+                if (isLine) {
+                    currentItem = new PrintDataItem("\n", new ArrayList<>());
+                } else {
+                    currentItem = new PrintDataItem(item.getContent(), new ArrayList<>(cmds));
+                }
+            } else {
+                if (isLine) {
+                    // Merge newline into the current item's content
+                    currentItem.setContent(currentItem.getContent() + "\n");
+                } else if (!hasSplittingCmds) {
+                    // No new splitting commands, merge this content into current item
+                    currentItem.setContent(currentItem.getContent() + item.getContent());
+                } else {
+                    // Has splitting commands (\L, \1, \B etc.), start a new item/TextView
+                    result.add(currentItem);
+                    currentItem = new PrintDataItem(item.getContent(), new ArrayList<>(cmds));
+                }
+            }
+        }
+
+        if (currentItem != null) {
+            result.add(currentItem);
+        }
+
+        return result;
+    }
+
     // new thread due with func:getTitleViewList
     public static void getTitleViewListAsync(
             Context context,
@@ -183,6 +248,10 @@ public class TextShowingUtils {
             PrintDataItemContainer container = PrintDataConverter.parse(safeData, map, supportLineSep);
             List<PrintDataItem> parsedItems = container.getPrintDataItems();
 
+            // --- NEW: Merge LINE items into text content ---
+            if (supportLineSep) {
+                parsedItems = mergeLineBreaksContent(parsedItems);
+            }
             List<PrintDataItem> filtered = filterItems(parsedItems, CENTER_ALIGN);
 
             // create View
