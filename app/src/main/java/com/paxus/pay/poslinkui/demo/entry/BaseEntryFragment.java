@@ -164,8 +164,15 @@ public abstract class BaseEntryFragment extends Fragment {
     }
 
     protected void sendNext(Bundle bundle){
-        EditabilityBlocker.getInstance().block((ViewGroup) getView());
-        EntryRequestUtils.sendNext(requireContext(), senderPackage, action, bundle);
+        // For DISPLAY_APPROVE_MESSAGE, it will display 3 seconds, and then send next,
+        // so, if the adb command is used to perform this action again within 3 seconds, it will crash.
+        // So if there is no view and context, then there is no need to proceed.
+        if (getView() != null) {
+            EditabilityBlocker.getInstance().block((ViewGroup) getView());
+        }
+        if (getContext() != null) {
+            EntryRequestUtils.sendNext(requireContext(), senderPackage, action, bundle);
+        }
     }
 
     protected void sendSecurityArea(TextView view, String... hint){
