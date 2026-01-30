@@ -54,6 +54,7 @@ import com.paxus.pay.poslinkui.demo.entry.option.SelectByPassFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectCardTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectCashDiscountFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectCofInitiatorFragment;
+import com.paxus.pay.poslinkui.demo.entry.option.SelectCurrencyFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectDuplicateOverrideFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectEbtTypeFragment;
 import com.paxus.pay.poslinkui.demo.entry.option.SelectEdcGroupFragment;
@@ -299,6 +300,7 @@ public class UIFragmentHelper {
             put(OptionEntry.ACTION_SELECT_COF_INITIATOR, SelectCofInitiatorFragment.class);
             put(OptionEntry.ACTION_SELECT_CASH_DISCOUNT, SelectCashDiscountFragment.class);
             put(OptionEntry.ACTION_SELECT_BATCH_REPORT_TYPE, SelectBatchReportTypeFragment.class);
+            put(OptionEntry.ACTION_SELECT_CURRENCY, SelectCurrencyFragment.class);
         }
     };
 
