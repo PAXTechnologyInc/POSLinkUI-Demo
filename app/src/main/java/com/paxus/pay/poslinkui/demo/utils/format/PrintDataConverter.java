@@ -71,7 +71,11 @@ public class PrintDataConverter {
             } else if (supportLineSep && curChar == 'n' && recognizer.length() > 0
                     && recognizer.charAt(recognizer.length() - 1) == '\\') {
                 recognizer.delete(recognizer.length() - 1, recognizer.length());
-                handleParseLineSep(printDataItemList, recognizer, contentBuilder, cmds);
+                if (recognizer.length() > 0) {
+                    contentBuilder.append(recognizer.toString());
+                    recognizer.delete(0, recognizer.length());
+                }
+                contentBuilder.append("\n");  // supportLineSep, add \n
             }  else {
                 if (recognizer.length() > 0) {
                     // Start recognize
