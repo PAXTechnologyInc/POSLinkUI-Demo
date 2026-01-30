@@ -128,6 +128,7 @@ class EntryActionAndCategoryRepository {
         put(OptionEntry.ACTION_SELECT_COF_INITIATOR, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_COF_INITIATOR, "Select COF Initiator", ".OPTION.SELECT_COF_INITIATOR", true));
         put(OptionEntry.ACTION_SELECT_CASH_DISCOUNT, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_CASH_DISCOUNT, "Select Cash Discount", ".OPTION.SELECT_CASH_DISCOUNT", true));
         put(OptionEntry.ACTION_SELECT_BATCH_REPORT_TYPE, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_BATCH_REPORT_TYPE, "Select Batch Report Type", ".OPTION.SELECT_BATCH_REPORT_TYPE", true));
+        put(OptionEntry.ACTION_SELECT_CURRENCY, new EntryAction(OptionEntry.CATEGORY, OptionEntry.ACTION_SELECT_CURRENCY, "Select Currency", ".OPTION.SELECT_CURRENCY", true));
 
         // Confirmation Entry
         put(ConfirmationEntry.ACTION_START_UI, new EntryAction(ConfirmationEntry.CATEGORY, ConfirmationEntry.ACTION_START_UI, "Start UI", ".CONFIRMATION.START_UI", true));

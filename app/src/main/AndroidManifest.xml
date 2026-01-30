@@ -398,6 +398,12 @@
                 <action android:name="com.pax.us.pay.action.SELECT_MOTO_TYPE"/>
             </intent-filter>
         </activity-alias>
+        <activity-alias android:name=".OPTION.SELECT_CURRENCY" android:exported="true" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.OPTION"/>
+                <action android:name="com.pax.us.pay.action.SELECT_CURRENCY"/>
+            </intent-filter>
+        </activity-alias>
 
         <activity-alias android:name=".OPTION.SELECT_ORIG_CURRENCY" android:exported="true" android:targetActivity=".entry.EntryActivity">
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
