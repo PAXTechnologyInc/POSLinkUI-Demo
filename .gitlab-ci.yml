@@ -147,8 +147,8 @@ uploadFtp:
         # 执行 FTP 上传，这里不用改
         - /opt/CI-sh/upload-to-ftp.sh $CI_PROJECT_NAME
 
-        # 生成ReleaseRuntimeClasspath的依赖关系树，需根据项目实际情况修改
-        - ./gradlew :apps:edc:dependencies --configuration releaseRuntimeClasspath > dependencies.txt  
+        # 生成ReleaseRuntimeClasspath的依赖关系树，当前项目为单模块 app
+        - ./gradlew :app:dependencies --configuration releaseRuntimeClasspath > dependencies.txt  
         
         # 生成符合CycloneDX格式的BOM文件
         - python3.9 /opt/CI-sh/SbomTool.py -i dependencies.txt -o bom.json -p paxapp
