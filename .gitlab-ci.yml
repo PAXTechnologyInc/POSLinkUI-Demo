@@ -50,7 +50,7 @@ buildReleaseApk:
         - chmod +x ./gradlew    # 给 Gradle 脚本赋予执行的权限，这个不用动
         # 本项目的 Application 模块为 app/，storeFile file('pax_demo.jks') 相对 app 目录，故 KeyStore 必须拷贝到 app/
         - rm -f ./app/*.jks ./app/signing.properties 2>/dev/null || true
-        - cp /opt/keystore/new/* ./app/
+        - cp /opt/keystore/old/* ./app/
         # Runner 上 keystore 为 PaxApp.jks 等，build.gradle 固定要求 pax_demo.jks，拷贝后统一重命名
         - |
           if [ ! -f ./app/pax_demo.jks ] && ls ./app/*.jks 1>/dev/null 2>&1; then
