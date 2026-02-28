@@ -1,0 +1,225 @@
+# 定义 CI 流程的阶段
+stages:
+    - "codeCheck" # 代码的初步检查
+    - "build"     # 构建 APK
+    - "uploadFtp"   # 上传产物到ftp
+    - "scan"      # 执行代码扫描
+    - "deploy"    # 应用上传
+    - "notify"    # 上传通知
+    - "test"      # 自动化测试
+
+# CI 缓存，目前只缓存 .gradle 文件夹
+cache:
+    key: ${CI_PROJECT_ID}
+    paths:
+        - .gradle/
+
+# local.properties 文件检查，此文件用来声明本地的 SDK 路径，每个人电脑本地的 SDK 路径都不一样，所以不应该上传此文件
+localPropFileCheck:
+    stage: codeCheck
+    rules:
+        - exists:   # 只有当项目根目录存在 local.properties 文件时才会将此 Job 添加到 CI 流程中
+              - "local.properties"
+    script:
+        - echo "DO NOT upload local.properties!"
+        - exit 1    # 返回值不为 0 时，此 Job 报错，终止 CI 流程。此时开发同事应当移除项目中的 local.properties 文件后再进行提交
+    tags:   # 指定此 Job 运行在哪个 Runner 上
+        - sit
+
+# 签名文件检查，签名文件不允许上传
+signFileCheck:
+    stage: codeCheck
+    rules:
+        - exists:
+              - "**.jks"
+    script:
+        - echo "DO NOT upload sign file!"
+        - exit 1
+    tags:
+        - sit
+
+# 构建 Release 应用，各项目需要根据实际情况进行配置
+buildReleaseApk:
+    stage: build
+    rules:  # 当请求合并到 golive 或 main 分支时，触发构建工作
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^golive\/.*/
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+    before_script:  # 这里设置了 Android SDK/JDK 路径。如果需要更新项目构建所使用的 Android SDK 版本，请通知 QA 在服务器端进行设置，并更改此处的配置
+        - export ANDROID_HOME="/opt/android/sdk"
+        - export JAVA_HOME="/opt/java/openjdk/jdk11" # 根据实际需求修改，例如需要使用JDK8，就改成：jdk8"
+        - chmod +x ./gradlew    # 给 Gradle 脚本赋予执行的权限，这个不用动
+        - cp /opt/keystore/old/* . # 拷贝 KeyStore，区分老签名和新签名，拷贝到项目中的地址也要注意
+    script: # 执行构建工作，这里请根据项目的实际情况来修改
+        - echo "Build release package"
+        - ./gradlew :app:assembleRelease   # 这里请根据项目的实际情况来修改
+    cache:  # 将构建过程中生成的 class 文件缓存下来，方便 SonarQube 代码扫描使用
+        key: ${CI_COMMIT_SHA}   # 以 Commit SHA 作为 Key，这样如果提交了新代码，那么缓存就会被清空
+        paths:
+            - "**/build/intermediates/javac"
+            - "sonar-project.properties"
+    artifacts:  # 构建产物，主要是 APK 文件。如果有其他需要使用的文件（例如生成的 SDK 文件等），也请添加到这里，否则后续的流程无法将其上传到 Confluence
+        paths:  # 产物路径，这里支持使用通配符，* 表示任意字符，** 表示任意字符与目录
+            - "**/build/outputs/apk/**/*.apk"   # 保留 APK 文件，因为需要扫描 APK 文件以及发布 APK
+        untracked: false
+        when: on_success    # 只有当构建成功时才输出产物
+        expire_in: 1 day    # 过期时间为 1 天，因为这些产物都是马上就被复制走了，所以 GitLab 上不需要保留太久
+    tags:
+        - sit
+
+# SonarQube 代码扫描，不必修改此处配置
+sonarQubeScan:
+    stage: scan
+    variables:
+        SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+        GIT_DEPTH: "0"
+    needs:
+        - buildReleaseApk
+    rules:  # 仅在合并到 dev、golive 或 main 分支时进行扫描
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^dev.*/
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^golive\/.*/
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+    script:
+        - sonar-scanner
+            -Dsonar.host.url=$SONAR_HOST_URL
+            -Dsonar.qualitygate.wait=true
+    cache:
+        key: ${CI_COMMIT_SHA}   # 使用与 buildReleaseApk 相同的 Key，这样就不需要再次 build 了
+        paths:
+            - "**/build/intermediates/javac"
+            - "sonar-project.properties"
+    tags:
+        - sit
+
+# APK 上传到 FTP，执行安全扫描，不必修改此处配置
+uploadFtp:
+    stage: uploadFtp
+    needs:
+        - buildReleaseApk
+    rules:  # 仅在合并到 golive 或 main 分支时才需要执行 APK 的安全扫描
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^golive\/.*/
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+    before_script:
+        - export JAVA_HOME="/opt/java/openjdk/jdk11"
+        - export ANDROID_HOME="/opt/android/sdk"
+        - chmod +x ./gradlew
+        # 创建临时目录
+        - mkdir -p /opt/CI-Temp/confluence/$CI_PROJECT_NAME || echo "Directory already exists"
+        - mkdir -p /opt/CI-Temp/other/$CI_PROJECT_NAME || echo "Directory already exists"
+
+        # 清空临时文件，释放内存
+        - rm -r /opt/CI-Temp/confluence/$CI_PROJECT_NAME/* || echo "The file is empty"
+        - rm -r /opt/CI-Temp/other/$CI_PROJECT_NAME/* || echo "The file is empty"
+        - rm -r /opt/ftp/$CI_PROJECT_NAME/confluence/newest/* || echo "The file is empty"
+
+    script:
+        # 先生成依赖 License 分析的报告
+        - ./gradlew downloadLicenses
+
+        # 查找构建得到的 APK，并将所有 APK 放到待上传的目录下
+        # 一般这个是不需要改的，因为 build 出来的 APK 文件都应该是要执行安全扫描的
+        # 如果你有 APK 不需要扫描，那就不应该构建，你应该改 buildReleaseApk 这个 Job
+        - find . -iname "*.apk" -type f -exec cp {} /opt/CI-Temp/confluence/$CI_PROJECT_NAME \;
+
+        # 将依赖 License 分析的报告放到待上传的目录下，这里不用改
+        - cp ./build/reports/license/dependency-license.json /opt/CI-Temp/other/$CI_PROJECT_NAME
+
+        # 将安全扫描白名单放到待上传的目录下，这里不用改
+        - cp ./security_test_whitelist.py /opt/CI-Temp/other/$CI_PROJECT_NAME
+
+        # 执行 FTP 上传，这里不用改
+        - /opt/CI-sh/upload-to-ftp.sh $CI_PROJECT_NAME
+
+        # 生成ReleaseRuntimeClasspath的依赖关系树，需根据项目实际情况修改
+        - ./gradlew :apps:edc:dependencies --configuration releaseRuntimeClasspath > dependencies.txt  
+        
+        # 生成符合CycloneDX格式的BOM文件
+        - python3.9 /opt/CI-sh/SbomTool.py -i dependencies.txt -o bom.json -p paxapp
+        
+        # 上传BOM文件到dependency-track平台进行漏洞分析
+        - curl -X "POST" "${DEPENDENCY_TRACK_API}/bom" -H "X-Api-Key:${DEPENDENCY_TRACK_API_KEY}" -F "autoCreate=true" -F "projectName=$CI_PROJECT_NAME" -F "projectVersion=1.00.00" -F "bom=@bom.json"
+    tags:
+        - sit
+
+# 打包上传到 Confluence并发送提测邮件，不必修改此处配置
+uploadConfluence:
+    stage: deploy
+    variables:
+        PROJECT_GIT_URL: "${CI_PROJECT_URL}.git"
+    rules:  # 仅在批准合并到 golive 或 main 分支时才需要上传 Confluence
+        - if: $CI_COMMIT_BRANCH =~ /^golive\/.*/
+        - if: $CI_COMMIT_BRANCH == "main"
+    script:
+        - D:/autoTest/script/download-from-ftp-release.bat $CI_PROJECT_NAME
+        - D:/autoTest/script/checkout-library-from-git.bat
+        - echo "Upload APK to Confluence"
+        - D:/autoTest/script/publishPackage.bat $CONFLUENCE_PRODUCTION_PAGE_ID $PROJECT_GIT_URL $CI_COMMIT_BRANCH $CI_PROJECT_NAME $GITLAB_USER_NAME $CI_PROJECT_ID
+    tags:
+        - slave2
+
+# 执行上传应用到MAXSTORE，不必修改此处配置
+autoPublishMaxstore:
+    stage: deploy
+    needs:
+        - uploadConfluence
+    rules:  # 仅在批准合并到 golive 或 main 分支才需要执行上传应用到MAXSTORE
+        - if: $CI_COMMIT_BRANCH =~ /^golive\/.*/
+        - if: $CI_COMMIT_BRANCH == "main"
+    script: # 这里的脚本不要改动
+        - cmd /C "set LANG=UTF-8"
+        # 执行上传应用到MAXSTORE，传入参数，分别为项目名、项目ID、MAXSTORE市场名、developerKey、developerSecret、应用名、机型、合并分支名、是否有参数文件（0表示没有，有则传模板文件名）
+        - D:/autoTest/script/publishMaxstore.bat $CI_PROJECT_NAME $CI_PROJECT_ID $MAXSTORE_APP_NAME $MAXSTORE_MODEL_LIST $CI_COMMIT_BRANCH $MAXSTORE_PARAM_NAME
+    tags:
+        - slave2
+
+# 执行自动化冒烟测试，不必修改此处配置
+autoSmokeTest:
+    stage: test
+    needs:
+        - autoPublishMaxstore
+    rules:  # 仅在批准合并到 golive 或 main 分支时才需要执行冒烟测试
+        - if: $CI_COMMIT_BRANCH =~ /^golive\/.*/
+        - if: $CI_COMMIT_BRANCH == "main"
+    script: # 这里的脚本不要改动
+        - cmd /C "set LANG=UTF-8"
+        # 执行自动化冒烟测试并发送邮件通知，传入参数，分别为项目名、项目ID、推送参数模板名
+        - D:/autoTest/script/runSmokeTest.bat $CI_PROJECT_NAME $CI_PROJECT_ID $CI_COMMIT_BRANCH $PUSH_TEMPLATE_NAME $MAXSTORE_PARAM_NAME
+    allow_failure: true
+    timeout: 1 day
+    tags:
+        - slave2
+        
+# 执行自动化回归测试，此处配置需要联系 QA 后方可修改
+autoRegressionTest:
+    stage: test
+    needs:
+        - autoSmokeTest
+    rules:  # 仅在批准合并到 golive 或 main 分支时才需要自动化回归测试
+        - if: $CI_COMMIT_BRANCH =~ /^golive\/.*/
+        - if: $CI_COMMIT_BRANCH == "main"
+    script:
+        # 检出自动化测试脚本工程，第三个参数为脚本存放的branch名称，需传入正确的值
+        - D:/autoTest/script/checkout-regressiontest-code.bat http://172.16.3.60/qa/auto_test/sg_cybersource_pay_a.git $CI_PROJECT_NAME master
+        # 执行自动化测试并发送邮件通知，传入参数，分别为项目名、bat脚本名称、项目ID、合并分支名
+        - D:/autoTest/script/runRegressionTest.bat $CI_PROJECT_NAME SG_CYBERSOURCE_PAY_A_Full_Test.bat $CI_PROJECT_ID $CI_COMMIT_BRANCH
+    allow_failure: true
+    timeout: 1 day
+    tags:
+        - slave1
+
+# 执行自动化压力测试，此处配置需要联系 QA 后方可修改
+autoPressureTest:
+    stage: test
+    needs:
+        - autoRegressionTest
+    rules:  # 仅在批准合并到 golive 或 main 分支时才需要自动化压力测试
+        - if: $CI_COMMIT_BRANCH =~ /^golive\/.*/
+        - if: $CI_COMMIT_BRANCH == "main"
+    script:
+        # 获取最新自动化压力测试脚本工程
+        - D:/autoTest/script/checkout-stresstest-code-release.bat
+        # 执行自动化测试并发送邮件通知，传入参数，分别为项目名、项目ID、合并分支名
+        - D:/autoTest/script/runStressTest.bat $CI_PROJECT_NAME $CI_PROJECT_ID $CI_COMMIT_BRANCH
+    allow_failure: true
+    timeout: 1 day
+    tags:
+        - slave1
