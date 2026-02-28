@@ -54,7 +54,11 @@ android {
             android.applicationVariants.all { variant ->
                 def buildType = variant.buildType.name
                 if (buildType == "release") {
-                    variant.getPackageApplicationProvider().get().outputDirectory = new File(project.rootDir.absolutePath + "/apks")
+                    // CI 环境下保持默认输出目录，避免 AGP 查找 output-metadata.json 失败；本地开发继续输出到 /apks
+                    if (!Boolean.valueOf(System.getenv('CI') ?: 'false')) {
+                        variant.getPackageApplicationProvider().get().outputDirectory =
+                                new File(project.rootDir.absolutePath + "/apks")
+                    }
                 }
 
                 variant.outputs.all {
