@@ -14,10 +14,10 @@ android {
 
     signingConfigs {
         release {
-            keyAlias 'paxdemo'
-            keyPassword 'paxdemo'
+            keyAlias System.getenv('KEY_ALIAS') ?: 'paxdemo'
+            keyPassword System.getenv('KEY_PASSWORD') ?: 'paxdemo'
             storeFile file('pax_demo.jks')
-            storePassword 'paxdemo'
+            storePassword System.getenv('KEYSTORE_PASSWORD') ?: 'paxdemo'
         }
     }
 
