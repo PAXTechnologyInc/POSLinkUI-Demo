@@ -59,7 +59,10 @@ buildReleaseApk:
           fi
 
           if [ -f ./app/signing.properties ]; then
-            . ./app/signing.properties
+            RELEASE_STORE_PASSWORD=$(grep '^RELEASE_STORE_PASSWORD=' ./app/signing.properties | head -n1 | cut -d'=' -f2- | tr -d '\r')
+            RELEASE_KEY_ALIAS=$(grep '^RELEASE_KEY_ALIAS=' ./app/signing.properties | head -n1 | cut -d'=' -f2- | tr -d '\r')
+            RELEASE_KEY_PASSWORD=$(grep '^RELEASE_KEY_PASSWORD=' ./app/signing.properties | head -n1 | cut -d'=' -f2- | tr -d '\r')
+
             export KEY_ALIAS="$RELEASE_KEY_ALIAS"
             export KEY_PASSWORD="$RELEASE_KEY_PASSWORD"
             export KEYSTORE_PASSWORD="$RELEASE_STORE_PASSWORD"
