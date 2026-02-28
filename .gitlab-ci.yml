@@ -51,6 +51,11 @@ buildReleaseApk:
         # 本项目的 Application 模块为 app/，storeFile file('pax_demo.jks') 相对 app 目录，故 KeyStore 必须拷贝到 app/
         - rm -f ./app/*.jks ./app/signing.properties 2>/dev/null || true
         - cp /opt/keystore/new/* ./app/
+        # Runner 上 keystore 为 PaxApp.jks 等，build.gradle 固定要求 pax_demo.jks，拷贝后统一重命名
+        - |
+          if [ ! -f ./app/pax_demo.jks ] && ls ./app/*.jks 1>/dev/null 2>&1; then
+            mv ./app/*.jks ./app/pax_demo.jks
+          fi
     script: # 执行构建工作，这里请根据项目的实际情况来修改
         - echo "Build release package"
         - ./gradlew :app:assembleRelease   # 这里请根据项目的实际情况来修改
