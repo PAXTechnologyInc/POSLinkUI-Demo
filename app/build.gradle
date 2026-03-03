@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -9,15 +12,23 @@ def releaseTime() {
 def VERSION_NAME = "V1.03.00_" + releaseTime()
 def ARCHIVES_BASE_NAME = "POSLinkUI-Demo_" + VERSION_NAME
 
+def signingPropertiesFile = file("signing.properties")
+def signingProps = new Properties()
+if (signingPropertiesFile.exists()) {
+    signingProps.load(new FileInputStream(signingPropertiesFile))
+}
+
 android {
     compileSdk 33
 
     signingConfigs {
         release {
-            keyAlias System.getenv('KEY_ALIAS') ?: 'paxdemo'
-            keyPassword System.getenv('KEY_PASSWORD') ?: 'paxdemo'
-            storeFile file('pax_demo.jks')
-            storePassword System.getenv('KEYSTORE_PASSWORD') ?: 'paxdemo'
+            if (!signingProps.isEmpty()) {
+                keyAlias signingProps["keyAlias"]
+                keyPassword signingProps["keyPassword"]
+                storeFile file(signingProps["storeFile"])
+                storePassword signingProps["storePassword"]
+            }
         }
     }
 
