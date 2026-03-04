@@ -68,18 +68,38 @@ buildReleaseApk:
     tags:
         - sit
 
+# 构建 Dev 分支用的 Debug 包，用于 feature -> dev 合并时验证能否正常编译
+buildDevApk:
+    stage: build
+    rules:
+        # 仅在 MR 目标分支为 dev* 时触发
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^dev.*/
+    before_script:
+        - export ANDROID_HOME="/opt/android/sdk"
+        - export JAVA_HOME="/opt/java/openjdk/jdk11"
+        - chmod +x ./gradlew
+    script:
+        - echo "Build debug apk for dev merge"
+        - ./gradlew :app:assembleDebug
+    cache:
+        key: ${CI_COMMIT_SHA}
+        paths:
+            - "**/build/intermediates/javac"
+            - "sonar-project.properties"
+    tags:
+        - sit
+
 # SonarQube 代码扫描，不必修改此处配置
 sonarQubeScan:
     stage: scan
     variables:
         SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
         GIT_DEPTH: "0"
-#    不需要needs，仅分析源码，feature -> dev 不触发 buildReleaseApk，会造成 sonarQubeScan 扫描dev分支pipeline
-#    needs:
-#        - buildReleaseApk
-    rules:  # 仅在合并到 dev、golive 或 main 分支时进行扫描
-        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^dev.*/
-        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^golive\/.*/
+    needs:
+        - buildReleaseApk
+    rules:
+#        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^dev.*/  社区版sonarqube没有分支管理，仅能扫描main分支代码
+#        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^golive\/.*/
         - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
     script:
         - sonar-scanner
