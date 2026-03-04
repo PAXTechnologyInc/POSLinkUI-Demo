@@ -74,8 +74,9 @@ sonarQubeScan:
     variables:
         SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
         GIT_DEPTH: "0"
-    needs:
-        - buildReleaseApk
+#    不需要needs，仅分析源码，feature -> dev 不触发 buildReleaseApk，会造成 sonarQubeScan 扫描dev分支pipeline
+#    needs:
+#        - buildReleaseApk
     rules:  # 仅在合并到 dev、golive 或 main 分支时进行扫描
         - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^dev.*/
         - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^golive\/.*/
