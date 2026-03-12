@@ -1,0 +1,89 @@
+name: Release POSLink UI Demo via PAXSTORE API
+
+on:
+  # manual trigger
+  workflow_dispatch:
+  # push release/* or golive/v** branch trigger
+  push:
+    branches:
+      - 'release/**'
+      - 'golive/v**'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.CI_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
+      GITHUB_CONTEXT: ${{ toJSON(github) }}
+      GITHUB_USERNAME: ${{ secrets.CI_NAME }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.CI_TOKEN }}
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Build POSLink UI Demo APK
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :app:assembleRelease
+
+      - name: Prepare release folder
+        run: |
+          set -e
+
+          CONFIG_FILE=".github/paxstore_api_config/paxstore_api_config.json"
+          PACKAGE_NAME="com.paxus.pay.poslinkui.demo"
+
+          # read config 
+          APP_NAME=$(jq -r --arg pkg "$PACKAGE_NAME" '.[$pkg].apkName' "$CONFIG_FILE")
+          ASSET_NAME=${APP_NAME// /_}
+
+          RELEASE_ROOT="release"
+          FOLDER="${ASSET_NAME}"
+
+          mkdir -p "${RELEASE_ROOT}/${FOLDER}/apk"
+
+          # copy Release APK
+          APK_SRC=$(find app/build/outputs/apk -name "*.apk" -type f | head -n 1)
+          if [ -z "${APK_SRC}" ]; then
+            echo "No APK found under app/build/outputs/apk"
+            exit 1
+          fi
+          cp -v "${APK_SRC}" "${RELEASE_ROOT}/${FOLDER}/apk/"
+
+          cd "${RELEASE_ROOT}/${FOLDER}/apk"
+          APK_FILE=$(ls *.apk)
+
+          openssl dgst -sha1 "${APK_FILE}" | sed 's/^.*= //g' > "${APK_FILE}.sha1"
+          openssl dgst -sha256 "${APK_FILE}" | sed 's/^.*= //g' > "${APK_FILE}.sha256"
+
+          cd "${GITHUB_WORKSPACE}"
+
+          echo "PACKAGE_NAME=${PACKAGE_NAME}" >> $GITHUB_ENV
+          echo "APP_NAME=${APP_NAME}" >> $GITHUB_ENV
+          echo "ASSET_NAME=${ASSET_NAME}" >> $GITHUB_ENV
+
+      - name: Upload APK via PAXSTORE Developer API
+        run: |
+          set -e
+
+          RELEASE_FOLDER="${GITHUB_WORKSPACE}/release/${ASSET_NAME}"
+
+          chmod +x .github/scripts/PaxstoreApiTool.jar || true
+
+          java -Xmx1536m -jar .github/scripts/PaxstoreApiTool.jar \
+            --url "${{ secrets.PAXSTORE_API_URL }}" \
+            --key "${{ secrets.PAXSTORE_SDK_KEY }}" \
+            --secret "${{ secrets.PAXSTORE_SDK_SECRET }}" \
+            --appname "${APP_NAME}" \
+            --pkgname "${PACKAGE_NAME}" \
+            --releasefolder "${RELEASE_FOLDER}" \
+            --command uploadapk
+

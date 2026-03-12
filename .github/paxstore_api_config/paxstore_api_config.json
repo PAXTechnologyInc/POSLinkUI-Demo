@@ -1,0 +1,41 @@
+{
+  "com.pax.us.pay.stdnative.shift4.lite.p2pe": {
+    "variantName": "poslink_ui_demo",
+    "apkName": "POSLink UI Demo",
+    "chargeType": 0,
+    "baseType": "P",
+    "shortDesc": "POSLink UI demo Application",
+    "fullDesc": "POSLink UI demo Application",
+    "modelNameList": [
+      "A30",
+      "A35",
+      "A3700",
+      "A60",
+      "A6630",
+      "A6650",
+      "A77",
+      "A80",
+      "A800",
+      "A920Max",
+      "A920Pro",
+      "A930",
+      "Aries6",
+      "Aries8",
+      "L1400",
+      "M8",
+      "Q10A"
+    ],
+    "categoryList": [
+      "RST",
+      "RTL",
+      "LDG"
+    ],
+    "screenshotFilePaths": [
+      "screenshot0.png",
+      "screenshot1.png",
+      "screenshot2.png"
+    ],
+    "featureImgFilePath": "feature.png",
+    "iconFilePath": "icon.png"
+  }
+}
