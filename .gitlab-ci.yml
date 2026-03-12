@@ -41,9 +41,9 @@ signFileCheck:
 # 构建 Release 应用，各项目需要根据实际情况进行配置
 buildReleaseApk:
     stage: build
-    rules:  # 当请求合并到 golive 或 main 分支时，触发构建工作
-        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^golive\/.*/
-        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+    rules:  # 当请求合并到 dev 或 release 分支时，触发构建工作
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^dev.*/
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release.*/
     before_script:  # 这里设置了 Android SDK/JDK 路径。如果需要更新项目构建所使用的 Android SDK 版本，请通知 QA 在服务器端进行设置，并更改此处的配置
         - export ANDROID_HOME="/opt/android/sdk"
         - export JAVA_HOME="/opt/java/openjdk/jdk11" # 根据实际需求修改，例如需要使用JDK8，就改成：jdk8"
@@ -68,26 +68,6 @@ buildReleaseApk:
     tags:
         - sit
 
-# 构建 Dev 分支用的 Debug 包，用于 feature -> dev 合并时验证能否正常编译
-buildDevApk:
-    stage: build
-    rules:
-        # 仅在 MR 目标分支为 dev* 时触发
-        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^dev.*/
-    before_script:
-        - export ANDROID_HOME="/opt/android/sdk"
-        - export JAVA_HOME="/opt/java/openjdk/jdk11"
-        - chmod +x ./gradlew
-    script:
-        - echo "Build debug apk for dev merge"
-        - ./gradlew :app:assembleDebug
-    cache:
-        key: ${CI_COMMIT_SHA}
-        paths:
-            - "**/build/intermediates/javac"
-            - "sonar-project.properties"
-    tags:
-        - sit
 
 # SonarQube 代码扫描，不必修改此处配置
 sonarQubeScan:
@@ -98,9 +78,8 @@ sonarQubeScan:
     needs:
         - buildReleaseApk
     rules:
-#        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^dev.*/  社区版sonarqube没有分支管理，仅能扫描main分支代码
-#        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^golive\/.*/
-        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^dev.*/
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release.*/
     script:
         - sonar-scanner
             -Dsonar.host.url=$SONAR_HOST_URL
@@ -118,9 +97,8 @@ uploadFtp:
     stage: uploadFtp
     needs:
         - buildReleaseApk
-    rules:  # 仅在合并到 golive 或 main 分支时才需要执行 APK 的安全扫描
-        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^golive\/.*/
-        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+    rules:  # 仅在合并到 release 分支时才需要执行 APK 的安全扫描
+        - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release.*/
     before_script:
         - export JAVA_HOME="/opt/java/openjdk/jdk11"
         - export ANDROID_HOME="/opt/android/sdk"
@@ -168,9 +146,9 @@ uploadConfluence:
     stage: deploy
     variables:
         PROJECT_GIT_URL: "${CI_PROJECT_URL}.git"
-    rules:  # 仅在批准合并到 golive 或 main 分支时才需要上传 Confluence
-        - if: $CI_COMMIT_BRANCH =~ /^golive\/.*/
-        - if: $CI_COMMIT_BRANCH == "main"
+    rules:  # 仅在批准合并到 release 或 master 分支时才需要上传 Confluence
+        - if: $CI_COMMIT_BRANCH =~ /^release.*/
+        - if: $CI_COMMIT_BRANCH =~ /^master.*/
     script:
         - D:/autoTest/script/download-from-ftp-release.bat $CI_PROJECT_NAME
         - D:/autoTest/script/checkout-library-from-git.bat
@@ -184,10 +162,10 @@ autoPublishMaxstore:
     stage: deploy
     needs:
         - uploadConfluence
-    rules:  # 仅在批准合并到 golive 或 main 分支才需要执行上传应用到MAXSTORE
-        - if: $CI_COMMIT_BRANCH =~ /^golive\/.*/
-        - if: $CI_COMMIT_BRANCH == "main"
-    script: # 这里的脚本不要改动
+    rules:  # 仅在批准合并到 release 分支才需要执行上传应用到 PAXSTORE
+        - if: $CI_COMMIT_BRANCH =~ /^release.*/
+    script:
+        # 1. 设置编码（保持和原来一样）
         - cmd /C "set LANG=UTF-8"
         # 执行上传应用到MAXSTORE，传入参数，分别为项目名、项目ID、MAXSTORE市场名、developerKey、developerSecret、应用名、机型、合并分支名、是否有参数文件（0表示没有，有则传模板文件名）
         - D:/autoTest/script/publishMaxstore.bat $CI_PROJECT_NAME $CI_PROJECT_ID $MAXSTORE_APP_NAME $MAXSTORE_MODEL_LIST $CI_COMMIT_BRANCH $MAXSTORE_PARAM_NAME
@@ -200,8 +178,7 @@ autoSmokeTest:
     needs:
         - autoPublishMaxstore
     rules:  # 仅在批准合并到 golive 或 main 分支时才需要执行冒烟测试
-        - if: $CI_COMMIT_BRANCH =~ /^golive\/.*/
-        - if: $CI_COMMIT_BRANCH == "main"
+        - if: $CI_COMMIT_BRANCH =~ /^release.*/
     script: # 这里的脚本不要改动
         - cmd /C "set LANG=UTF-8"
         # 执行自动化冒烟测试并发送邮件通知，传入参数，分别为项目名、项目ID、推送参数模板名
@@ -216,9 +193,8 @@ autoRegressionTest:
     stage: test
     needs:
         - autoSmokeTest
-    rules:  # 仅在批准合并到 golive 或 main 分支时才需要自动化回归测试
-        - if: $CI_COMMIT_BRANCH =~ /^golive\/.*/
-        - if: $CI_COMMIT_BRANCH == "main"
+    rules:  # 仅在批准合并到 release 分支时才需要自动化测试
+        - if: $CI_COMMIT_BRANCH =~ /^release.*/
     script:
         # 检出自动化测试脚本工程，第三个参数为脚本存放的branch名称，需传入正确的值
         - D:/autoTest/script/checkout-regressiontest-code.bat http://172.16.3.60/qa/auto_test/sg_cybersource_pay_a.git $CI_PROJECT_NAME master
@@ -235,8 +211,7 @@ autoPressureTest:
     needs:
         - autoRegressionTest
     rules:  # 仅在批准合并到 golive 或 main 分支时才需要自动化压力测试
-        - if: $CI_COMMIT_BRANCH =~ /^golive\/.*/
-        - if: $CI_COMMIT_BRANCH == "main"
+        - if: $CI_COMMIT_BRANCH =~ /^release.*/
     script:
         # 获取最新自动化压力测试脚本工程
         - D:/autoTest/script/checkout-stresstest-code-release.bat
