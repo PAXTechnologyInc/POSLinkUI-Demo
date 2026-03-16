@@ -3,11 +3,11 @@ name: Release POSLink UI Demo via PAXSTORE API
 on:
   # manual trigger
   workflow_dispatch:
-  # push release/* or golive/v** branch trigger
+  # push release/* or master branch trigger
   push:
     branches:
       - 'release/**'
-      - 'golive/v**'
+      - 'master'
 
 jobs:
   release:
@@ -17,6 +17,10 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
       GITHUB_CONTEXT: ${{ toJSON(github) }}
       GITHUB_USERNAME: ${{ secrets.CI_NAME }}
+      PAX_DEMO_JKS_BASE64: ${{ secrets.PAX_DEMO_JKS_BASE64 }}
+      PAX_DEMO_KEY_ALIAS: ${{ secrets.PAX_DEMO_KEY_ALIAS }}
+      PAX_DEMO_KEY_PASSWORD: ${{ secrets.PAX_DEMO_KEY_PASSWORD }}
+      PAX_DEMO_STORE_PASSWORD: ${{ secrets.PAX_DEMO_STORE_PASSWORD }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -28,6 +32,11 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+
+      - name: Prepare demo keystore and signing.properties
+        run: |
+          chmod +x .github/scripts/decrypt_secret.sh
+          .github/scripts/decrypt_secret.sh
 
       - name: Build POSLink UI Demo APK
         run: |
