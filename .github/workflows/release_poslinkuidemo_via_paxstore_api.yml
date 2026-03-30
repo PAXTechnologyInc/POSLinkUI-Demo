@@ -76,6 +76,11 @@ jobs:
 
           cd "${GITHUB_WORKSPACE}"
 
+          # PaxstoreApiTool expects release/${ASSET_NAME}.zip for upload.
+          cd "${RELEASE_ROOT}"
+          zip -r "${FOLDER}.zip" "${FOLDER}"
+          cd "${GITHUB_WORKSPACE}"
+
           echo "PACKAGE_NAME=${PACKAGE_NAME}" >> $GITHUB_ENV
           echo "APP_NAME=${APP_NAME}" >> $GITHUB_ENV
           echo "ASSET_NAME=${ASSET_NAME}" >> $GITHUB_ENV
