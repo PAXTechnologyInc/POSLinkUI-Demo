@@ -3,7 +3,7 @@
     "variantName": "poslink_ui_demo",
     "apkName": "POSLink UI Demo",
     "chargeType": 0,
-    "baseType": "P",
+    "baseType": "N",
     "shortDesc": "POSLink UI demo Application",
     "fullDesc": "POSLink UI demo Application",
     "modelNameList": [
