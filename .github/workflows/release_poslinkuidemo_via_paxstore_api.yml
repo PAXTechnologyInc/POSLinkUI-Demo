@@ -14,10 +14,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ secrets.CI_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
-      GITHUB_CONTEXT: ${{ toJSON(github) }}
-      GITHUB_USERNAME: ${{ secrets.CI_NAME }}
+#      GH_TOKEN: ${{ secrets.CI_TOKEN }}
+#      GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
+#      GITHUB_CONTEXT: ${{ toJSON(github) }}
+#      GITHUB_USERNAME: ${{ secrets.CI_NAME }}
       PAX_DEMO_JKS_BASE64: ${{ secrets.PAX_DEMO_JKS_BASE64 }}
       PAX_DEMO_KEY_ALIAS: ${{ secrets.PAX_DEMO_KEY_ALIAS }}
       PAX_DEMO_KEY_PASSWORD: ${{ secrets.PAX_DEMO_KEY_PASSWORD }}
