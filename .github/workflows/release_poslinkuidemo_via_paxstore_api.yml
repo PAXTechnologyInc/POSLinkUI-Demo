@@ -76,11 +76,8 @@ jobs:
 
           cd "${GITHUB_WORKSPACE}"
 
-          # PaxstoreApiTool requires exactly one file named ReleaseNote*.txt (see Utils in jar).
-          {
-            echo "POSLink UI Demo — automated CI build."
-            echo "Build: ${GITHUB_RUN_ID} @ ${GITHUB_SHA}"
-          } > "${RELEASE_ROOT}/${FOLDER}/ReleaseNote.txt"
+          # Copy ReleaseNote.txt from repo root; developers update this file with each release.
+          cp -v "${GITHUB_WORKSPACE}/ReleaseNote.txt" "${RELEASE_ROOT}/${FOLDER}/ReleaseNote.txt"
 
           # PaxstoreApiTool expects release/${ASSET_NAME}.zip for upload.
           cd "${RELEASE_ROOT}"
@@ -91,8 +88,6 @@ jobs:
           echo "APP_NAME=${APP_NAME}" >> $GITHUB_ENV
           echo "ASSET_NAME=${ASSET_NAME}" >> $GITHUB_ENV
 
-      # PaxstoreApiTool: uploadapk = CreateApkRequest (新建应用，包名已存在会报 1217)。
-      # createapk = 先按 appname/pkgname 查已有应用，再在该应用下新增 APK（适用于商店里已有该包名）。
       - name: Upload APK via PAXSTORE Developer API
         run: |
           set -e
@@ -108,5 +103,5 @@ jobs:
             --appname "${APP_NAME}" \
             --pkgname "${PACKAGE_NAME}" \
             --releasefolder "${RELEASE_FOLDER}" \
-            --command createapk
+            --command uploadapk
 
