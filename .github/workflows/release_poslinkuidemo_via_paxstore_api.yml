@@ -91,6 +91,8 @@ jobs:
           echo "APP_NAME=${APP_NAME}" >> $GITHUB_ENV
           echo "ASSET_NAME=${ASSET_NAME}" >> $GITHUB_ENV
 
+      # PaxstoreApiTool: uploadapk = CreateApkRequest (新建应用，包名已存在会报 1217)。
+      # createapk = 先按 appname/pkgname 查已有应用，再在该应用下新增 APK（适用于商店里已有该包名）。
       - name: Upload APK via PAXSTORE Developer API
         run: |
           set -e
@@ -106,5 +108,5 @@ jobs:
             --appname "${APP_NAME}" \
             --pkgname "${PACKAGE_NAME}" \
             --releasefolder "${RELEASE_FOLDER}" \
-            --command uploadapk
+            --command createapk
 
