@@ -49,7 +49,7 @@ jobs:
           set -e
 
           CONFIG_FILE=".github/paxstore_api_config/paxstore_api_config.json"
-          PACKAGE_NAME="com.paxus.pay.poslinkui.demo.michael"
+          PACKAGE_NAME="com.paxus.pay.poslinkui.demo"
 
           # read config 
           APP_NAME=$(jq -r --arg pkg "$PACKAGE_NAME" '.[$pkg].apkName' "$CONFIG_FILE")

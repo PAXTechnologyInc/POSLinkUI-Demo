@@ -1,7 +1,7 @@
 {
-  "com.paxus.pay.poslinkui.demo.michael": {
+  "com.paxus.pay.poslinkui.demo": {
     "variantName": "poslinkuidemo",
-    "apkName": "POSLink UI Demo Michael",
+    "apkName": "POSLink UI Demo",
     "chargeType": 0,
     "baseType": "N",
     "shortDesc": "POSLink UI demo Application",
