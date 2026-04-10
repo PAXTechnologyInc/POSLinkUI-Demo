@@ -46,7 +46,8 @@ buildReleaseApk:
         - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release.*/
     before_script:  # 这里设置了 Android SDK/JDK 路径。如果需要更新项目构建所使用的 Android SDK 版本，请通知 QA 在服务器端进行设置，并更改此处的配置
         - export ANDROID_HOME="/opt/android/sdk"
-        - export JAVA_HOME="/opt/java/openjdk/jdk11" # 根据实际需求修改，例如需要使用JDK8，就改成：jdk8"
+        # Compose Material3 等依赖的 lint.jar 为 class file 61（JDK 17）；JDK 11 会报 UnsupportedClassVersionError。
+        - export JAVA_HOME="/opt/java/openjdk/jdk17"
         - chmod +x ./gradlew    # 给 Gradle 脚本赋予执行的权限，这个不用动
         # app/build.gradle 中 storeFile file('pax_demo.jks') 相对 app 模块目录解析，即需存在 app/pax_demo.jks，故从 Runner 拷贝到 ./app/
         - rm -f ./app/*.jks ./app/signing.properties 2>/dev/null || true
@@ -58,6 +59,7 @@ buildReleaseApk:
         key: ${CI_COMMIT_SHA}   # 以 Commit SHA 作为 Key，这样如果提交了新代码，那么缓存就会被清空
         paths:
             - "**/build/intermediates/javac"
+            - "**/build/tmp/kotlin-classes"
             - "sonar-project.properties"
     artifacts:  # 构建产物，主要是 APK 文件。如果有其他需要使用的文件（例如生成的 SDK 文件等），也请添加到这里，否则后续的流程无法将其上传到 Confluence
         paths:  # 产物路径，这里支持使用通配符，* 表示任意字符，** 表示任意字符与目录
@@ -80,7 +82,15 @@ sonarQubeScan:
     rules:
         - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^dev.*/
         - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release.*/
+    before_script:
+        - export ANDROID_HOME="/opt/android/sdk"
+        - export JAVA_HOME="/opt/java/openjdk/jdk17"
+        - chmod +x ./gradlew
+        - rm -f ./app/*.jks ./app/signing.properties 2>/dev/null || true
+        - cp /opt/keystore/us/* ./app/
     script:
+        # assembleRelease 不编译 test/androidTest；生成 test 字节码以匹配 sonar.java.test.binaries
+        - ./gradlew :app:compileDebugUnitTestSources :app:compileDebugAndroidTestSources --no-daemon
         - sonar-scanner
             -Dsonar.host.url=$SONAR_HOST_URL
             -Dsonar.qualitygate.wait=true
@@ -88,6 +98,7 @@ sonarQubeScan:
         key: ${CI_COMMIT_SHA}   # 使用与 buildReleaseApk 相同的 Key，这样就不需要再次 build 了
         paths:
             - "**/build/intermediates/javac"
+            - "**/build/tmp/kotlin-classes"
             - "sonar-project.properties"
     tags:
         - sit
@@ -100,7 +111,7 @@ uploadFtp:
     rules:  # 仅在合并到 release 分支时才需要执行 APK 的安全扫描
         - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^release.*/
     before_script:
-        - export JAVA_HOME="/opt/java/openjdk/jdk11"
+        - export JAVA_HOME="/opt/java/openjdk/jdk17"
         - export ANDROID_HOME="/opt/android/sdk"
         - chmod +x ./gradlew
         # 创建临时目录

@@ -1,0 +1,4 @@
+{
+    "sonarQubeUri": "http://172.16.3.60:9090",
+    "projectKey": "POSLinkUI-Demo"
+}

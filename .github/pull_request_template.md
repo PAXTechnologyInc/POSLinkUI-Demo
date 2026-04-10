@@ -1,10 +1,10 @@
-### JIRA Ticket  
+### JIRA 工单  
 
 
-### Related Pull Requests  
+### 关联 Pull Request  
 *
 
-### How do you fix?  
+### 修复说明  
 
 
-### Test Evidence
+### 测试证据

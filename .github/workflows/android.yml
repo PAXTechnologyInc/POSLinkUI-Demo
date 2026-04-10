@@ -1,0 +1,21 @@
+name: Android CI
+
+on:
+  pull_request:
+  push:
+    branches: [ "main", "003-jetpack-refactor" ]
+
+jobs:
+  build-and-memory-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Build
+        run: ./gradlew assembleDebug
+      - name: Memory verification gate
+        run: ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.paxus.pay.poslinkui.demo.MemoryVerificationTest
