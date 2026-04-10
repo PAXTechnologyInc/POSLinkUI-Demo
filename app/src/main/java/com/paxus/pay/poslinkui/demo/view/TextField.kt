@@ -5,11 +5,11 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import com.paxus.pay.poslinkui.demo.utils.MainThreadRunner
 import android.os.ResultReceiver
 import android.text.InputType
 import android.util.AttributeSet
 import android.view.ViewTreeObserver
-import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.res.ResourcesCompat
@@ -88,7 +88,7 @@ class TextField : AppCompatEditText {
     }
 
     private fun softKeyboardNeeded(): Boolean {
-        return if(DeviceUtils.hasPhysicalKeyboard() && !requiresAlphanumericKeyboard(inputType)) pressedIntentionally else true
+        return !(DeviceUtils.hasPhysicalKeyboard() && !requiresAlphanumericKeyboard(inputType)) || pressedIntentionally
     }
 
     private fun requiresAlphanumericKeyboard(inputType: Int): Boolean {
@@ -107,13 +107,15 @@ class TextField : AppCompatEditText {
 
             keyboardOpened = resultCode == InputMethodManager.RESULT_SHOWN || resultCode == InputMethodManager.RESULT_UNCHANGED_SHOWN
 
-            val resultDescription = when (resultCode) {
-                InputMethodManager.RESULT_UNCHANGED_SHOWN -> "IMM: Soft keyboard already shown and unchanged"
-                InputMethodManager.RESULT_UNCHANGED_HIDDEN -> "IMM: Soft keyboard already hidden and unchanged"
-                InputMethodManager.RESULT_SHOWN -> "IMM: Soft keyboard shown successfully"
-                InputMethodManager.RESULT_HIDDEN -> "IMM: Soft keyboard hidden successfully"
-                else -> "IMM: Unknown result code ($resultCode)"
-            }
+            Logger.i(
+                when (resultCode) {
+                    InputMethodManager.RESULT_UNCHANGED_SHOWN -> "IMM: Soft keyboard already shown and unchanged"
+                    InputMethodManager.RESULT_UNCHANGED_HIDDEN -> "IMM: Soft keyboard already hidden and unchanged"
+                    InputMethodManager.RESULT_SHOWN -> "IMM: Soft keyboard shown successfully"
+                    InputMethodManager.RESULT_HIDDEN -> "IMM: Soft keyboard hidden successfully"
+                    else -> "IMM: Unknown result code ($resultCode)"
+                }
+            )
             Logger.i("Keyboard Opened: $keyboardOpened")
         }
     }
@@ -123,7 +125,7 @@ class TextField : AppCompatEditText {
             override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                 when (event) {
                     Lifecycle.Event.ON_RESUME -> {
-                        if(softKeyboardNeeded()) Handler(Looper.getMainLooper()).post({ requestFocus() })
+                        if(softKeyboardNeeded()) MainThreadRunner.post { requestFocus() }
                     }
                     Lifecycle.Event.ON_PAUSE -> {
                         hideSoftKeyboard()
@@ -156,18 +158,18 @@ class TextField : AppCompatEditText {
     private fun showSoftKeyboard() {
         if(!softKeyboardNeeded() || keyboardOpened) return
 
-        (hasFocus() && imm().isActive(this) && isAttachedToWindow).let {
-            Handler(Looper.getMainLooper()).postDelayed({
+        if (hasFocus() && imm().isActive(this) && isAttachedToWindow) {
+            MainThreadRunner.postDelayed(200, Runnable {
                 imm().showSoftInput(this, InputMethodManager.SHOW_IMPLICIT, immResultReceiver)
                 requestLayout()
-            }, 200)
+            })
         }
 
     }
 
     private fun hideSoftKeyboard() {
-        Handler(Looper.getMainLooper()).post({
+        MainThreadRunner.post {
             imm().hideSoftInputFromWindow(windowToken, InputMethodManager.HIDE_IMPLICIT_ONLY, immResultReceiver)
-        })
+        }
     }
 }

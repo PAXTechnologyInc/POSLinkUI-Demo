@@ -8,3 +8,12 @@
 .externalNativeBuild
 .cxx
 local.properties
+*.log
+.env
+.env.*
+out/
+build/
+.tools/
+
+# SSIM / device screenshot baselines (local only; do not version PNGs)
+Expected_Result/**/*.png

@@ -1,9 +1,7 @@
 <resources>
     <!-- constant dimensions -->
     <dimen name="circle_width">3dp</dimen>
-    <dimen name="paint_width">5dp</dimen>
     <dimen name="corner_radius">8dp</dimen>
-    <dimen name="space_between_textview">12dp</dimen>
     <dimen name="default_gap">4dp</dimen>
 
     <!-- display dependent dimensions. fallback use.-->
@@ -16,9 +14,15 @@
     <dimen name="button_height">54dp</dimen>
     <dimen name="button_height_double_line">65dp</dimen>
 
+    <!-- Defaults for qualified overlays (MissingDefaultResource); overlays may refine per config. -->
+    <dimen name="space_between_textview">12dp</dimen>
     <dimen name="text_size_supertitle">36sp</dimen>
+
     <dimen name="text_size_title">24sp</dimen>
     <dimen name="text_size_subtitle">18sp</dimen>
     <dimen name="text_size_normal">14sp</dimen>
     <dimen name="text_size_hint">11sp</dimen>
+
+    <!-- CLSS indicator row in action bar (golive layout_clss_light_default) -->
+    <dimen name="clss_light_row_height">30dp</dimen>
 </resources>

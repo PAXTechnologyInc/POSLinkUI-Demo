@@ -1,14 +1,14 @@
 
 # POSLinkUI-Demo
 
-This is a simple demo for POSLinkUI.
+POSLinkUI 的简单演示工程。
 
 ## EntryActivity
-Use fragment to implement all UI (Activity and Dialog).
-1. exported should be true. Then this activity can be started by Intent.
-2. launchMode is set to singleTop. If the activity is at the top of stack, it will not be created. New intent will be called.
-3. To show some dialog like ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE. The theme is set to No Action Bar and transparent.
-4. To not confuse user by seeing 2 app in recents, auto remove from recents
+使用 Fragment 实现全部 UI（Activity 与 Dialog）。
+1. `exported` 应为 `true`，以便通过 Intent 启动该 Activity。
+2. `launchMode` 设为 `singleTop`：若 Activity 已在栈顶则不会新建实例，会收到 `onNewIntent`。
+3. 展示类似 `ConfirmationEntry.ACTION_CONFIRM_BATCH_CLOSE` 的对话框时，主题设为无 ActionBar 且透明。
+4. 避免在最近任务中出现两个应用图标造成困惑，启用自动从最近任务移除。
 ```
     <activity
         android:name=".entry.EntryActivity"
@@ -18,35 +18,35 @@ Use fragment to implement all UI (Activity and Dialog).
         android:autoRemoveFromRecents="true">
 ```
 
-## UI List
-You just need focus on required actions of specific BroadPOS app and don't have to implement ALL UI actions defined in POSLinkUI.
-Specific AndroidManifest.xml for reference:
-1. [ALL](./app/src/main/AndroidManifest.xml)
+## UI 列表
+只需关注目标 BroadPOS 应用**所需**的 Action，不必实现 POSLinkUI 中定义的**全部** UI Action。
+可参考的 AndroidManifest：
+1. [全部](./app/src/main/AndroidManifest.xml)
 2. [Shift4](./app/src/Shift4/AndroidManifest.xml)
 3. [FDRCNV](./app/src/FDRCNV/AndroidManifest.xml)
 
-## POSLinkUI Transaction flow
-The log below would help you understand how POSLinkUI run when do a transaction.
+## POSLinkUI 交易流程
+下面日志有助于理解做一笔交易时 POSLinkUI 如何运行。
 
-A simple explanation for reading log (Step by Step)
+### 阅读日志的简单说明（按步骤）
 
-- BroadPOS startActivity "com.pax.us.pay.action.ENTER_AMOUNT"
-- POSLinkUIDemo create activity per intent
-    > start Entry Action "com.pax.us.pay.action.ENTER_AMOUNT"
-- After click confirm button, POSLInkUIDemo send next broadcast with result to BroadPOS
-    > Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
-- BroadPOS return entry response tell POSLinkUIDemo that the result could be accepted or declined
-- If declined, that means the input is not valid, user need retry. Generally POSLinkUIDemo will show a toast message.
-    > Receive Response Broadcast ACTION_DECLINED for action "com.pax.us.pay.action.ENTER_AMOUNT" (-32-Please Input Amount)
-- After user redo input amount, click confirm button, POSLinkUIDemo request next again.
-    > Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
-- Finally, ACTION_NEXT was accepted. The ENTER_AMOUNT action end.
-    > Receive Response Broadcast ACTION_ACCEPTED for action "com.pax.us.pay.action.ENTER_AMOUNT"
-- Then generally BroadPOS will go to next step. Like startActivity for enter tip.
-    > start Entry Action "com.pax.us.pay.action.ENTER_TIP"
+- BroadPOS `startActivity`：`"com.pax.us.pay.action.ENTER_AMOUNT"`
+- POSLinkUIDemo 按 Intent 创建 Activity
+    > 启动 Entry Action `"com.pax.us.pay.action.ENTER_AMOUNT"`
+- 用户点击确认后，POSLinkUIDemo 向 BroadPOS 发送带结果的下一跳广播
+    > 发送请求广播 `ACTION_NEXT`，来自 action `"com.pax.us.pay.action.ENTER_AMOUNT"`
+- BroadPOS 返回 entry 响应，告知结果可被接受或拒绝
+- 若拒绝，表示输入不合法，用户需重试；一般 POSLinkUIDemo 会弹出 Toast。
+    > 收到响应广播 `ACTION_DECLINED`，对应 action `"com.pax.us.pay.action.ENTER_AMOUNT"`（-32-Please Input Amount）
+- 用户重新输入金额并确认后，POSLinkUIDemo 再次请求下一跳。
+    > 发送请求广播 `ACTION_NEXT`，来自 action `"com.pax.us.pay.action.ENTER_AMOUNT"`
+- 最终 `ACTION_NEXT` 被接受，`ENTER_AMOUNT` 结束。
+    > 收到响应广播 `ACTION_ACCEPTED`，对应 action `"com.pax.us.pay.action.ENTER_AMOUNT"`
+- 随后 BroadPOS 一般会进入下一步，例如启动小费输入 Activity。
+    > 启动 Entry Action `"com.pax.us.pay.action.ENTER_TIP"`
 
 
-1.Example log for a chip transaction:
+1. 芯片卡交易示例日志：
 
     EntryActivity onCreate
     start Entry Action "com.pax.us.pay.action.ENTER_AMOUNT"
@@ -137,11 +137,11 @@ A simple explanation for reading log (Step by Step)
     ConfirmReceiptViewFragment onDestroy
     EntryActivity onDestroy
 
-## How to integrate POSLinkUI library
-POSLinkUI library is published on Github Maven. You can integrate it as this DEMO app does.
+## 如何集成 POSLinkUI 库
+POSLinkUI 库发布在 GitHub Maven，可按本 Demo 工程方式集成。
 
-### 1.Config Maven
-In build.gradle of root project, we add maven repository of POSLinkUI.
+### 1. 配置 Maven
+在工程根目录 `build.gradle` 中加入 POSLinkUI 的 Maven 仓库。
 ```
 Boolean mavenLocalFirst = gradleProps.getProperty("maven.local.first").toBoolean()
 println("maven.local.first: $mavenLocalFirst")
@@ -168,29 +168,29 @@ allprojects {
 
 ```
 
-You can modify the value of "maven.local.first" in the gradle.properties. Default value is true, so the project will get POSLinkUI from local maven, if you want to get POSLinkUI from remote maven, set this value to false
+可在 `gradle.properties` 中修改 `maven.local.first`。默认值为 `true`，工程从本地 Maven 取 POSLinkUI；若要从远程拉取，将该值设为 `false`。
 
 ```
 maven.local.first=true
 ```
 
-If maven.local.first=false, you need to get credentials from github
+若 `maven.local.first=false`，需配置 GitHub 凭据。
 
- You can login your github credential by 2 ways:
+可通过两种方式登录 GitHub：
 
-1. Settings->Version Control->Github->Log In using token
-2. Add github user name and token to local.properties. Example:
+1. Settings → Version Control → Github → Log In using token  
+2. 在 `local.properties` 中写入用户名与 token，例如：
 ```
     gpr.key=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     gpr.user=XXXXXXXXXXX@XXXXXX
 ```
 
-NOTED: please select **read:packages** permission when you create your token.
+**注意**：创建 token 时请勾选 **read:packages** 权限。
 
-About how to generate github token. Please refer [Github Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+如何生成 GitHub token，参见 [Github Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)。
 
-### 2.Add dependency
-Add dependency to app/build.gradle
+### 2. 添加依赖
+在 `app/build.gradle` 的 `dependencies` 中加入：
 ```
     dependencies {
         implementation "com.paxus.ui:constant:1.01.00"
@@ -198,10 +198,9 @@ Add dependency to app/build.gradle
 ```
 
 
-## Build Q&A
+## 构建常见问题
 
-### Q1: Build fail by ArtifactResolveException
-Caused by: org.gradle.api.internal.artifacts.ivyservice.DefaultLenientConfiguration&ArtifactResolveException: Could not resolve all files for configuration ':app:debugRuntimeClasspath'.
+### Q1：构建失败，ArtifactResolveException
+原因示例：`org.gradle.api.internal.artifacts.ivyservice.DefaultLenientConfiguration&ArtifactResolveException: Could not resolve all files for configuration ':app:debugRuntimeClasspath'`。
 
-Solution:
-Please login with your github token and make sure your token has **read:packages** permission
+**处理**：使用 GitHub token 登录，并确认 token 具有 **read:packages** 权限。

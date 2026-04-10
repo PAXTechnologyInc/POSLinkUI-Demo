@@ -5,12 +5,9 @@
     <string name="demo_only">FOR DEMO ONLY\n(Not for commercial use)</string>
     <string name="test_and_demo">FOR TEST &amp; DEMO ONLY\n(Not for commercial use)</string>
 
-    <string name="reset">Reset</string>
     <string name="enter">Enter</string>
     <string name="confirm">Confirm</string>
-    <string name="bypass">Bypass Fee</string>
 
-    <string name="amount_default">0.00</string>
     <string name="time_default">00:00</string>
 
     <string name="length">length</string>
@@ -95,7 +92,6 @@
     <string name="hint_enter_account">Please Enter Card Number:</string>
     <string name="enter_new_account">Please Enter New Card Number:</string>
     <string name="prompt_pin">Please Enter PIN</string>
-    <string name="prompt_no_pin">Press OK to Bypass PIN</string>
     <string name="prompt_offline_pin">Please Enter PIN</string>
     <string name="prompt_use_pinpad">Please Use Pinpad</string>
     <string name="prompt_input_point">Please Enter Point</string>
@@ -118,15 +114,6 @@
     <string name="prompt_merchant_pwd">Enter %1$s\'s Password</string>
     <string name="enter_pwd">Enter Password</string>
 
-    <string name="prompt_merchant">Merchant</string>
-    <string name="total_amount">Total Amount</string>
-    <string name="total_point">Total Point</string>
-
-    <string name="pete_total">Total:</string>
-    <string name="pete_tax">Tax:</string>
-
-    <string name="cancel_sign">Cancel</string>
-    <string name="clear_sign">Clear</string>
     <string name="finish_sign">Confirm</string>
     <string name="signature">Signature</string>
     <string name="pls_re_signature">Please Sign Again</string>
@@ -149,15 +136,11 @@
     <string name="pls_input_cid">Please Enter CID</string>
     <string name="prompt_input_4digit">Please Enter Last 4 Digits</string>
     <string name="prompt_input_all_digit">Please Enter All Digits</string>
-    <string name="prompt_input_cashback">Please Enter Cashback</string>
     <string name="pls_input_orig_trans_date">Please Enter Original Transaction Date</string>
     <string name="pls_input_pin_again">PIN Error, Please Retry\n\nPlease Enter PIN</string>
     <string name="pls_input_pin_last">Last PIN Attempt\n\nPlease Enter PIN</string>
     <string name="pls_input_dest_zip_code">Please Enter Destination Zip Code</string>
     <string name="prompt_input_length">Please Enter %s Characters</string>
-    <string name="prompt_input_type">Please Enter Correct Format Of Input Type</string>
-
-    <string name="prompt_invalid_date">Invalid Date. Please enter again.</string>
     <string name="prompt_invalid_time">Invalid Time. Please enter again.</string>
     <string name="prompt_input">Please Enter</string>
 
@@ -182,6 +165,8 @@
     <string name="select_report_type">Select Report Type</string>
     <string name="select_tip_amount">Please Select Tip Amount</string>
     <string name="select_cashback_amount">Please Select Cashback</string>
+    <string name="select_installment_plan">Please Select Installment Plan</string>
+    <string name="select_trans_for_adjust">Please Select Transaction For Adjust</string>
     <string name="select_merchant">Please Select Merchant</string>
     <string name="select_orig_currency">Please Select Orig Trans Currency</string>
     <string name="select_cof_initiator">Please Select COF Initiator</string>
@@ -444,8 +429,8 @@
     <string name="finished">Finished</string>
     <string name="service_fee">Service Fee</string>
     <string name="confirm_amount">Confirm Amount</string>
-    <string name="reversal_process">Reversal...</string>
-    <string name="emv_process_start">EMV Process Start...</string>
+    <string name="reversal_process">Reversal&#8230;</string>
+    <string name="emv_process_start">EMV Process Start&#8230;</string>
     <string name="please_flip_over">Please Flip Over!</string>
     <string name="card_error">Card Error!</string>
     <string name="please_remove_card">Please Remove Card!</string>
@@ -455,26 +440,26 @@
     <string name="please_tap_card">Please Tap Card!</string>
     <string name="please_see_phone">Please See Phone!</string>
     <string name="info_emv_trans_online">Do Not Remove Your Card Please!\nProcessing Online&#8230;</string>
-    <string name="second_screen_processing">Processing ...</string>
-    <string name="second_screen_please_wait">Please Wait ...</string>
-    <string name="info_trans_online">Processing, Please Wait...</string>
-    <string name="start_ui">Processing, Please Wait...</string>
-    <string name="download_emv_capk">Downloading EMV CAPK\nPlease Wait...</string>
-    <string name="update_process">Updating...</string>
-    <string name="print_process">Printing...</string>
-    <string name="batch_close_start">Batch Close START...</string>
+    <string name="second_screen_processing">Processing&#8230;</string>
+    <string name="second_screen_please_wait">Please Wait&#8230;</string>
+    <string name="info_trans_online">Processing, Please Wait&#8230;</string>
+    <string name="start_ui">Processing, Please Wait&#8230;</string>
+    <string name="download_emv_capk">Downloading EMV CAPK\nPlease Wait&#8230;</string>
+    <string name="update_process">Updating&#8230;</string>
+    <string name="print_process">Printing&#8230;</string>
+    <string name="batch_close_start">Batch Close START&#8230;</string>
     <string name="uploading_trans">Uploading</string>
     <string name="total_count">\nTotal Count : </string>
     <string name="current_count">\nCurrent Count : </string>
-    <string name="uploading_failed_trans">Uploading Failed Transaction...</string>
-    <string name="uploading_sf_trans">Uploading Stored Transaction...</string>
+    <string name="uploading_failed_trans">Uploading Failed Transaction&#8230;</string>
+    <string name="uploading_sf_trans">Uploading Stored Transaction&#8230;</string>
     <string name="uploading_start">Upload Start</string>
-    <string name="log_uploading_start">Starting Upload...\nWaiting For Connection</string>
-    <string name="log_connected">Connected...</string>
-    <string name="check_for_update_start">Checking For Update...</string>
-    <string name="info_dcc_online_start">DCC Request\nProcessing...</string>
-    <string name="info_rki_start">Remote Key Injection, Processing...</string>
-    <string name="info_pin_pad_connection_start">Connecting to PINPAD...</string>
+    <string name="log_uploading_start">Starting Upload&#8230;\nWaiting For Connection</string>
+    <string name="log_connected">Connected&#8230;</string>
+    <string name="check_for_update_start">Checking For Update&#8230;</string>
+    <string name="info_dcc_online_start">DCC Request\nProcessing&#8230;</string>
+    <string name="info_rki_start">Remote Key Injection, Processing&#8230;</string>
+    <string name="info_pin_pad_connection_start">Connecting to PINPAD&#8230;</string>
     <string name="transaction_failed">Transaction Failed!</string>
     <string name="transaction_successful">Transaction Successful!</string>
     <string name="tip_name">Tip</string>
@@ -599,6 +584,7 @@
     <string name="confirm_online_retry">Online Failed, Retry?</string>
     <string name="confirm_debit_trans">Debit Transaction?</string>
     <string name="confirm_batch_close">Close Batch?</string>
+    <string name="confirm_batch_close_with_incomplete_transaction">Close Batch with Incomplete Transaction?</string>
     <string name="confirm_reconciliation_close">Close Reconciliation?</string>
     <string name="confirm_untipped_close">Close Batch with Untipped Trans.?</string>
     <string name="prompt_confirm_dup_transaction">Duplicated Trans.\nDo you wish to continue?</string>
@@ -650,5 +636,22 @@
     <string name="status_msg_approved">Transaction Approved</string>
     <string name="status_msg_declined">Transaction Declined</string>
     <string name="status_msg_partially_approved">Partially Approved</string>
+
+    <!-- Compose migration strings -->
+    <string name="security_secure_area_hint">Use secure keypad to finish input.</string>
+    <string name="security_input_placeholder_label">Secure Input Area</string>
+    <string name="security_continue_after_ped">Continue</string>
+    <string name="signature_demo_hint">Demo signature capture area. Tap confirm to submit sample data.</string>
+    <string name="fsa_no_amount_options_hint">No FSA amount options provided.</string>
+    <string name="receipt_preview_title">Receipt Preview</string>
+    <string name="receipt_preview_missing_uri">No receipt image available.</string>
+    <string name="receipt_preview_confirm_prompt">Confirm this receipt preview?</string>
+    <string name="qr_content_missing">QR content is empty.</string>
+    <string name="start_ui_advancing">Preparing transaction UI&#8230;</string>
+    <string name="surcharge_fallback_message">Surcharge fee confirmation</string>
+    <string name="surcharge_continue_prompt">Would you like to continue?</string>
+    <string name="confirm_option_bypass_fee">Bypass Fee</string>
+    <string name="option_list_empty">No selectable options.</string>
+    <string name="poslink_action_not_handled">Action not handled: %1$s</string>
 
 </resources>

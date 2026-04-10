@@ -70,6 +70,13 @@
             </intent-filter>
         </activity-alias>
 
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_BATCH_CLOSE_WITH_INCOMPLETE_TRANSACTION" android:exported="true" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_BATCH_CLOSE_WITH_INCOMPLETE_TRANSACTION"/>
+            </intent-filter>
+        </activity-alias>
+
         <activity-alias android:name=".CONFIRMATION.CONFIRM_CARD_ENTRY_RETRY" android:exported="true" android:targetActivity=".entry.EntryActivity">
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
@@ -116,6 +123,13 @@
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
                 <action android:name="com.pax.us.pay.action.CONFIRM_DUPLICATE_TRANS"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_DEBIT_TRANS" android:exported="true" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_DEBIT_TRANS"/>
             </intent-filter>
         </activity-alias>
 
@@ -210,6 +224,13 @@
             </intent-filter>
         </activity-alias>
 
+        <activity-alias android:name=".CONFIRMATION.CONFIRM_TAX_AMOUNT" android:exported="true" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
+                <action android:name="com.pax.us.pay.action.CONFIRM_TAX_AMOUNT"/>
+            </intent-filter>
+        </activity-alias>
+
         <activity-alias android:name=".CONFIRMATION.CONFIRM_UNIFIED_MESSAGE" android:exported="true" android:targetActivity=".entry.EntryActivity">
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="com.pax.us.pay.ui.category.CONFIRMATION"/>
@@ -284,6 +305,13 @@
             <intent-filter><category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="com.pax.us.pay.ui.category.DETAILS"/>
                 <action android:name="com.pax.us.pay.action.DISPLAY_APPROVE_MESSAGE"/>
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:name=".INFORMATION.DISPLAY_VISA_INSTALLMENT_TRANSACTION_END" android:exported="true" android:targetActivity=".entry.EntryActivity">
+            <intent-filter><category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.pax.us.pay.ui.category.DETAILS"/>
+                <action android:name="com.pax.us.pay.action.DISPLAY_VISA_INSTALLMENT_TRANSACTION_END"/>
             </intent-filter>
         </activity-alias>
 
