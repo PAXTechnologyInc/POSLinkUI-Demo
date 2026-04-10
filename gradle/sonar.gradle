@@ -1,0 +1,13 @@
+// SonarQube 集成 - 执行: gradlew sonarQubeAnalyze
+// 首次运行需网络下载插件；若 TLS/网络失败，可临时注释本行: apply from: file('gradle/sonar.gradle')
+buildscript {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.sonarsource.scanner.gradle:sonar-gradle-plugin:3.5.0.3062"
+    }
+}
+apply plugin: 'org.sonarqube'

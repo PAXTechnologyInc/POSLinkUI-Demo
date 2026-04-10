@@ -1,0 +1,11 @@
+/**
+ * Dev CI parity: license report plugin was previously applied from the root Groovy {@code build.gradle}.
+ * Kept as a small Groovy script so it can be applied from {@code build.gradle.kts}.
+ */
+allprojects {
+    apply plugin: 'com.github.hierynomus.license-report'
+    downloadLicenses {
+        includeProjectDependencies = true
+        dependencyConfiguration = 'releaseRuntimeClasspath'
+    }
+}
