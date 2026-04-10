@@ -1,0 +1,21 @@
+--------- beginning of main
+01-10 02:17:26.792  3656  3656 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@2dab003
+01-10 02:17:26.990  3656  3656 E RecyclerView: No adapter attached; skipping layout
+01-10 02:17:27.147  3656  3656 E RecyclerView: No adapter attached; skipping layout
+01-10 02:17:27.166  3656  3656 E RecyclerView: No adapter attached; skipping layout
+01-10 02:17:27.176  3656  3669 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:17:27.212  3656  3656 E RecyclerView: No adapter attached; skipping layout
+01-10 02:17:27.215  3656  3669 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:17:27.358  3656  3656 E RecyclerView: No adapter attached; skipping layout
+01-10 02:17:27.361  3656  3669 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:17:27.375  3656  3656 E RecyclerView: No adapter attached; skipping layout
+01-10 02:17:27.377  3656  3669 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:17:27.399  3656  3689 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-10 02:17:28.996  3656  3656 I .poslinkui.demo: type=1400 audit(0.0:3785): avc: denied { write } for name="property_service" dev="tmpfs" ino=1830 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-10 02:17:28.996  3656  3656 I .poslinkui.demo: type=1400 audit(0.0:3786): avc: denied { connectto } for path="/dev/socket/property_service" scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:r:init:s0 tclass=unix_stream_socket permissive=1
+01-10 02:17:31.663  3656  3656 E RecyclerView: No adapter attached; skipping layout
+01-10 02:17:32.376  3656  3669 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
+01-10 02:17:32.378  3656  3669 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-10 02:17:32.378  3656  3669 I I      : action: com.pax.us.pay.action.ENTER_TIP
+01-10 02:17:32.378  3656  3669 I I      : tip: 123456789012
+01-10 02:17:32.378  3656  3669 I I      : 

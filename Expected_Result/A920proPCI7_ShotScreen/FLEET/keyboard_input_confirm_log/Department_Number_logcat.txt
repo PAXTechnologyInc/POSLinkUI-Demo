@@ -1,0 +1,16 @@
+--------- beginning of main
+01-08 13:17:09.825 20560 20629 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-08 13:17:10.028 20560 20560 I ImeTracker: com.paxus.pay.poslinkui.demo:911d6ec1: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+01-08 13:17:10.029 20560 20560 D InputMethodManager: showSoftInput() view=com.paxus.pay.poslinkui.demo.view.TextField{cbe84df VFED..CL. .F.P.... 0,85-640,193 #7f0800cd app:id/edit_number_text aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+01-08 13:17:10.033 20560 20560 D InsetsController: show(ime(), fromIme=true)
+01-08 13:17:10.034 20560 20560 I ImeTracker: com.paxus.pay.poslinkui.demo:911d6ec1: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+01-08 13:17:12.526 20560 20560 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=ImeCallback=ImeOnBackInvokedCallback@41934001 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@5a57cd8
+01-08 13:17:12.748 20560 20560 I ImeTracker: com.paxus.pay.poslinkui.demo:ee4a30b7: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+01-08 13:17:12.752 20560 20560 I ImeTracker: com.paxus.pay.poslinkui.demo:5e25f196: onHidden
+01-08 13:17:13.400 20560 20560 I ImeTracker: com.paxus.pay.poslinkui.demo:b991b767: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+01-08 13:17:13.405 20560 20590 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_CUSTOMER_DATA"
+01-08 13:17:13.406 20560 20590 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-08 13:17:13.406 20560 20590 I I      : paramCustomData: abcdefghij01234567891234
+01-08 13:17:13.406 20560 20590 I I      : action: com.pax.us.pay.action.ENTER_CUSTOMER_DATA
+01-08 13:17:13.406 20560 20590 I I      : 
+01-08 13:17:13.436 20560 20560 I ImeTracker: com.paxus.pay.poslinkui.demo:ce6e8760: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT

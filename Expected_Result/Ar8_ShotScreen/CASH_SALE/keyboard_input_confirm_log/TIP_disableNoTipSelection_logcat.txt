@@ -1,0 +1,21 @@
+--------- beginning of main
+01-10 02:21:25.324  5069  5069 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@3476005
+01-10 02:21:25.518  5069  5069 E RecyclerView: No adapter attached; skipping layout
+01-10 02:21:25.655  5069  5069 E RecyclerView: No adapter attached; skipping layout
+01-10 02:21:25.719  5069  5069 E RecyclerView: No adapter attached; skipping layout
+01-10 02:21:25.727  5069  5082 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:21:25.738  5069  5069 E RecyclerView: No adapter attached; skipping layout
+01-10 02:21:25.743  5069  5082 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:21:25.755  5069  5102 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-10 02:21:25.872  5069  5069 E RecyclerView: No adapter attached; skipping layout
+01-10 02:21:25.874  5069  5082 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:21:25.938  5069  5069 E RecyclerView: No adapter attached; skipping layout
+01-10 02:21:25.941  5069  5082 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:21:27.436  5069  5069 I .poslinkui.demo: type=1400 audit(0.0:3906): avc: denied { write } for name="property_service" dev="tmpfs" ino=1830 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-10 02:21:27.436  5069  5069 I .poslinkui.demo: type=1400 audit(0.0:3907): avc: denied { connectto } for path="/dev/socket/property_service" scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:r:init:s0 tclass=unix_stream_socket permissive=1
+01-10 02:21:30.106  5069  5069 E RecyclerView: No adapter attached; skipping layout
+01-10 02:21:30.854  5069  5082 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
+01-10 02:21:30.856  5069  5082 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-10 02:21:30.856  5069  5082 I I      : action: com.pax.us.pay.action.ENTER_TIP
+01-10 02:21:30.856  5069  5082 I I      : tip: 123456789012
+01-10 02:21:30.856  5069  5082 I I      : 

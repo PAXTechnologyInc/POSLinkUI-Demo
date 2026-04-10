@@ -1,0 +1,14 @@
+--------- beginning of main
+01-10 02:46:45.430 14032 14032 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@5d360cf
+01-10 02:46:45.757 14032 14045 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:46:45.776 14032 14045 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:46:45.839 14032 14045 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:46:45.972 14032 14045 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:46:46.053 14032 14066 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-10 02:46:48.896 14032 14032 I .poslinkui.demo: type=1400 audit(0.0:4513): avc: denied { write } for name="property_service" dev="tmpfs" ino=1830 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-10 02:46:48.896 14032 14032 I .poslinkui.demo: type=1400 audit(0.0:4514): avc: denied { connectto } for path="/dev/socket/property_service" scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:r:init:s0 tclass=unix_stream_socket permissive=1
+01-10 02:46:51.525 14032 14045 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_PROMPT_RESTRICTION_CODE"
+01-10 02:46:51.526 14032 14045 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-10 02:46:51.526 14032 14045 I I      : action: com.pax.us.pay.action.ENTER_PROMPT_RESTRICTION_CODE
+01-10 02:46:51.526 14032 14045 I I      : promptRestrictionCode: 12
+01-10 02:46:51.526 14032 14045 I I      : 

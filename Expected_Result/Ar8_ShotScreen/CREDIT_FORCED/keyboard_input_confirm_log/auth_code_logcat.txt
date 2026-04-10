@@ -1,0 +1,9 @@
+--------- beginning of main
+01-09 15:56:29.309  6990  6990 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@40c6406
+01-09 15:56:29.982  6990  7027 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-09 15:56:32.826  6990  6990 I .poslinkui.demo: type=1400 audit(0.0:4638): avc: denied { write } for name="property_service" dev="tmpfs" ino=658 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-09 15:56:35.782  6990  7003 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AUTH_CODE"
+01-09 15:56:35.785  6990  7003 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-09 15:56:35.785  6990  7003 I I      : action: com.pax.us.pay.action.ENTER_AUTH_CODE
+01-09 15:56:35.785  6990  7003 I I      : authCode: abcdefg01234567
+01-09 15:56:35.785  6990  7003 I I      : 

@@ -1,0 +1,13 @@
+--------- beginning of main
+01-09 18:01:52.581 20995 20995 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@c95165
+01-09 18:01:52.896 20995 21008 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 18:01:52.929 20995 21008 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 18:01:53.030 20995 21008 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 18:01:53.033 20995 21027 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-09 18:01:53.113 20995 21008 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 18:01:56.166 20995 20995 I .poslinkui.demo: type=1400 audit(0.0:9948): avc: denied { connectto } for path="/dev/socket/property_service" scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:r:init:s0 tclass=unix_stream_socket permissive=1
+01-09 18:01:59.129 20995 21008 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_INVOICE_NUMBER"
+01-09 18:01:59.131 20995 21008 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-09 18:01:59.131 20995 21008 I I      : action: com.pax.us.pay.action.ENTER_INVOICE_NUMBER
+01-09 18:01:59.131 20995 21008 I I      : invoiceNumber: 01234567890123456789
+01-09 18:01:59.131 20995 21008 I I      : 

@@ -1,0 +1,8 @@
+--------- beginning of main
+01-07 16:56:21.284 29392 29404 I .poslinkui.dem: Background young concurrent copying GC freed 11632(4114KB) AllocSpace objects, 2(40KB) LOS objects, 69% free, 1917KB/6263KB, paused 311us total 102.231ms
+01-07 16:56:21.915 29392 29494 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 16:56:24.855 29392 29425 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_SERVER_ID"
+01-07 16:56:24.857 29392 29425 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 16:56:24.857 29392 29425 I I      : action: com.pax.us.pay.action.ENTER_SERVER_ID
+01-07 16:56:24.857 29392 29425 I I      : serverId: 1234
+01-07 16:56:24.857 29392 29425 I I      : 

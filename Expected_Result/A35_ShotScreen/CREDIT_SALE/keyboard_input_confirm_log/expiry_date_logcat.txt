@@ -1,0 +1,7 @@
+--------- beginning of main
+01-08 19:05:05.360 15564 15656 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-08 19:05:09.782 15564 15598 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_EXPIRY_DATE"
+01-08 19:05:09.784 15564 15598 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-08 19:05:09.784 15564 15598 I I      : action: com.pax.us.pay.action.ENTER_EXPIRY_DATE
+01-08 19:05:09.784 15564 15598 I I      : expiryDate: 1234
+01-08 19:05:09.784 15564 15598 I I      : 

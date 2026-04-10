@@ -1,0 +1,14 @@
+--------- beginning of main
+01-09 14:33:20.827  8126  8126 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@5d360cf
+01-09 14:33:21.147  8126  8139 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 14:33:21.179  8126  8139 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 14:33:21.264  8126  8139 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 14:33:21.364  8126  8139 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 14:33:21.649  8126  8164 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-09 14:33:24.296  8126  8126 I .poslinkui.demo: type=1400 audit(0.0:1444): avc: denied { write } for name="property_service" dev="tmpfs" ino=658 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-09 14:33:24.296  8126  8126 I .poslinkui.demo: type=1400 audit(0.0:1445): avc: denied { connectto } for path="/dev/socket/property_service" scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:r:init:s0 tclass=unix_stream_socket permissive=1
+01-09 14:33:26.982  8126  8139 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TABLE_NUMBER"
+01-09 14:33:26.986  8126  8139 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-09 14:33:26.986  8126  8139 I I      : action: com.pax.us.pay.action.ENTER_TABLE_NUMBER
+01-09 14:33:26.986  8126  8139 I I      : tableNumber: 1234
+01-09 14:33:26.986  8126  8139 I I      : 

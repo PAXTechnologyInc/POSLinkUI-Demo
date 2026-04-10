@@ -1,0 +1,16 @@
+--------- beginning of main
+01-08 12:57:38.046  9632  9632 I ImeTracker: com.paxus.pay.poslinkui.demo:9e3ef1e5: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+01-08 12:57:38.047  9632  9632 D InputMethodManager: showSoftInput() view=com.paxus.pay.poslinkui.demo.view.TextField{d14b52c VFED..CL. .F.P.... 0,142-640,250 #7f0800cd app:id/edit_number_text aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+01-08 12:57:38.052  9632  9632 D InsetsController: show(ime(), fromIme=true)
+01-08 12:57:38.052  9632  9632 I ImeTracker: com.paxus.pay.poslinkui.demo:9e3ef1e5: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+01-08 12:57:38.144  9632  9694 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-08 12:57:40.427  9632  9632 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=ImeCallback=ImeOnBackInvokedCallback@41934001 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@a902831
+01-08 12:57:40.660  9632  9632 I ImeTracker: com.paxus.pay.poslinkui.demo:a9d68a03: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+01-08 12:57:40.663  9632  9632 I ImeTracker: com.paxus.pay.poslinkui.demo:44119dc5: onHidden
+01-08 12:57:42.313  9632  9632 I ImeTracker: com.paxus.pay.poslinkui.demo:216cc929: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+01-08 12:57:42.318  9632  9662 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_ADDITIONAL_FLEET_DATA_2"
+01-08 12:57:42.319  9632  9662 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-08 12:57:42.319  9632  9662 I I      : action: com.pax.us.pay.action.ENTER_ADDITIONAL_FLEET_DATA_2
+01-08 12:57:42.319  9632  9662 I I      : paramAdditionalFleetData2: abcdefghij0123456789
+01-08 12:57:42.319  9632  9662 I I      : 
+01-08 12:57:42.353  9632  9632 I ImeTracker: com.paxus.pay.poslinkui.demo:651ce773: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT

@@ -1,0 +1,17 @@
+--------- beginning of main
+01-15 23:51:31.373 25836 25836 I ImeTracker: com.paxus.pay.poslinkui.demo:4a3f8d69: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+01-15 23:51:31.374 25836 25836 D InputMethodManager: showSoftInput() view=com.paxus.pay.poslinkui.demo.view.TextField{ac2b3ee VFED..CL. .F.P.... 0,198-640,306 #7f0800d1 app:id/edit_text aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+01-15 23:51:31.379 25836 25836 D InsetsController: show(ime(), fromIme=true)
+01-15 23:51:31.380 25836 25836 I ImeTracker: com.paxus.pay.poslinkui.demo:4a3f8d69: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+01-15 23:51:31.573 25836 25896 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-15 23:51:32.275 25836 25836 D CompatibilityChangeReporter: Compat change id reported: 247079863; UID 10140; state: DISABLED
+01-15 23:51:33.292 25836 25836 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=ImeCallback=ImeOnBackInvokedCallback@142366443 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@eb7db29
+01-15 23:51:33.509 25836 25836 I ImeTracker: com.paxus.pay.poslinkui.demo:bd9e65a4: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+01-15 23:51:33.512 25836 25836 I ImeTracker: com.paxus.pay.poslinkui.demo:8f2f5763: onHidden
+01-15 23:51:35.168 25836 25836 I ImeTracker: com.paxus.pay.poslinkui.demo:6bae918a: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+01-15 23:51:35.176 25836 25866 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.SHOW_INPUT_TEXT_BOX"
+01-15 23:51:35.177 25836 25866 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-15 23:51:35.177 25836 25866 I I      : action: com.pax.us.pay.action.SHOW_INPUT_TEXT_BOX
+01-15 23:51:35.177 25836 25866 I I      : inputValue: 123456
+01-15 23:51:35.177 25836 25866 I I      : 
+01-15 23:51:35.193 25836 25836 I ImeTracker: com.paxus.pay.poslinkui.demo:45b1f06f: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT

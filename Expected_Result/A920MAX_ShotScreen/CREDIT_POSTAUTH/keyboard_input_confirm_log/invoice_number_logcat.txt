@@ -1,0 +1,7 @@
+--------- beginning of main
+01-07 16:53:22.679  6123  6165 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 16:53:25.580  6123  6148 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_INVOICE_NUMBER"
+01-07 16:53:25.581  6123  6148 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 16:53:25.581  6123  6148 I I      : action: com.pax.us.pay.action.ENTER_INVOICE_NUMBER
+01-07 16:53:25.581  6123  6148 I I      : invoiceNumber: 01234567890123456789
+01-07 16:53:25.581  6123  6148 I I      : 

@@ -1,0 +1,8 @@
+--------- beginning of main
+01-10 02:31:06.371  8500  8500 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@40c6406
+01-10 02:31:07.147  8500  8538 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-10 02:31:12.824  8500  8514 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_ORDER_NUMBER"
+01-10 02:31:12.838  8500  8514 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-10 02:31:12.838  8500  8514 I I      : action: com.pax.us.pay.action.ENTER_ORDER_NUMBER
+01-10 02:31:12.838  8500  8514 I I      : orderNumber: abcdefg012345678
+01-10 02:31:12.838  8500  8514 I I      : 

@@ -1,0 +1,17 @@
+--------- beginning of main
+01-07 16:33:29.241 32292 32351 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 16:33:29.283 32292 32292 I ImeTracker: com.paxus.pay.poslinkui.demo:e921799e: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+01-07 16:33:29.283 32292 32292 D InputMethodManager: showSoftInput() view=com.paxus.pay.poslinkui.demo.view.TextField{7980794 VFED..CL. .F.P.... 0,85-640,193 #7f0800ca app:id/edit_expiry aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+01-07 16:33:29.289 32292 32292 D InsetsController: show(ime(), fromIme=true)
+01-07 16:33:29.290 32292 32292 I ImeTracker: com.paxus.pay.poslinkui.demo:e921799e: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+01-07 16:33:30.169 32292 32292 D CompatibilityChangeReporter: Compat change id reported: 247079863; UID 10140; state: DISABLED
+01-07 16:33:31.565 32292 32292 I ImeTracker: com.paxus.pay.poslinkui.demo:6aaff535: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+01-07 16:33:31.571 32292 32322 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_EXPIRY_DATE"
+01-07 16:33:31.572 32292 32322 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 16:33:31.572 32292 32322 I I      : action: com.pax.us.pay.action.ENTER_EXPIRY_DATE
+01-07 16:33:31.572 32292 32322 I I      : expiryDate: 1234
+01-07 16:33:31.572 32292 32322 I I      : 
+01-07 16:33:31.597 32292 32292 I ImeTracker: com.paxus.pay.poslinkui.demo:21ea89c4: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+01-07 16:33:31.599 32292 32292 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=ImeCallback=ImeOnBackInvokedCallback@41934001 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@3e96854
+01-07 16:33:31.832 32292 32292 I ImeTracker: com.paxus.pay.poslinkui.demo:a4d28a3c: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+01-07 16:33:31.835 32292 32292 I ImeTracker: com.paxus.pay.poslinkui.demo:6aaff535: onHidden

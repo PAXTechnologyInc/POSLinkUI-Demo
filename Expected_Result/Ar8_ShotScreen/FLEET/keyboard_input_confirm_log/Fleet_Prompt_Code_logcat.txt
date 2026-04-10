@@ -1,0 +1,13 @@
+--------- beginning of main
+01-10 03:15:46.536 24382 24382 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@1997a5c
+01-10 03:15:46.798 24382 24415 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-10 03:15:46.860 24382 24395 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 03:15:46.881 24382 24395 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 03:15:46.960 24382 24395 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 03:15:47.077 24382 24395 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 03:15:50.036 24382 24382 I .poslinkui.demo: type=1400 audit(0.0:5795): avc: denied { write } for name="property_service" dev="tmpfs" ino=1830 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-10 03:15:52.653 24382 24395 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_FLEET_PROMPT_CODE"
+01-10 03:15:52.655 24382 24395 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-10 03:15:52.655 24382 24395 I I      : paramFleetPromptCode: 12
+01-10 03:15:52.655 24382 24395 I I      : action: com.pax.us.pay.action.ENTER_FLEET_PROMPT_CODE
+01-10 03:15:52.655 24382 24395 I I      : 

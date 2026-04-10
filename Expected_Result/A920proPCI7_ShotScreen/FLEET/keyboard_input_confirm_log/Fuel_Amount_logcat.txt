@@ -1,0 +1,24 @@
+--------- beginning of main
+01-08 12:55:32.953  8418  8476 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-08 12:55:33.110  8418  8418 I ImeTracker: com.paxus.pay.poslinkui.demo:20e49841: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+01-08 12:55:33.111  8418  8418 D InputMethodManager: showSoftInput() view=com.paxus.pay.poslinkui.demo.view.TextField{8b80900 VFED..CL. .FSP.... 0,85-640,193 #7f0800c8 app:id/edit_amount aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+01-08 12:55:33.147  8418  8418 D InsetsController: show(ime(), fromIme=true)
+01-08 12:55:33.148  8418  8418 I ImeTracker: com.paxus.pay.poslinkui.demo:20e49841: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+01-08 12:55:33.173  8418  8478 D mali_gralloc: register: id=2080001987e, handle=0xf32a8680, importpid=-1, gRegisteredHandles=6
+01-08 12:55:33.175  8418  8478 D mali_gralloc: register: id=2080001987f, handle=0xf32a8ca0, importpid=-1, gRegisteredHandles=7
+01-08 12:55:33.175  8418  8478 D mali_gralloc: register: id=20800019880, handle=0xf32a8e60, importpid=-1, gRegisteredHandles=8
+01-08 12:55:33.833  8418  8418 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=android.view.ViewRootImpl$$ExternalSyntheticLambda17@706eba7
+01-08 12:55:33.839  8418  8434 D mali_gralloc: unregister: id=20800019880, handle=0xf32a8e60, base=0x0, importpid=8418, count:0
+01-08 12:55:33.840  8418  8434 D mali_gralloc: unregister: id=2080001987f, handle=0xf32a8ca0, base=0x0, importpid=8418, count:0
+01-08 12:55:33.842  8418  8418 D mali_gralloc: unregister: id=2080001987e, handle=0xf32a8680, base=0x0, importpid=8418, count:0
+01-08 12:55:33.978  8418  8418 D CompatibilityChangeReporter: Compat change id reported: 247079863; UID 10140; state: DISABLED
+01-08 12:55:35.147  8418  8418 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=ImeCallback=ImeOnBackInvokedCallback@41934001 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@a902831
+01-08 12:55:35.363  8418  8418 I ImeTracker: com.paxus.pay.poslinkui.demo:79bc7421: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+01-08 12:55:35.366  8418  8418 I ImeTracker: com.paxus.pay.poslinkui.demo:309d1929: onHidden
+01-08 12:55:37.023  8418  8418 I ImeTracker: com.paxus.pay.poslinkui.demo:ee84523e: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+01-08 12:55:37.029  8418  8448 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_FUEL_AMOUNT"
+01-08 12:55:37.030  8418  8448 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-08 12:55:37.030  8418  8448 I I      : action: com.pax.us.pay.action.ENTER_FUEL_AMOUNT
+01-08 12:55:37.030  8418  8448 I I      : fuelAmount: 123456789123
+01-08 12:55:37.030  8418  8448 I I      : 
+01-08 12:55:37.054  8418  8418 I ImeTracker: com.paxus.pay.poslinkui.demo:a2d41d29: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT

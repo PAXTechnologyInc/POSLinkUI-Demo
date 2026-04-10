@@ -1,0 +1,7 @@
+--------- beginning of main
+01-07 23:00:50.737  1501  1549 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 23:00:54.844  1501  1530 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_FLEET_PROMPT_CODE"
+01-07 23:00:54.846  1501  1530 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 23:00:54.846  1501  1530 I I      : paramFleetPromptCode: 12
+01-07 23:00:54.846  1501  1530 I I      : action: com.pax.us.pay.action.ENTER_FLEET_PROMPT_CODE
+01-07 23:00:54.846  1501  1530 I I      : 

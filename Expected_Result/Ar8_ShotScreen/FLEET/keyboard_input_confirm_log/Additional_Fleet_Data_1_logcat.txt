@@ -1,0 +1,10 @@
+--------- beginning of main
+01-10 02:50:10.807 15263 15263 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@40c6406
+01-10 02:50:11.558 15263 15301 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-10 02:50:14.306 15263 15263 I .poslinkui.demo: type=1400 audit(0.0:5214): avc: denied { write } for name="property_service" dev="tmpfs" ino=1830 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-10 02:50:14.306 15263 15263 I .poslinkui.demo: type=1400 audit(0.0:5215): avc: denied { connectto } for path="/dev/socket/property_service" scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:r:init:s0 tclass=unix_stream_socket permissive=1
+01-10 02:50:17.398 15263 15277 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_ADDITIONAL_FLEET_DATA_1"
+01-10 02:50:17.406 15263 15277 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-10 02:50:17.406 15263 15277 I I      : action: com.pax.us.pay.action.ENTER_ADDITIONAL_FLEET_DATA_1
+01-10 02:50:17.406 15263 15277 I I      : paramAdditionalFleetData1: abcdefghij0123456789
+01-10 02:50:17.406 15263 15277 I I      : 

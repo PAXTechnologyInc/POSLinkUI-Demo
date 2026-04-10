@@ -1,0 +1,24 @@
+--------- beginning of main
+01-07 17:09:25.460 22675 22675 I ImeTracker: com.paxus.pay.poslinkui.demo:60bb43cd: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+01-07 17:09:25.461 22675 22675 D InputMethodManager: showSoftInput() view=com.paxus.pay.poslinkui.demo.view.TextField{b914852 VFED..CL. .F.P.... 0,341-640,449 #7f0800d2 app:id/edit_text_tip_entry aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+01-07 17:09:25.496 22675 22675 D InsetsController: show(ime(), fromIme=true)
+01-07 17:09:25.497 22675 22675 I ImeTracker: com.paxus.pay.poslinkui.demo:60bb43cd: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+01-07 17:09:25.522 22675 22735 D mali_gralloc: register: id=20800016da3, handle=0xf2e80e00, importpid=-1, gRegisteredHandles=6
+01-07 17:09:25.523 22675 22735 D mali_gralloc: register: id=20800016da4, handle=0xf2e81180, importpid=-1, gRegisteredHandles=7
+01-07 17:09:25.524 22675 22735 D mali_gralloc: register: id=20800016da5, handle=0xf2e815e0, importpid=-1, gRegisteredHandles=8
+01-07 17:09:25.694 22675 22736 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 17:09:26.194 22675 22675 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=android.view.ViewRootImpl$$ExternalSyntheticLambda17@ad93561
+01-07 17:09:26.198 22675 22691 D mali_gralloc: unregister: id=20800016da5, handle=0xf2e815e0, base=0x0, importpid=22675, count:0
+01-07 17:09:26.198 22675 22691 D mali_gralloc: unregister: id=20800016da4, handle=0xf2e81180, base=0x0, importpid=22675, count:0
+01-07 17:09:26.200 22675 22675 D mali_gralloc: unregister: id=20800016da3, handle=0xf2e80e00, base=0x0, importpid=22675, count:0
+01-07 17:09:28.020 22675 22675 I ImeTracker: com.paxus.pay.poslinkui.demo:ac8de557: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+01-07 17:09:28.027 22675 22705 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
+01-07 17:09:28.028 22675 22705 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 17:09:28.028 22675 22705 I I      : action: com.pax.us.pay.action.ENTER_TIP
+01-07 17:09:28.028 22675 22705 I I      : tip: 123456789012
+01-07 17:09:28.028 22675 22705 I I      : 
+01-07 17:09:28.037 22675 22675 I ImeTracker: com.paxus.pay.poslinkui.demo:a317e1c6: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+01-07 17:09:28.039 22675 22675 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=ImeCallback=ImeOnBackInvokedCallback@41934001 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@788e8c2
+01-07 17:09:28.044 22675 22675 E RecyclerView: No adapter attached; skipping layout
+01-07 17:09:28.281 22675 22675 I ImeTracker: com.paxus.pay.poslinkui.demo:ec03093c: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+01-07 17:09:28.284 22675 22675 I ImeTracker: com.paxus.pay.poslinkui.demo:ac8de557: onHidden

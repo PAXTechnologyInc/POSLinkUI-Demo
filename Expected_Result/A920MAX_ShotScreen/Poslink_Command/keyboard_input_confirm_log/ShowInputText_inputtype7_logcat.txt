@@ -1,0 +1,7 @@
+--------- beginning of main
+01-07 20:01:53.245 11255 11297 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 20:01:56.473 11255 11279 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.SHOW_INPUT_TEXT_BOX"
+01-07 20:01:56.474 11255 11279 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 20:01:56.474 11255 11279 I I      : action: com.pax.us.pay.action.SHOW_INPUT_TEXT_BOX
+01-07 20:01:56.474 11255 11279 I I      : inputValue: 123456789
+01-07 20:01:56.474 11255 11279 I I      : 

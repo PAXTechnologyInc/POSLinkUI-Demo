@@ -1,0 +1,13 @@
+--------- beginning of main
+01-10 02:27:25.115  7184  7184 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@1997a5c
+01-10 02:27:25.437  7184  7197 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:27:25.469  7184  7197 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:27:25.553  7184  7197 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:27:25.653  7184  7197 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:27:25.813  7184  7219 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-10 02:27:28.566  7184  7184 I .poslinkui.demo: type=1400 audit(0.0:4042): avc: denied { write } for name="property_service" dev="tmpfs" ino=1830 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-10 02:27:31.242  7184  7197 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_CLERK_ID"
+01-10 02:27:31.274  7184  7197 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-10 02:27:31.274  7184  7197 I I      : action: com.pax.us.pay.action.ENTER_CLERK_ID
+01-10 02:27:31.274  7184  7197 I I      : clerkId: 1234
+01-10 02:27:31.274  7184  7197 I I      : 

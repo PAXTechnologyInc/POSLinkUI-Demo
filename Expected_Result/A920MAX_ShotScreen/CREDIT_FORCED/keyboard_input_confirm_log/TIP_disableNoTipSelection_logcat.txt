@@ -1,0 +1,8 @@
+--------- beginning of main
+01-07 17:11:16.576 15053 15093 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 17:11:20.113 15053 15077 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
+01-07 17:11:20.114 15053 15077 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 17:11:20.114 15053 15077 I I      : action: com.pax.us.pay.action.ENTER_TIP
+01-07 17:11:20.114 15053 15077 I I      : tip: 123456789012
+01-07 17:11:20.114 15053 15077 I I      : 
+01-07 17:11:20.198 15053 15053 E RecyclerView: No adapter attached; skipping layout

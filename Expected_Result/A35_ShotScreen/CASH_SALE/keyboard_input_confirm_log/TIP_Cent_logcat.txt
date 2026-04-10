@@ -1,0 +1,19 @@
+--------- beginning of main
+01-07 19:13:32.339 18935 18957 I .poslinkui.dem: Waiting for a blocking GC ProfileSaver
+01-07 19:13:32.367 18935 18957 I .poslinkui.dem: WaitForGcToComplete blocked ProfileSaver on AddRemoveAppImageSpace for 28.796ms
+01-07 19:13:32.808 18935 18935 E RecyclerView: No adapter attached; skipping layout
+01-07 19:13:33.059 18935 18935 E RecyclerView: No adapter attached; skipping layout
+01-07 19:13:33.104 18935 18935 E RecyclerView: No adapter attached; skipping layout
+01-07 19:13:33.110 18935 18963 I I      : Logger.java[73](i) Keyboard Opened: true
+01-07 19:13:33.112 18935 18963 I I      : Logger.java[73](i) Keyboard Opened: true
+01-07 19:13:33.286 18935 18935 E RecyclerView: No adapter attached; skipping layout
+01-07 19:13:33.290 18935 18963 I I      : Logger.java[73](i) Keyboard Opened: true
+01-07 19:13:33.330 18935 18935 E RecyclerView: No adapter attached; skipping layout
+01-07 19:13:33.335 18935 18963 I I      : Logger.java[73](i) Keyboard Opened: true
+01-07 19:13:33.684 18935 19095 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 19:13:36.092 18935 18963 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
+01-07 19:13:36.095 18935 18963 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 19:13:36.095 18935 18963 I I      : action: com.pax.us.pay.action.ENTER_TIP
+01-07 19:13:36.095 18935 18963 I I      : tip: 123456789012
+01-07 19:13:36.095 18935 18963 I I      : 
+01-07 19:13:36.224 18935 18935 E RecyclerView: No adapter attached; skipping layout

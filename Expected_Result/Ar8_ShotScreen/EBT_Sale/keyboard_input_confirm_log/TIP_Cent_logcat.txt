@@ -1,0 +1,21 @@
+--------- beginning of main
+01-09 17:28:44.209  9077  9077 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@2dab003
+01-09 17:28:44.387  9077  9077 E RecyclerView: No adapter attached; skipping layout
+01-09 17:28:44.533  9077  9077 E RecyclerView: No adapter attached; skipping layout
+01-09 17:28:44.565  9077  9110 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-09 17:28:44.565  9077  9077 E RecyclerView: No adapter attached; skipping layout
+01-09 17:28:44.592  9077  9090 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 17:28:44.608  9077  9077 E RecyclerView: No adapter attached; skipping layout
+01-09 17:28:44.611  9077  9090 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 17:28:44.758  9077  9077 E RecyclerView: No adapter attached; skipping layout
+01-09 17:28:44.761  9077  9090 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 17:28:44.775  9077  9077 E RecyclerView: No adapter attached; skipping layout
+01-09 17:28:44.777  9077  9090 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 17:28:46.406  9077  9077 I .poslinkui.demo: type=1400 audit(0.0:8956): avc: denied { write } for name="property_service" dev="tmpfs" ino=658 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-09 17:28:46.406  9077  9077 I .poslinkui.demo: type=1400 audit(0.0:8957): avc: denied { connectto } for path="/dev/socket/property_service" scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:r:init:s0 tclass=unix_stream_socket permissive=1
+01-09 17:28:49.061  9077  9077 E RecyclerView: No adapter attached; skipping layout
+01-09 17:28:49.795  9077  9090 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
+01-09 17:28:49.797  9077  9090 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-09 17:28:49.797  9077  9090 I I      : action: com.pax.us.pay.action.ENTER_TIP
+01-09 17:28:49.797  9077  9090 I I      : tip: 123456789012
+01-09 17:28:49.797  9077  9090 I I      : 

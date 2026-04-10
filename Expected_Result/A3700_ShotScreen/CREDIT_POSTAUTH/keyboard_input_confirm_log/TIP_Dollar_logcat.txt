@@ -1,0 +1,12 @@
+--------- beginning of main
+01-07 22:03:06.462  3632  3632 D ViewRootImpl[PopupWindow:145519a]: hardware acceleration = true , fakeHwAccelerated = false, sRendererDisabled = false, forceHwAccelerated = false, sSystemRendererDisabled = false
+01-07 22:03:06.467  3632  3632 I InputTransport: Create ARC handle: 0xb400007ed5779fe0
+01-07 22:03:07.086  3632  3632 D View    : [Warning] assignParent to null: this = android.widget.PopupWindow$PopupDecorView{b9ed154 V.E...... R....... 0,0-60,60}
+01-07 22:03:07.091  3632  3632 I InputTransport: Destroy ARC handle: 0xb400007ed5779fe0
+01-07 22:03:07.133  3632  3681 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 22:03:09.266  3632  3632 E RecyclerView: No adapter attached; skipping layout
+01-07 22:03:10.072  3632  3656 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
+01-07 22:03:10.074  3632  3656 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 22:03:10.074  3632  3656 I I      : action: com.pax.us.pay.action.ENTER_TIP
+01-07 22:03:10.074  3632  3656 I I      : tip: 123456789012
+01-07 22:03:10.074  3632  3656 I I      : 

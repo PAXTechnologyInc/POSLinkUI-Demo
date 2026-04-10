@@ -1,0 +1,7 @@
+--------- beginning of main
+01-07 22:59:44.155 32698 32739 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 22:59:48.516 32698 32722 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_HUBOMETER"
+01-07 22:59:48.519 32698 32722 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 22:59:48.519 32698 32722 I I      : action: com.pax.us.pay.action.ENTER_HUBOMETER
+01-07 22:59:48.519 32698 32722 I I      : paramHubomter: 123456789
+01-07 22:59:48.519 32698 32722 I I      : 

@@ -1,0 +1,9 @@
+--------- beginning of main
+01-07 06:21:57.933  9045  9086 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 06:22:00.686  9045  9068 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_CLERK_ID"
+01-07 06:22:00.688  9045  9068 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 06:22:00.688  9045  9068 I I      : action: com.pax.us.pay.action.ENTER_CLERK_ID
+01-07 06:22:00.688  9045  9068 I I      : clerkId: 1234
+01-07 06:22:00.688  9045  9068 I I      : 
+01-07 06:22:00.815  9045  9045 W Choreographer: Frame time is 0.048903  now = 167628623545220  timestampNanos = 167628623594123 ms in the future!  Check that graphics HAL is generating vsync timestamps using the correct timebase.
+01-07 06:22:00.815  9045  9071 W Choreographer: Frame time is 0.048595  now = 167628623545528  timestampNanos = 167628623594123 ms in the future!  Check that graphics HAL is generating vsync timestamps using the correct timebase.

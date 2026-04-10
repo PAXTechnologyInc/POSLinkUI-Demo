@@ -1,0 +1,17 @@
+--------- beginning of main
+01-07 16:59:49.875  2539  2539 E RecyclerView: No adapter attached; skipping layout
+01-07 16:59:50.084  2539  2539 E RecyclerView: No adapter attached; skipping layout
+01-07 16:59:50.131  2539  2539 E RecyclerView: No adapter attached; skipping layout
+01-07 16:59:50.138  2539  2588 I I      : Logger.java[73](i) Keyboard Opened: true
+01-07 16:59:50.140  2539  2588 I I      : Logger.java[73](i) Keyboard Opened: true
+01-07 16:59:50.317  2539  2539 E RecyclerView: No adapter attached; skipping layout
+01-07 16:59:50.321  2539  2588 I I      : Logger.java[73](i) Keyboard Opened: true
+01-07 16:59:50.357  2539  2539 E RecyclerView: No adapter attached; skipping layout
+01-07 16:59:50.363  2539  2588 I I      : Logger.java[73](i) Keyboard Opened: true
+01-07 16:59:50.605  2539  2853 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 16:59:53.211  2539  2588 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
+01-07 16:59:53.213  2539  2588 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 16:59:53.213  2539  2588 I I      : action: com.pax.us.pay.action.ENTER_TIP
+01-07 16:59:53.213  2539  2588 I I      : tip: 123456789012
+01-07 16:59:53.213  2539  2588 I I      : 
+01-07 16:59:53.391  2539  2539 E RecyclerView: No adapter attached; skipping layout

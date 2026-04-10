@@ -1,0 +1,18 @@
+--------- beginning of main
+01-09 16:48:50.021 25829 25829 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@d83985a
+01-09 16:48:50.216 25829 25829 E RecyclerView: No adapter attached; skipping layout
+01-09 16:48:50.379 25829 25829 E RecyclerView: No adapter attached; skipping layout
+01-09 16:48:50.394 25829 25842 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 16:48:50.437 25829 25829 E RecyclerView: No adapter attached; skipping layout
+01-09 16:48:50.439 25829 25842 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 16:48:50.601 25829 25829 E RecyclerView: No adapter attached; skipping layout
+01-09 16:48:50.604 25829 25842 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 16:48:50.857 25829 25865 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-09 16:48:52.146 25829 25829 I .poslinkui.demo: type=1400 audit(0.0:7004): avc: denied { write } for name="property_service" dev="tmpfs" ino=658 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-09 16:48:52.146 25829 25829 I .poslinkui.demo: type=1400 audit(0.0:7005): avc: denied { connectto } for path="/dev/socket/property_service" scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:r:init:s0 tclass=unix_stream_socket permissive=1
+01-09 16:48:54.820 25829 25829 E RecyclerView: No adapter attached; skipping layout
+01-09 16:48:55.567 25829 25842 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
+01-09 16:48:55.572 25829 25842 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-09 16:48:55.572 25829 25842 I I      : action: com.pax.us.pay.action.ENTER_TIP
+01-09 16:48:55.572 25829 25842 I I      : tip: 123456789012
+01-09 16:48:55.572 25829 25842 I I      : 

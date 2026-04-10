@@ -1,0 +1,7 @@
+--------- beginning of main
+01-08 13:07:55.964  1069  1348 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-08 13:08:00.087  1069  1099 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_ODOMETER"
+01-08 13:08:00.090  1069  1099 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-08 13:08:00.090  1069  1099 I I      : action: com.pax.us.pay.action.ENTER_ODOMETER
+01-08 13:08:00.090  1069  1099 I I      : paramOdometer: 0123456789123456
+01-08 13:08:00.090  1069  1099 I I      : 

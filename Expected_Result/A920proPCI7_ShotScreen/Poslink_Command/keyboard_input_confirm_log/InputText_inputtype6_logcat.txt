@@ -1,0 +1,17 @@
+--------- beginning of main
+01-15 23:45:55.019 22778 22778 I ImeTracker: com.paxus.pay.poslinkui.demo:e429f674: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+01-15 23:45:55.020 22778 22778 D InputMethodManager: showSoftInput() view=com.paxus.pay.poslinkui.demo.view.TextField{33c3fa2 VFED..CL. .F.P.... 0,85-640,193 #7f0800d1 app:id/edit_text aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+01-15 23:45:55.024 22778 22778 D InsetsController: show(ime(), fromIme=true)
+01-15 23:45:55.025 22778 22778 I ImeTracker: com.paxus.pay.poslinkui.demo:e429f674: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+01-15 23:45:55.461 22778 22839 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-15 23:45:55.890 22778 22778 D CompatibilityChangeReporter: Compat change id reported: 247079863; UID 10140; state: DISABLED
+01-15 23:45:57.021 22778 22778 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=ImeCallback=ImeOnBackInvokedCallback@142366443 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@79ba444
+01-15 23:45:57.242 22778 22778 I ImeTracker: com.paxus.pay.poslinkui.demo:5152186d: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+01-15 23:45:57.245 22778 22778 I ImeTracker: com.paxus.pay.poslinkui.demo:94f9f51f: onHidden
+01-15 23:45:58.902 22778 22778 I ImeTracker: com.paxus.pay.poslinkui.demo:3df5e7f5: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+01-15 23:45:58.910 22778 22808 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.INPUT_TEXT"
+01-15 23:45:58.911 22778 22808 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-15 23:45:58.911 22778 22808 I I      : action: com.pax.us.pay.action.INPUT_TEXT
+01-15 23:45:58.911 22778 22808 I I      : inputValue: 0123456789
+01-15 23:45:58.911 22778 22808 I I      : 
+01-15 23:45:58.924 22778 22778 I ImeTracker: com.paxus.pay.poslinkui.demo:b7ffa15: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT

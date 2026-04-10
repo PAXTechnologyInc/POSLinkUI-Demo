@@ -1,0 +1,21 @@
+--------- beginning of main
+01-09 15:53:52.310  6019  6019 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@3476005
+01-09 15:53:52.496  6019  6019 E RecyclerView: No adapter attached; skipping layout
+01-09 15:53:52.645  6019  6019 E RecyclerView: No adapter attached; skipping layout
+01-09 15:53:52.672  6019  6019 E RecyclerView: No adapter attached; skipping layout
+01-09 15:53:52.676  6019  6032 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 15:53:52.718  6019  6019 E RecyclerView: No adapter attached; skipping layout
+01-09 15:53:52.720  6019  6032 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 15:53:52.827  6019  6051 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-09 15:53:52.852  6019  6019 E RecyclerView: No adapter attached; skipping layout
+01-09 15:53:52.855  6019  6032 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 15:53:52.886  6019  6019 E RecyclerView: No adapter attached; skipping layout
+01-09 15:53:52.889  6019  6032 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 15:53:54.426  6019  6019 I .poslinkui.demo: type=1400 audit(0.0:4555): avc: denied { write } for name="property_service" dev="tmpfs" ino=658 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-09 15:53:54.426  6019  6019 I .poslinkui.demo: type=1400 audit(0.0:4556): avc: denied { connectto } for path="/dev/socket/property_service" scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:r:init:s0 tclass=unix_stream_socket permissive=1
+01-09 15:53:57.085  6019  6019 E RecyclerView: No adapter attached; skipping layout
+01-09 15:53:57.854  6019  6032 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
+01-09 15:53:57.855  6019  6032 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-09 15:53:57.855  6019  6032 I I      : action: com.pax.us.pay.action.ENTER_TIP
+01-09 15:53:57.855  6019  6032 I I      : tip: 123456789012
+01-09 15:53:57.855  6019  6032 I I      : 

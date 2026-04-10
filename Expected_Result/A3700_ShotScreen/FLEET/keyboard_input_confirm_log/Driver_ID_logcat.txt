@@ -1,0 +1,7 @@
+--------- beginning of main
+01-07 23:02:54.366  3031  3079 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 23:02:58.904  3031  3058 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_DRIVER_ID"
+01-07 23:02:58.905  3031  3058 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 23:02:58.905  3031  3058 I I      : action: com.pax.us.pay.action.ENTER_DRIVER_ID
+01-07 23:02:58.905  3031  3058 I I      : paramDriverId: 12345678901234567890
+01-07 23:02:58.905  3031  3058 I I      : 

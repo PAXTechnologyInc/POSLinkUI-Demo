@@ -1,0 +1,17 @@
+--------- beginning of main
+01-15 23:41:17.152 20251 20251 I ImeTracker: com.paxus.pay.poslinkui.demo:2108b43: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+01-15 23:41:17.153 20251 20251 D InputMethodManager: showSoftInput() view=com.paxus.pay.poslinkui.demo.view.TextField{33c3fa2 VFED..CL. .F.P.... 0,85-640,193 #7f0800d1 app:id/edit_text aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+01-15 23:41:17.159 20251 20251 D InsetsController: show(ime(), fromIme=true)
+01-15 23:41:17.160 20251 20251 I ImeTracker: com.paxus.pay.poslinkui.demo:2108b43: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+01-15 23:41:17.843 20251 20318 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-15 23:41:18.053 20251 20251 D CompatibilityChangeReporter: Compat change id reported: 247079863; UID 10140; state: DISABLED
+01-15 23:41:19.119 20251 20251 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=ImeCallback=ImeOnBackInvokedCallback@142366443 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@26b6ad6
+01-15 23:41:19.340 20251 20251 I ImeTracker: com.paxus.pay.poslinkui.demo:7ff035df: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+01-15 23:41:19.343 20251 20251 I ImeTracker: com.paxus.pay.poslinkui.demo:c61a71df: onHidden
+01-15 23:41:20.939 20251 20251 I ImeTracker: com.paxus.pay.poslinkui.demo:45d31732: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+01-15 23:41:20.943 20251 20282 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.INPUT_TEXT"
+01-15 23:41:20.944 20251 20282 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-15 23:41:20.944 20251 20282 I I      : action: com.pax.us.pay.action.INPUT_TEXT
+01-15 23:41:20.944 20251 20282 I I      : inputValue: 12345678
+01-15 23:41:20.944 20251 20282 I I      : 
+01-15 23:41:20.974 20251 20251 I ImeTracker: com.paxus.pay.poslinkui.demo:c333f49: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT

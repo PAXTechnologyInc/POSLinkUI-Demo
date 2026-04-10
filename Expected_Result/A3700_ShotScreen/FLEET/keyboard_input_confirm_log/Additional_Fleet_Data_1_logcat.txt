@@ -1,0 +1,7 @@
+--------- beginning of main
+01-07 22:46:35.847 26000 26051 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 22:46:39.704 26000 26024 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_ADDITIONAL_FLEET_DATA_1"
+01-07 22:46:39.706 26000 26024 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 22:46:39.706 26000 26024 I I      : action: com.pax.us.pay.action.ENTER_ADDITIONAL_FLEET_DATA_1
+01-07 22:46:39.706 26000 26024 I I      : paramAdditionalFleetData1: abcdefghij0123456789
+01-07 22:46:39.706 26000 26024 I I      : 

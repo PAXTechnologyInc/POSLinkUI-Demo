@@ -1,0 +1,7 @@
+--------- beginning of main
+01-07 16:56:51.778  7844  7884 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 16:56:54.625  7844  7867 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_SERVER_ID"
+01-07 16:56:54.626  7844  7867 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 16:56:54.626  7844  7867 I I      : action: com.pax.us.pay.action.ENTER_SERVER_ID
+01-07 16:56:54.626  7844  7867 I I      : serverId: 1234
+01-07 16:56:54.626  7844  7867 I I      : 

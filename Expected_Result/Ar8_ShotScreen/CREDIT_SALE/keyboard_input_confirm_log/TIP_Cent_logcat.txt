@@ -1,0 +1,21 @@
+--------- beginning of main
+01-09 14:39:06.121 10175 10175 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@2dab003
+01-09 14:39:06.306 10175 10175 E RecyclerView: No adapter attached; skipping layout
+01-09 14:39:06.480 10175 10175 E RecyclerView: No adapter attached; skipping layout
+01-09 14:39:06.494 10175 10208 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-09 14:39:06.496 10175 10175 E RecyclerView: No adapter attached; skipping layout
+01-09 14:39:06.508 10175 10188 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 14:39:06.534 10175 10175 E RecyclerView: No adapter attached; skipping layout
+01-09 14:39:06.537 10175 10188 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 14:39:06.697 10175 10175 E RecyclerView: No adapter attached; skipping layout
+01-09 14:39:06.700 10175 10188 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 14:39:06.713 10175 10175 E RecyclerView: No adapter attached; skipping layout
+01-09 14:39:06.716 10175 10188 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 14:39:08.296 10175 10175 I .poslinkui.demo: type=1400 audit(0.0:1614): avc: denied { write } for name="property_service" dev="tmpfs" ino=658 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-09 14:39:08.296 10175 10175 I .poslinkui.demo: type=1400 audit(0.0:1615): avc: denied { connectto } for path="/dev/socket/property_service" scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:r:init:s0 tclass=unix_stream_socket permissive=1
+01-09 14:39:10.978 10175 10175 E RecyclerView: No adapter attached; skipping layout
+01-09 14:39:11.735 10175 10188 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TIP"
+01-09 14:39:11.736 10175 10188 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-09 14:39:11.736 10175 10188 I I      : action: com.pax.us.pay.action.ENTER_TIP
+01-09 14:39:11.736 10175 10188 I I      : tip: 123456789012
+01-09 14:39:11.736 10175 10188 I I      : 

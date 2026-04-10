@@ -1,0 +1,7 @@
+--------- beginning of main
+01-08 13:10:14.626 27671 27713 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-08 13:10:18.874 27671 27694 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_LICENSE_NUMBER"
+01-08 13:10:18.875 27671 27694 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-08 13:10:18.875 27671 27694 I I      : action: com.pax.us.pay.action.ENTER_LICENSE_NUMBER
+01-08 13:10:18.875 27671 27694 I I      : paramLicenseNumber: abcdefghij0123456789
+01-08 13:10:18.875 27671 27694 I I      : 

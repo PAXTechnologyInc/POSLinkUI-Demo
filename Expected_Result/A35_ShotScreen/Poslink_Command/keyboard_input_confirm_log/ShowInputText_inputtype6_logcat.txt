@@ -1,0 +1,12 @@
+--------- beginning of main
+01-15 23:55:06.979 10180 10202 I .poslinkui.dem: Waiting for a blocking GC ProfileSaver
+01-15 23:55:07.008 10180 10202 I .poslinkui.dem: WaitForGcToComplete blocked ProfileSaver on AddRemoveAppImageSpace for 28.808ms
+01-15 23:55:07.623 10180 10215 I I      : Logger.java[73](i) Keyboard Opened: true
+01-15 23:55:07.705 10180 10215 I chatty  : uid=10094(com.paxus.pay.poslinkui.demo) pool-1-thread-1 identical 2 lines
+01-15 23:55:07.843 10180 10215 I I      : Logger.java[73](i) Keyboard Opened: true
+01-15 23:55:08.049 10180 10391 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-15 23:55:11.857 10180 10215 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.SHOW_INPUT_TEXT_BOX"
+01-15 23:55:11.859 10180 10215 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-15 23:55:11.859 10180 10215 I I      : action: com.pax.us.pay.action.SHOW_INPUT_TEXT_BOX
+01-15 23:55:11.859 10180 10215 I I      : inputValue: 0123456789
+01-15 23:55:11.859 10180 10215 I I      : 

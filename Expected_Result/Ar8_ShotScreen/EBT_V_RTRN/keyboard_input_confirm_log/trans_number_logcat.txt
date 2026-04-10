@@ -1,0 +1,13 @@
+--------- beginning of main
+01-09 18:14:39.559 25519 25519 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@5d360cf
+01-09 18:14:39.882 25519 25532 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 18:14:39.899 25519 25532 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 18:14:39.965 25519 25532 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 18:14:40.099 25519 25532 I I      : Logger.java[73](i) Keyboard Opened: true
+01-09 18:14:40.246 25519 25554 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-09 18:14:43.116 25519 25519 I .poslinkui.demo: type=1400 audit(0.0:10320): avc: denied { connectto } for path="/dev/socket/property_service" scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:r:init:s0 tclass=unix_stream_socket permissive=1
+01-09 18:14:45.925 25519 25532 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TRANS_NUMBER"
+01-09 18:14:45.927 25519 25532 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-09 18:14:45.927 25519 25532 I I      : action: com.pax.us.pay.action.ENTER_TRANS_NUMBER
+01-09 18:14:45.927 25519 25532 I I      : transNumber: 123456789012
+01-09 18:14:45.927 25519 25532 I I      : 

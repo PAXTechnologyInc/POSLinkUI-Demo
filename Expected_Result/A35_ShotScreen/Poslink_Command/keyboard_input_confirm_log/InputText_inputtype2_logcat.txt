@@ -1,0 +1,10 @@
+--------- beginning of main
+01-15 23:41:29.289 20417 20452 I I      : Logger.java[73](i) Keyboard Opened: true
+01-15 23:41:29.443 20417 20452 I chatty  : uid=10094(com.paxus.pay.poslinkui.demo) pool-1-thread-1 identical 2 lines
+01-15 23:41:29.516 20417 20452 I I      : Logger.java[73](i) Keyboard Opened: true
+01-15 23:41:29.562 20417 20584 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-15 23:41:33.546 20417 20452 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.INPUT_TEXT"
+01-15 23:41:33.548 20417 20452 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-15 23:41:33.548 20417 20452 I I      : action: com.pax.us.pay.action.INPUT_TEXT
+01-15 23:41:33.548 20417 20452 I I      : inputValue: 12345678
+01-15 23:41:33.548 20417 20452 I I      : 

@@ -1,0 +1,7 @@
+--------- beginning of main
+01-12 13:10:51.733 21802 22029 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-12 13:10:54.649 21802 21828 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_ORDER_NUMBER"
+01-12 13:10:54.654 21802 21828 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-12 13:10:54.654 21802 21828 I I      : action: com.pax.us.pay.action.ENTER_ORDER_NUMBER
+01-12 13:10:54.654 21802 21828 I I      : orderNumber: abcdefg012345678
+01-12 13:10:54.654 21802 21828 I I      : 

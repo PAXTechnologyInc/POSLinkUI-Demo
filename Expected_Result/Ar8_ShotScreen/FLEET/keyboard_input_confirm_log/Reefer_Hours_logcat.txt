@@ -1,0 +1,14 @@
+--------- beginning of main
+01-10 03:02:40.859 19726 19726 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@1997a5c
+01-10 03:02:41.108 19726 19758 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-10 03:02:41.179 19726 19739 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 03:02:41.213 19726 19739 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 03:02:41.295 19726 19739 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 03:02:41.380 19726 19739 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 03:02:44.356 19726 19726 I .poslinkui.demo: type=1400 audit(0.0:5493): avc: denied { write } for name="property_service" dev="tmpfs" ino=1830 scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=1
+01-10 03:02:44.356 19726 19726 I .poslinkui.demo: type=1400 audit(0.0:5494): avc: denied { connectto } for path="/dev/socket/property_service" scontext=u:r:untrusted_app:s0:c512,c768 tcontext=u:r:init:s0 tclass=unix_stream_socket permissive=1
+01-10 03:02:47.101 19726 19739 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_REEFER_HOURS"
+01-10 03:02:47.104 19726 19739 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-10 03:02:47.104 19726 19739 I I      : paramReeferHours: 1234567
+01-10 03:02:47.104 19726 19739 I I      : action: com.pax.us.pay.action.ENTER_REEFER_HOURS
+01-10 03:02:47.104 19726 19739 I I      : 

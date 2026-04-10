@@ -1,0 +1,7 @@
+--------- beginning of main
+01-12 13:16:04.593  7326  7612 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-12 13:16:07.712  7326  7367 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_TRIP_NUMBER"
+01-12 13:16:07.714  7326  7367 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-12 13:16:07.714  7326  7367 I I      : action: com.pax.us.pay.action.ENTER_TRIP_NUMBER
+01-12 13:16:07.714  7326  7367 I I      : paramTripNumber: abcdefghij01234
+01-12 13:16:07.714  7326  7367 I I      : 

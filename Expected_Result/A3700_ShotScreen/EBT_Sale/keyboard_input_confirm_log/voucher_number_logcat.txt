@@ -1,0 +1,7 @@
+--------- beginning of main
+01-07 05:06:59.589  1483  1534 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 05:07:02.821  1483  1515 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_VOUCHER_DATA"
+01-07 05:07:02.823  1483  1515 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 05:07:02.823  1483  1515 I I      : action: com.pax.us.pay.action.ENTER_VOUCHER_DATA
+01-07 05:07:02.823  1483  1515 I I      : voucherNumber: 123456789123456
+01-07 05:07:02.823  1483  1515 I I      : 

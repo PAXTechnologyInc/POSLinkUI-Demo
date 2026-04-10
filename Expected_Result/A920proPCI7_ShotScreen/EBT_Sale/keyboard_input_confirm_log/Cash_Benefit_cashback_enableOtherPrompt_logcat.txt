@@ -1,0 +1,23 @@
+--------- beginning of main
+01-07 18:05:04.267 25501 25501 D CompatibilityChangeReporter: Compat change id reported: 163400105; UID 10140; state: DISABLED
+01-07 18:05:04.269 25501 25501 I ImeTracker: com.paxus.pay.poslinkui.demo:ee456641: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+01-07 18:05:04.269 25501 25501 D InputMethodManager: showSoftInput() view=com.paxus.pay.poslinkui.demo.view.TextField{a7412f9 VFED..CL. .F.P..ID 6,443-634,551 #7f0800c9 app:id/edit_cashback aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+01-07 18:05:04.351 25501 25501 D InsetsController: show(ime(), fromIme=true)
+01-07 18:05:04.469 25501 25501 I ImeTracker: com.paxus.pay.poslinkui.demo:8d6764bc: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+01-07 18:05:04.470 25501 25501 D InputMethodManager: showSoftInput() view=com.paxus.pay.poslinkui.demo.view.TextField{a7412f9 VFED..CL. .F...... 6,443-634,551 #7f0800c9 app:id/edit_cashback aid=1073741824} flags=1 reason=SHOW_SOFT_INPUT
+01-07 18:05:04.485 25501 25501 D InsetsController: show(ime(), fromIme=true)
+01-07 18:05:04.485 25501 25501 I ImeTracker: com.paxus.pay.poslinkui.demo:8d6764bc: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+01-07 18:05:04.486 25501 25531 I I      : Logger.java[73](i) Keyboard Opened: true
+01-07 18:05:04.569 25501 25501 I ImeTracker: com.paxus.pay.poslinkui.demo:ee456641: onShown
+01-07 18:05:04.638 25501 25562 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-07 18:05:05.123 25501 25501 D CompatibilityChangeReporter: Compat change id reported: 247079863; UID 10140; state: DISABLED
+01-07 18:05:06.787 25501 25501 I ImeTracker: com.paxus.pay.poslinkui.demo:b1628c32: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+01-07 18:05:06.795 25501 25531 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_CASH_BACK"
+01-07 18:05:06.796 25501 25531 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-07 18:05:06.796 25501 25531 I I      : action: com.pax.us.pay.action.ENTER_CASH_BACK
+01-07 18:05:06.796 25501 25531 I I      : cashbackAmount: 123456789012
+01-07 18:05:06.796 25501 25531 I I      : 
+01-07 18:05:06.801 25501 25501 I ImeTracker: com.paxus.pay.poslinkui.demo:5605f61e: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+01-07 18:05:06.803 25501 25501 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=ImeCallback=ImeOnBackInvokedCallback@41934001 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@f0fc198
+01-07 18:05:07.038 25501 25501 I ImeTracker: com.paxus.pay.poslinkui.demo:a10bc4f5: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT_BY_INSETS_API
+01-07 18:05:07.040 25501 25501 I ImeTracker: com.paxus.pay.poslinkui.demo:b1628c32: onHidden

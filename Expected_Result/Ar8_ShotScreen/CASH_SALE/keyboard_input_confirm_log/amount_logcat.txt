@@ -1,0 +1,12 @@
+--------- beginning of main
+01-10 02:07:44.913 31283 31283 V BoostFramework: BoostFramework() : mPerf = com.qualcomm.qti.Performance@1997a5c
+01-10 02:07:45.251 31283 31296 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:07:45.300 31283 31296 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:07:45.416 31283 31296 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:07:45.467 31283 31296 I I      : Logger.java[73](i) Keyboard Opened: true
+01-10 02:07:45.559 31283 31319 D ProfileInstaller: Skipping profile installation for com.paxus.pay.poslinkui.demo
+01-10 02:07:51.239 31283 31296 I I      : Logger.java[73](i) Send Request Broadcast ACTION_NEXT from action  "com.pax.us.pay.action.ENTER_AMOUNT"
+01-10 02:07:51.241 31283 31296 I I      : Logger.java[73](i) Intent: com.pax.us.pay.ui.NEXT
+01-10 02:07:51.241 31283 31296 I I      : action: com.pax.us.pay.action.ENTER_AMOUNT
+01-10 02:07:51.241 31283 31296 I I      : amount: 123456789012
+01-10 02:07:51.241 31283 31296 I I      : 
