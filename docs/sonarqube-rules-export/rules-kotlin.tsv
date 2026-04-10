@@ -1,0 +1,136 @@
+key	name	severity	type	lang
+kotlin:ParsingError	Kotlin parser failure	MAJOR	CODE_SMELL	kotlin
+kotlin:S100	Function names should comply with a naming convention	MINOR	CODE_SMELL	kotlin
+kotlin:S101	Class names should comply with a naming convention	MINOR	CODE_SMELL	kotlin
+kotlin:S103	Lines should not be too long	MAJOR	CODE_SMELL	kotlin
+kotlin:S104	Files should not have too many lines of code	MAJOR	CODE_SMELL	kotlin
+kotlin:S1066	Mergeable "if" statements should be combined	MAJOR	CODE_SMELL	kotlin
+kotlin:S1067	Expressions should not be too complex	CRITICAL	CODE_SMELL	kotlin
+kotlin:S107	Functions should not have too many parameters	MAJOR	CODE_SMELL	kotlin
+kotlin:S1110	Redundant pairs of parentheses should be removed	MAJOR	CODE_SMELL	kotlin
+kotlin:S1125	Boolean literals should not be redundant	MINOR	CODE_SMELL	kotlin
+kotlin:S1128	Unnecessary imports should be removed	MINOR	CODE_SMELL	kotlin
+kotlin:S1133	Deprecated code should be removed	INFO	CODE_SMELL	kotlin
+kotlin:S1134	Track uses of "FIXME" tags	MAJOR	CODE_SMELL	kotlin
+kotlin:S1135	Track uses of "TODO" tags	INFO	CODE_SMELL	kotlin
+kotlin:S1143	Jump statements should not occur in "finally" blocks	CRITICAL	BUG	kotlin
+kotlin:S1144	Unused "private" methods should be removed	MAJOR	CODE_SMELL	kotlin
+kotlin:S1145	Useless "if(true) {...}" and "if(false){...}" blocks should be removed	MAJOR	BUG	kotlin
+kotlin:S1151	"when" clauses should not have too many lines of code	MAJOR	CODE_SMELL	kotlin
+kotlin:S117	Local variable and function parameter names should comply with a naming convention	MINOR	CODE_SMELL	kotlin
+kotlin:S1172	Unused function parameters should be removed	MAJOR	CODE_SMELL	kotlin
+kotlin:S1186	Functions should not be empty	CRITICAL	CODE_SMELL	kotlin
+kotlin:S1192	String literals should not be duplicated	CRITICAL	CODE_SMELL	kotlin
+kotlin:S1206	"equals(Any?)" and "hashCode()" should be overridden in pairs	MINOR	BUG	kotlin
+kotlin:S122	Statements should be on separate lines	MAJOR	CODE_SMELL	kotlin
+kotlin:S125	Sections of code should not be commented out	MAJOR	CODE_SMELL	kotlin
+kotlin:S126	"if ... else if" constructs should end with "else" clauses	CRITICAL	CODE_SMELL	kotlin
+kotlin:S1313	Using hardcoded IP addresses is security-sensitive	MINOR	SECURITY_HOTSPOT	kotlin
+kotlin:S134	Control flow statements "if", "for", "while", "when" and "try" should not be nested too deeply	CRITICAL	CODE_SMELL	kotlin
+kotlin:S1479	"when" statements should not have too many clauses	MAJOR	CODE_SMELL	kotlin
+kotlin:S1481	Unused local variables should be removed	MINOR	CODE_SMELL	kotlin
+kotlin:S1656	Variables should not be self-assigned	MAJOR	BUG	kotlin
+kotlin:S1763	All code should be reachable	MAJOR	BUG	kotlin
+kotlin:S1764	Identical expressions should not be used on both sides of a binary operator	MAJOR	BUG	kotlin
+kotlin:S1862	Related "if/else if" statements should not have the same condition	MAJOR	BUG	kotlin
+kotlin:S1871	Two branches in a conditional structure should not have exactly the same implementation	MAJOR	CODE_SMELL	kotlin
+kotlin:S1874	Code annotated as deprecated should not be used	MINOR	CODE_SMELL	kotlin
+kotlin:S1940	Boolean checks should not be inverted	MINOR	CODE_SMELL	kotlin
+kotlin:S2053	Password hashing functions should use an unpredictable salt	CRITICAL	VULNERABILITY	kotlin
+kotlin:S2068	Hard-coded credentials are security-sensitive	BLOCKER	SECURITY_HOTSPOT	kotlin
+kotlin:S2097	"equals(other: Any?)" should test the argument's type	MINOR	BUG	kotlin
+kotlin:S2114	Collections should not be passed as arguments to their own methods	MAJOR	BUG	kotlin
+kotlin:S2116	"hashCode" and "toString" should not be called on array instances	MAJOR	BUG	kotlin
+kotlin:S2122	"ScheduledThreadPoolExecutor" should not have 0 core threads	CRITICAL	BUG	kotlin
+kotlin:S2123	Values should not be uselessly incremented	MAJOR	BUG	kotlin
+kotlin:S2151	"runFinalizersOnExit" should not be called	CRITICAL	BUG	kotlin
+kotlin:S2175	Inappropriate collection calls should not be made	MAJOR	BUG	kotlin
+kotlin:S2245	Using pseudorandom number generators (PRNGs) is security-sensitive	CRITICAL	SECURITY_HOTSPOT	kotlin
+kotlin:S2695	"PreparedStatement" and "ResultSet" methods should be called with valid indices	BLOCKER	BUG	kotlin
+kotlin:S2757	Non-existent operators like "=+" should not be used	MAJOR	BUG	kotlin
+kotlin:S3329	Cipher Block Chaining IVs should be unpredictable	CRITICAL	VULNERABILITY	kotlin
+kotlin:S3353	"var" should be "val" if local variable is never re-assigned	CRITICAL	CODE_SMELL	kotlin
+kotlin:S3776	Cognitive Complexity of functions should not be too high	CRITICAL	CODE_SMELL	kotlin
+kotlin:S3923	All branches in a conditional structure should not have exactly the same implementation	MAJOR	BUG	kotlin
+kotlin:S3958	Intermediate Sequence and Stream functions should not be left unused	MAJOR	BUG	kotlin
+kotlin:S3981	Collection and array sizes comparisons should make sense	MAJOR	BUG	kotlin
+kotlin:S4144	Functions should not have identical implementations	MAJOR	CODE_SMELL	kotlin
+kotlin:S4347	Secure random number generators should not output predictable values	CRITICAL	VULNERABILITY	kotlin
+kotlin:S4423	Weak SSL/TLS protocols should not be used	CRITICAL	VULNERABILITY	kotlin
+kotlin:S4426	Cryptographic keys should be robust	CRITICAL	VULNERABILITY	kotlin
+kotlin:S4507	Delivering code in production with debug features activated is security-sensitive	MINOR	SECURITY_HOTSPOT	kotlin
+kotlin:S4663	Multi-line comments should not be empty	MINOR	CODE_SMELL	kotlin
+kotlin:S4738	Native features should be preferred to Guava	MAJOR	CODE_SMELL	kotlin
+kotlin:S4790	Using weak hashing algorithms is security-sensitive	CRITICAL	SECURITY_HOTSPOT	kotlin
+kotlin:S4830	Server certificates should be verified during SSL/TLS connections	CRITICAL	VULNERABILITY	kotlin
+kotlin:S5320	Broadcasting intents is security-sensitive	CRITICAL	SECURITY_HOTSPOT	kotlin
+kotlin:S5322	Receiving intents is security-sensitive	CRITICAL	SECURITY_HOTSPOT	kotlin
+kotlin:S5324	Accessing Android external storage is security-sensitive	CRITICAL	SECURITY_HOTSPOT	kotlin
+kotlin:S5332	Using clear-text protocols is security-sensitive	CRITICAL	SECURITY_HOTSPOT	kotlin
+kotlin:S5344	Passwords should not be stored in plaintext or with a fast hashing algorithm	CRITICAL	VULNERABILITY	kotlin
+kotlin:S5527	Server hostnames should be verified during SSL/TLS connections	CRITICAL	VULNERABILITY	kotlin
+kotlin:S5547	Cipher algorithms should be robust	CRITICAL	VULNERABILITY	kotlin
+kotlin:S5612	Lambdas should not have too many lines	MAJOR	CODE_SMELL	kotlin
+kotlin:S5842	Repeated patterns in regular expressions should not match the empty string	MINOR	BUG	kotlin
+kotlin:S5843	Regular expressions should not be too complicated	MAJOR	CODE_SMELL	kotlin
+kotlin:S5846	Empty lines should not be tested with regex MULTILINE flag	CRITICAL	CODE_SMELL	kotlin
+kotlin:S5850	Alternatives in regular expressions should be grouped when used with anchors	MAJOR	BUG	kotlin
+kotlin:S5856	Regular expressions should be syntactically valid	CRITICAL	BUG	kotlin
+kotlin:S5857	Character classes should be preferred over reluctant quantifiers in regular expressions	MINOR	CODE_SMELL	kotlin
+kotlin:S5867	Unicode-aware versions of character classes should be preferred	MINOR	CODE_SMELL	kotlin
+kotlin:S5868	Unicode Grapheme Clusters should be avoided inside regex character classes	MAJOR	BUG	kotlin
+kotlin:S5869	Character classes in regular expressions should not contain the same character twice	MAJOR	CODE_SMELL	kotlin
+kotlin:S6202	Operator "is" should be used instead of "isInstance()"	MAJOR	CODE_SMELL	kotlin
+kotlin:S6207	Redundant methods should be avoided in data classes	MAJOR	CODE_SMELL	kotlin
+kotlin:S6218	Equals method should be overridden in data classes containing array fields	MAJOR	BUG	kotlin
+kotlin:S6288	Authorizing non-authenticated users to use keys in the Android KeyStore is security-sensitive	MAJOR	SECURITY_HOTSPOT	kotlin
+kotlin:S6293	Using biometric authentication without a cryptographic solution is security-sensitive	MAJOR	SECURITY_HOTSPOT	kotlin
+kotlin:S6301	Mobile database encryption keys should not be disclosed	MAJOR	VULNERABILITY	kotlin
+kotlin:S6305	"MutableStateFlow" and "MutableSharedFlow" should not be exposed	MAJOR	CODE_SMELL	kotlin
+kotlin:S6306	Coroutine usage should adhere to structured concurrency principles	MAJOR	CODE_SMELL	kotlin
+kotlin:S6307	Suspending functions should be main-safe	MAJOR	CODE_SMELL	kotlin
+kotlin:S6309	Functions returning Flow/Channel should not be suspending	MAJOR	CODE_SMELL	kotlin
+kotlin:S6310	Dispatchers should be injectable	MAJOR	CODE_SMELL	kotlin
+kotlin:S6311	Suspending functions should not be called on a different dispatcher	MAJOR	CODE_SMELL	kotlin
+kotlin:S6312	Extension functions on CoroutineScopes should not be declared as "suspend"	MAJOR	CODE_SMELL	kotlin
+kotlin:S6313	ViewModel classes should create coroutines	MAJOR	CODE_SMELL	kotlin
+kotlin:S6314	Flow intermediate operation results should not be left unused	MAJOR	BUG	kotlin
+kotlin:S6315	The return value of functions returning "Deferred" should be used	MAJOR	CODE_SMELL	kotlin
+kotlin:S6316	Kotlin coroutines API for timeouts should be used	MAJOR	CODE_SMELL	kotlin
+kotlin:S6318	"suspend" modifier should not be redundant	MINOR	CODE_SMELL	kotlin
+kotlin:S6362	Enabling JavaScript support for WebViews is security-sensitive	MAJOR	SECURITY_HOTSPOT	kotlin
+kotlin:S6363	Enabling file access for WebViews is security-sensitive	MAJOR	SECURITY_HOTSPOT	kotlin
+kotlin:S6432	Counter Mode initialization vectors should not be reused	CRITICAL	VULNERABILITY	kotlin
+kotlin:S6474	Using remote artifacts without authenticity and integrity checks is security-sensitive	MINOR	SECURITY_HOTSPOT	kotlin
+kotlin:S6508	"Unit" should be used instead of "Void"	MAJOR	CODE_SMELL	kotlin
+kotlin:S6510	"return" statements should be lifted before "if" or "when" statement	MAJOR	CODE_SMELL	kotlin
+kotlin:S6511	"when" statements should be used instead of chained "if" statements	MAJOR	CODE_SMELL	kotlin
+kotlin:S6512	Getter and setter pattern should use property getters and setters	MINOR	CODE_SMELL	kotlin
+kotlin:S6514	Delegator pattern should use "by" clause	MAJOR	CODE_SMELL	kotlin
+kotlin:S6515	Singleton pattern should use object declarations or expressions	MAJOR	CODE_SMELL	kotlin
+kotlin:S6517	Single function interfaces should be functional interfaces	MAJOR	CODE_SMELL	kotlin
+kotlin:S6519	Structural equality tests should use "==" or "!="	MAJOR	CODE_SMELL	kotlin
+kotlin:S6524	Collection should be immutable if contents is not changed	MAJOR	CODE_SMELL	kotlin
+kotlin:S6526	Abstract class should be interface	MAJOR	CODE_SMELL	kotlin
+kotlin:S6527	Function chain using "filter" should be simplified	MINOR	CODE_SMELL	kotlin
+kotlin:S6528	"find" should be replaced with "any", "none" or "contains"	MINOR	CODE_SMELL	kotlin
+kotlin:S6529	Expression should be simplified with "isEmpty", "isNotEmpty" or "isNullOrEmpty"	MAJOR	CODE_SMELL	kotlin
+kotlin:S6531	Redundant type casts should be removed	MAJOR	CODE_SMELL	kotlin
+kotlin:S6532	Check for preconditions should be simplified	MAJOR	CODE_SMELL	kotlin
+kotlin:S6558	"It" shouldn't be used as a lambda parameter name	MAJOR	CODE_SMELL	kotlin
+kotlin:S6611	"Map" values should be accessed safely	MAJOR	BUG	kotlin
+kotlin:S6615	Variables assigned values should be read	MAJOR	CODE_SMELL	kotlin
+kotlin:S6619	Null checks should be useful	MAJOR	CODE_SMELL	kotlin
+kotlin:S6623	"tasks.register()" should be preferred over "tasks.create()"	MAJOR	CODE_SMELL	kotlin
+kotlin:S6624	Dependency versions shouldn't be hard-coded	MAJOR	CODE_SMELL	kotlin
+kotlin:S6625	"rootProject.name" should always be present in Gradle settings	MAJOR	CODE_SMELL	kotlin
+kotlin:S6626	Tasks should define "description" and "group"	MAJOR	CODE_SMELL	kotlin
+kotlin:S6629	Dependencies should be grouped by destination	MAJOR	CODE_SMELL	kotlin
+kotlin:S6631	Gradle settings file should always be present	MAJOR	CODE_SMELL	kotlin
+kotlin:S6634	Core plugins IDs should be replaced by their shortcuts	MINOR	CODE_SMELL	kotlin
+kotlin:S7204	Obfuscation should be enabled for release builds	MAJOR	VULNERABILITY	kotlin
+kotlin:S7409	Exposing native code through JavaScript interfaces is security-sensitive	MAJOR	SECURITY_HOTSPOT	kotlin
+kotlin:S7410	Keyboard cache should be disabled for password inputs	MAJOR	VULNERABILITY	kotlin
+kotlin:S7416	Android production release targets should not be debuggable	MINOR	VULNERABILITY	kotlin
+kotlin:S7435	Processing persistent unique identifiers is security-sensitive	MINOR	SECURITY_HOTSPOT	kotlin
+kotlin:S899	Return values should not be ignored when they contain the operation status code	MINOR	BUG	kotlin

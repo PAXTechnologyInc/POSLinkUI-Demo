@@ -1,0 +1,63 @@
+---
+description: Android SDD 项目实施细则（始终生效）。本规则是 .cursor/rules/constitution.mdc 的实施细则，冲突时以宪法为准。
+alwaysApply: false
+---
+
+# Android SDD 项目实施细则
+
+> 宪法定义"做什么、为什么、用什么"，本文件定义"具体怎么写代码"。
+
+## SDD 工作流
+
+- Feature 文档放在项目采用的 SDD 目录中，例如 `openspec/specs/` 或仓库既有约定路径。
+- Android 源码应按 feature 或按层组织，保持 UI、domain、data 职责清晰，避免无边界堆叠。
+- 使用 AI 生成代码时，应参考当前 feature 的 spec、design/plan、tasks 与宪法。
+- 如需重大架构变更，应先更新设计文档，再实施代码修改。
+
+## Kotlin 编码规范
+
+- 遵循 Kotlin 官方编码规范；KDoc 写在公开 API/公共类上。
+- 优先 `val` + 不可变集合；新增状态管理优先 `StateFlow` / `MutableStateFlow`，并兼容项目既有方案。
+- 使用 `sealed class/interface` 建模有限状态（如 `UiState`、`Result`）。
+
+## Compose UI 实践
+
+- 状态提升：Screen 级 Composable 优先接收 `UiState` 与事件回调，减少直接耦合 ViewModel。
+- Preview 友好：可独立预览的 UI 应提取无副作用 `@Preview`。
+- 避免在 Composable 内部发起不受控副作用；副作用使用 `LaunchedEffect`、`SideEffect` 等受生命周期约束的 API。
+
+## Hilt / DI 实践
+
+- 若项目采用 Hilt，优先按 feature 或边界拆分 Module，避免巨型全局 Module。
+- Repository 接口与实现保持边界清晰；绑定关系应放在 DI 层，而不是散落在调用方。
+- 新项目中的 ViewModel 优先使用构造注入；旧项目以渐进迁移为主，不强制一次性改完。
+
+## Coroutines 实践
+
+- ViewModel 中使用 `viewModelScope` 启动协程。
+- Repository/UseCase 中的挂起函数应在边界内部切换到合适线程，不把线程管理泄漏给调用方。
+- Flow 收集优先使用 `repeatOnLifecycle(STARTED)` 或 Compose 的 `collectAsStateWithLifecycle()`。
+
+## 生命周期与性能
+
+- Fragment 在 `onDestroyView()` 清理 ViewBinding/Adapter 引用。
+- 图片按目标尺寸下采样，缓存必须有上限。
+- 避免在 `onResume()` / `onStart()` 中做重复的重量级初始化。
+
+## 构建与发布
+
+- 新项目优先使用 Gradle Version Catalog 管理依赖版本；旧项目可逐步迁移。
+- `minSdk`、`targetSdk`、`compileSdk` 应在统一位置维护，避免模块间漂移。
+- 发布包启用 R8/ProGuard 混淆；`android:debuggable=false`。
+- 格式化工具：ktfmt 或 ktlint；静态检查：Android Lint。
+
+## 测试实践
+
+- 测试框架优先采用项目现有标准；新项目可优先 JUnit 5 + MockK。
+- UI 测试使用 Compose UI Test 或 Espresso，取决于项目 UI 栈。
+- 参数化/表格驱动测试覆盖边界条件。
+
+## 安全规范引用
+
+- Kotlin 代码：遵循 `.cursor/rules/kotlin-security.mdc`。
+- Java 代码：遵循 `.cursor/rules/java-security.mdc`。

@@ -1,0 +1,50 @@
+---
+description: Kotlin/Android 安全编码规范（从 Java CERT 标准中提炼的 Kotlin 适用规则）
+globs: "**/*.kt"
+alwaysApply: false
+---
+
+# Kotlin 安全编码规则
+
+## 输入验证
+
+- 日志中禁止直接拼接未过滤的用户输入，需先 sanitize 再记录。
+- 使用参数化查询防止 SQL 注入；对 XML/JSON 输入做格式校验与特殊字符转义。
+- 来自网络/用户的字符串在传入系统命令、文件路径、数据库前必须校验与过滤。
+
+## 敏感信息保护
+
+- **禁止硬编码**密码、密钥、token、连接串等敏感信息；应从安全存储（如 `EncryptedSharedPreferences`、环境变量、服务端下发）读取。
+- 异常信息禁止暴露内部路径、堆栈、用户数据；对外展示通用错误消息，详细信息仅写日志。
+- 序列化/持久化对象时，敏感字段标记 `@Transient` 或不参与序列化。
+
+## 异常处理
+
+- 禁止空 catch 或仅 `e.printStackTrace()`；异常必须被合理处理或向上传播。
+- 不抛出 `RuntimeException` / `Exception` / `Throwable`，应使用具体异常类型。
+- `finally` 块中不得使用 `return`、`break`、`continue`，避免吞掉原始异常。
+
+## 数值与类型安全
+
+- 精确计算（如金额）禁止使用 `Float`/`Double`，应使用 `BigDecimal` 或整数（分为单位）。
+- 不与 `NaN` 直接比较，使用 `value.isNaN()`。
+- 包装类型比较使用 `==`（Kotlin 的 `==` 已调用 equals），但注意 Java 互操作时仍需留意引用比较。
+
+## 并发安全
+
+- 使用 Kotlin Coroutines 而非直接操作 `Thread`；禁止调用 `Thread.stop()`。
+- 如使用 `Lock`，必须在 `finally` 中 `unlock()`，或优先使用 `Mutex`/`synchronized`。
+- 持有锁时不执行可能阻塞的 I/O 操作，防止死锁。
+
+## Android 特有
+
+- 安全随机数使用 `java.security.SecureRandom`，禁止用 `java.util.Random` 生成 token/密钥。
+- 网络通信使用 HTTPS（OkHttp 默认配置已支持），禁止明文 HTTP 传输敏感数据。
+- 临时文件及时清理；`cacheDir` 下文件不应存放敏感信息。
+- 生产包禁止保留调试入口（如 `android:debuggable=true`、测试后门接口）。
+
+## 方法与类设计
+
+- 公开方法的参数应做非空/合法性校验，不符合时抛出 `IllegalArgumentException`。
+- 安全检查方法声明为 `private` 或所在类为 `final`（Kotlin class 默认 final，open 类需注意）。
+- 构造函数/`init` 块中不调用可被子类重写的方法（`open` 函数）。

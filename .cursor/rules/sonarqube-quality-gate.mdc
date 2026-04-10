@@ -1,0 +1,199 @@
+---
+description: SonarQube 质量门禁合规规则（PAX Sonar way，数据来自 REST API 实时拉取）
+alwaysApply: true
+---
+
+# SonarQube 质量门禁（PAX Sonar way）
+
+数据来源：REST API `http://[sonar-server]/api/qualitygates/show?name=PAX+Sonar+way`  
+Kotlin Profile：135 条规则 | Java Profile：1462 条规则
+
+---
+
+## 质量门禁阈值（实际配置）
+
+**新增代码（New Code）门禁 — 全部为硬阻断：**
+
+| 指标 | 阈值 | 说明 |
+|------|------|------|
+| new_software_quality_blocker_issues | = 0 | 新代码零 BLOCKER |
+| new_software_quality_high_issues | = 0 | 新代码零 HIGH（对应 CRITICAL 严重度规则） |
+| new_software_quality_medium_issues | = 0 | 新代码零 MEDIUM（对应 MAJOR 严重度规则） |
+| new_duplicated_lines_density | ≤ 9% | 新代码重复率 |
+| new_security_hotspots_reviewed | = 100% | 新增安全热点必须全部审查 |
+| new_software_quality_maintainability_rating | ≤ B | 可维护性 |
+| new_software_quality_reliability_rating | ≤ B | 可靠性 |
+| new_software_quality_security_rating | ≤ B | 安全性 |
+
+**整体代码门禁：**
+
+| 指标 | 阈值 |
+|------|------|
+| software_quality_blocker_issues | = 0 |
+| duplicated_lines_density | ≤ 9% |
+| comment_lines_density | **≥ 15%** |
+| software_quality_*_rating | ≤ B |
+
+> **核心约束**：生成新代码时，**BLOCKER / CRITICAL / MAJOR 级别的规则违规一条都不能有**。
+> 注释覆盖率需达到 15%，public 类/方法必须写 KDoc/Javadoc。
+
+---
+
+## Kotlin 规则（PAX Sonar way，135 条）
+
+### BLOCKER — 绝对禁止
+
+| 规则 | 说明 |
+|------|------|
+| kotlin:S2068 | 禁止硬编码凭据（密码、token、密钥） |
+| kotlin:S2695 | PreparedStatement/ResultSet 索引必须合法（从 1 开始） |
+
+### CRITICAL — 新增代码不得触发
+
+| 规则 | 实践要求 |
+|------|---------|
+| kotlin:S3776 | 函数认知复杂度过高 → 超过阈值时必须拆分方法 |
+| kotlin:S1186 | 禁止空函数体（无实现时须注释说明原因） |
+| kotlin:S3353 | 局部变量不再赋值时必须声明为 `val`，不用 `var` |
+| kotlin:S1067 | 表达式嵌套不得过复杂，必要时拆分 |
+| kotlin:S134 | `if/for/while/when/try` 不得嵌套过深 |
+| kotlin:S126 | `if ... else if` 链必须以 `else` 结尾 |
+| kotlin:S1143 | `finally` 块中禁止 `return/break/continue/throw` |
+| kotlin:S1192 | 相同字符串字面量出现 3 次以上必须提取为常量 |
+| kotlin:S4423 | 禁止使用弱 SSL/TLS 协议 |
+| kotlin:S4830 | SSL/TLS 连接必须校验服务器证书 |
+| kotlin:S5527 | SSL/TLS 连接必须校验服务器主机名 |
+| kotlin:S5332 | 禁止使用明文协议（HTTP、FTP 等） |
+| kotlin:S4790 | 禁止弱哈希算法（MD5、SHA-1） |
+| kotlin:S4426 | 加密密钥长度必须满足安全要求 |
+
+### MAJOR — 新增代码重点规范（选取 Android 项目高频规则）
+
+**Kotlin 惯用法：**
+```kotlin
+// kotlin:S6512 — 属性访问替代 getter/setter（MAJOR）
+// ❌ BAD
+view.getVisibility()
+activity.getSupportFragmentManager()
+obj.setEnabled(true)
+// ✅ GOOD
+view.visibility
+activity.supportFragmentManager
+obj.isEnabled = true
+
+// kotlin:S6519 — 结构相等用 == / !=（MAJOR）
+// ❌ BAD
+if (a.equals(b)) { }
+// ✅ GOOD
+if (a == b) { }
+
+// kotlin:S6517 — 单方法接口声明为 fun interface（MAJOR）
+// ❌ BAD
+interface Callback { fun onResult(value: String) }
+val cb = object : Callback { override fun onResult(v: String) { ... } }
+// ✅ GOOD
+fun interface Callback { fun onResult(value: String) }
+val cb = Callback { value -> ... }
+
+// kotlin:S6511 — 链式 if 应改为 when（MAJOR）
+// ❌ BAD
+if (x == A) { ... } else if (x == B) { ... } else { ... }
+// ✅ GOOD
+when (x) { A -> ... B -> ... else -> ... }
+
+// kotlin:S6510 — return 提升到 if/when 之前（MAJOR）
+// ❌ BAD
+return if (cond) expr1 else expr2   // 当分支逻辑复杂时
+// ✅ GOOD: 提前 return 各分支
+
+// kotlin:S6529 — 使用 isEmpty/isNotEmpty/isNullOrEmpty（MAJOR）
+// ❌ BAD
+if (list.size == 0) { }
+if (str.length > 0) { }
+// ✅ GOOD
+if (list.isEmpty()) { }
+if (str.isNotEmpty()) { }
+```
+
+**代码整洁：**
+```kotlin
+// kotlin:S1481 — 删除未使用的局部变量（MAJOR）
+// kotlin:S1128 — 删除未使用的 import（MAJOR）
+// kotlin:S1125 — 避免冗余的 Boolean 字面量（MAJOR）
+// ❌ BAD
+if (flag == true) { }
+return condition == false
+// ✅ GOOD
+if (flag) { }
+return !condition
+
+// kotlin:S1066 — 合并可合并的 if 语句（MAJOR）
+// ❌ BAD
+if (a) { if (b) { doSomething() } }
+// ✅ GOOD
+if (a && b) { doSomething() }
+
+// kotlin:S6524 — 不变集合应声明为不可变（MAJOR）
+// ❌ BAD
+val list = mutableListOf(1, 2, 3)  // 从未修改
+// ✅ GOOD
+val list = listOf(1, 2, 3)
+
+// kotlin:S3353 — 不再赋值的变量用 val（CRITICAL）
+// ❌ BAD
+var x = computeValue()  // x 之后没有重新赋值
+// ✅ GOOD
+val x = computeValue()
+```
+
+**命名约定（MAJOR）：**
+- `kotlin:S100`：函数名 camelCase
+- `kotlin:S101`：类名 PascalCase
+- `kotlin:S117`：局部变量/参数名 camelCase
+
+---
+
+## Java 规则（PAX Sonar way，遗留 Java 文件适用）
+
+### java:S* BLOCKER
+- `S2115`：数据库连接必须使用安全密码
+- `S1147`：禁止调用 `System.exit()`
+- `S2693`：禁止在构造器中启动线程
+- `S2236`：`wait/notify/notifyAll` 不得在 `Thread` 实例上调用
+
+### java:S* CRITICAL（常见）
+- `S3776`：方法认知复杂度过高
+- `S2208`：禁止通配符 import（`import java.util.*`）
+- `S1143`：`finally` 中禁止跳转语句
+- `S2222`：锁必须在所有路径上释放
+
+### java:S* MAJOR（高频）
+| 规则 | 要求 |
+|------|------|
+| java:S1117 | 局部变量不得遮蔽类字段 |
+| java:S1118 | 工具类必须声明 private 构造方法 |
+| java:S2681 | `if/for/while` 多语句块必须加花括号 |
+| java:S1176 | public 类、方法、字段必须写 Javadoc |
+| java:S1144 | 删除未使用的 private 方法 |
+| java:S1481 | 删除未使用的局部变量（此处为 MINOR） |
+| java:S1128 | 删除未使用的 import（此处为 MINOR） |
+| java:S2694 | 不引用外部类的内部类应声明为 `static` |
+| java:S2589 | 布尔表达式不得是无意义的常量 |
+
+---
+
+## 注释覆盖率要求（门禁硬指标）
+
+- **整体注释密度 ≥ 15%**（门禁配置：`comment_lines_density LT 15`）
+- 生成代码时，**public 类/接口/方法/重要属性**必须编写 KDoc（Kotlin）或 Javadoc（Java）
+- 注释说明"为什么"，不复述"是什么"
+
+```kotlin
+/**
+ * 处理支付进件请求并映射为领域模型。
+ *
+ * @param bundle 来自 Intent 的原始参数包，必须包含 [KEY_AMOUNT] 和 [KEY_CURRENCY]
+ * @return 解析后的 [EntryRequest]，若关键字段缺失则抛出 [IllegalArgumentException]
+ */
+fun parseEntryRequest(bundle: Bundle): EntryRequest { ... }
+```
