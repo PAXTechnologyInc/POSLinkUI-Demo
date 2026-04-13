@@ -59,7 +59,8 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = false
+            // R8 obfuscates dex/class names for release APK (PAX security naming-ratio checks on decompiled artifacts).
+            isMinifyEnabled = true
             isShrinkResources = false
             isZipAlignEnabled = false
             proguardFiles(

@@ -15,44 +15,91 @@
  it would be: obfuscation_whitelist = ['R$attr.smali', 'R$drawable.smali'].
  ============================================================================
 """
-# case 1：apk 权限设置白名单（保留通用系统权限）
+# 用例标题: Application Permission Security Check (应用申请的权限安全检测)
+# 示例: permissions_whitelist = ["android.permission.READ_EXTERNAL_STORAGE"]
 permissions_whitelist = [
-    "android.permission.READ_EXTERNAL_STORAGE",
-    "android.permission.WRITE_EXTERNAL_STORAGE",
-    "android.permission.CHANGE_CONFIGURATION",
-    "android.permission.CAMERA",
-    "android.permission.READ_PHONE_STATE",
-]
+                           "android.permission.READ_EXTERNAL_STORAGE",
+                             "android.permission.WRITE_EXTERNAL_STORAGE",
+                             "android.permission.CHANGE_CONFIGURATION",
+                             "android.permission.CAMERA",
+                             "android.permission.READ_PHONE_STATE",
+                             ]
 
-# case 3：代码混淆白名单（保留通用 R$* 资源类）
+# 用例标题: Code Obfuscation Check (代码混淆检查)
+# 示例: obfuscation_whitelist = True，是否跳过可选用例，False跳过检查
 obfuscation_whitelist = [
-    "R$attr.smali",
-    "R$drawable.smali",
-    "R$id.smali",
-    "R$layout.smali",
-    "R$styleable.smali",
-]
+                            "R$attr.smali",
+                            "R$drawable.smali",
+                            "R$id.smali",
+                            "R$layout.smali",
+                            "R$styleable.smali",
+                        ]
 
-# case 8：IP 地址白名单（当前项目暂不配置，留空）
+# 用例标题: Application Integrity Validation & Icon Replace (完整性校验检查)
+# 示例: completeness_whitelist_flag = True，是否跳过可选用例，False跳过检查
+completeness_whitelist_flag = True
+
+# 用例标题: Check ip address (外部IP地址安全检测)
+# 示例: ip_address_whitelist = [{'com.pax.market.': '18.200.80.151'}]
 ip_address_whitelist = []
 
-# case 10：四大组件白名单（当前项目暂不配置，留空）
-major_components_whitelist = {}
-
-# case 12：开源许可证合规检查（保留通用三方库白名单）
-license_compliance_whitelist = {
-    "javacsv-2.0.jar",
-    "jaxb-api-2.2.12.jar",
-    "xpp3-1.1.4c.jar",
-    "jakarta.annotation-api-2.0.0.jar",
+# 用例标题: Android Core Component Security Check (四大组件安全检测)
+# 示例: major_components_whitelist = {"com.pax.pay.thirdpartyinvoke.PaymentService": "true", }
+major_components_whitelist = {
+     "com.paxus.pay.poslinkui.demo.MainActivity": "true",
+     "com.paxus.pay.poslinkui.demo.entry.EntryActivity": "true"
 }
 
-# case 13: 字体侵权检查（保留通用字体白名单）
-fonts_whitelist = {"NotoSans-SemiBold.ttf"}
+# 用例标题: Dependency Licence Detection (开源许可证合规检查)
+# 示例: license_compliance_whitelist = {'GNU Library or Lesser General Public License'}
+license_compliance_whitelist = {'javacsv-2.0.jar',
+                                'jaxb-api-2.2.12.jar',
+                                'xpp3-1.1.4c.jar',
+                                'jakarta.annotation-api-2.0.0.jar'}
 
-# 是否跳过可选用例标志位，保持原有含义
-prohibit_screenshots = True  # case 6：屏幕截图检查
-prohibit_gif_animation = True  # case 9：GIF 动画检查
-sqlite3_encryption = True  # case 11：数据库加密检查
+# 用例标题: Font License Compliance Check (字体库侵权检查)
+# 示例: fonts_whitelist = {'aaa.ttf'}
+fonts_whitelist = {'NotoSans-SemiBold.ttf'}
+
+# 用例标题: Fragment Injection Check (Fragment注入检查)
+# 示例: Fragment_whitelist_flag = True，是否跳过可选用例，False跳过检查
+Fragment_whitelist_flag = True
+
+# 用例标题: Activity Hijacking Check (Activity界面劫持检查)
+# 示例: Activity_whitelist_flag = True，是否跳过可选用例，False跳过检查
+Activity_whitelist_flag = True
+
+# 用例标题: Dynamic DEX File Security Validation Check (动态加载DEX文件检查)
+# 示例: dex_dynamic_loading_whitelist = True，是否跳过可选用例，False跳过检查
+dex_dynamic_loading_whitelist_flag = True
+
+# 用例标题: Module Comparison Between SonarQube Configuration File and Gradle Settings File
+# (sonar文件扫描模块与gradle文件模块对比检查)
+# 示例: sonar_whitelist = ['gradlew', 'gradlew.bat', 'gradle-wrapper.jar']
+sonar_whitelist = ['VERSION_CATALOGS']
+
+# 用例标题: Application Anti-Screenshot and Anti-Screen-Recording Check (应用防截屏防录屏检查)
+# 示例: prohibit_screenshots = True，是否跳过可选用例，False跳过检查
+prohibit_screenshots = True
+
+# 用例标题: GIF Animation Detection (GIF动态图片检测)
+# 示例: prohibit_gif_animation = True，是否跳过可选用例，False跳过检查
+prohibit_gif_animation = False
+
+# 用例标题: Database Encryption Check (数据库加密检查)
+# 示例: sqlite3_encryption = True，是否跳过可选用例，False跳过检查
+# 由于数据库加密涉及的改动范围较大，可以暂时跳过检查。
+sqlite3_encryption = False
+# 示例: database_file_path = ['/data/data/com.pax.edc.ui1/databases/data.db']，将需要检查的数据库文件路径填进去即可。
+# 提示: 数据库文件路径为必填项，不填则会导致检查失败。
 database_file_path = []
-# 不在白名单内的 case 属于必须解决的安全性问题。
+
+# 用例标题: Check the apk name and package and version number (检查apk名称、apk包名和版本号)
+# 示例: check_apk_name_and_package = True，是否跳过可选用例，False跳过检查
+check_apk_name_and_package = False
+
+# 用例标题: Comprehensive inspection of Bitmap usage (Bitmap内存优化检查)
+# 示例：bitmap_whitelist = ['ResourceUtil.java','logo_halyk_launch.png'] 过大的图片文件和有问题的代码文件都放置在该列表里面
+bitmap_whitelist = []
+
+# 不在白名单内的case属于必须解决的安全性问题。
