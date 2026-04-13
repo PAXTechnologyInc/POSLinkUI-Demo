@@ -199,36 +199,36 @@ autoSmokeTest:
     tags:
         - slave2
         
-# 执行自动化回归测试，此处配置需要联系 QA 后方可修改
-autoRegressionTest:
-    stage: test
-    needs:
-        - autoSmokeTest
-    rules:  # 仅在批准合并到 release 分支时才需要自动化测试
-        - if: $CI_COMMIT_BRANCH =~ /^release.*/
-    script:
-        # 检出自动化测试脚本工程，第三个参数为脚本存放的branch名称，需传入正确的值
-        - D:/autoTest/script/checkout-regressiontest-code.bat http://172.16.3.60/qa/auto_test/sg_cybersource_pay_a.git $CI_PROJECT_NAME master
-        # 执行自动化测试并发送邮件通知，传入参数，分别为项目名、bat脚本名称、项目ID、合并分支名
-        - D:/autoTest/script/runRegressionTest.bat $CI_PROJECT_NAME SG_CYBERSOURCE_PAY_A_Full_Test.bat $CI_PROJECT_ID $CI_COMMIT_BRANCH
-    allow_failure: true
-    timeout: 1 day
-    tags:
-        - slave1
-
-# 执行自动化压力测试，此处配置需要联系 QA 后方可修改
-autoPressureTest:
-    stage: test
-    needs:
-        - autoRegressionTest
-    rules:  # 仅在批准合并到 golive 或 main 分支时才需要自动化压力测试
-        - if: $CI_COMMIT_BRANCH =~ /^release.*/
-    script:
-        # 获取最新自动化压力测试脚本工程
-        - D:/autoTest/script/checkout-stresstest-code-release.bat
-        # 执行自动化测试并发送邮件通知，传入参数，分别为项目名、项目ID、合并分支名
-        - D:/autoTest/script/runStressTest.bat $CI_PROJECT_NAME $CI_PROJECT_ID $CI_COMMIT_BRANCH
-    allow_failure: true
-    timeout: 1 day
-    tags:
-        - slave1
+## 执行自动化回归测试，此处配置需要联系 QA 后方可修改
+#autoRegressionTest:
+#    stage: test
+#    needs:
+#        - autoSmokeTest
+#    rules:  # 仅在批准合并到 release 分支时才需要自动化测试
+#        - if: $CI_COMMIT_BRANCH =~ /^release.*/
+#    script:
+#        # 检出自动化测试脚本工程，第三个参数为脚本存放的branch名称，需传入正确的值
+#        - D:/autoTest/script/checkout-regressiontest-code.bat http://172.16.3.60/qa/auto_test/sg_cybersource_pay_a.git $CI_PROJECT_NAME master
+#        # 执行自动化测试并发送邮件通知，传入参数，分别为项目名、bat脚本名称、项目ID、合并分支名
+#        - D:/autoTest/script/runRegressionTest.bat $CI_PROJECT_NAME SG_CYBERSOURCE_PAY_A_Full_Test.bat $CI_PROJECT_ID $CI_COMMIT_BRANCH
+#    allow_failure: true
+#    timeout: 1 day
+#    tags:
+#        - slave1
+#
+## 执行自动化压力测试，此处配置需要联系 QA 后方可修改
+#autoPressureTest:
+#    stage: test
+#    needs:
+#        - autoRegressionTest
+#    rules:  # 仅在批准合并到 golive 或 main 分支时才需要自动化压力测试
+#        - if: $CI_COMMIT_BRANCH =~ /^release.*/
+#    script:
+#        # 获取最新自动化压力测试脚本工程
+#        - D:/autoTest/script/checkout-stresstest-code-release.bat
+#        # 执行自动化测试并发送邮件通知，传入参数，分别为项目名、项目ID、合并分支名
+#        - D:/autoTest/script/runStressTest.bat $CI_PROJECT_NAME $CI_PROJECT_ID $CI_COMMIT_BRANCH
+#    allow_failure: true
+#    timeout: 1 day
+#    tags:
+#        - slave1

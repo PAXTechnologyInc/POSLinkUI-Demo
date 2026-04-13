@@ -18,7 +18,7 @@ apply(plugin = "org.jetbrains.dokka")
 fun releaseTime(): String =
     LocalDate.now(ZoneOffset.UTC).format(DateTimeFormatter.BASIC_ISO_DATE)
 
-val appVersionName = "V1.03.00_${releaseTime()}"
+val appVersionName = "V1.04.00_${releaseTime()}"
 val apkBaseName = "POSLinkUI-Demo_$appVersionName"
 
 val signingProps = Properties().apply {
@@ -51,7 +51,7 @@ android {
         applicationId = "com.paxus.pay.poslinkui.demo"
         minSdk = 22
         targetSdk = 31
-        versionCode = 22
+        versionCode = 23
         versionName = appVersionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
