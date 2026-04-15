@@ -173,7 +173,8 @@ internal data class PoslinkDisplayImage(
 
 internal enum class PoslinkMessageVisualMode {
     Default,
-    ShowMessageLegacy
+    ShowMessageLegacy,
+    ShowItemLegacy
 }
 
 internal data class PoslinkMessageFallbackText(
@@ -275,10 +276,13 @@ internal fun PoslinkMessageDisplayScrollColumn(
     messageText: String,
     imageUrl: String,
     imageDesc: String,
-    isShowMessageLegacy: Boolean
+    visualMode: PoslinkMessageVisualMode
 ) {
+    val useLegacyTitleLayout = visualMode != PoslinkMessageVisualMode.Default
+    val useLegacyMessageGroups = visualMode == PoslinkMessageVisualMode.ShowMessageLegacy
+    val useLegacyImageBounds = visualMode != PoslinkMessageVisualMode.Default
     if (title.isNotBlank()) {
-        if (isShowMessageLegacy) {
+        if (useLegacyTitleLayout) {
             PoslinkFormattedTitleLegacy(title = title)
         } else {
             PoslinkFormattedTitle(title = title)
@@ -286,7 +290,7 @@ internal fun PoslinkMessageDisplayScrollColumn(
     }
     if (messageText.isNotBlank()) {
         Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        if (isShowMessageLegacy) {
+        if (useLegacyMessageGroups) {
             PoslinkMessageListText(messageText = messageText)
         } else {
             PosLinkText(text = messageText, role = PosLinkTextRole.Supporting)
@@ -298,17 +302,17 @@ internal fun PoslinkMessageDisplayScrollColumn(
             data = imageUrl,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(if (isShowMessageLegacy) 136.dp else 120.dp),
+                .height(if (useLegacyImageBounds) 136.dp else 120.dp),
             options = PosLinkAsyncImageOptions(
                 contentDescription = imageDesc.ifBlank { null },
-                contentScale = if (isShowMessageLegacy) ContentScale.Fit else ContentScale.Crop
+                contentScale = if (useLegacyImageBounds) ContentScale.Fit else ContentScale.Crop
             )
         )
         if (imageDesc.isNotBlank()) {
             Spacer(Modifier.height(PosLinkDesignTokens.CompactSpacing))
             PosLinkText(
                 text = imageDesc,
-                role = if (isShowMessageLegacy) PosLinkTextRole.Body else PosLinkTextRole.Supporting
+                role = if (useLegacyImageBounds) PosLinkTextRole.Body else PosLinkTextRole.Supporting
             )
         }
     }
@@ -319,13 +323,14 @@ internal fun PoslinkMessageDisplayFooterColumn(
     tax: String,
     total: String,
     showConfirmButton: Boolean,
-    isShowMessageLegacy: Boolean,
+    visualMode: PoslinkMessageVisualMode,
     onConfirm: () -> Unit
 ) {
+    val useLegacyTaxTotalStyle = visualMode != PoslinkMessageVisualMode.Default
     PoslinkTaxTotalFooter(
         tax = tax,
         total = total,
-        showMessageLegacy = isShowMessageLegacy
+        showMessageLegacy = useLegacyTaxTotalStyle
     )
     if (showConfirmButton) {
         Spacer(Modifier.height(PosLinkDesignTokens.SectionBreakSpacing))
@@ -374,7 +379,6 @@ internal fun PoslinkMessageDisplayLayout(p: PoslinkMessageDisplayLayoutParams) {
     val visualMode = p.footer.visualMode
     val showConfirmButton = p.footer.showConfirmButton
     val onConfirm = p.footer.onConfirm
-    val isShowMessageLegacy = visualMode == PoslinkMessageVisualMode.ShowMessageLegacy
     val bottomInset = if (showConfirmButton) 140.dp else 92.dp
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -388,7 +392,7 @@ internal fun PoslinkMessageDisplayLayout(p: PoslinkMessageDisplayLayoutParams) {
                 messageText = messageText,
                 imageUrl = imageUrl,
                 imageDesc = imageDesc,
-                isShowMessageLegacy = isShowMessageLegacy
+                visualMode = visualMode
             )
         }
         Column(
@@ -400,7 +404,7 @@ internal fun PoslinkMessageDisplayLayout(p: PoslinkMessageDisplayLayoutParams) {
                 tax = tax,
                 total = total,
                 showConfirmButton = showConfirmButton,
-                isShowMessageLegacy = isShowMessageLegacy,
+                visualMode = visualMode,
                 onConfirm = onConfirm
             )
         }

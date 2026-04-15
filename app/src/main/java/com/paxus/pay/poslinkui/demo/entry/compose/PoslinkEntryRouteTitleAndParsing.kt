@@ -17,6 +17,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
+import java.math.BigDecimal
+import java.math.RoundingMode
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -440,13 +442,13 @@ internal fun poslinkJsonDoubleQuotedEnvelope(s: String): Boolean {
     return wrappedObject || wrappedArray
 }
 
-internal fun parsePoslinkShowItemList(raw: String): String {
+internal fun parsePoslinkShowItemList(raw: String, currencySymbol: String): String {
     if (raw.isBlank()) return ""
     val normalizedRaw = normalizePoslinkPayload(raw)
     val strictItems = parsePoslinkShowItemListFromJson(normalizedRaw)
-    if (strictItems.isNotEmpty()) return strictItems.toReadablePoslinkItemText()
+    if (strictItems.isNotEmpty()) return strictItems.toReadablePoslinkItemText(currencySymbol)
     val looseItems = parsePoslinkShowItemListLoose(normalizedRaw)
-    if (looseItems.isNotEmpty()) return looseItems.toReadablePoslinkItemText()
+    if (looseItems.isNotEmpty()) return looseItems.toReadablePoslinkItemText(currencySymbol)
     val fallback = parsePoslinkMessageList(normalizedRaw)
     return fallback.ifBlank { "Item details unavailable" }
 }
@@ -598,23 +600,51 @@ internal fun JSONObject.optStringOrNull(key: String): String? {
     }
 }
 
-internal fun List<PoslinkItemDetail>.toReadablePoslinkItemText(): String =
-    mapIndexed { index, item -> item.toReadableLine(index) }
+internal fun List<PoslinkItemDetail>.toReadablePoslinkItemText(currencySymbol: String): String =
+    mapIndexed { index, item -> item.toReadableLine(index, currencySymbol) }
         .filter { it.isNotBlank() }
         .joinToString("\n\n")
 
-internal fun PoslinkItemDetail.toReadableLine(index: Int): String {
+internal fun PoslinkItemDetail.toReadableLine(index: Int, currencySymbol: String): String {
+    val symbol = currencySymbol.ifBlank { "$" }
     val name = productName?.takeIf { it.isNotBlank() }
         ?: pluCode?.takeIf { it.isNotBlank() }?.let { "Item $it" }
         ?: "Item ${index + 1}"
-    val quantityPart = quantity?.takeIf { it.isNotBlank() }?.let { "Qty $it" }
-    val unitPricePart = (unitPrice ?: price)?.takeIf { it.isNotBlank() }?.let {
-        val unitSuffix = unit?.takeIf { value -> value.isNotBlank() }?.let { value -> "/$value" }.orEmpty()
-        "Unit $it$unitSuffix"
+    val quantityRaw = quantity?.takeIf { it.isNotBlank() }
+    val unitRaw = unit?.takeIf { it.isNotBlank() }
+    val unitPriceText = formatPoslinkMoney(unitPrice ?: price, symbol)
+    val amountText = formatPoslinkMoney(price, symbol)
+
+    val qtyAndUnit = when {
+        quantityRaw.isNullOrBlank() -> ""
+        unitRaw.equals("x", ignoreCase = true) -> "x$quantityRaw"
+        unitRaw.isNullOrBlank() -> quantityRaw
+        else -> "$quantityRaw$unitRaw"
     }
-    val amountPart = price?.takeIf { it.isNotBlank() }?.let { "Amount $it" }
-    val detailLine = listOf(quantityPart, unitPricePart, amountPart)
-        .filterNotNull()
+    val atUnitPrice = when {
+        unitPriceText.isBlank() -> ""
+        unitRaw.equals("x", ignoreCase = true) -> "@$unitPriceText"
+        unitRaw.isNullOrBlank() -> "@$unitPriceText"
+        else -> "@$unitPriceText/$unitRaw"
+    }
+    val leadingDetail = listOf(qtyAndUnit, atUnitPrice)
+        .filter { it.isNotBlank() }
+        .joinToString(" ")
+    val detailLine = listOf(leadingDetail, amountText)
+        .filter { it.isNotBlank() }
         .joinToString("  ")
-    return if (detailLine.isBlank()) name else "$name\n$detailLine"
+
+    val numberedName = "${index + 1}. $name"
+    return if (detailLine.isBlank()) {
+        numberedName
+    } else {
+        "$numberedName\n$detailLine"
+    }
+}
+
+internal fun formatPoslinkMoney(raw: String?, symbol: String): String {
+    val source = raw?.trim().orEmpty()
+    if (source.isBlank()) return ""
+    val value = source.toBigDecimalOrNull() ?: return "$symbol$source"
+    return "$symbol${value.setScale(2, RoundingMode.HALF_UP).toPlainString()}"
 }

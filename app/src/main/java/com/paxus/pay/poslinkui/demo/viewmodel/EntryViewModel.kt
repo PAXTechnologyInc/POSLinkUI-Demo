@@ -96,9 +96,6 @@ class EntryViewModel @Inject constructor(
 
     fun clearPoslinkContent() {
         _uiState.update { prev ->
-            if (!prev.categories.contains(com.pax.us.pay.ui.constant.entry.PoslinkEntry.CATEGORY)) {
-                return@update prev
-            }
             prev.copy(
                 revision = prev.revision + 1L,
                 extras = Bundle(),

@@ -236,7 +236,7 @@ private fun PoslinkRouteShowMessage(
     val displayMessage = when {
         list.isNotBlank() -> list
         fallbackText != null -> fallbackText.text
-        else -> "Message content unavailable"
+        else -> ""
     }
     if (list.isBlank() && fallbackText != null) {
         Logger.w(
@@ -249,7 +249,7 @@ private fun PoslinkRouteShowMessage(
         )
     } else if (list.isBlank()) {
         Logger.w(
-            "SHOW_MESSAGE parsed empty, fallback missing. using placeholder. constKey=%s rawLen=%d keys=%s rawPreview=%s",
+            "SHOW_MESSAGE parsed empty, fallback missing. constKey=%s rawLen=%d keys=%s rawPreview=%s",
             EntryExtraData.PARAM_MESSAGE_LIST,
             rawMessageList.length,
             extras.keySet().joinToString(","),
@@ -292,27 +292,40 @@ private fun PoslinkRouteShowMessage(
 }
 
 @Composable
-private fun PoslinkRouteShowItem(extras: Bundle, viewModel: EntryViewModel) {
+private fun PoslinkRouteShowItem(
+    extras: Bundle,
+    activity: FragmentActivity,
+    viewModel: EntryViewModel
+) {
     val title = extras.getString(EntryExtraData.PARAM_TITLE).orEmpty()
     val tax = extras.getString(EntryExtraData.PARAM_TAX_LINE).orEmpty()
     val total = extras.getString(EntryExtraData.PARAM_TOTAL_LINE).orEmpty()
+    val currencySymbol = extras.getString(EntryExtraData.PARAM_CURRENCY_SYMBOL).orEmpty()
     val rawItems = resolvePoslinkShowItemRaw(extras)
-    val list = parsePoslinkShowItemList(rawItems)
+    val list = parsePoslinkShowItemList(rawItems, currencySymbol)
     val image = resolvePoslinkDisplayImage(
         extras = extras,
         fallbackRawPayload = rawItems
     )
+    val resolvedImageUrl = image.url.ifBlank {
+        resolveShowMessageDrawableUri(
+            activity = activity,
+            imageDesc = image.desc
+        )
+    }
     PoslinkMessageDisplayLayout(
         PoslinkMessageDisplayLayoutParams(
             body = PoslinkMessageDisplayBodyParams(
                 title = title,
                 messageText = list,
-                imageUrl = image.url,
-                imageDesc = image.desc
+                imageUrl = resolvedImageUrl,
+                imageDesc = ""
             ),
             footer = PoslinkMessageDisplayFooterParams(
                 tax = tax,
                 total = total,
+                visualMode = PoslinkMessageVisualMode.ShowItemLegacy,
+                showConfirmButton = false,
                 onConfirm = { viewModel.sendNext(null) }
             )
         )
@@ -519,7 +532,7 @@ fun PoslinkEntryRoute(
         PoslinkEntry.ACTION_SHOW_THANK_YOU -> PoslinkRouteShowThankYou(extras, viewModel)
         PoslinkEntry.ACTION_INPUT_TEXT -> PoslinkRouteInputText(extras, activity, viewModel)
         PoslinkEntry.ACTION_SHOW_MESSAGE -> PoslinkRouteShowMessage(extras, activity, viewModel)
-        PoslinkEntry.ACTION_SHOW_ITEM -> PoslinkRouteShowItem(extras, viewModel)
+        PoslinkEntry.ACTION_SHOW_ITEM -> PoslinkRouteShowItem(extras, activity, viewModel)
         PoslinkEntry.ACTION_SHOW_TEXT_BOX -> PoslinkTextBoxButtons(extras, viewModel)
         PoslinkEntry.ACTION_SHOW_INPUT_TEXT_BOX -> PoslinkRouteShowInputTextBox(extras, activity, viewModel)
         PoslinkEntry.ACTION_SHOW_SIGNATURE_BOX -> PoslinkRouteShowSignatureBox(extras, viewModel)
