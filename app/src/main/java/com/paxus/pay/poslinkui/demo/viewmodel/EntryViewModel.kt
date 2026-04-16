@@ -76,11 +76,19 @@ class EntryViewModel @Inject constructor(
     val managerResponse: SharedFlow<ManagerResponseEvent> = _managerResponse.asSharedFlow()
 
     /**
+     * After [sendNext], matches legacy `EditabilityBlocker.block`: disable primary actions until
+     * [EntryResponse.ACTION_DECLINED] clears the lock; [EntryResponse.ACTION_ACCEPTED] leaves UI locked.
+     */
+    private val _interactionLocked = MutableStateFlow(false)
+    val interactionLocked: StateFlow<Boolean> = _interactionLocked.asStateFlow()
+
+    /**
      * Apply a new Entry [Intent] after the activity has validated it
      * ([com.paxus.pay.poslinkui.demo.entry.EntryActionRegistry.canResolveEntry] or demo extra).
      */
     fun consumeEntryIntent(intent: Intent) {
         _statusOverlay.value = null
+        _interactionLocked.value = false
         val extras = Bundle().apply { intent.extras?.let { putAll(it) } }
         _uiState.update { prev ->
             EntryUiState(
@@ -95,6 +103,7 @@ class EntryViewModel @Inject constructor(
     }
 
     fun clearPoslinkContent() {
+        _interactionLocked.value = false
         _uiState.update { prev ->
             prev.copy(
                 revision = prev.revision + 1L,
@@ -130,6 +139,7 @@ class EntryViewModel @Inject constructor(
                 _managerResponse.tryEmit(ManagerResponseEvent.Accepted)
             }
             EntryResponse.ACTION_DECLINED -> {
+                _interactionLocked.value = false
                 val code = extras?.getInt(EntryResponse.PARAM_CODE) ?: -1
                 val msg = extras?.getString(EntryResponse.PARAM_MSG)
                 _managerResponse.tryEmit(ManagerResponseEvent.Declined(code, msg))
@@ -144,6 +154,7 @@ class EntryViewModel @Inject constructor(
             Logger.w("EntryViewModel.sendNext skipped: no entryAction")
             return
         }
+        _interactionLocked.value = true
         EntryRequestUtils.sendNext(getApplication(), s.senderPackage, action, bundle)
     }
 

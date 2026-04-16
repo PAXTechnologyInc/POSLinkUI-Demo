@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFillAppearance
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFilledButton
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
@@ -88,6 +89,7 @@ fun OrigTransDateScreen(
     dateFormat: String?,
     onConfirm: (String) -> Unit
 ) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     val resolvedFormat = dateFormat?.takeIf { it.isNotBlank() } ?: DateFormat.YYYYMMDD
     val activity = LocalContext.current as? FragmentActivity
     val focusRequester = remember { FocusRequester() }
@@ -148,6 +150,7 @@ fun OrigTransDateScreen(
                     )
                 }
             },
+            readOnly = interactionLocked,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(PosLinkDesignTokens.ButtonHeight)
@@ -201,10 +204,11 @@ fun OrigTransDateScreen(
         Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
         PosLinkLegacyMaterialFilledButton(
             onClick = { onConfirm(value.text.replace("[^0-9]".toRegex(), "")) },
+            enabled = !interactionLocked,
             modifier = Modifier.fillMaxWidth(),
             appearance = PosLinkLegacyMaterialFillAppearance(
                 slotHeight = PosLinkDesignTokens.ButtonHeight,
-                shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius),
+                shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
                 containerColor = Color(0xFF6E85B7),
                 disabledContainerColor = Color(0xFF6E85B7).copy(alpha = 0.38f)
             )

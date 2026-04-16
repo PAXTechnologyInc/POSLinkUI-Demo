@@ -4,19 +4,19 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -73,6 +73,7 @@ fun ConfirmationSpecialRoute(
 
 @Composable
 private fun ReceiptPreviewEntryScreen(extras: Bundle, viewModel: EntryViewModel) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     val uriStr = extras.getString(EntryExtraData.PARAM_RECEIPT_URI).orEmpty()
     val crossfadeEnabled = AnimationSupport.shouldUseReceiptPreviewCrossfade(currentAnimationPolicy)
     Column(
@@ -124,13 +125,15 @@ private fun ReceiptPreviewEntryScreen(extras: Bundle, viewModel: EntryViewModel)
             },
             onCancel = {
                 viewModel.sendNext(buildConfirmationSubmitBundle(confirmed = false))
-            }
+            },
+            buttonsEnabled = !interactionLocked
         )
     }
 }
 
 @Composable
 private fun QrCodeReceiptEntryScreen(extras: Bundle, viewModel: EntryViewModel) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     val content = extras.getString(EntryExtraData.PARAM_QR_CODE_CONTENT).orEmpty()
     val bmp = remember(content) {
         if (content.isBlank()) null else QrBitmapEncoder.encode(content, 512)
@@ -157,7 +160,8 @@ private fun QrCodeReceiptEntryScreen(extras: Bundle, viewModel: EntryViewModel) 
         Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
         PosLinkPrimaryButton(
             text = stringResource(R.string.confirm),
-            onClick = { viewModel.sendNext(null) }
+            onClick = { viewModel.sendNext(null) },
+            enabled = !interactionLocked
         )
     }
 }
@@ -172,6 +176,7 @@ private fun StartUiEntryScreen(viewModel: EntryViewModel) {
 
 @Composable
 private fun SurchargeFeeEntryScreen(extras: Bundle, viewModel: EntryViewModel) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     LaunchedEffect(Unit) {
         Logger.i("SurchargeFee parity v1 active")
     }
@@ -183,50 +188,52 @@ private fun SurchargeFeeEntryScreen(extras: Bundle, viewModel: EntryViewModel) {
     }
     val currency = extras.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD)
     val amountLine = CurrencyUtils.convert(fee, currency)
-    val feeSummary = when {
-        name.isNotBlank() -> {
-            val trimmedName = name.trimEnd().trimEnd(':')
-            "$trimmedName $amountLine"
-        }
-        else -> amountLine
-    }.ifBlank { stringResource(R.string.surcharge_fallback_message) }
     val enableBypass = extras.getBoolean(EntryExtraData.PARAM_ENABLE_BYPASS, true)
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = PosLinkDesignTokens.ScreenPadding)
+            .padding(all = 25.dp)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(PosLinkDesignTokens.SpaceBetweenTextView)
+                .padding(vertical = 15.dp),
+            horizontalArrangement = Arrangement.Center
         ) {
             PosLinkText(
-                text = feeSummary,
+                text = name.ifBlank { stringResource(R.string.surcharge_fallback_message) },
                 role = PosLinkTextRole.Body,
-                modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
+            Spacer(Modifier.width(PosLinkDesignTokens.SpaceBetweenTextView))
             PosLinkText(
-                text = stringResource(R.string.surcharge_continue_prompt),
+                text = amountLine,
                 role = PosLinkTextRole.Body,
-                modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
+        }
+        PosLinkText(
+            text = stringResource(R.string.surcharge_continue_prompt),
+            role = PosLinkTextRole.Body,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+        Spacer(Modifier.height(15.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(PosLinkDesignTokens.CompactSpacing)
+        ) {
             PosLinkPrimaryButton(
                 text = stringResource(R.string.confirm_option_yes),
                 onClick = {
                     viewModel.sendNext(buildSurchargeFeeSubmitBundle(SurchargeFeeSubmitChoice.Accept))
                 },
+                enabled = !interactionLocked,
                 variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
             )
             PosLinkPrimaryButton(
                 text = stringResource(R.string.confirm_option_no),
-                onClick = {
-                    viewModel.sendNext(buildSurchargeFeeSubmitBundle(SurchargeFeeSubmitChoice.Decline))
-                },
+                onClick = { viewModel.sendAbort() },
                 variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
             )
             if (enableBypass) {
@@ -235,6 +242,7 @@ private fun SurchargeFeeEntryScreen(extras: Bundle, viewModel: EntryViewModel) {
                     onClick = {
                         viewModel.sendNext(buildSurchargeFeeSubmitBundle(SurchargeFeeSubmitChoice.Bypass))
                     },
+                    enabled = !interactionLocked,
                     variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
                 )
             }
@@ -244,6 +252,7 @@ private fun SurchargeFeeEntryScreen(extras: Bundle, viewModel: EntryViewModel) {
 
 @Composable
 private fun ServiceFeeEntryScreen(extras: Bundle, viewModel: EntryViewModel) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     val feeName = extras.getString(EntryExtraData.PARAM_SERVICE_FEE_NAME)
     val totalAmount = extras.getLong(EntryExtraData.PARAM_TOTAL_AMOUNT)
     val feeAmount = extras.getLong(EntryExtraData.PARAM_SERVICE_FEE)
@@ -265,6 +274,7 @@ private fun ServiceFeeEntryScreen(extras: Bundle, viewModel: EntryViewModel) {
         },
         onCancel = {
             viewModel.sendNext(buildConfirmationSubmitBundle(confirmed = false))
-        }
+        },
+        buttonsEnabled = !interactionLocked
     )
 }

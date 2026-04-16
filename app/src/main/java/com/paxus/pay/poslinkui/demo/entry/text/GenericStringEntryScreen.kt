@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.pax.us.pay.ui.constant.entry.enumeration.InputType
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
@@ -93,6 +94,7 @@ fun GenericStringEntryScreen(
     onConfirm: (String) -> Unit,
     onError: (String) -> Unit
 ) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     var text by remember { mutableStateOf("") }
     val scroll = rememberScrollState()
     val focusRequester = remember { FocusRequester() }
@@ -135,11 +137,13 @@ fun GenericStringEntryScreen(
             keyboardType = derived.keyboardType,
             mask = derived.mask,
             maxChars = derived.maxChars,
+            readOnly = interactionLocked,
             focusRequester = focusRequester
         )
         Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
         PosLinkPrimaryButton(
             text = confirmText,
+            enabled = !interactionLocked,
             onClick = {
                 val t = text.trim()
                 if (!lengths.contains(t.length)) {
@@ -160,6 +164,7 @@ private fun GenericStringEntryTextField(
     keyboardType: KeyboardType,
     mask: Boolean,
     maxChars: Int,
+    readOnly: Boolean,
     focusRequester: FocusRequester
 ) {
     val applyFiltered: (String) -> Unit = { raw ->
@@ -175,6 +180,7 @@ private fun GenericStringEntryTextField(
         BasicTextField(
             value = text,
             onValueChange = applyFiltered,
+            readOnly = readOnly,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(PosLinkDesignTokens.ButtonHeight)
@@ -207,6 +213,7 @@ private fun GenericStringEntryTextField(
             value = text,
             onValueChange = applyFiltered,
             modifier = Modifier.fillMaxWidth(),
+            enabled = !readOnly,
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             visualTransformation = if (mask) PasswordVisualTransformation() else VisualTransformation.None

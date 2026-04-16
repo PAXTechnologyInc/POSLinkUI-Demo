@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkSurfaceCard
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
@@ -233,6 +234,7 @@ private fun CashbackPresetOptionsBlock(
     onPresetOptionClick: (Long) -> Unit,
     onNoThanksClick: () -> Unit
 ) {
+    val controlsEnabled = !LocalEntryInteractionLocked.current
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.height(optionsGridHeight),
@@ -246,7 +248,7 @@ private fun CashbackPresetOptionsBlock(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(PosLinkDesignTokens.ButtonHeight)
-                    .clickable { onPresetOptionClick(amt) },
+                    .clickable(enabled = controlsEnabled) { onPresetOptionClick(amt) },
                 contentPadding = PaddingValues(0.dp)
             ) {
                 Box(
@@ -263,7 +265,7 @@ private fun CashbackPresetOptionsBlock(
         modifier = Modifier
             .fillMaxWidth()
             .height(noThanksHeight)
-            .clickable { onNoThanksClick() },
+            .clickable(enabled = controlsEnabled) { onNoThanksClick() },
         contentPadding = PaddingValues(0.dp)
     ) {
         Box(
@@ -282,8 +284,10 @@ private fun CashbackOtherAmountField(
     currency: String?,
     onDisplayValueChange: (String) -> Unit
 ) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     OutlinedTextField(
         value = displayValue,
+        enabled = !interactionLocked,
         onValueChange = {
             val digits = it.replace("[^0-9]".toRegex(), "")
             if (digits.length <= maxLength) {
@@ -315,8 +319,10 @@ private fun CashbackConfirmBar(
     onError: (String) -> Unit,
     onConfirm: (Long) -> Unit
 ) {
+    val controlsEnabled = !LocalEntryInteractionLocked.current
     PosLinkPrimaryButton(
         text = confirmLabel,
+        enabled = controlsEnabled,
         onClick = {
             val value = if (displayValue.isNotEmpty()) CurrencyUtils.parse(displayValue) else 0L
             val lengthList = valuePattern

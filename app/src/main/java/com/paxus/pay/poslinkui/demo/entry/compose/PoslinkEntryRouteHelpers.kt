@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -89,17 +90,20 @@ internal fun resolvePoslinkTextBoxButtons(extras: Bundle): List<PoslinkTextBoxBu
 internal fun PoslinkTextBoxButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
-    val fill = Color(0xFF8899BB)
+    val fill = PosLinkDesignTokens.PrimaryColor
     PosLinkLegacyMaterialFilledButton(
         onClick = onClick,
         modifier = modifier,
+        enabled = enabled,
         appearance = PosLinkLegacyMaterialFillAppearance(
             slotHeight = PosLinkDesignTokens.ButtonHeight,
-            shape = MaterialTheme.shapes.extraSmall,
+            shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
             containerColor = fill,
-            disabledContainerColor = fill.copy(alpha = 0.38f)
+            disabledContainerColor = fill.copy(alpha = 0.38f),
+            pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor
         )
     ) {
         Text(

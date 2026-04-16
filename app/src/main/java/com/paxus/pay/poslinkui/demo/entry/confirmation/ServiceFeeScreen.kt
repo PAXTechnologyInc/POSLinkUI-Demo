@@ -37,7 +37,8 @@ data class ServiceFeeScreenContent(
 fun ServiceFeeScreen(
     content: ServiceFeeScreenContent,
     onConfirm: () -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    buttonsEnabled: Boolean = true
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         PosLinkSurfaceCard {
@@ -65,14 +66,16 @@ fun ServiceFeeScreen(
                 onClick = onCancel,
                 modifier = Modifier
                     .weight(1f),
-                fillMaxWidth = false
+                fillMaxWidth = false,
+                enabled = buttonsEnabled
             )
             PosLinkPrimaryButton(
                 text = content.positiveText,
                 onClick = onConfirm,
                 modifier = Modifier
                     .weight(1f),
-                fillMaxWidth = false
+                fillMaxWidth = false,
+                enabled = buttonsEnabled
             )
         }
     }

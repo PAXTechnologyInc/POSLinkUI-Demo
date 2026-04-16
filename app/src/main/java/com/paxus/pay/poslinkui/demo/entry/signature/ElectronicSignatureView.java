@@ -76,8 +76,7 @@ public class ElectronicSignatureView extends View {
     private boolean isTouched = false;
 
     /**
-     * Paint width px；
-     */
+     * Paint width px锛?     */
     private int mPaintWidth;
 
     /**
@@ -154,7 +153,7 @@ public class ElectronicSignatureView extends View {
             default:
                 break;
         }
-        // 更新绘制
+        // 鏇存柊缁樺埗
         invalidate();
         return true;
     }
@@ -223,7 +222,7 @@ public class ElectronicSignatureView extends View {
             float cY = (y + previousY) / 2;
 
             //dataListener.onMove((short)previousX, (short)previousY, (short)x, (short)y);
-            // seconds bezier curve to smooth curve；previousX, previousY as working point，cX, cY as end point
+            // seconds bezier curve to smooth curve锛沺reviousX, previousY as working point锛宑X, cY as end point
             mPath.quadTo(previousX, previousY, cX, cY);
 
             // for next start, take the previous end point x\y coordinate as next start point x\y coordinate
@@ -273,7 +272,7 @@ public class ElectronicSignatureView extends View {
     }
 
     /**
-     * 保存bitmap
+     * 淇濆瓨bitmap
      *
      * @param clearBlank to clear blank
      * @param blank      board size
@@ -311,13 +310,13 @@ public class ElectronicSignatureView extends View {
             if (buffer != null) {
                 File file = new File(path);
                 if (!file.delete()) {
-                    Logger.d(file.toString() + "is not existed");
+                    Logger.INSTANCE.d(file.toString() + "is not existed");
                 }
 
                 try (OutputStream outputStream = new FileOutputStream(file)) {
                     outputStream.write(buffer);
                 } catch (Exception e) {
-                    Logger.e(e);
+                    Logger.INSTANCE.e(e);
                 }
             }
         }).start();
@@ -390,8 +389,7 @@ public class ElectronicSignatureView extends View {
     }
 
     /**
-     * Progressive scan clear boundary blank。
-     *
+     * Progressive scan clear boundary blank銆?     *
      * @param bp    the bitmap
      * @param blank How many pixels are left in the margin
      * @return formatted bitmap
@@ -456,7 +454,7 @@ public class ElectronicSignatureView extends View {
             size = 0.5f;
         }
         matrix.postScale(size, size);// get zoom size
-        Bitmap bitmap1 = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true); // 根据缩放比例获取新的位图
+        Bitmap bitmap1 = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true); // 鏍规嵁缂╂斁姣斾緥鑾峰彇鏂扮殑浣嶅浘
 
         Bitmap newBitmap = Bitmap.createBitmap(rect.width(), rect.height(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(newBitmap);

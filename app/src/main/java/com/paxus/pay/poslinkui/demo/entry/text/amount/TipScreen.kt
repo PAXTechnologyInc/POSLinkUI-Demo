@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkSurfaceCard
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
@@ -474,9 +475,11 @@ private fun TipConfirmBar(
     onConfirm: (Long, Boolean) -> Unit,
     onError: (String) -> Unit
 ) {
+    val controlsEnabled = !LocalEntryInteractionLocked.current
     val promptInputStr = stringResource(R.string.prompt_input)
     PosLinkPrimaryButton(
         text = stringResource(R.string.confirm),
+        enabled = controlsEnabled,
         onClick = {
             val value = if (displayValue.isBlank()) 0L else CurrencyUtils.parse(displayValue)
             val lengthList = valuePattern
@@ -644,11 +647,12 @@ private fun TipOptionSurfaceCard(
     onTipAmountChosen: (Long) -> Unit,
     showSubtitle: Boolean
 ) {
+    val controlsEnabled = !LocalEntryInteractionLocked.current
     val amt = (opt.value as? Long) ?: 0L
     PosLinkSurfaceCard(
         modifier = modifier
             .height(optionHeight)
-            .clickable { onTipAmountChosen(amt) }
+            .clickable(enabled = controlsEnabled) { onTipAmountChosen(amt) }
     ) {
         PosLinkText(
             text = opt.title ?: "",
@@ -672,12 +676,13 @@ private fun TipNoTipChoiceCard(
     noTipHeight: Dp,
     onNoTipClick: () -> Unit
 ) {
+    val controlsEnabled = !LocalEntryInteractionLocked.current
     Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
     PosLinkSurfaceCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(noTipHeight)
-            .clickable { onNoTipClick() }
+            .clickable(enabled = controlsEnabled) { onNoTipClick() }
     ) {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             PosLinkText(
@@ -720,6 +725,7 @@ private fun TipValueInputSection(p: TipValueInputSectionParams) {
 
 @Composable
 private fun TipCentAmountTextField(mode: TipValueInputMode, v: TipValueInputValues) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     var textFieldValue by remember(v.displayValue) {
         mutableStateOf(
             TextFieldValue(
@@ -730,6 +736,7 @@ private fun TipCentAmountTextField(mode: TipValueInputMode, v: TipValueInputValu
     }
     BasicTextField(
         value = textFieldValue,
+        readOnly = interactionLocked,
         onValueChange = { newValue ->
             v.onTipFieldEdited()
             val digits = newValue.text.replace("[^0-9]".toRegex(), "")
@@ -776,8 +783,10 @@ private fun TipCentAmountTextField(mode: TipValueInputMode, v: TipValueInputValu
 
 @Composable
 private fun TipStandardAmountOutlinedField(mode: TipValueInputMode, v: TipValueInputValues) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     OutlinedTextField(
         value = v.displayValue,
+        enabled = !interactionLocked,
         onValueChange = {
             v.onTipFieldEdited()
             val digits = it.replace("[^0-9]".toRegex(), "")

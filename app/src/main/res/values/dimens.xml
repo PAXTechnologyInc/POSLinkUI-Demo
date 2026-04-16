@@ -25,4 +25,7 @@
 
     <!-- CLSS indicator row in action bar (golive layout_clss_light_default) -->
     <dimen name="clss_light_row_height">30dp</dimen>
+
+    <!-- ElectronicSignatureView stroke width (golive signature board) -->
+    <dimen name="paint_width">4dp</dimen>
 </resources>

@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.KeyEvent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -212,6 +214,7 @@ private fun GenericConfirmationRoute(
     extras: Bundle,
     viewModel: EntryViewModel
 ) {
+    val interactionLocked by viewModel.interactionLocked.collectAsState()
     val activity = LocalContext.current as FragmentActivity
     val resources = activity.resources
     val secondVm = ViewModelProvider(activity)[SecondScreenInfoViewModel::class.java]
@@ -288,6 +291,7 @@ private fun GenericConfirmationRoute(
         onCancel = {
             viewModel.sendNext(buildConfirmationSubmitBundle(confirmed = false))
         },
+        buttonsEnabled = !interactionLocked,
         layout = confirmationLayout
     )
 }

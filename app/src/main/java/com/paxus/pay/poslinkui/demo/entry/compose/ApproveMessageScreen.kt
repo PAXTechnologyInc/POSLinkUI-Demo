@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -12,16 +13,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.pax.us.pay.ui.constant.entry.enumeration.CardType
 import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkAsyncImage
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkAsyncImageLoadHooks
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkAsyncImageOptions
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkAsyncImageRequestTuning
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.AnimationLogger
 import com.paxus.pay.poslinkui.demo.utils.AnimationPolicy
@@ -109,15 +111,23 @@ fun ApproveMessageScreen(
 @Composable
 private fun ApprovalTextFallback(cardType: String?) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        PosLinkText(
+        Text(
             text = "Approved By",
-            role = PosLinkTextRole.SectionTitle,
+            style = TextStyle(
+                fontSize = PosLinkDesignTokens.SectionTitleTextSize,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 24.sp
+            ),
             textAlign = TextAlign.Center,
             color = PosLinkDesignTokens.PrimaryTextColor
         )
-        PosLinkText(
+        Text(
             text = cardType.orEmpty(),
-            role = PosLinkTextRole.Status,
+            style = TextStyle(
+                fontSize = PosLinkDesignTokens.TitleTextSize,
+                fontWeight = FontWeight.Normal,
+                lineHeight = 30.sp
+            ),
             textAlign = TextAlign.Center,
             color = PosLinkDesignTokens.PrimaryTextColor
         )

@@ -115,6 +115,9 @@
     <string name="enter_pwd">Enter Password</string>
 
     <string name="finish_sign">Confirm</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="cancel_sign">Cancel</string>
+    <string name="clear_sign">Clear</string>
     <string name="signature">Signature</string>
     <string name="pls_re_signature">Please Sign Again</string>
     <string name="pls_input_again_date">Please Enter Date again</string>

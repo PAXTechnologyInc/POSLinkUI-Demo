@@ -1,118 +1,305 @@
 package com.paxus.pay.poslinkui.demo.entry.signature
 
-import android.os.Bundle
+import android.graphics.Rect
+import android.view.KeyEvent
+import android.view.ViewGroup
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.pax.us.pay.ui.constant.entry.EntryRequest
+import androidx.compose.ui.viewinterop.AndroidView
+import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFillAppearance
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFilledButton
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils
-import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType
+import kotlinx.coroutines.delay
 
 /**
- * Demo signature capture: submits a minimal [EntryRequest.PARAM_SIGNATURE] stub.
- * Production must replace with real stroke capture and valid [EntryRequest.PARAM_SIGN_STATUS].
+ * Signature screen parity for `GET_SIGNATURE` (`fragment_signature.xml` in golive/v1.03).
+ * Embeds legacy [ElectronicSignatureView] for stroke capture; surrounding layout is Compose.
  *
- * @param onSubmit Called with a bundle suitable for [com.paxus.pay.poslinkui.demo.viewmodel.EntryViewModel.sendNext]
+ * Vertical gap before the white board uses [R.dimen.space_between_textview] (golive qualified
+ * `values-sw320dp-*` may override, e.g. 5dp on small devices) so spacing tracks multi-config dimens.
  */
 @Composable
 fun SignatureDemoScreen(
-    timeoutSec: Int,
+    signLine1: String,
+    signLine2: String,
+    timeoutMs: Long,
     totalAmount: Long,
     currency: String?,
-    onSubmit: (Bundle) -> Unit
+    enableCancel: Boolean,
+    /** After [onSubmit] / sendNext, false matches golive [EditabilityBlocker] (buttons disabled). */
+    controlsEnabled: Boolean = true,
+    onHostTimeoutReset: () -> Unit = {},
+    onCancel: () -> Unit,
+    onSubmit: (ShortArray) -> Unit
 ) {
-    Logger.i("Signature parity v5 active")
-    val timeoutDisplay = if (timeoutSec > 0) timeoutSec else 23
-    Column(
+    val safeTimeoutMs = timeoutMs.coerceAtLeast(0L)
+    var timeoutResetVersion by remember { mutableStateOf(0L) }
+    var remainingMs by remember(safeTimeoutMs, timeoutResetVersion) { mutableStateOf(safeTimeoutMs) }
+    val signatureRef = remember { object { var view: ElectronicSignatureView? = null } }
+    var isConfirmInFlight by remember { mutableStateOf(false) }
+
+    LaunchedEffect(safeTimeoutMs, timeoutResetVersion) {
+        var current = safeTimeoutMs
+        remainingMs = current
+        while (current > 0L) {
+            delay(1000L)
+            current -= 1000L
+            remainingMs = current.coerceAtLeast(0L)
+        }
+    }
+
+    fun submitIfTouched() {
+        if (!controlsEnabled || isConfirmInFlight) return
+        val signatureView = signatureRef.view ?: return
+        if (!signatureView.getTouched()) return
+        isConfirmInFlight = true
+        try {
+            val pathPos = signatureView.getPathPos()
+            var totalLen = 0
+            for (segment in pathPos) {
+                totalLen += segment.size
+            }
+            val signature = ShortArray(totalLen)
+            var index = 0
+            for (segment in pathPos) {
+                for (value in segment) {
+                    signature[index++] = value.toInt().toShort()
+                }
+            }
+            onSubmit(signature)
+        } finally {
+            isConfirmInFlight = false
+        }
+    }
+
+    fun clearAndResetTimeout() {
+        if (!controlsEnabled) return
+        signatureRef.view?.clear()
+        timeoutResetVersion += 1L
+        onHostTimeoutReset()
+    }
+
+    val timeoutSeconds = (remainingMs / 1000L).toString()
+    val density = LocalDensity.current
+    val signatureBoardHeightPx = (250f * density.density).toInt()
+    val bottomBarReserved =
+        PosLinkDesignTokens.ButtonHeight + PosLinkDesignTokens.InlineSpacing * 2 + 5.dp
+    val textToBoardGap = dimensionResource(R.dimen.space_between_textview)
+
+    Box(
         Modifier
             .fillMaxSize()
-            .padding(horizontal = PosLinkDesignTokens.ScreenPadding)
+            .background(PosLinkDesignTokens.BackgroundColor)
+            .padding(PosLinkDesignTokens.CompactSpacing)
     ) {
-        Text(
-            text = timeoutDisplay.toString(),
-            color = Color(0xFF2196F3),
-            modifier = Modifier.fillMaxWidth(),
-            fontWeight = FontWeight.Normal,
-            textAlign = TextAlign.Center
-        )
-        Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(bottom = bottomBarReserved)
         ) {
-            Text(text = "Total Amount", color = PosLinkDesignTokens.PrimaryTextColor)
-            Text(
-                text = CurrencyUtils.convert(totalAmount, currency ?: CurrencyType.USD),
-                color = PosLinkDesignTokens.PrimaryTextColor
+            if (remainingMs > 0L) {
+                Text(
+                    text = timeoutSeconds,
+                    color = Color(0xFF2196F3),
+                    modifier = Modifier.fillMaxWidth(),
+                    fontSize = PosLinkDesignTokens.SectionTitleTextSize,
+                    fontWeight = FontWeight.Normal,
+                    textAlign = TextAlign.Center
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.total_amount),
+                    color = PosLinkDesignTokens.PrimaryTextColor
+                )
+                Text(
+                    text = CurrencyUtils.convert(totalAmount, currency ?: CurrencyType.USD),
+                    color = PosLinkDesignTokens.PrimaryTextColor
+                )
+            }
+            Column(modifier = Modifier.fillMaxWidth()) {
+                if (signLine1.isNotBlank()) {
+                    Text(
+                        text = signLine1,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        color = PosLinkDesignTokens.PrimaryTextColor
+                    )
+                }
+                if (signLine2.isNotBlank()) {
+                    Text(
+                        text = signLine2,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        color = PosLinkDesignTokens.PrimaryTextColor
+                    )
+                }
+            }
+            // Golive View: TextViews use includeFontPadding + line metrics; Compose default is tighter —
+            // explicit gap matches `space_between_textview` used across fragment_* layouts (qualified dimens apply).
+            Spacer(modifier = Modifier.height(textToBoardGap))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                Surface(
+                    color = Color.White,
+                    shadowElevation = 0.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp)
+                ) {
+                    AndroidView(
+                        factory = { context ->
+                            ElectronicSignatureView(context).apply {
+                                layoutParams = ViewGroup.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    signatureBoardHeightPx
+                                )
+                                setBitmap(Rect(0, 0, 384, 128), 0, android.graphics.Color.WHITE)
+                                isFocusable = true
+                                isFocusableInTouchMode = true
+                                requestFocus()
+                                setOnKeyListener { _, keyCode, event ->
+                                    if (event.action != KeyEvent.ACTION_UP) {
+                                        return@setOnKeyListener false
+                                    }
+                                    when (keyCode) {
+                                        KeyEvent.KEYCODE_ENTER -> {
+                                            submitIfTouched()
+                                            true
+                                        }
+                                        KeyEvent.KEYCODE_DEL -> {
+                                            clearAndResetTimeout()
+                                            true
+                                        }
+                                        KeyEvent.KEYCODE_BACK -> {
+                                            onCancel()
+                                            true
+                                        }
+                                        else -> false
+                                    }
+                                }
+                                isEnabled = controlsEnabled
+                                signatureRef.view = this
+                            }
+                        },
+                        update = { view ->
+                            signatureRef.view = view
+                            view.isEnabled = controlsEnabled
+                            if (view.layoutParams.height != signatureBoardHeightPx) {
+                                view.layoutParams = view.layoutParams.apply {
+                                    width = ViewGroup.LayoutParams.MATCH_PARENT
+                                    height = signatureBoardHeightPx
+                                }
+                                view.requestLayout()
+                            }
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+        }
+        Row(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .background(PosLinkDesignTokens.BackgroundColor)
+                .padding(bottom = 5.dp),
+            horizontalArrangement = Arrangement.spacedBy(0.dp)
+        ) {
+            if (enableCancel) {
+                SignatureActionButton(
+                    text = stringResource(R.string.cancel_sign),
+                    background = Color(0xFFFF7878),
+                    onClick = onCancel,
+                    enabled = controlsEnabled,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(5.dp)
+                )
+            }
+            SignatureActionButton(
+                text = stringResource(R.string.clear_sign),
+                background = Color(0xFF89AA97),
+                onClick = { clearAndResetTimeout() },
+                enabled = controlsEnabled,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(5.dp)
+            )
+            SignatureActionButton(
+                text = stringResource(R.string.confirm),
+                background = Color(0xFF6E85B7),
+                onClick = { submitIfTouched() },
+                enabled = controlsEnabled,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(5.dp)
             )
         }
-        Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(306.dp)
-                .border(1.dp, Color(0xFF13304C))
-                .background(Color(0xFFDADADA))
+    }
+}
+
+@Composable
+private fun SignatureActionButton(
+    text: String,
+    background: Color,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier
+) {
+    PosLinkLegacyMaterialFilledButton(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        appearance = PosLinkLegacyMaterialFillAppearance(
+            slotHeight = PosLinkDesignTokens.ButtonHeight,
+            shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
+            containerColor = background,
+            disabledContainerColor = background.copy(alpha = 0.38f)
         )
-        Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        Spacer(Modifier.weight(1f))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = PosLinkDesignTokens.SectionSpacing),
-            horizontalArrangement = Arrangement.spacedBy(PosLinkDesignTokens.ControlGutter)
-        ) {
-            PosLinkLegacyMaterialFilledButton(
-                onClick = { /* reserved for future stroke clear */ },
-                modifier = Modifier.weight(1f),
-                appearance = PosLinkLegacyMaterialFillAppearance(
-                    slotHeight = PosLinkDesignTokens.ButtonHeight,
-                    shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius),
-                    containerColor = Color(0xFF89AA97),
-                    disabledContainerColor = Color(0xFF89AA97).copy(alpha = 0.38f)
-                )
-            ) {
-                Text("Clear", letterSpacing = 1.sp, color = Color(0xFFECECEC))
-            }
-            PosLinkLegacyMaterialFilledButton(
-                onClick = {
-                    onSubmit(
-                        Bundle().apply {
-                            putString(EntryRequest.PARAM_SIGN_STATUS, "DEMO_ACCEPT")
-                            putShortArray(EntryRequest.PARAM_SIGNATURE, shortArrayOf(0, 0, 1, 0, 1, 1))
-                        }
-                    )
-                },
-                modifier = Modifier.weight(1f),
-                appearance = PosLinkLegacyMaterialFillAppearance(
-                    slotHeight = PosLinkDesignTokens.ButtonHeight,
-                    shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius),
-                    containerColor = Color(0xFF6E85B7),
-                    disabledContainerColor = Color(0xFF6E85B7).copy(alpha = 0.38f)
-                )
-            ) {
-                Text("Confirm", letterSpacing = 1.sp, color = Color(0xFFECECEC))
-            }
-        }
+    ) {
+        Text(
+            text = text,
+            letterSpacing = 0.sp,
+            color = Color(0xFFECECEC),
+            fontWeight = FontWeight.Normal
+        )
     }
 }

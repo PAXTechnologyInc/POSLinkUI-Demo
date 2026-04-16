@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
@@ -56,6 +57,7 @@ fun AVSScreen(
     onConfirm: (String, String) -> Unit,
     onError: (String) -> Unit
 ) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     var addr by remember { mutableStateOf("") }
     var zip by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
@@ -75,6 +77,7 @@ fun AVSScreen(
             value = addr,
             onValueChange = { if (it.length <= config.maxLengthAddr) addr = it },
             modifier = Modifier.fillMaxWidth(),
+            enabled = !interactionLocked,
             label = { PosLinkText(text = stringResource(R.string.pls_input_address)) },
             singleLine = true
         )
@@ -89,6 +92,7 @@ fun AVSScreen(
             value = zip,
             onValueChange = { if (it.length <= config.maxLengthZip) zip = it },
             modifier = Modifier.fillMaxWidth(),
+            enabled = !interactionLocked,
             keyboardOptions = KeyboardOptions(
                 keyboardType = if (config.allowText) KeyboardType.Text else KeyboardType.Number
             ),
@@ -106,6 +110,7 @@ fun AVSScreen(
             stringResource(R.string.pls_input_zip_code)
         PosLinkPrimaryButton(
             text = stringResource(R.string.confirm),
+            enabled = !interactionLocked,
             onClick = {
                 when {
                     !isLengthAllowedForPattern(addr.length, config.valuePatternAddr) -> onError(errAddr)

@@ -166,14 +166,14 @@ internal fun InputModeImageRow(
 }
 
 @Composable
-internal fun InputAccountConfirmButton(onClick: () -> Unit) {
+internal fun InputAccountConfirmButton(onClick: () -> Unit, enabled: Boolean = true) {
     PosLinkLegacyMaterialFilledButton(
         onClick = onClick,
-        enabled = true,
+        enabled = enabled,
         modifier = Modifier.fillMaxWidth(),
         appearance = PosLinkLegacyMaterialFillAppearance(
             slotHeight = PosLinkDesignTokens.ButtonHeight,
-            shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius),
+            shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
             containerColor = PosLinkDesignTokens.PrimaryColor,
             disabledContainerColor = PosLinkDesignTokens.PrimaryColor
         )

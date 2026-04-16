@@ -18,6 +18,7 @@ object PosLinkDesignTokens {
     val SurfaceColor = Color(0xFF172D4A)
     val SurfaceMutedColor = Color(0xFFE4E1E3)
     val BorderColor = Color(0xFF6E85B7)
+    val LegacyButtonPressedColor = Color(0xFF303F9F)
     val PrimaryTextColor = Color(0xFFECECEC)
     val SecondaryTextColor = Color(0xFFA6B1E1)
 
@@ -33,6 +34,7 @@ object PosLinkDesignTokens {
     val CardPadding: Dp = 16.dp
     val ScreenPadding: Dp = 20.dp
     val CornerRadius: Dp = 8.dp
+    val LegacyButtonCornerRadius: Dp = 6.dp
     val ButtonHeight: Dp = 54.dp
     val InputHeight: Dp = 54.dp
 

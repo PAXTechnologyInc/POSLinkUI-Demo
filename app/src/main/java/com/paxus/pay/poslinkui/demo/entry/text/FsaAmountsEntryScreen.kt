@@ -25,6 +25,7 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest
 import com.pax.us.pay.ui.constant.entry.enumeration.FSAAmountType
 import com.pax.us.pay.ui.constant.entry.enumeration.FSAType
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkSecondaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
@@ -49,6 +50,7 @@ fun FsaAmountsEntryScreen(
     onConfirm: (Bundle) -> Unit,
     onError: (String) -> Unit
 ) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     val options = fsaAmountOptions?.mapNotNull { opt ->
         fsaAmountKey(opt)?.let { key -> opt to key }
     }.orEmpty()
@@ -82,12 +84,14 @@ fun FsaAmountsEntryScreen(
             PosLinkSecondaryButton(
                 text = FSAType.HEALTH_CARE,
                 onClick = { fsaOption = FSAType.HEALTH_CARE },
+                enabled = !interactionLocked,
                 fillMaxWidth = false
             )
             Spacer(modifier = Modifier.width(PosLinkDesignTokens.ControlGutter))
             PosLinkSecondaryButton(
                 text = FSAType.TRANSIT,
                 onClick = { fsaOption = FSAType.TRANSIT },
+                enabled = !interactionLocked,
                 fillMaxWidth = false
             )
         }
@@ -115,6 +119,7 @@ fun FsaAmountsEntryScreen(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
+                    enabled = !interactionLocked,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
                 Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
@@ -124,6 +129,7 @@ fun FsaAmountsEntryScreen(
         val promptInputStr = stringResource(R.string.prompt_input)
         PosLinkPrimaryButton(
             text = stringResource(R.string.confirm),
+            enabled = !interactionLocked,
             onClick = {
                 val b = Bundle()
                 b.putString(EntryRequest.PARAM_FSA_OPTION, fsaOption)

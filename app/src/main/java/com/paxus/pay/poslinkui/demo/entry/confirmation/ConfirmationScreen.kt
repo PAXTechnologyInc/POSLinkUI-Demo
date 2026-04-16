@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,7 +44,8 @@ data class ConfirmationScreenLayout(
     val messageStyle: ConfirmationMessageStyle = ConfirmationMessageStyle.InCard,
     val verticallyCenterContent: Boolean = false,
     val bothActionsPrimaryLegacy: Boolean = false,
-    val messageRole: PosLinkTextRole = PosLinkTextRole.Body
+    val messageRole: PosLinkTextRole = PosLinkTextRole.Body,
+    val packedVerticalBias: Float? = null
 )
 
 /**
@@ -55,6 +57,7 @@ data class ConfirmationScreenLayout(
  * @param negativeText Cancel button text (null = hide)
  * @param onConfirm Called when confirm clicked
  * @param onCancel Called when cancel clicked
+ * @param buttonsEnabled When false, matches golive [EditabilityBlocker] after [sendNext] until Manager declines.
  * @param layout Optional presentation overrides for prototype / legacy parity.
  */
 @Composable
@@ -64,6 +67,7 @@ fun ConfirmationScreen(
     negativeText: String?,
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
+    buttonsEnabled: Boolean = true,
     layout: ConfirmationScreenLayout = ConfirmationScreenLayout()
 ) {
     @Composable
@@ -104,6 +108,7 @@ fun ConfirmationScreen(
                         onClick = onCancel,
                         modifier = Modifier.weight(1f),
                         fillMaxWidth = false,
+                        enabled = buttonsEnabled,
                         variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
                     )
                 } else {
@@ -111,7 +116,8 @@ fun ConfirmationScreen(
                         text = negativeText,
                         onClick = onCancel,
                         modifier = Modifier.weight(1f),
-                        fillMaxWidth = false
+                        fillMaxWidth = false,
+                        enabled = buttonsEnabled
                     )
                 }
             }
@@ -120,6 +126,7 @@ fun ConfirmationScreen(
                 onClick = onConfirm,
                 modifier = Modifier.weight(1f),
                 fillMaxWidth = false,
+                enabled = buttonsEnabled,
                 variant = if (layout.bothActionsPrimaryLegacy) {
                     PosLinkPrimaryButtonVariant.PoslinkLegacy
                 } else {
@@ -144,6 +151,16 @@ fun ConfirmationScreen(
             ) {
                 columnContent()
             }
+        }
+    } else if (layout.packedVerticalBias != null) {
+        val topBias = layout.packedVerticalBias.coerceIn(0f, 1f)
+        val bottomBias = 1f - topBias
+        Column(modifier = Modifier.fillMaxSize()) {
+            Spacer(Modifier.weight(topBias))
+            Column(modifier = Modifier.fillMaxWidth()) {
+                columnContent()
+            }
+            Spacer(Modifier.weight(bottomBias))
         }
     } else {
         Column(modifier = Modifier.fillMaxWidth()) {

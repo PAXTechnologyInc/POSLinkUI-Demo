@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkSurfaceCard
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
@@ -29,6 +30,7 @@ fun InfoScreen(
     content: String,
     onConfirm: () -> Unit
 ) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     val scrollState = rememberScrollState()
     val confirmText = stringResource(R.string.confirm)
 
@@ -55,6 +57,6 @@ fun InfoScreen(
             }
         }
         Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        PosLinkPrimaryButton(text = confirmText, onClick = onConfirm)
+        PosLinkPrimaryButton(text = confirmText, onClick = onConfirm, enabled = !interactionLocked)
     }
 }

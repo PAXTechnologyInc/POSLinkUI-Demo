@@ -49,6 +49,7 @@ import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.viewmodel.EntryViewModel
+import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import kotlin.math.roundToInt
 
 /**
@@ -175,6 +176,7 @@ private fun SecuritySecureAreaPedPlaceholderSection(
     viewModel: EntryViewModel,
     onContinue: () -> Unit
 ) {
+    val continueEnabled = !LocalEntryInteractionLocked.current
     if (pinReadyOnly || isInputAccount) return
     OutlinedTextField(
         value = "",
@@ -206,7 +208,8 @@ private fun SecuritySecureAreaPedPlaceholderSection(
     )
     PosLinkPrimaryButton(
         text = stringResource(R.string.security_continue_after_ped),
-        onClick = onContinue
+        onClick = onContinue,
+        enabled = continueEnabled
     )
 }
 
@@ -697,6 +700,7 @@ private data class InputAccountSecurityMainColumnParams(
  */
 @Composable
 private fun InputAccountSecurityMainColumn(p: InputAccountSecurityMainColumnParams) {
+    val continueEnabled = !LocalEntryInteractionLocked.current
     val totalAmountText = p.display.totalAmountText
     val message = p.display.message
     val enableManual = p.display.enableManual
@@ -757,7 +761,7 @@ private fun InputAccountSecurityMainColumn(p: InputAccountSecurityMainColumnPara
                 viewModel = viewModel
             )
             if (applyCreditSaleMainLayout) {
-                InputAccountConfirmButton(onClick = onContinue)
+                InputAccountConfirmButton(onClick = onContinue, enabled = continueEnabled)
             } else {
                 PosLinkPrimaryButton(
                     text = stringResource(R.string.confirm),

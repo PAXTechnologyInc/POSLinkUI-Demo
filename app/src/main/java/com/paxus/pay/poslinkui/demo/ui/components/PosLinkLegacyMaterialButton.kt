@@ -1,6 +1,8 @@
 package com.paxus.pay.poslinkui.demo.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +35,7 @@ data class PosLinkLegacyMaterialFillAppearance(
     val shape: Shape,
     val containerColor: Color,
     val disabledContainerColor: Color,
+    val pressedContainerColor: Color? = null,
     val horizontalContentPadding: Dp = 16.dp
 )
 
@@ -58,7 +63,13 @@ fun PosLinkLegacyMaterialFilledButton(
 ) {
     val insetV = LocalPosLinkLegacyMaterialButtonVerticalInset.current
     val fillHeight = (appearance.slotHeight - insetV * 2).coerceAtLeast(1.dp)
-    val fillColor = if (enabled) appearance.containerColor else appearance.disabledContainerColor
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val fillColor = when {
+        !enabled -> appearance.disabledContainerColor
+        isPressed && appearance.pressedContainerColor != null -> appearance.pressedContainerColor
+        else -> appearance.containerColor
+    }
     Box(
         modifier = modifier
             .then(if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier)
@@ -72,6 +83,8 @@ fun PosLinkLegacyMaterialFilledButton(
                 .clickable(
                     role = Role.Button,
                     enabled = enabled,
+                    interactionSource = interactionSource,
+                    indication = null,
                     onClick = onClick
                 ),
             shape = appearance.shape,

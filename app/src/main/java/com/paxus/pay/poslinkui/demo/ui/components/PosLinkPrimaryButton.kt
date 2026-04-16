@@ -24,6 +24,7 @@ private data class PosLinkPrimaryButtonStyle(
     val cornerDp: Int,
     val containerColor: Color,
     val disabledContainerColor: Color,
+    val pressedContainerColor: Color?,
     val allCaps: Boolean
 )
 
@@ -52,12 +53,14 @@ fun PosLinkPrimaryButton(
             cornerDp = PosLinkDesignTokens.CornerRadius.value.toInt(),
             containerColor = PosLinkDesignTokens.PrimaryColor,
             disabledContainerColor = PosLinkDesignTokens.PrimaryColor.copy(alpha = 0.38f),
+            pressedContainerColor = null,
             allCaps = false
         )
         PosLinkPrimaryButtonVariant.PoslinkLegacy -> PosLinkPrimaryButtonStyle(
-            cornerDp = PosLinkDesignTokens.CornerRadius.value.toInt(),
-            containerColor = Color(0xFF8899BB),
-            disabledContainerColor = Color(0xFF8899BB).copy(alpha = 0.45f),
+            cornerDp = PosLinkDesignTokens.LegacyButtonCornerRadius.value.toInt(),
+            containerColor = PosLinkDesignTokens.PrimaryColor,
+            disabledContainerColor = PosLinkDesignTokens.PrimaryColor.copy(alpha = 0.45f),
+            pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor,
             allCaps = true
         )
     }
@@ -70,7 +73,8 @@ fun PosLinkPrimaryButton(
             slotHeight = h,
             shape = RoundedCornerShape(style.cornerDp.dp),
             containerColor = style.containerColor,
-            disabledContainerColor = style.disabledContainerColor
+            disabledContainerColor = style.disabledContainerColor,
+            pressedContainerColor = style.pressedContainerColor
         )
     ) {
         val displayText = if (style.allCaps) text.uppercase(Locale.ROOT) else text

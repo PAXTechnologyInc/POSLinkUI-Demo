@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFillAppearance
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFilledButton
 import com.paxus.pay.poslinkui.demo.ui.device.DeviceProfileId
@@ -65,6 +66,7 @@ fun InvoiceNumberScreen(
     onConfirm: (String) -> Unit,
     onError: (String) -> Unit
 ) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     var value by remember { mutableStateOf(TextFieldValue("", TextRange(0))) }
     val scrollState = rememberScrollState()
     val activity = LocalContext.current as? FragmentActivity
@@ -137,6 +139,7 @@ fun InvoiceNumberScreen(
                     value = TextFieldValue(text = nextText, selection = TextRange(nextText.length))
                 }
             },
+            readOnly = interactionLocked,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(inputHeight)
@@ -178,10 +181,11 @@ fun InvoiceNumberScreen(
                         onConfirm(text)
                     }
                 },
+                enabled = !interactionLocked,
                 modifier = Modifier.fillMaxWidth(),
                 appearance = PosLinkLegacyMaterialFillAppearance(
                     slotHeight = inputHeight,
-                    shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius),
+                    shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
                     containerColor = Color(0xFF6E85B7),
                     disabledContainerColor = Color(0xFF6E85B7).copy(alpha = 0.38f)
                 )
