@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,8 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,11 +41,14 @@ import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType
 import kotlinx.coroutines.delay
 
 /**
- * Signature screen parity for `GET_SIGNATURE` (`fragment_signature.xml` in golive/v1.03).
- * Embeds legacy [ElectronicSignatureView] for stroke capture; surrounding layout is Compose.
+ * Signature screen parity for `GET_SIGNATURE` (`fragment_signature.xml` + [SignatureFragment] in golive/v1.03).
  *
- * Vertical gap before the white board uses [R.dimen.space_between_textview] (golive qualified
- * `values-sw320dp-*` may override, e.g. 5dp on small devices) so spacing tracks multi-config dimens.
+ * [SignatureFragment] never applies extra margins in code; spacing comes from the layout. The XML always
+ * includes **two** `TextView`s under `sign_line_layout`. When `PARAM_SIGNLINE1/2` are absent, the Fragment
+ * does not call `setText`, but the views still exist — on device they still occupy line box height. In
+ * Compose, **always** render two line slots with [minLines] so empty lines do not collapse (Untitled 8 /
+ * `CREDIT_SALE——signature.png` adb case). Typography uses configuration-qualified [R.dimen.text_size_normal]
+ * like `fragment_signature.xml` default TextView sizing.
  */
 @Composable
 fun SignatureDemoScreen(
@@ -111,10 +113,15 @@ fun SignatureDemoScreen(
 
     val timeoutSeconds = (remainingMs / 1000L).toString()
     val density = LocalDensity.current
+    val res = LocalContext.current.resources
+    val dm = res.displayMetrics
+    val bodyTextSize = (res.getDimension(R.dimen.text_size_normal) / dm.scaledDensity).sp
+    val bodyLineHeight = (res.getDimension(R.dimen.text_size_normal) / dm.scaledDensity * 1.4f).sp
+    val subtitleTextSize = (res.getDimension(R.dimen.text_size_subtitle) / dm.scaledDensity).sp
+    val subtitleLineHeight = (res.getDimension(R.dimen.text_size_subtitle) / dm.scaledDensity * 1.4f).sp
     val signatureBoardHeightPx = (250f * density.density).toInt()
     val bottomBarReserved =
         PosLinkDesignTokens.ButtonHeight + PosLinkDesignTokens.InlineSpacing * 2 + 5.dp
-    val textToBoardGap = dimensionResource(R.dimen.space_between_textview)
 
     Box(
         Modifier
@@ -132,8 +139,9 @@ fun SignatureDemoScreen(
                     text = timeoutSeconds,
                     color = Color(0xFF2196F3),
                     modifier = Modifier.fillMaxWidth(),
-                    fontSize = PosLinkDesignTokens.SectionTitleTextSize,
+                    fontSize = subtitleTextSize,
                     fontWeight = FontWeight.Normal,
+                    lineHeight = subtitleLineHeight,
                     textAlign = TextAlign.Center
                 )
             }
@@ -143,34 +151,38 @@ fun SignatureDemoScreen(
             ) {
                 Text(
                     text = stringResource(R.string.total_amount),
-                    color = PosLinkDesignTokens.PrimaryTextColor
+                    color = PosLinkDesignTokens.PrimaryTextColor,
+                    fontSize = bodyTextSize,
+                    lineHeight = bodyLineHeight
                 )
                 Text(
                     text = CurrencyUtils.convert(totalAmount, currency ?: CurrencyType.USD),
-                    color = PosLinkDesignTokens.PrimaryTextColor
+                    color = PosLinkDesignTokens.PrimaryTextColor,
+                    fontSize = bodyTextSize,
+                    lineHeight = bodyLineHeight
                 )
             }
+            // Match fragment_signature: two TextViews always in sign_line_layout (SignatureFragment only setText when non-empty).
             Column(modifier = Modifier.fillMaxWidth()) {
-                if (signLine1.isNotBlank()) {
-                    Text(
-                        text = signLine1,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        color = PosLinkDesignTokens.PrimaryTextColor
-                    )
-                }
-                if (signLine2.isNotBlank()) {
-                    Text(
-                        text = signLine2,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        color = PosLinkDesignTokens.PrimaryTextColor
-                    )
-                }
+                Text(
+                    text = signLine1,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    color = PosLinkDesignTokens.PrimaryTextColor,
+                    fontSize = bodyTextSize,
+                    lineHeight = bodyLineHeight,
+                    minLines = 1
+                )
+                Text(
+                    text = signLine2,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    color = PosLinkDesignTokens.PrimaryTextColor,
+                    fontSize = bodyTextSize,
+                    lineHeight = bodyLineHeight,
+                    minLines = 1
+                )
             }
-            // Golive View: TextViews use includeFontPadding + line metrics; Compose default is tighter —
-            // explicit gap matches `space_between_textview` used across fragment_* layouts (qualified dimens apply).
-            Spacer(modifier = Modifier.height(textToBoardGap))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
