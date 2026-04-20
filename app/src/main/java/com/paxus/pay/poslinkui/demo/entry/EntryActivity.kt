@@ -426,11 +426,13 @@ class EntryActivity : AppCompatActivity() {
         if (uiReceiversRegistered) return
         val statusRec = StatusBroadcastReceiver()
         statusBroadcastReceiver = statusRec
+        // 须 EXPORTED：与 golive `registerReceiver(filter)` 一致，否则系统/ adb 发出的隐式
+        // POSLINK_CLEAR_MESSAGE 等状态广播无法送达（RECEIVER_NOT_EXPORTED 会拦截非本 UID）。
         ContextCompat.registerReceiver(
             this,
             statusRec,
             statusRec.filter,
-            ContextCompat.RECEIVER_NOT_EXPORTED,
+            ContextCompat.RECEIVER_EXPORTED,
         )
 
         val responseRec = ResponseBroadcastReceiver()
@@ -510,6 +512,8 @@ class EntryActivity : AppCompatActivity() {
             Logger.intent(intent, "STATUS BROADCAST:\t" + intent.action)
             if (intent.action == ACTION_POSLINK_CLEAR_MESSAGE) {
                 entryViewModel?.clearPoslinkContent()
+                // 与主屏一致：清屏时重置副屏聚合状态，避免 Presentation 仍显示旧文案
+                viewModel?.updateAllData("", "", "", null, "", "")
                 clearStatus()
                 return
             }

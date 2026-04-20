@@ -19,6 +19,10 @@ object PosLinkDesignTokens {
     val SurfaceMutedColor = Color(0xFFE4E1E3)
     val BorderColor = Color(0xFF6E85B7)
     val LegacyButtonPressedColor = Color(0xFF303F9F)
+    /** 与 golive `pastel_warning` / cancel_sign 按钮 tint 一致。 */
+    val PastelWarning = Color(0xFFFF7878)
+    /** 与 golive `pastel_accent` / clear_sign 按钮 tint 一致。 */
+    val PastelAccent = Color(0xFF89AA97)
     val PrimaryTextColor = Color(0xFFECECEC)
     val SecondaryTextColor = Color(0xFFA6B1E1)
 
@@ -29,6 +33,16 @@ object PosLinkDesignTokens {
     val BodyTextSize: TextUnit = 14.sp
     val CaptionTextSize: TextUnit = 14.sp
     val SupportingTextSize: TextUnit = 11.sp
+
+    /**
+     * golive [com.paxus.pay.poslinkui.demo.entry.poslink.TextShowingUtils] `FONT_NORMAL_SP`：
+     * `customizeFontSize` 对无 \\B/\\S 等命令的 `PrintDataItem` 默认 **24sp**。
+     * `MessageItemAdapter` 传入的 `R.dimen.text_size_normal`、图注 `getTitleViewList` 的 subtitle 像素参数均会被覆盖为该值。
+     */
+    val PoslinkTextShowingNormalSp: TextUnit = 24.sp
+
+    /** 与 TextShowingUtils 中 `standardLineHeight = FONT_BIG_SP * density * 1.3f` 的排版意图大致对齐。 */
+    val PoslinkTextShowingNormalLineHeight: TextUnit = 31.2.sp
 
     // Layout tokens
     val CardPadding: Dp = 16.dp

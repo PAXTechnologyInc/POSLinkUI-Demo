@@ -531,6 +531,7 @@
     <string name="detail_item_total_points">Total Points:</string>
     <string name="detail_item_approved_points">Approved Points:</string>
     <string name="detail_item_tax">Tax:</string>
+    <string name="pete_total">Total:</string>
     <string name="detail_item_cashback">Cash Back:</string>
     <string name="detail_item_merchant_fee">Merchant Fee:</string>
     <string name="detail_item_surchage_fee">Surcharge Fee:</string>

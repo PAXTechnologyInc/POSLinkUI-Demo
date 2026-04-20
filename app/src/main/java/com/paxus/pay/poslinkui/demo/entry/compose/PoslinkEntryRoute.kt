@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,11 +27,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
+import java.util.Locale
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.pax.us.pay.ui.constant.entry.EntryRequest
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry
@@ -241,10 +243,12 @@ private fun PoslinkRouteShowMessage(
     val total = extras.getString(EntryExtraData.PARAM_TOTAL_LINE).orEmpty()
     val rawMessageList = resolvePoslinkShowMessageRaw(extras)
     val list = parsePoslinkMessageList(rawMessageList)
-    val fallbackText = resolvePoslinkShowMessageFallbackText(rawMessageList)
+    // 无 messageList 载荷时不从其它字段“猜”正文，避免 message 区出现非预期占位文案
+    val fallbackText =
+        if (rawMessageList.isNotBlank()) resolvePoslinkShowMessageFallbackText(rawMessageList) else null
     val displayMessage = when {
         list.isNotBlank() -> list
-        fallbackText != null -> fallbackText.text
+        rawMessageList.isNotBlank() && fallbackText != null -> fallbackText.text
         else -> ""
     }
     if (list.isBlank() && fallbackText != null) {
@@ -570,36 +574,62 @@ private fun PoslinkSignBox1Screen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = title.ifBlank { "Signature" },
-                modifier = Modifier.align(Alignment.Center),
-                color = PosLinkDesignTokens.PrimaryTextColor,
-                style = MaterialTheme.typography.titleLarge
-            )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+        ) {
+            if (title.isNotBlank()) {
+                PosLinkText(
+                    text = title,
+                    role = PosLinkTextRole.ScreenTitle,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center),
+                    textAlign = TextAlign.Center
+                )
+            }
             Text(
                 text = timeoutSec.toString(),
-                modifier = Modifier.align(Alignment.CenterEnd),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(4.dp),
                 color = Color(0xFF2196F3),
                 style = MaterialTheme.typography.bodyLarge
             )
         }
-        if (body.isNotBlank()) {
-            Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-            Text(
-                text = body,
-                color = PosLinkDesignTokens.PrimaryTextColor,
-                style = MaterialTheme.typography.bodyLarge
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(4.dp)
+            ) {
+                if (body.isNotBlank()) {
+                    Text(
+                        text = body,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = PosLinkDesignTokens.PrimaryTextColor,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontSize = 24.sp,
+                            lineHeight = 31.2.sp,
+                            fontWeight = FontWeight.Normal
+                        )
+                    )
+                }
+            }
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .background(Color.White)
             )
         }
-        Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(250.dp)
-                .background(Color.White)
-        )
-        Spacer(Modifier.weight(1f))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -610,22 +640,22 @@ private fun PoslinkSignBox1Screen(
             horizontalArrangement = Arrangement.spacedBy(PosLinkDesignTokens.InlineSpacing)
         ) {
             PoslinkSignatureButton(
-                text = "CANCEL",
-                background = Color(0xFFFF7878),
+                text = stringResource(R.string.cancel_sign),
+                background = PosLinkDesignTokens.PastelWarning,
                 onClick = onCancel,
                 enabled = buttonsEnabled,
                 modifier = Modifier.weight(1f)
             )
             PoslinkSignatureButton(
-                text = "CLEAR",
-                background = Color(0xFF89AA97),
+                text = stringResource(R.string.clear_sign),
+                background = PosLinkDesignTokens.PastelAccent,
                 onClick = onClear,
                 enabled = buttonsEnabled,
                 modifier = Modifier.weight(1f)
             )
             PoslinkSignatureButton(
-                text = "ENTER",
-                background = Color(0xFF6E85B7),
+                text = stringResource(R.string.enter),
+                background = PosLinkDesignTokens.PrimaryColor,
                 onClick = onEnter,
                 enabled = buttonsEnabled,
                 modifier = Modifier.weight(1f)
@@ -648,36 +678,58 @@ private fun PoslinkSignBox2Screen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = title.ifBlank { "Signature" },
-                modifier = Modifier.align(Alignment.Center),
-                color = PosLinkDesignTokens.PrimaryTextColor,
-                style = MaterialTheme.typography.titleLarge
-            )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+        ) {
+            if (title.isNotBlank()) {
+                PosLinkText(
+                    text = title,
+                    role = PosLinkTextRole.ScreenTitle,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center),
+                    textAlign = TextAlign.Center
+                )
+            }
             Text(
                 text = timeoutSec.toString(),
-                modifier = Modifier.align(Alignment.CenterEnd),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(4.dp),
                 color = Color(0xFF2196F3),
                 style = MaterialTheme.typography.bodyLarge
             )
         }
-        Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
+        Spacer(Modifier.height(4.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+                .padding(horizontal = 4.dp)
         ) {
-            Text(
-                text = body,
-                color = PosLinkDesignTokens.PrimaryTextColor,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.weight(1f)
-            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = body,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = PosLinkDesignTokens.PrimaryTextColor,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 24.sp,
+                        lineHeight = 31.2.sp,
+                        fontWeight = FontWeight.Normal
+                    )
+                )
+            }
             Spacer(
                 modifier = Modifier
+                    .weight(1f)
                     .fillMaxHeight()
-                    .width(212.dp)
                     .background(Color.White)
             )
         }
@@ -692,22 +744,22 @@ private fun PoslinkSignBox2Screen(
             horizontalArrangement = Arrangement.spacedBy(PosLinkDesignTokens.InlineSpacing)
         ) {
             PoslinkSignatureButton(
-                text = "CANCEL",
-                background = Color(0xFFFF7878),
+                text = stringResource(R.string.cancel_sign),
+                background = PosLinkDesignTokens.PastelWarning,
                 onClick = onCancel,
                 enabled = buttonsEnabled,
                 modifier = Modifier.weight(1f)
             )
             PoslinkSignatureButton(
-                text = "CLEAR",
-                background = Color(0xFF89AA97),
+                text = stringResource(R.string.clear_sign),
+                background = PosLinkDesignTokens.PastelAccent,
                 onClick = onClear,
                 enabled = buttonsEnabled,
                 modifier = Modifier.weight(1f)
             )
             PoslinkSignatureButton(
-                text = "ENTER",
-                background = Color(0xFF6E85B7),
+                text = stringResource(R.string.enter),
+                background = PosLinkDesignTokens.PrimaryColor,
                 onClick = onEnter,
                 enabled = buttonsEnabled,
                 modifier = Modifier.weight(1f)
@@ -736,7 +788,7 @@ private fun PoslinkSignatureButton(
         )
     ) {
         Text(
-            text = text,
+            text = text.uppercase(Locale.ROOT),
             style = MaterialTheme.typography.labelLarge.copy(
                 letterSpacing = 0.5.sp,
                 color = Color(0xFFECECEC)

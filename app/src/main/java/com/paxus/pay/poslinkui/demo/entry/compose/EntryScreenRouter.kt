@@ -270,16 +270,13 @@ private fun GenericConfirmationRoute(
         else -> null
     }
 
-    val confirmationLayout = if (isCashPayment) {
-        ConfirmationScreenLayout(
-            messageStyle = ConfirmationMessageStyle.Plain,
-            verticallyCenterContent = true,
-            bothActionsPrimaryLegacy = true,
-            messageRole = PosLinkTextRole.ScreenTitle
-        )
-    } else {
-        ConfirmationScreenLayout()
-    }
+    // 对齐 golive fragment_confirmation.xml：双 Button 均为填充样式；现金与其它双键均用 legacy 主按钮槽
+    val confirmationLayout = ConfirmationScreenLayout(
+        messageStyle = ConfirmationMessageStyle.Plain,
+        packedVerticalBias = 0.3f,
+        messageRole = PosLinkTextRole.ConfirmationMessage,
+        bothActionsPrimaryLegacy = isCashPayment || !negative.isNullOrBlank()
+    )
 
     ConfirmationScreen(
         message = presentation.message,

@@ -61,7 +61,8 @@ fun PosLinkPrimaryButton(
             containerColor = PosLinkDesignTokens.PrimaryColor,
             disabledContainerColor = PosLinkDesignTokens.PrimaryColor.copy(alpha = 0.45f),
             pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor,
-            allCaps = true
+            // golive XML Button 保留 extras 传入大小写（如 Yes/No）；勿强制全大写
+            allCaps = false
         )
     }
     PosLinkLegacyMaterialFilledButton(

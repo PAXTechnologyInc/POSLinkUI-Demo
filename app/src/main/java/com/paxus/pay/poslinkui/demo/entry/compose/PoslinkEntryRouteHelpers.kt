@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.paxus.pay.poslinkui.demo.R
@@ -274,6 +275,86 @@ internal fun JSONArray.findShowMessageFallbackText(path: String): PoslinkMessage
     return null
 }
 
+/**
+ * 标题 + 正文（无图）：用于单 Scroll 或与 golive 一致时仅中间 List 区域滚动。
+ */
+@Composable
+internal fun PoslinkMessageTitleAndMessages(
+    title: String,
+    messageText: String,
+    visualMode: PoslinkMessageVisualMode,
+    leadingSpacingBeforeMessage: Boolean = true
+) {
+    val useLegacyTitleLayout = visualMode != PoslinkMessageVisualMode.Default
+    val useLegacyMessageGroups = visualMode == PoslinkMessageVisualMode.ShowMessageLegacy
+    if (title.isNotBlank()) {
+        when {
+            visualMode == PoslinkMessageVisualMode.ShowMessageLegacy && !title.contains('\\') -> {
+                Text(
+                    text = title,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = PosLinkDesignTokens.PrimaryTextColor,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = PosLinkDesignTokens.PoslinkTextShowingNormalSp,
+                        lineHeight = PosLinkDesignTokens.PoslinkTextShowingNormalLineHeight,
+                        fontWeight = FontWeight.Normal
+                    ),
+                    textAlign = TextAlign.Center
+                )
+            }
+            useLegacyTitleLayout -> PoslinkFormattedTitleLegacy(title = title)
+            else -> PoslinkFormattedTitle(title = title)
+        }
+    }
+    if (messageText.isNotBlank()) {
+        if (leadingSpacingBeforeMessage && title.isNotBlank()) {
+            Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
+        }
+        if (useLegacyMessageGroups) {
+            PoslinkMessageListText(messageText = messageText)
+        } else {
+            PosLinkText(text = messageText, role = PosLinkTextRole.Supporting)
+        }
+    }
+}
+
+/**
+ * 图片 + imageDesc：golive 中位于 `ll_desc_msg_list_show_message`（ImageView + 横向 ll_desc_list）。
+ */
+@Composable
+internal fun PoslinkMessageImageDescBlock(
+    imageUrl: String,
+    imageDesc: String,
+    useLegacyImageBounds: Boolean
+) {
+    if (imageUrl.isBlank()) return
+    PosLinkAsyncImage(
+        data = imageUrl,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(if (useLegacyImageBounds) 150.dp else 120.dp),
+        options = PosLinkAsyncImageOptions(
+            contentDescription = imageDesc.ifBlank { null },
+            contentScale = if (useLegacyImageBounds) ContentScale.FillBounds else ContentScale.Crop
+        )
+    )
+    if (imageDesc.isNotBlank()) {
+        Spacer(Modifier.height(5.dp))
+        // golive：图注走 getTitleViewList + customizeFontSize，无字号命令时为 FONT_NORMAL_SP(24sp)，单段居中
+        Text(
+            text = imageDesc,
+            modifier = Modifier.fillMaxWidth(),
+            color = PosLinkDesignTokens.PrimaryTextColor,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontSize = PosLinkDesignTokens.PoslinkTextShowingNormalSp,
+                lineHeight = PosLinkDesignTokens.PoslinkTextShowingNormalLineHeight,
+                fontWeight = FontWeight.Normal
+            ),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
 @Composable
 internal fun PoslinkMessageDisplayScrollColumn(
     title: String,
@@ -282,43 +363,15 @@ internal fun PoslinkMessageDisplayScrollColumn(
     imageDesc: String,
     visualMode: PoslinkMessageVisualMode
 ) {
-    val useLegacyTitleLayout = visualMode != PoslinkMessageVisualMode.Default
-    val useLegacyMessageGroups = visualMode == PoslinkMessageVisualMode.ShowMessageLegacy
     val useLegacyImageBounds = visualMode != PoslinkMessageVisualMode.Default
-    if (title.isNotBlank()) {
-        if (useLegacyTitleLayout) {
-            PoslinkFormattedTitleLegacy(title = title)
-        } else {
-            PoslinkFormattedTitle(title = title)
-        }
-    }
-    if (messageText.isNotBlank()) {
-        Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        if (useLegacyMessageGroups) {
-            PoslinkMessageListText(messageText = messageText)
-        } else {
-            PosLinkText(text = messageText, role = PosLinkTextRole.Supporting)
-        }
-    }
+    PoslinkMessageTitleAndMessages(title = title, messageText = messageText, visualMode = visualMode)
     if (imageUrl.isNotBlank()) {
         Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        PosLinkAsyncImage(
-            data = imageUrl,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(if (useLegacyImageBounds) 136.dp else 120.dp),
-            options = PosLinkAsyncImageOptions(
-                contentDescription = imageDesc.ifBlank { null },
-                contentScale = if (useLegacyImageBounds) ContentScale.Fit else ContentScale.Crop
-            )
+        PoslinkMessageImageDescBlock(
+            imageUrl = imageUrl,
+            imageDesc = imageDesc,
+            useLegacyImageBounds = useLegacyImageBounds
         )
-        if (imageDesc.isNotBlank()) {
-            Spacer(Modifier.height(PosLinkDesignTokens.CompactSpacing))
-            PosLinkText(
-                text = imageDesc,
-                role = if (useLegacyImageBounds) PosLinkTextRole.Body else PosLinkTextRole.Supporting
-            )
-        }
     }
 }
 
@@ -384,20 +437,76 @@ internal fun PoslinkMessageDisplayLayout(p: PoslinkMessageDisplayLayoutParams) {
     val showConfirmButton = p.footer.showConfirmButton
     val onConfirm = p.footer.onConfirm
     val bottomInset = if (showConfirmButton) 140.dp else 92.dp
+    val useLegacyImageBounds = visualMode != PoslinkMessageVisualMode.Default
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .fillMaxSize()
-                .padding(bottom = bottomInset)
-        ) {
-            PoslinkMessageDisplayScrollColumn(
-                title = title,
-                messageText = messageText,
-                imageUrl = imageUrl,
-                imageDesc = imageDesc,
-                visualMode = visualMode
-            )
+        if (visualMode == PoslinkMessageVisualMode.ShowMessageLegacy) {
+            // golive fragment_show_message：ListView 单独滚动；图片+desc 在 list 与 tax 之间固定，不随列表滚动
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = bottomInset)
+                    .padding(5.dp)
+            ) {
+                if (title.isNotBlank()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp)
+                    ) {
+                        PoslinkMessageTitleAndMessages(
+                            title = title,
+                            messageText = "",
+                            visualMode = visualMode,
+                            leadingSpacingBeforeMessage = false
+                        )
+                    }
+                }
+                Spacer(Modifier.height(10.dp))
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    if (messageText.isNotBlank()) {
+                        PoslinkMessageTitleAndMessages(
+                            title = "",
+                            messageText = messageText,
+                            visualMode = visualMode,
+                            leadingSpacingBeforeMessage = false
+                        )
+                    }
+                }
+                Spacer(Modifier.height(10.dp))
+                if (imageUrl.isNotBlank()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 5.dp, bottom = 5.dp)
+                    ) {
+                        PoslinkMessageImageDescBlock(
+                            imageUrl = imageUrl,
+                            imageDesc = imageDesc,
+                            useLegacyImageBounds = useLegacyImageBounds
+                        )
+                    }
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize()
+                    .padding(bottom = bottomInset)
+            ) {
+                PoslinkMessageDisplayScrollColumn(
+                    title = title,
+                    messageText = messageText,
+                    imageUrl = imageUrl,
+                    imageDesc = imageDesc,
+                    visualMode = visualMode
+                )
+            }
         }
         Column(
             modifier = Modifier
@@ -419,6 +528,12 @@ internal fun PoslinkMessageDisplayLayout(p: PoslinkMessageDisplayLayoutParams) {
 internal fun PoslinkMessageListText(messageText: String) {
     val groups = remember(messageText) { parsePoslinkMessageGroups(messageText) }
     if (groups.isEmpty()) return
+    // golive MessageItemAdapter：虽传 R.dimen.text_size_normal，但 getViewList→customizeFontize 默认 FONT_NORMAL_SP=24sp
+    val lineStyle = MaterialTheme.typography.bodyLarge.copy(
+        fontWeight = FontWeight.Normal,
+        fontSize = PosLinkDesignTokens.PoslinkTextShowingNormalSp,
+        lineHeight = PosLinkDesignTokens.PoslinkTextShowingNormalLineHeight
+    )
     Column(modifier = Modifier.fillMaxWidth()) {
         groups.forEachIndexed { index, group ->
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -426,9 +541,7 @@ internal fun PoslinkMessageListText(messageText: String) {
                     text = group.msg1,
                     modifier = Modifier.fillMaxWidth(),
                     color = PosLinkDesignTokens.PrimaryTextColor,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    style = lineStyle
                 )
                 group.msg2?.let { second ->
                     Spacer(Modifier.height(PosLinkDesignTokens.MicroSpacing))
@@ -436,9 +549,7 @@ internal fun PoslinkMessageListText(messageText: String) {
                         text = second,
                         modifier = Modifier.fillMaxWidth(),
                         color = PosLinkDesignTokens.PrimaryTextColor,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontWeight = FontWeight.Normal
-                        )
+                        style = lineStyle
                     )
                 }
             }
@@ -479,10 +590,16 @@ internal fun PoslinkTaxTotalFooter(
     showMessageLegacy: Boolean = false
 ) {
     if (tax.isBlank() && total.isBlank()) return
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (showMessageLegacy) Modifier.padding(horizontal = 5.dp) else Modifier
+            )
+    ) {
         if (tax.isNotBlank()) {
             PoslinkTaxTotalRow(
-                label = "Tax:",
+                label = stringResource(R.string.detail_item_tax),
                 value = tax,
                 showMessageLegacy = showMessageLegacy
             )
@@ -490,7 +607,7 @@ internal fun PoslinkTaxTotalFooter(
         if (total.isNotBlank()) {
             Spacer(Modifier.height(PosLinkDesignTokens.CompactSpacing))
             PoslinkTaxTotalRow(
-                label = "Total:",
+                label = stringResource(R.string.pete_total),
                 value = total,
                 showMessageLegacy = showMessageLegacy
             )
@@ -504,17 +621,39 @@ internal fun PoslinkTaxTotalRow(
     value: String,
     showMessageLegacy: Boolean = false
 ) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        PosLinkText(
-            text = label,
-            role = if (showMessageLegacy) PosLinkTextRole.Body else PosLinkTextRole.Supporting,
-            modifier = Modifier.weight(1f)
-        )
-        PosLinkText(
-            text = value,
-            role = PosLinkTextRole.Body,
-            textAlign = TextAlign.End
-        )
+    // fragment_show_message.xml：tax/total 均为 text_size_subtitle(18sp)，标签粗体
+    if (showMessageLegacy) {
+        val labelStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+        val valueStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Normal)
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = label,
+                modifier = Modifier.weight(1f),
+                color = PosLinkDesignTokens.PrimaryTextColor,
+                style = labelStyle,
+                textAlign = TextAlign.Start
+            )
+            Text(
+                text = value,
+                color = PosLinkDesignTokens.PrimaryTextColor,
+                style = valueStyle,
+                textAlign = TextAlign.End,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    } else {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            PosLinkText(
+                text = label,
+                role = PosLinkTextRole.Supporting,
+                modifier = Modifier.weight(1f)
+            )
+            PosLinkText(
+                text = value,
+                role = PosLinkTextRole.Body,
+                textAlign = TextAlign.End
+            )
+        }
     }
 }
 

@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 
@@ -36,6 +37,8 @@ fun PosLinkText(
 
 enum class PosLinkTextRole {
     ScreenTitle,
+    /** 与 `fragment_confirmation.xml` 中 message TextView 一致：24sp（text_size_title）、字重 regular。 */
+    ConfirmationMessage,
     SectionTitle,
     Body,
     Supporting,
@@ -45,6 +48,8 @@ enum class PosLinkTextRole {
 @Composable
 private fun PosLinkTextRole.textStyle() = when (this) {
     PosLinkTextRole.ScreenTitle -> MaterialTheme.typography.titleLarge
+    PosLinkTextRole.ConfirmationMessage ->
+        MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Normal)
     PosLinkTextRole.SectionTitle -> MaterialTheme.typography.titleMedium
     PosLinkTextRole.Body -> MaterialTheme.typography.bodyLarge
     PosLinkTextRole.Supporting -> MaterialTheme.typography.bodyMedium
