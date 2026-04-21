@@ -189,6 +189,20 @@ class EntryViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Reports PIN keypad key rectangles for touch-PED routing parity with legacy PINFragment.
+     */
+    fun sendPinKeyLayout(keyLocations: Bundle) {
+        val s = _uiState.value
+        val action = s.entryAction ?: return
+        EntryRequestUtils.sendSetPinKeyLayout(
+            getApplication(),
+            s.senderPackage,
+            action,
+            keyLocations
+        )
+    }
+
     fun sendAbort() {
         val s = _uiState.value
         EntryRequestUtils.sendAbort(getApplication(), s.senderPackage, s.entryAction)

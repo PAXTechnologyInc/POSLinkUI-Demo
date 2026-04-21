@@ -74,6 +74,11 @@ internal fun resolveInputAccountTotalAmount(extras: Bundle): String? {
     return CurrencyUtils.convert(totalAmount, currency)
 }
 
+internal fun canBypassPin(extras: Bundle): Boolean {
+    val pinRange = extras.getStringCompat(EntryExtraData.PARAM_PIN_RANGE, "pinRange").orEmpty()
+    return pinRange.startsWith("0,")
+}
+
 internal fun isLikelyInputAccountCreditSalePrompt(
     message: String,
     totalAmountText: String?,

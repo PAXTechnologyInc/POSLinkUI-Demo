@@ -92,6 +92,7 @@
     <string name="hint_enter_account">Please Enter Card Number:</string>
     <string name="enter_new_account">Please Enter New Card Number:</string>
     <string name="prompt_pin">Please Enter PIN</string>
+    <string name="prompt_no_pin">Press OK to Bypass PIN</string>
     <string name="prompt_offline_pin">Please Enter PIN</string>
     <string name="prompt_use_pinpad">Please Use Pinpad</string>
     <string name="prompt_input_point">Please Enter Point</string>
