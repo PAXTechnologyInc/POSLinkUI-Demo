@@ -441,7 +441,7 @@ class EntryActivity : AppCompatActivity() {
             this,
             responseRec,
             responseRec.filter,
-            ContextCompat.RECEIVER_NOT_EXPORTED,
+            ContextCompat.RECEIVER_EXPORTED,
         )
         uiReceiversRegistered = true
     }

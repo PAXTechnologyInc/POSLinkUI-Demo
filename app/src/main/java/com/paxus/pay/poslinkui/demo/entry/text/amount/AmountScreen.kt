@@ -51,6 +51,7 @@ import com.paxus.pay.poslinkui.demo.ui.device.DeviceProfileId
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import kotlin.math.roundToInt
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils
 import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils
@@ -121,12 +122,15 @@ fun AmountScreen(
             if (idx < 9) delay(150)
         }
         Logger.i("AmountScreen parity v10 active")
-        focusRequester.requestFocus()
-        keyboardController?.show()
-        // Retry after first composition; some PAX builds ignore the initial request.
-        delay(150)
-        focusRequester.requestFocus()
-        keyboardController?.show()
+        val shouldShowSoftKeyboard = !DeviceUtils.hasPhysicalKeyboard()
+        if (shouldShowSoftKeyboard) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+            // Retry after first composition; some PAX builds ignore the initial request.
+            delay(150)
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
     }
 
     Column(

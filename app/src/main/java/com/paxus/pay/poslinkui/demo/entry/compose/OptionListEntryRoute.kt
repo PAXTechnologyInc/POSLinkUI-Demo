@@ -10,6 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -36,6 +41,9 @@ fun OptionListEntryRoute(
     resources: Resources
 ) {
     val interactionLocked = LocalEntryInteractionLocked.current
+    val latestInteractionLocked = rememberUpdatedState(interactionLocked)
+    var optionSubmitted by remember(action, extras) { mutableStateOf(false) }
+    val latestOptionSubmitted = rememberUpdatedState(optionSubmitted)
     val opts = extras.getStringArray(EntryExtraData.PARAM_OPTIONS) ?: emptyArray()
     if (opts.isEmpty()) {
         BoxWithCenterText(stringResource(R.string.option_list_empty))
@@ -71,7 +79,15 @@ fun OptionListEntryRoute(
                                 SelectOptionsView.Option(index, label ?: "", null, index)
                             }.toMutableList()
                             initialize(activity, 1, items) { option ->
+                                if (latestInteractionLocked.value || latestOptionSubmitted.value) return@initialize
                                 val selectedIndex = (option?.value as? Int) ?: return@initialize
+                                optionSubmitted = true
+                                // Lock immediately at view layer to match golive:
+                                // after first selection, this option page must become non-interactive.
+                                this@apply.isEnabled = false
+                                this@apply.isClickable = false
+                                this@apply.isFocusable = false
+                                this@apply.setOnTouchListener { _, _ -> true }
                                 viewModel.sendNext(
                                     Bundle().apply {
                                         putInt(EntryRequest.PARAM_INDEX, selectedIndex)
@@ -82,7 +98,15 @@ fun OptionListEntryRoute(
                     }
                 },
                 update = { view ->
-                    view.isEnabled = !interactionLocked
+                    val enabled = !interactionLocked && !optionSubmitted
+                    view.isEnabled = enabled
+                    view.isClickable = enabled
+                    view.isFocusable = enabled
+                    if (enabled) {
+                        view.setOnTouchListener(null)
+                    } else {
+                        view.setOnTouchListener { _, _ -> true }
+                    }
                 },
                 modifier = Modifier.fillMaxSize()
             )

@@ -51,6 +51,7 @@ import com.paxus.pay.poslinkui.demo.ui.device.LocalDeviceLayoutSpec
 import com.paxus.pay.poslinkui.demo.ui.theme.LocalPosLinkLegacyMaterialButtonVerticalInset
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.Logger
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils
 import kotlinx.coroutines.delay
@@ -93,9 +94,10 @@ fun InvoiceNumberScreen(
         .dp
 
     LaunchedEffect(Unit) {
+        val shouldShowSoftKeyboard = forceTextKeyboard || !isNumeric || !DeviceUtils.hasPhysicalKeyboard()
         if (eagerShowKeyboard) {
             focusRequester.requestFocus()
-            keyboardController?.show()
+            if (shouldShowSoftKeyboard) keyboardController?.show()
             delay(80)
         }
         repeat(10) { idx ->
@@ -104,10 +106,10 @@ fun InvoiceNumberScreen(
         }
         Logger.i(parityLog)
         focusRequester.requestFocus()
-        keyboardController?.show()
+        if (shouldShowSoftKeyboard) keyboardController?.show()
         delay(150)
         focusRequester.requestFocus()
-        keyboardController?.show()
+        if (shouldShowSoftKeyboard) keyboardController?.show()
     }
 
     Column(

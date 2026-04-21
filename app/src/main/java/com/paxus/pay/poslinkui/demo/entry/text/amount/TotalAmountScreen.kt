@@ -4,15 +4,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkSecondaryButton
@@ -43,6 +52,8 @@ fun TotalAmountScreen(
     onNoTip: () -> Unit
 ) {
     var displayValue by remember { mutableStateOf(CurrencyUtils.convert(0L, content.currency)) }
+    val fieldShape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
+    val inputHeight = PosLinkDesignTokens.ButtonHeight
 
     Column(modifier = Modifier.fillMaxWidth()) {
         PosLinkText(
@@ -59,7 +70,7 @@ fun TotalAmountScreen(
             PosLinkText(text = content.tipName, role = PosLinkTextRole.Supporting)
         }
         Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        OutlinedTextField(
+        BasicTextField(
             value = displayValue,
             onValueChange = {
                 val digits = it.replace("[^0-9]".toRegex(), "")
@@ -70,8 +81,27 @@ fun TotalAmountScreen(
                     )
                 }
             },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(inputHeight),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true,
+            textStyle = TextStyle(
+                color = Color(0xFF222222),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            ),
+            decorationBox = { inner ->
+                androidx.compose.foundation.layout.Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(inputHeight)
+                        .border(2.dp, Color(0xFFDBD4D9), fieldShape)
+                        .background(Color(0xFFDBD4D9), fieldShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    inner()
+                }
+            }
         )
         Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
         if (content.noTipEnabled) {
@@ -79,7 +109,7 @@ fun TotalAmountScreen(
             Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
         }
         PosLinkPrimaryButton(
-            text = stringResource(R.string.confirm),
+            text = stringResource(R.string.confirm).uppercase(),
             onClick = { onConfirm(CurrencyUtils.parse(displayValue)) }
         )
     }

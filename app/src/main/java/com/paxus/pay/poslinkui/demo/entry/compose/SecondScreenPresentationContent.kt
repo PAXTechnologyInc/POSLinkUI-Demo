@@ -43,9 +43,10 @@ fun SecondScreenPresentationContent(screenInfo: ScreenInfo?) {
             if (uiState.title.isNotBlank()) {
                 SecondScreenText(
                     text = uiState.title,
+                    modifier = Modifier.fillMaxWidth(),
                     fontSize = PosLinkDesignTokens.SecondScreenTitleTextSize,
                     color = PosLinkDesignTokens.SecondScreenTextColor,
-                    maxLines = 1
+                    maxLines = 3
                 )
             }
 

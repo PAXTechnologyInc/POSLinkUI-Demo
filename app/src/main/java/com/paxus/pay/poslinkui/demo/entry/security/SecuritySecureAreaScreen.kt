@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -39,6 +40,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.pax.us.pay.ui.constant.entry.SecurityEntry
 import com.paxus.pay.poslinkui.demo.R
@@ -49,6 +52,7 @@ import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.viewmodel.EntryViewModel
+import com.paxus.pay.poslinkui.demo.viewmodel.SecondScreenInfoViewModel
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import kotlin.math.roundToInt
 
@@ -369,7 +373,6 @@ private fun LegacySecurityFieldBody(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(fieldHeight)
-                .padding(PosLinkDesignTokens.InlineSpacing)
                 .onGloballyPositioned { coords ->
                     if (boundsSent || coords.size.width <= 0) return@onGloballyPositioned
                     onBoundsSent()
@@ -661,6 +664,8 @@ private fun InputAccountSecurityBody(
     viewModel: EntryViewModel,
     onContinue: () -> Unit
 ) {
+    val activity = LocalContext.current as FragmentActivity
+    val secondVm = ViewModelProvider(activity)[SecondScreenInfoViewModel::class.java]
     val enableInsert = extras.getBooleanCompat(EntryExtraData.PARAM_ENABLE_INSERT, false, "enableInsert")
     val enableTap = extras.getBooleanCompat(EntryExtraData.PARAM_ENABLE_TAP, false, "enableTap")
     val enableSwipe = extras.getBooleanCompat(EntryExtraData.PARAM_ENABLE_SWIPE, false, "enableSwipe")
@@ -696,6 +701,17 @@ private fun InputAccountSecurityBody(
         enableManual = enableManual
     )
     val applyCreditSaleMainLayout = isCreditSaleMainCase || isLikelyCreditSalePrompt
+
+    LaunchedEffect(totalAmountText, enableTap) {
+        secondVm.updateAllData(
+            totalAmountText ?: "",
+            "",
+            "",
+            if (enableTap) R.mipmap.tap else null,
+            "",
+            ""
+        )
+    }
 
     LaunchedEffect(enableTap, supportNfc) {
         when {

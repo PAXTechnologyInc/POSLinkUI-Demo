@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
@@ -34,6 +36,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,9 +60,12 @@ import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButtonVariant
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
+import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils
+import com.paxus.pay.poslinkui.demo.utils.DateUtils
 import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.utils.Toast
 import com.paxus.pay.poslinkui.demo.utils.Toast.TYPE
+import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils
 import com.paxus.pay.poslinkui.demo.viewmodel.EntryViewModel
 
 /** First-row button count in [PoslinkShowDialogThreeOptionsLayout] (remaining option is the full-width row). */
@@ -207,39 +215,25 @@ private fun PoslinkRouteInputText(
     activity: FragmentActivity,
     viewModel: EntryViewModel
 ) {
-    val title = extras.getString(EntryExtraData.PARAM_TITLE).orEmpty()
-    val inputType = extras.getString(EntryExtraData.PARAM_INPUT_TYPE).orEmpty()
-    val normalizedInputType = inputType.trim()
     val minL = extras.getString(EntryExtraData.PARAM_MIN_LENGTH)?.toIntOrNull() ?: 0
     val maxL = extras.getString(EntryExtraData.PARAM_MAX_LENGTH)?.toIntOrNull() ?: 64
-    val pattern = if (minL > 0 && maxL >= minL) "$minL-$maxL" else "1-$maxL"
-    val message = title.ifBlank { stringResource(R.string.enter) }
-    if (normalizedInputType.isBlank() || normalizedInputType == "0") {
-        InvoiceNumberScreen(
-            message = message,
-            valuePattern = pattern,
-            parityLog = "Poslink InputText type0 parity v1 active",
-            forceTextKeyboard = true,
-            eagerShowKeyboard = true,
-            onConfirm = { v ->
-                viewModel.sendNext(Bundle().apply { putString(EntryRequest.PARAM_INPUT_VALUE, v) })
-            },
-            onError = { msg -> Toast(activity).show(msg, TYPE.FAILURE) }
-        )
-    } else {
-        val mappedInputType = if (normalizedInputType == "1") InputType.NUM else null
-        GenericStringEntryScreen(
-            message = message,
-            valuePattern = pattern,
-            maxLengthFallback = maxL,
-            eInputType = mappedInputType,
-            useLegacyFleetInputStyle = true,
-            onConfirm = { v ->
-                viewModel.sendNext(Bundle().apply { putString(EntryRequest.PARAM_INPUT_VALUE, v) })
-            },
-            onError = { msg -> Toast(activity).show(msg, TYPE.FAILURE) }
-        )
-    }
+    PoslinkTypedInputContent(
+        title = extras.getString(EntryExtraData.PARAM_TITLE).orEmpty(),
+        body = null,
+        inputType = extras.getString(EntryExtraData.PARAM_INPUT_TYPE).orEmpty(),
+        minLength = minL,
+        maxLength = maxL,
+        defaultValue = extras.getString(EntryExtraData.PARAM_DEFAULT_VALUE).orEmpty(),
+        onSubmit = { payload ->
+            val b = Bundle()
+            when (payload) {
+                is Long -> b.putLong(EntryRequest.PARAM_INPUT_VALUE, payload)
+                else -> b.putString(EntryRequest.PARAM_INPUT_VALUE, payload.toString())
+            }
+            viewModel.sendNext(b)
+        },
+        onError = { msg -> Toast(activity).show(msg, TYPE.FAILURE) }
+    )
 }
 
 @Composable
@@ -361,21 +355,201 @@ private fun PoslinkRouteShowInputTextBox(
     activity: FragmentActivity,
     viewModel: EntryViewModel
 ) {
-    val title = extras.getString(EntryExtraData.PARAM_TITLE).orEmpty()
     val minL = extras.getString(EntryExtraData.PARAM_MIN_LENGTH)?.toIntOrNull() ?: 0
     val maxL = extras.getString(EntryExtraData.PARAM_MAX_LENGTH)?.toIntOrNull() ?: 64
-    val pattern = if (minL > 0 && maxL >= minL) "$minL-$maxL" else "1-$maxL"
-    GenericStringEntryScreen(
-        message = title.ifBlank { stringResource(R.string.enter) },
-        valuePattern = pattern,
-        maxLengthFallback = maxL,
-        eInputType = extras.getString(EntryExtraData.PARAM_INPUT_TYPE),
-        useLegacyFleetInputStyle = true,
-        onConfirm = { v ->
-            viewModel.sendNext(Bundle().apply { putString(EntryRequest.PARAM_INPUT_VALUE, v) })
+    PoslinkTypedInputContent(
+        title = extras.getString(EntryExtraData.PARAM_TITLE).orEmpty(),
+        body = extras.getString(EntryExtraData.PARAM_TEXT),
+        inputType = extras.getString(EntryExtraData.PARAM_INPUT_TYPE).orEmpty(),
+        minLength = minL,
+        maxLength = maxL,
+        defaultValue = extras.getString(EntryExtraData.PARAM_DEFAULT_VALUE).orEmpty(),
+        onSubmit = { payload ->
+            val b = Bundle()
+            when (payload) {
+                is Long -> b.putLong(EntryRequest.PARAM_INPUT_VALUE, payload)
+                else -> b.putString(EntryRequest.PARAM_INPUT_VALUE, payload.toString())
+            }
+            viewModel.sendNext(b)
         },
         onError = { msg -> Toast(activity).show(msg, TYPE.FAILURE) }
     )
+}
+
+private const val POSLINK_DATE_HINT = "MM/DD/YYYY"
+private const val POSLINK_TIME_HINT = "HH:MM:SS"
+private const val POSLINK_PHONE_HINT = "(XXX)XXX-XXXX"
+private const val POSLINK_SSN_HINT = "XXX-XX-XXXX"
+
+private fun formatPoslinkInput(rawDigits: String, inputType: String): String = when (inputType) {
+    "2" -> rawDigits.chunked(2).joinToString("/").take(POSLINK_DATE_HINT.length)
+    "3" -> rawDigits.chunked(2).joinToString(":").take(POSLINK_TIME_HINT.length)
+    "4" -> CurrencyUtils.convert(rawDigits.ifEmpty { "0" }.toLongOrNull() ?: 0L, "USD")
+    "6" -> buildString {
+        val d = rawDigits.take(10)
+        if (d.isNotEmpty()) append("(")
+        d.forEachIndexed { index, c ->
+            append(c)
+            if (index == 2) append(")")
+            if (index == 5) append("-")
+        }
+    }
+    "7" -> buildString {
+        val d = rawDigits.take(9)
+        d.forEachIndexed { index, c ->
+            append(c)
+            if (index == 2 || index == 4) append("-")
+        }
+    }
+    else -> rawDigits
+}
+
+private fun poslinkInputHint(inputType: String): String = when (inputType) {
+    "2" -> POSLINK_DATE_HINT
+    "3" -> POSLINK_TIME_HINT
+    "4" -> "$0.00"
+    "6" -> POSLINK_PHONE_HINT
+    "7" -> POSLINK_SSN_HINT
+    else -> ""
+}
+
+private fun poslinkInputRawLengthLimit(inputType: String, maxLength: Int): Int = when (inputType) {
+    "2" -> 8
+    "3" -> 6
+    "6" -> 10
+    "7" -> 9
+    else -> maxLength.coerceAtLeast(0)
+}
+
+@Composable
+private fun PoslinkTypedInputContent(
+    title: String,
+    body: String?,
+    inputType: String,
+    minLength: Int,
+    maxLength: Int,
+    defaultValue: String,
+    onSubmit: (Any) -> Unit,
+    onError: (String) -> Unit
+) {
+    val normalizedType = inputType.trim()
+    val initialDigits = remember(defaultValue, normalizedType) {
+        defaultValue.filter { it.isDigit() }
+    }
+    val defaultDisplay = remember(defaultValue, normalizedType, initialDigits) {
+        when (normalizedType) {
+            "4" -> formatPoslinkInput(initialDigits, normalizedType)
+            "2", "3", "6", "7" -> formatPoslinkInput(initialDigits, normalizedType)
+            else -> defaultValue
+        }
+    }
+    var displayValue by remember(defaultDisplay) { mutableStateOf(defaultDisplay) }
+    val rawLengthLimit = poslinkInputRawLengthLimit(normalizedType, maxLength)
+    val keyboardType = when (normalizedType) {
+        "1", "2", "3", "4", "6", "7" -> KeyboardType.Number
+        "5" -> KeyboardType.Password
+        else -> KeyboardType.Text
+    }
+    val hint = poslinkInputHint(normalizedType)
+    val promptInput = stringResource(R.string.prompt_input)
+    val promptLength = stringResource(R.string.prompt_input_length, "$minLength-$maxLength")
+    val invalidDateMsg = promptInput
+    val invalidTimeMsg = promptInput
+    Column(Modifier.verticalScroll(rememberScrollState())) {
+        PosLinkText(
+            text = title.ifBlank { stringResource(R.string.enter) },
+            role = PosLinkTextRole.ScreenTitle,
+            modifier = Modifier.fillMaxWidth()
+        )
+        if (!body.isNullOrBlank()) {
+            Spacer(Modifier.height(PosLinkDesignTokens.CompactSpacing))
+            PosLinkText(text = body, modifier = Modifier.fillMaxWidth())
+        }
+        Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
+        BasicTextField(
+            value = displayValue,
+            onValueChange = { input ->
+                if (normalizedType == "5") {
+                    displayValue = if (input.length <= rawLengthLimit) input else displayValue
+                    return@BasicTextField
+                }
+                if (normalizedType == "0" || normalizedType.isBlank()) {
+                    displayValue = if (input.length <= rawLengthLimit) input else displayValue
+                    return@BasicTextField
+                }
+                val digits = input.filter { it.isDigit() }.take(rawLengthLimit)
+                displayValue = formatPoslinkInput(digits, normalizedType)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(PosLinkDesignTokens.ButtonHeight),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            visualTransformation = if (normalizedType == "5") {
+                PasswordVisualTransformation()
+            } else {
+                VisualTransformation.None
+            },
+            textStyle = MaterialTheme.typography.bodyLarge.copy(
+                color = Color(0xFF222222),
+                textAlign = TextAlign.Center
+            ),
+            decorationBox = { inner ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFFDBD4D9), RoundedCornerShape(PosLinkDesignTokens.CornerRadius))
+                        .padding(horizontal = PosLinkDesignTokens.FieldInnerHorizontalPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (displayValue.isBlank() && hint.isNotBlank()) {
+                        Text(
+                            text = hint,
+                            color = Color(0xFFA8A8A8),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                    inner()
+                }
+            }
+        )
+        Spacer(Modifier.height(PosLinkDesignTokens.CompactSpacing))
+        PosLinkPrimaryButton(
+            text = stringResource(R.string.confirm).uppercase(Locale.ROOT),
+            onClick = {
+                val rawDigits = displayValue.filter { it.isDigit() }
+                if (normalizedType == "4") {
+                    val amount = CurrencyUtils.parse(displayValue)
+                    if (minLength > 0 && amount <= 0L) {
+                        onError(promptInput)
+                        return@PosLinkPrimaryButton
+                    }
+                    onSubmit(amount)
+                    return@PosLinkPrimaryButton
+                }
+                val logicalValue = if (normalizedType in setOf("2", "3", "6", "7")) {
+                    rawDigits
+                } else {
+                    displayValue.trim()
+                }
+                val length = logicalValue.length
+                if (length < minLength || length > maxLength) {
+                    onError(if (minLength == maxLength) promptInput else promptLength)
+                    return@PosLinkPrimaryButton
+                }
+                if (normalizedType == "2" && !DateUtils().isValidateDate(rawDigits)) {
+                    onError(invalidDateMsg)
+                    return@PosLinkPrimaryButton
+                }
+                if (normalizedType == "3" && !DateUtils().isValidateTime(rawDigits)) {
+                    onError(invalidTimeMsg)
+                    return@PosLinkPrimaryButton
+                }
+                onSubmit(logicalValue)
+            },
+            variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
+        )
+    }
 }
 
 @Composable

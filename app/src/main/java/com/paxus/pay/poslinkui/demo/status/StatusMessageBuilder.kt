@@ -37,7 +37,9 @@ object StatusMessageBuilder {
 
     fun build(bundle: Bundle, context: Context): ParsedStatus {
         val transactionStatus = bundle.getString(EntryExtraData.PARAM_TRANS_STATUS, "").orEmpty()
-        val screenStatusTitle = bundle.getString(StatusData.PARAM_MSG_PRIMARY, "").orEmpty()
+        val screenStatusTitle = bundle.getString(StatusData.PARAM_MSG_PRIMARY)
+            ?: bundle.getString("resultMessagePrimary")
+            ?: ""
         var screenStatusMessage = context.getString(R.string.second_screen_please_wait)
         val action = bundle.getString(EntryRequest.PARAM_ACTION)
         var message: String? = ""

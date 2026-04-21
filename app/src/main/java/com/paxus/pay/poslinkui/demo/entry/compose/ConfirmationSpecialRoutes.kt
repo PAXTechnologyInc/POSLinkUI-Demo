@@ -17,12 +17,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
 import com.pax.us.pay.ui.constant.entry.ConfirmationEntry
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType
@@ -45,6 +48,7 @@ import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.utils.QrBitmapEncoder
 import com.paxus.pay.poslinkui.demo.utils.currentAnimationPolicy
 import com.paxus.pay.poslinkui.demo.viewmodel.EntryViewModel
+import com.paxus.pay.poslinkui.demo.viewmodel.SecondScreenInfoViewModel
 
 /**
  * Confirmation actions that need more than generic message + options.
@@ -188,6 +192,20 @@ private fun SurchargeFeeEntryScreen(extras: Bundle, viewModel: EntryViewModel) {
     }
     val currency = extras.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD)
     val amountLine = CurrencyUtils.convert(fee, currency)
+    val activity = LocalContext.current as FragmentActivity
+    val secondVm = ViewModelProvider(activity)[SecondScreenInfoViewModel::class.java]
+    val waitText = stringResource(R.string.second_screen_please_wait)
+    val fallbackFeeName = stringResource(R.string.surcharge_fallback_message)
+    LaunchedEffect(name, amountLine) {
+        secondVm.updateAllData(
+            amountLine,
+            waitText,
+            "",
+            null,
+            "",
+            name.ifBlank { fallbackFeeName }
+        )
+    }
     val enableBypass = extras.getBoolean(EntryExtraData.PARAM_ENABLE_BYPASS, true)
     Column(
         modifier = Modifier

@@ -48,6 +48,8 @@ import com.paxus.pay.poslinkui.demo.entry.text.amount.TipScreenCallbacks
 import com.paxus.pay.poslinkui.demo.entry.text.amount.TipScreenDisplayFields
 import com.paxus.pay.poslinkui.demo.entry.text.amount.TipScreenModeFlags
 import com.paxus.pay.poslinkui.demo.entry.text.amount.TipScreenModel
+import com.paxus.pay.poslinkui.demo.entry.text.amount.TotalAmountScreen
+import com.paxus.pay.poslinkui.demo.entry.text.amount.TotalAmountScreenContent
 import com.paxus.pay.poslinkui.demo.ui.PosLinkScreenRoot
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils
@@ -304,6 +306,10 @@ private fun TextEntryComposeRoute(
         TipEntryRoute(extras, activity, viewModel)
         return
     }
+    if (entryAction == TextEntry.ACTION_ENTER_TOTAL_AMOUNT) {
+        TotalAmountEntryRoute(extras, viewModel)
+        return
+    }
     if (entryAction == TextEntry.ACTION_ENTER_CASH_BACK) {
         CashbackEntryRoute(extras, activity, viewModel)
         return
@@ -320,6 +326,32 @@ private fun TextEntryComposeRoute(
         TextEntryKind.Unknown ->
             UnmappedEntryPlaceholder(entryAction)
     }
+}
+
+@Composable
+private fun TotalAmountEntryRoute(extras: Bundle, viewModel: EntryViewModel) {
+    val currency = extras.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD)
+    val valuePattern = extras.getString(EntryExtraData.PARAM_VALUE_PATTERN, "1-12")
+    val maxLength = ValuePatternUtils.getMaxLength(valuePattern ?: "1-12")
+    val baseAmount = extras.getLong(EntryExtraData.PARAM_BASE_AMOUNT)
+    val noTipEnabled = extras.getBoolean(EntryExtraData.PARAM_ENABLE_NO_TIP_SELECTION, false)
+    val tipName = extras.getString(EntryExtraData.PARAM_TIP_NAME)
+    TotalAmountScreen(
+        content = TotalAmountScreenContent(
+            message = stringResource(R.string.prompt_input_total_amount),
+            baseAmount = baseAmount,
+            tipName = tipName,
+            currency = currency,
+            maxLength = maxLength,
+            noTipEnabled = noTipEnabled
+        ),
+        onConfirm = { amount ->
+            viewModel.sendNext(Bundle().apply { putLong(EntryRequest.PARAM_TOTAL_AMOUNT, amount) })
+        },
+        onNoTip = {
+            viewModel.sendNext(Bundle().apply { putLong(EntryRequest.PARAM_TOTAL_AMOUNT, baseAmount) })
+        }
+    )
 }
 
 @Composable
