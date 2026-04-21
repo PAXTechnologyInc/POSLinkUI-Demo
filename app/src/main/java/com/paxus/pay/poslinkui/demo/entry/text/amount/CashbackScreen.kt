@@ -1,6 +1,8 @@
 package com.paxus.pay.poslinkui.demo.entry.text.amount
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -32,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkSurfaceCard
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
@@ -125,20 +128,14 @@ fun CashbackScreen(
                 displayValue = displayValue,
                 onDisplayValueChange = { displayValue = it },
                 onPresetOptionChosen = { amt ->
-                    if (props.promptOther) {
-                        displayValue = CurrencyUtils.convert(amt, props.currency)
-                        onOptionSelected(amt)
-                    } else {
-                        onConfirm(amt)
-                    }
+                    displayValue = CurrencyUtils.convert(amt, props.currency)
+                    onOptionSelected(amt)
+                    onConfirm(amt)
                 },
                 onNoThanksChosen = {
-                    if (props.promptOther) {
-                        displayValue = ""
-                        onOptionSelected(0L)
-                    } else {
-                        onConfirm(0L)
-                    }
+                    displayValue = ""
+                    onOptionSelected(0L)
+                    onConfirm(0L)
                 },
                 onError = onError,
                 onConfirm = onConfirm
@@ -217,7 +214,7 @@ private fun CashbackScreenMainColumn(p: CashbackScreenMainColumnParams) {
                 displayValue = displayValue,
                 valuePattern = valuePattern,
                 promptInputStr = promptInputStr,
-                confirmLabel = stringResource(R.string.confirm),
+                confirmLabel = stringResource(R.string.confirm).uppercase(),
                 onError = onError,
                 onConfirm = onConfirm
             )
@@ -244,36 +241,51 @@ private fun CashbackPresetOptionsBlock(
     ) {
         itemsIndexed(options) { _, opt ->
             val amt = (opt.value as? Long) ?: 0L
-            PosLinkSurfaceCard(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(PosLinkDesignTokens.ButtonHeight)
-                    .clickable(enabled = controlsEnabled) { onPresetOptionClick(amt) },
-                contentPadding = PaddingValues(0.dp)
+                    .clickable(enabled = controlsEnabled) { onPresetOptionClick(amt) }
+                    .background(Color.Transparent)
+                    .padding(0.dp)
+                    .then(
+                        Modifier
+                            .background(Color.Transparent, RoundedCornerShape(PosLinkDesignTokens.CornerRadius))
+                            .border(
+                                width = 1.dp,
+                                color = Color(0xFFDBD4D9),
+                                shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
+                            )
+                    )
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    PosLinkText(text = opt.title ?: "", textAlign = TextAlign.Center)
-                }
+                PosLinkText(
+                    text = opt.title ?: "",
+                    textAlign = TextAlign.Center,
+                    color = PosLinkDesignTokens.PrimaryTextColor,
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
     }
     Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-    PosLinkSurfaceCard(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(noThanksHeight)
-            .clickable(enabled = controlsEnabled) { onNoThanksClick() },
-        contentPadding = PaddingValues(0.dp)
+            .clickable(enabled = controlsEnabled) { onNoThanksClick() }
+            .background(Color.Transparent, RoundedCornerShape(PosLinkDesignTokens.CornerRadius))
+            .border(
+                width = 1.dp,
+                color = Color(0xFFDBD4D9),
+                shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
+            )
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            PosLinkText(text = "No Thanks!!", textAlign = TextAlign.Center)
-        }
+        PosLinkText(
+            text = "No Thanks!!",
+            textAlign = TextAlign.Center,
+            color = PosLinkDesignTokens.PrimaryTextColor,
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }
 
@@ -297,14 +309,16 @@ private fun CashbackOtherAmountField(
             }
         },
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { PosLinkText(text = "Other", role = PosLinkTextRole.Supporting) },
+        placeholder = { PosLinkText(text = "Other", color = Color(0xFF222222)) },
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Color(0xFFDBD4D9),
             unfocusedContainerColor = Color(0xFFDBD4D9),
             focusedBorderColor = Color(0xFFDBD4D9),
             unfocusedBorderColor = Color(0xFFDBD4D9),
             focusedTextColor = Color(0xFF222222),
-            unfocusedTextColor = Color(0xFF222222)
+            unfocusedTextColor = Color(0xFF222222),
+            focusedPlaceholderColor = Color(0xFF222222),
+            unfocusedPlaceholderColor = Color(0xFF222222)
         ),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )

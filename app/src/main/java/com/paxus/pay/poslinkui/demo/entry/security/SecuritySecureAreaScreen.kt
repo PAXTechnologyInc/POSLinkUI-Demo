@@ -72,6 +72,9 @@ fun SecuritySecureAreaScreen(
 ) {
     val isInputAccount = entryAction == SecurityEntry.ACTION_INPUT_ACCOUNT
     val isCvvEntry = entryAction == SecurityEntry.ACTION_ENTER_VCODE
+    val isLegacySecurityFieldEntry = entryAction == SecurityEntry.ACTION_ENTER_VCODE ||
+        entryAction == SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS ||
+        entryAction == SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS
     val pinReadyOnly = entryAction == SecurityEntry.ACTION_ENTER_PIN
     val isCreditSalePinMain = pinReadyOnly && isCreditSaleTransType(extras)
     val pinLines = remember(message, pinReadyOnly) {
@@ -105,6 +108,7 @@ fun SecuritySecureAreaScreen(
                 pinUi = SecuritySecureAreaPinUiParams(
                     pinReadyOnly = pinReadyOnly,
                     isCreditSalePinMain = isCreditSalePinMain,
+                    isLegacySecurityFieldEntry = isLegacySecurityFieldEntry,
                     isInputAccount = isInputAccount,
                     pinLines = pinLines,
                     message = message
@@ -217,6 +221,7 @@ private fun SecuritySecureAreaPedPlaceholderSection(
 private data class SecuritySecureAreaPinUiParams(
     val pinReadyOnly: Boolean,
     val isCreditSalePinMain: Boolean,
+    val isLegacySecurityFieldEntry: Boolean,
     val isInputAccount: Boolean,
     val pinLines: List<String>,
     val message: String
@@ -246,6 +251,7 @@ private data class SecuritySecureAreaPrimaryBodyParams(
 private fun SecuritySecureAreaPrimaryBody(params: SecuritySecureAreaPrimaryBodyParams) {
     val pinReadyOnly = params.pinUi.pinReadyOnly
     val isCreditSalePinMain = params.pinUi.isCreditSalePinMain
+    val isLegacySecurityFieldEntry = params.pinUi.isLegacySecurityFieldEntry
     val isInputAccount = params.pinUi.isInputAccount
     val pinLines = params.pinUi.pinLines
     val message = params.pinUi.message
@@ -285,6 +291,15 @@ private fun SecuritySecureAreaPrimaryBody(params: SecuritySecureAreaPrimaryBodyP
                 viewModel = viewModel
             )
         }
+        isLegacySecurityFieldEntry -> {
+            LegacySecurityFieldBody(
+                message = message,
+                boundsSent = boundsSent,
+                onBoundsSent = onBoundsSent,
+                viewModel = viewModel,
+                onContinue = onContinue
+            )
+        }
         isInputAccount -> {
             InputAccountSecurityBody(
                 message = message,
@@ -317,15 +332,7 @@ private fun PinPromptAndInput(
     onBoundsSent: () -> Unit,
     viewModel: EntryViewModel
 ) {
-    pinLines.firstOrNull()?.let {
-        PosLinkText(
-            text = it,
-            role = PosLinkTextRole.Supporting,
-            color = PosLinkDesignTokens.PrimaryTextColor
-        )
-    }
-    Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-    val pinPrompt = pinLines.drop(1).joinToString(" ").ifBlank { fallbackMessage }
+    val pinPrompt = pinLines.joinToString(" ").ifBlank { fallbackMessage }
     PosLinkText(text = pinPrompt, role = PosLinkTextRole.Body)
     Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
     PinSecurePlaceholderField(
@@ -333,6 +340,69 @@ private fun PinPromptAndInput(
         onBoundsSent = onBoundsSent,
         viewModel = viewModel
     )
+}
+
+@Composable
+private fun LegacySecurityFieldBody(
+    message: String,
+    boundsSent: Boolean,
+    onBoundsSent: () -> Unit,
+    viewModel: EntryViewModel,
+    onContinue: () -> Unit
+) {
+    val continueEnabled = !LocalEntryInteractionLocked.current
+    val fieldHeight = dimensionResource(R.dimen.button_height)
+    val fieldCorner = dimensionResource(R.dimen.corner_radius)
+    val fieldShape = RoundedCornerShape(fieldCorner)
+    Column(modifier = Modifier.fillMaxWidth()) {
+        PosLinkText(text = message, role = PosLinkTextRole.ScreenTitle)
+        BasicTextField(
+            value = "",
+            onValueChange = {},
+            readOnly = true,
+            singleLine = true,
+            textStyle = TextStyle(
+                fontSize = PosLinkDesignTokens.SectionTitleTextSize,
+                color = Color(0xFF9C27B0),
+                textAlign = TextAlign.Start
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(fieldHeight)
+                .padding(PosLinkDesignTokens.InlineSpacing)
+                .onGloballyPositioned { coords ->
+                    if (boundsSent || coords.size.width <= 0) return@onGloballyPositioned
+                    onBoundsSent()
+                    val pos = coords.positionInWindow()
+                    viewModel.sendSecurityAreaBounds(
+                        pos.x.roundToInt(),
+                        pos.y.roundToInt(),
+                        coords.size.width,
+                        coords.size.height,
+                        null,
+                        null
+                    )
+                },
+            decorationBox = { innerTextField ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(fieldHeight)
+                        .background(color = Color(0xFFDBD4D9), shape = fieldShape)
+                        .padding(15.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    innerTextField()
+                }
+            }
+        )
+        PosLinkPrimaryButton(
+            text = stringResource(R.string.confirm).uppercase(),
+            onClick = onContinue,
+            enabled = continueEnabled,
+            variant = com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButtonVariant.PoslinkLegacy
+        )
+    }
 }
 
 /**

@@ -443,45 +443,18 @@ private fun CashbackEntryRoute(
     val options = rawOptions
         .filterNotNull()
         .filter { it.isNotBlank() }
-        .mapIndexed { idx, title ->
-            SelectOptionsView.Option(idx, title, null, CurrencyUtils.parse(title))
+        .mapNotNull { raw ->
+            val parsed = CurrencyUtils.parse(raw)
+            if (parsed == 0L) null else parsed
         }
-    if (promptOther && options.isNotEmpty()) {
-        TipScreen(
-            TipScreenModel(
-                amount = TipScreenAmountFields(
-                    baseAmount = extras.getLong(EntryRequest.PARAM_AMOUNT, 0L),
-                    currency = currency,
-                    maxLength = maxLength,
-                    valuePattern = normalizedValuePattern
-                ),
-                display = TipScreenDisplayFields(
-                    tipInfoList = emptyList(),
-                    tipName = activity.getString(R.string.select_cashback_amount),
-                    tipOptions = options,
-                    noTipEnabled = true
-                ),
-                flags = TipScreenModeFlags(
-                    parityLog = "CashBackEnable parity v4 active",
-                    showAmountSection = false,
-                    forcePromptTitle = activity.getString(R.string.select_cashback_amount),
-                    isCashbackPromptCase = true,
-                    noTipTriggersSubmit = false
-                ),
-                callbacks = TipScreenCallbacks(
-                    onTipOptionSelected = { },
-                    onNoTipSelected = { },
-                    onConfirm = { amount, _ ->
-                        viewModel.sendNext(
-                            Bundle().apply { putLong(EntryRequest.PARAM_CASHBACK_AMOUNT, amount) }
-                        )
-                    },
-                    onError = { msg -> Toast(activity).show(msg, TYPE.FAILURE) }
-                )
+        .mapIndexed { idx, amount ->
+            SelectOptionsView.Option(
+                idx,
+                CurrencyUtils.convert(amount, currency),
+                null,
+                amount
             )
-        )
-        return
-    }
+        }
 
     CashbackScreen(
         props = CashbackScreenProps(
