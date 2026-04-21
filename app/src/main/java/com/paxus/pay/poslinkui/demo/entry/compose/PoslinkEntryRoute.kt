@@ -1,6 +1,9 @@
 ﻿package com.paxus.pay.poslinkui.demo.entry.compose
 
 import android.os.Bundle
+import android.graphics.Rect
+import android.view.KeyEvent
+import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +22,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
 import java.util.Locale
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
@@ -42,6 +47,7 @@ import com.pax.us.pay.ui.constant.entry.enumeration.InputType
 import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.entry.text.GenericStringEntryScreen
 import com.paxus.pay.poslinkui.demo.entry.text.invoice.InvoiceNumberScreen
+import com.paxus.pay.poslinkui.demo.entry.signature.ElectronicSignatureView
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFillAppearance
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFilledButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
@@ -58,6 +64,10 @@ import com.paxus.pay.poslinkui.demo.viewmodel.EntryViewModel
 private const val POSLINK_DIALOG_TOP_ROW_SLOT_COUNT = 2
 
 private const val POSLINK_DIALOG_RESPONSE_INDEX_THIRD = 3
+
+private class PoslinkSignatureViewRef {
+    var view: ElectronicSignatureView? = null
+}
 
 /**
  * Title and option buttons for [PoslinkEntry.ACTION_SHOW_DIALOG].
@@ -389,23 +399,46 @@ private fun PoslinkRouteShowSignatureBox(
     } else {
         timeoutRaw.toInt()
     }.coerceAtLeast(0)
+    val signatureViewRef = remember { PoslinkSignatureViewRef() }
+    fun clearSignature() {
+        signatureViewRef.view?.clear()
+    }
+    fun collectSignature(): ShortArray? {
+        val signatureView = signatureViewRef.view ?: return null
+        if (!signatureView.getTouched()) return null
+        val pathPos = signatureView.getPathPos()
+        var totalLen = 0
+        for (segment in pathPos) {
+            totalLen += segment.size
+        }
+        val signature = ShortArray(totalLen)
+        var index = 0
+        for (segment in pathPos) {
+            for (value in segment) {
+                signature[index++] = value.toInt().toShort()
+            }
+        }
+        return signature
+    }
     if (signBoxStyle == 2) {
         PoslinkSignBox2Screen(
             title = title,
             body = body,
             timeoutSec = timeoutSec,
             buttonsEnabled = buttonsEnabled,
+            signatureViewRef = signatureViewRef,
             onCancel = {
                 viewModel.sendNext(
                     Bundle().apply { putString(EntryRequest.PARAM_SIGN_STATUS, "DEMO_CANCEL") }
                 )
             },
-            onClear = { },
+            onClear = { clearSignature() },
             onEnter = {
+                val signature = collectSignature() ?: return@PoslinkSignBox2Screen
                 viewModel.sendNext(
                     Bundle().apply {
                         putString(EntryRequest.PARAM_SIGN_STATUS, "DEMO_ACCEPT")
-                        putShortArray(EntryRequest.PARAM_SIGNATURE, shortArrayOf(0, 0, 1, 0, 1, 1))
+                        putShortArray(EntryRequest.PARAM_SIGNATURE, signature)
                     }
                 )
             }
@@ -416,17 +449,19 @@ private fun PoslinkRouteShowSignatureBox(
             body = body,
             timeoutSec = timeoutSec,
             buttonsEnabled = buttonsEnabled,
+            signatureViewRef = signatureViewRef,
             onCancel = {
                 viewModel.sendNext(
                     Bundle().apply { putString(EntryRequest.PARAM_SIGN_STATUS, "DEMO_CANCEL") }
                 )
             },
-            onClear = { },
+            onClear = { clearSignature() },
             onEnter = {
+                val signature = collectSignature() ?: return@PoslinkSignBox1Screen
                 viewModel.sendNext(
                     Bundle().apply {
                         putString(EntryRequest.PARAM_SIGN_STATUS, "DEMO_ACCEPT")
-                        putShortArray(EntryRequest.PARAM_SIGNATURE, shortArrayOf(0, 0, 1, 0, 1, 1))
+                        putShortArray(EntryRequest.PARAM_SIGNATURE, signature)
                     }
                 )
             }
@@ -566,6 +601,7 @@ private fun PoslinkSignBox1Screen(
     body: String,
     timeoutSec: Int,
     buttonsEnabled: Boolean,
+    signatureViewRef: PoslinkSignatureViewRef,
     onCancel: () -> Unit,
     onClear: () -> Unit,
     onEnter: () -> Unit
@@ -573,6 +609,7 @@ private fun PoslinkSignBox1Screen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(PosLinkDesignTokens.BackgroundColor)
     ) {
         Box(
             modifier = Modifier
@@ -598,38 +635,38 @@ private fun PoslinkSignBox1Screen(
                 style = MaterialTheme.typography.bodyLarge
             )
         }
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-        ) {
+        if (body.isNotBlank()) {
             Column(
                 modifier = Modifier
-                    .weight(1f)
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                     .padding(4.dp)
             ) {
-                if (body.isNotBlank()) {
-                    Text(
-                        text = body,
-                        modifier = Modifier.fillMaxWidth(),
-                        color = PosLinkDesignTokens.PrimaryTextColor,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = 24.sp,
-                            lineHeight = 31.2.sp,
-                            fontWeight = FontWeight.Normal
-                        )
+                Text(
+                    text = body,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = PosLinkDesignTokens.PrimaryTextColor,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 24.sp,
+                        lineHeight = 31.2.sp,
+                        fontWeight = FontWeight.Normal
                     )
-                }
+                )
             }
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .background(Color.White)
-            )
         }
+        PoslinkSignatureBoard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .padding(horizontal = 4.dp)
+                .background(Color.White),
+            buttonsEnabled = buttonsEnabled,
+            signatureViewRef = signatureViewRef,
+            onConfirm = onEnter,
+            onClear = onClear,
+            onCancel = onCancel
+        )
+        Spacer(modifier = Modifier.weight(1f))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -670,6 +707,7 @@ private fun PoslinkSignBox2Screen(
     body: String,
     timeoutSec: Int,
     buttonsEnabled: Boolean,
+    signatureViewRef: PoslinkSignatureViewRef,
     onCancel: () -> Unit,
     onClear: () -> Unit,
     onEnter: () -> Unit
@@ -677,6 +715,7 @@ private fun PoslinkSignBox2Screen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(PosLinkDesignTokens.BackgroundColor)
     ) {
         Box(
             modifier = Modifier
@@ -726,11 +765,16 @@ private fun PoslinkSignBox2Screen(
                     )
                 )
             }
-            Spacer(
+            PoslinkSignatureBoard(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .background(Color.White)
+                    .background(Color.White),
+                buttonsEnabled = buttonsEnabled,
+                signatureViewRef = signatureViewRef,
+                onConfirm = onEnter,
+                onClear = onClear,
+                onCancel = onCancel
             )
         }
         Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
@@ -765,6 +809,61 @@ private fun PoslinkSignBox2Screen(
                 modifier = Modifier.weight(1f)
             )
         }
+    }
+}
+
+@Composable
+private fun PoslinkSignatureBoard(
+    modifier: Modifier,
+    buttonsEnabled: Boolean,
+    signatureViewRef: PoslinkSignatureViewRef,
+    onConfirm: () -> Unit,
+    onClear: () -> Unit,
+    onCancel: () -> Unit
+) {
+    Surface(
+        modifier = modifier,
+        color = Color.White
+    ) {
+        AndroidView(
+            factory = { context ->
+                ElectronicSignatureView(context).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    setBitmap(Rect(0, 0, 384, 128), 0, android.graphics.Color.WHITE)
+                    isFocusable = true
+                    isFocusableInTouchMode = true
+                    requestFocus()
+                    setOnKeyListener { _, keyCode, event ->
+                        if (event.action != KeyEvent.ACTION_UP) {
+                            return@setOnKeyListener false
+                        }
+                        when (keyCode) {
+                            KeyEvent.KEYCODE_ENTER -> {
+                                onConfirm()
+                                true
+                            }
+                            KeyEvent.KEYCODE_DEL -> {
+                                onClear()
+                                true
+                            }
+                            KeyEvent.KEYCODE_BACK -> {
+                                onCancel()
+                                true
+                            }
+                            else -> false
+                        }
+                    }
+                }
+            },
+            update = { view ->
+                view.isEnabled = buttonsEnabled
+                signatureViewRef.view = view
+            },
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 
