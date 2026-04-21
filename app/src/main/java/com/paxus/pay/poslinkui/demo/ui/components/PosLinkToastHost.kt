@@ -10,10 +10,12 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,7 +24,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.AnimationLogger
 import com.paxus.pay.poslinkui.demo.utils.AnimationPolicy
@@ -30,6 +35,7 @@ import com.paxus.pay.poslinkui.demo.utils.Toast
 import com.paxus.pay.poslinkui.demo.utils.ToastCenter
 import com.paxus.pay.poslinkui.demo.utils.ToastMessage
 import com.paxus.pay.poslinkui.demo.utils.currentAnimationPolicy
+import com.paxus.pay.poslinkui.demo.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
@@ -72,19 +78,22 @@ fun PosLinkToastHost(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .wrapContentWidth()
                         .wrapContentHeight()
+                        .heightIn(min = PosLinkDesignTokens.ToolbarHeight)
                         .background(
                             color = toast.backgroundColor(),
-                            shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
+                            // Match golive background_toast.xml: fully rounded capsule (radius = toolbar_height).
+                            shape = RoundedCornerShape(PosLinkDesignTokens.ToolbarHeight)
                         )
                         .padding(
-                            horizontal = PosLinkDesignTokens.ToastHorizontalPadding,
-                            vertical = PosLinkDesignTokens.ToastVerticalPadding
+                            horizontal = 30.dp,
+                            vertical = 0.dp
                         )
                 ) {
-                    PosLinkText(
+                    Text(
                         text = toast.message,
                         color = PosLinkDesignTokens.SecondScreenTextColor,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontSize = dimensionResource(R.dimen.text_size_normal).value.sp
                     )
                 }
             }

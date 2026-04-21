@@ -302,6 +302,17 @@ internal fun PoslinkMessageTitleAndMessages(
                     textAlign = TextAlign.Center
                 )
             }
+            visualMode == PoslinkMessageVisualMode.ShowItemLegacy && !title.contains('\\') -> {
+                Text(
+                    text = title,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = PosLinkDesignTokens.PrimaryTextColor,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Normal
+                    ),
+                    textAlign = TextAlign.Center
+                )
+            }
             useLegacyTitleLayout -> PoslinkFormattedTitleLegacy(title = title)
             else -> PoslinkFormattedTitle(title = title)
         }

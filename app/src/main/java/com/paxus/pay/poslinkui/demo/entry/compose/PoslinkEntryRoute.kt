@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -35,10 +37,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -319,34 +324,194 @@ private fun PoslinkRouteShowItem(
     val total = extras.getString(EntryExtraData.PARAM_TOTAL_LINE).orEmpty()
     val currencySymbol = extras.getString(EntryExtraData.PARAM_CURRENCY_SYMBOL).orEmpty()
     val rawItems = resolvePoslinkShowItemRaw(extras)
-    val list = parsePoslinkShowItemList(rawItems, currencySymbol)
-    val image = resolvePoslinkDisplayImage(
-        extras = extras,
-        fallbackRawPayload = rawItems
-    )
-    val resolvedImageUrl = image.url.ifBlank {
-        resolveShowMessageDrawableUri(
-            activity = activity,
-            imageDesc = image.desc
-        )
+    val normalizedRaw = remember(rawItems) { normalizePoslinkPayload(rawItems) }
+    val parsedItems = remember(normalizedRaw) {
+        val strictItems = parsePoslinkShowItemListFromJson(normalizedRaw)
+        if (strictItems.isNotEmpty()) strictItems else parsePoslinkShowItemListLoose(normalizedRaw)
     }
-    PoslinkMessageDisplayLayout(
-        PoslinkMessageDisplayLayoutParams(
-            body = PoslinkMessageDisplayBodyParams(
-                title = title,
-                messageText = list,
-                imageUrl = resolvedImageUrl,
-                imageDesc = ""
-            ),
-            footer = PoslinkMessageDisplayFooterParams(
-                tax = tax,
-                total = total,
-                visualMode = PoslinkMessageVisualMode.ShowItemLegacy,
-                showConfirmButton = false,
-                onConfirm = { viewModel.sendNext(null) }
-            )
-        )
+    val fallbackText = remember(normalizedRaw, currencySymbol, parsedItems) {
+        if (parsedItems.isNotEmpty()) "" else parsePoslinkShowItemList(normalizedRaw, currencySymbol)
+    }
+    PoslinkShowItemLegacyScreen(
+        title = title,
+        tax = tax,
+        total = total,
+        currencySymbol = currencySymbol,
+        items = parsedItems,
+        fallbackText = fallbackText
     )
+}
+
+@Composable
+private fun PoslinkShowItemLegacyScreen(
+    title: String,
+    tax: String,
+    total: String,
+    currencySymbol: String,
+    items: List<PoslinkItemDetail>,
+    fallbackText: String
+) {
+    val subtitleSize = dimensionResource(R.dimen.text_size_subtitle).value.sp
+    // golive TextShowingUtils default title size becomes FONT_NORMAL_SP (24sp).
+    val titleSize = 24.sp
+    // Match legacy darker divider look (avoid bright white separators).
+    val dividerColor = Color(0x66000000)
+    val symbol = currencySymbol.ifBlank { "$" }
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (title.isNotBlank()) {
+            Text(
+                text = title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                color = PosLinkDesignTokens.PrimaryTextColor,
+                textAlign = TextAlign.Center,
+                fontSize = titleSize
+            )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(dividerColor)
+        )
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            if (items.isNotEmpty()) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    itemsIndexed(items) { index, item ->
+                        PoslinkShowItemRow(
+                            index = index,
+                            item = item,
+                            symbol = symbol,
+                            subtitleSize = subtitleSize
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(dividerColor)
+                        )
+                    }
+                }
+            } else if (fallbackText.isNotBlank()) {
+                Text(
+                    text = fallbackText,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 8.dp),
+                    color = PosLinkDesignTokens.PrimaryTextColor,
+                    fontSize = subtitleSize
+                )
+            }
+        }
+        if (tax.isNotBlank() || total.isNotBlank()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp)
+                    .height(1.5.dp)
+                    .background(Color(0x80000000))
+            )
+            if (tax.isNotBlank()) {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = stringResource(R.string.detail_item_tax),
+                        modifier = Modifier.padding(start = 24.dp),
+                        color = PosLinkDesignTokens.PrimaryTextColor,
+                        fontSize = subtitleSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = tax,
+                        modifier = Modifier.padding(end = 24.dp),
+                        color = PosLinkDesignTokens.PrimaryTextColor,
+                        fontSize = subtitleSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+            if (total.isNotBlank()) {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = stringResource(R.string.pete_total),
+                        modifier = Modifier.padding(start = 24.dp),
+                        color = PosLinkDesignTokens.PrimaryTextColor,
+                        fontSize = subtitleSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = total,
+                        modifier = Modifier.padding(end = 24.dp),
+                        color = PosLinkDesignTokens.PrimaryTextColor,
+                        fontSize = subtitleSize,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+    }
+}
+
+@Composable
+private fun PoslinkShowItemRow(
+    index: Int,
+    item: PoslinkItemDetail,
+    symbol: String,
+    subtitleSize: androidx.compose.ui.unit.TextUnit
+) {
+    val name = item.productName?.takeIf { it.isNotBlank() } ?: "Item ${index + 1}"
+    val unitDisplay = when (item.unit?.trim()) {
+        "1" -> "1b"
+        "2" -> "ft"
+        else -> item.unit.orEmpty()
+    }
+    val quantityText = when {
+        item.quantity.isNullOrBlank() -> ""
+        unitDisplay.equals("x", ignoreCase = true) -> "x${item.quantity}"
+        unitDisplay.isBlank() -> item.quantity.orEmpty()
+        else -> "${item.quantity}$unitDisplay"
+    }
+    val unitPrice = formatPoslinkMoney(item.unitPrice ?: item.price, symbol)
+    val quantityLine = when {
+        quantityText.isBlank() || unitPrice.isBlank() -> ""
+        unitDisplay.equals("x", ignoreCase = true) || unitDisplay.isBlank() -> "$quantityText  @$unitPrice"
+        else -> "$quantityText  @$unitPrice/$unitDisplay"
+    }
+    val totalPrice = formatPoslinkMoney(item.price, symbol)
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "${index + 1}. $name",
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 24.dp),
+                color = PosLinkDesignTokens.PrimaryTextColor,
+                fontSize = subtitleSize
+            )
+            Text(
+                text = totalPrice,
+                modifier = Modifier.padding(end = 24.dp),
+                color = PosLinkDesignTokens.PrimaryTextColor,
+                fontSize = subtitleSize
+            )
+        }
+        if (quantityLine.isNotBlank()) {
+            Text(
+                text = quantityLine,
+                modifier = Modifier.padding(start = 50.dp),
+                color = PosLinkDesignTokens.PrimaryTextColor,
+                fontSize = subtitleSize
+            )
+        }
+    }
 }
 
 @Composable
@@ -432,7 +597,18 @@ private fun PoslinkTypedInputContent(
     onSubmit: (Any) -> Unit,
     onError: (String) -> Unit
 ) {
+    var localSubmitted by remember { mutableStateOf(false) }
+    val interactionEnabled = !LocalEntryInteractionLocked.current && !localSubmitted
     val normalizedType = inputType.trim()
+    val (effectiveMinLength, effectiveMaxLength) = remember(normalizedType, minLength, maxLength) {
+        when (normalizedType) {
+            "2" -> 8 to 8
+            "3" -> 6 to 6
+            "6" -> 10 to 10
+            "7" -> 9 to 9
+            else -> minLength to maxLength
+        }
+    }
     val initialDigits = remember(defaultValue, normalizedType) {
         defaultValue.filter { it.isDigit() }
     }
@@ -443,7 +619,15 @@ private fun PoslinkTypedInputContent(
             else -> defaultValue
         }
     }
-    var displayValue by remember(defaultDisplay) { mutableStateOf(defaultDisplay) }
+    var fieldValue by remember(defaultDisplay) {
+        mutableStateOf(
+            TextFieldValue(
+                text = defaultDisplay,
+                selection = TextRange(defaultDisplay.length)
+            )
+        )
+    }
+    val displayValue = fieldValue.text
     val rawLengthLimit = poslinkInputRawLengthLimit(normalizedType, maxLength)
     val keyboardType = when (normalizedType) {
         "1", "2", "3", "4", "6", "7" -> KeyboardType.Number
@@ -452,38 +636,70 @@ private fun PoslinkTypedInputContent(
     }
     val hint = poslinkInputHint(normalizedType)
     val promptInput = stringResource(R.string.prompt_input)
-    val promptLength = stringResource(R.string.prompt_input_length, "$minLength-$maxLength")
-    val invalidDateMsg = promptInput
-    val invalidTimeMsg = promptInput
+    val promptLength = stringResource(
+        R.string.prompt_input_length,
+        "$effectiveMinLength-$effectiveMaxLength"
+    )
+    val invalidDateMsg = stringResource(R.string.err_invalid_date)
+    val invalidTimeMsg = stringResource(R.string.prompt_invalid_time)
+    val promptInputType = stringResource(R.string.prompt_input_type)
+    val titleMargin = PosLinkDesignTokens.SpaceBetweenTextView
+    val bodyTopMargin = 8.dp
     Column(Modifier.verticalScroll(rememberScrollState())) {
-        PosLinkText(
+        Spacer(Modifier.height(titleMargin))
+        Text(
             text = title.ifBlank { stringResource(R.string.enter) },
-            role = PosLinkTextRole.ScreenTitle,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            color = PosLinkDesignTokens.PrimaryTextColor,
+            fontSize = 36.sp
         )
+        Spacer(Modifier.height(titleMargin))
         if (!body.isNullOrBlank()) {
-            Spacer(Modifier.height(PosLinkDesignTokens.CompactSpacing))
-            PosLinkText(text = body, modifier = Modifier.fillMaxWidth())
+            Spacer(Modifier.height(bodyTopMargin))
+            PoslinkFormattedTitleLegacy(title = body)
         }
-        Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
         BasicTextField(
-            value = displayValue,
+            value = fieldValue,
             onValueChange = { input ->
                 if (normalizedType == "5") {
-                    displayValue = if (input.length <= rawLengthLimit) input else displayValue
+                    fieldValue = if (input.text.length <= rawLengthLimit) {
+                        input
+                    } else {
+                        fieldValue
+                    }
                     return@BasicTextField
                 }
                 if (normalizedType == "0" || normalizedType.isBlank()) {
-                    displayValue = if (input.length <= rawLengthLimit) input else displayValue
+                    fieldValue = if (input.text.length <= rawLengthLimit) {
+                        input
+                    } else {
+                        fieldValue
+                    }
                     return@BasicTextField
                 }
-                val digits = input.filter { it.isDigit() }.take(rawLengthLimit)
-                displayValue = formatPoslinkInput(digits, normalizedType)
+                val previousText = fieldValue.text
+                val previousDigits = previousText.filter { it.isDigit() }
+                var digits = input.text.filter { it.isDigit() }
+                // When user deletes a separator (e.g. '-' ')' '/'), legacy EditText+Watcher removes
+                // the preceding digit as well; keep same behavior so backspace can clear continuously.
+                val deletingSeparatorOnly =
+                    input.text.length < previousText.length && digits.length == previousDigits.length
+                if (deletingSeparatorOnly && previousDigits.isNotEmpty()) {
+                    digits = previousDigits.dropLast(1)
+                }
+                digits = digits.take(rawLengthLimit)
+                val formatted = formatPoslinkInput(digits, normalizedType)
+                // Keep caret at end for watcher-style formatting parity with legacy EditText.
+                fieldValue = TextFieldValue(
+                    text = formatted,
+                    selection = TextRange(formatted.length)
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(PosLinkDesignTokens.ButtonHeight),
             singleLine = true,
+            enabled = interactionEnabled,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             visualTransformation = if (normalizedType == "5") {
                 PasswordVisualTransformation()
@@ -505,7 +721,8 @@ private fun PoslinkTypedInputContent(
                     if (displayValue.isBlank() && hint.isNotBlank()) {
                         Text(
                             text = hint,
-                            color = Color(0xFFA8A8A8),
+                            // Match golive TextField hint tint: pastel_text_color_on_light.
+                            color = Color(0xFF222222),
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
@@ -513,7 +730,6 @@ private fun PoslinkTypedInputContent(
                 }
             }
         )
-        Spacer(Modifier.height(PosLinkDesignTokens.CompactSpacing))
         PosLinkPrimaryButton(
             text = stringResource(R.string.confirm).uppercase(Locale.ROOT),
             onClick = {
@@ -524,6 +740,7 @@ private fun PoslinkTypedInputContent(
                         onError(promptInput)
                         return@PosLinkPrimaryButton
                     }
+                    localSubmitted = true
                     onSubmit(amount)
                     return@PosLinkPrimaryButton
                 }
@@ -533,8 +750,8 @@ private fun PoslinkTypedInputContent(
                     displayValue.trim()
                 }
                 val length = logicalValue.length
-                if (length < minLength || length > maxLength) {
-                    onError(if (minLength == maxLength) promptInput else promptLength)
+                if (length < effectiveMinLength || length > effectiveMaxLength) {
+                    onError(if (effectiveMinLength == effectiveMaxLength) promptInputType else promptLength)
                     return@PosLinkPrimaryButton
                 }
                 if (normalizedType == "2" && !DateUtils().isValidateDate(rawDigits)) {
@@ -545,8 +762,10 @@ private fun PoslinkTypedInputContent(
                     onError(invalidTimeMsg)
                     return@PosLinkPrimaryButton
                 }
+                localSubmitted = true
                 onSubmit(logicalValue)
             },
+            enabled = interactionEnabled,
             variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
         )
     }

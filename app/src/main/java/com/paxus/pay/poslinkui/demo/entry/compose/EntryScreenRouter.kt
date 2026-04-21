@@ -307,7 +307,7 @@ private fun TextEntryComposeRoute(
         return
     }
     if (entryAction == TextEntry.ACTION_ENTER_TOTAL_AMOUNT) {
-        TotalAmountEntryRoute(extras, viewModel)
+        TotalAmountEntryRoute(extras, activity, viewModel)
         return
     }
     if (entryAction == TextEntry.ACTION_ENTER_CASH_BACK) {
@@ -329,10 +329,12 @@ private fun TextEntryComposeRoute(
 }
 
 @Composable
-private fun TotalAmountEntryRoute(extras: Bundle, viewModel: EntryViewModel) {
+private fun TotalAmountEntryRoute(extras: Bundle, activity: FragmentActivity, viewModel: EntryViewModel) {
     val currency = extras.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD)
     val valuePattern = extras.getString(EntryExtraData.PARAM_VALUE_PATTERN, "1-12")
     val maxLength = ValuePatternUtils.getMaxLength(valuePattern ?: "1-12")
+    val lengthList = ValuePatternUtils.getLengthList(valuePattern ?: "1-12")
+    val promptInput = stringResource(R.string.prompt_input)
     val baseAmount = extras.getLong(EntryExtraData.PARAM_BASE_AMOUNT)
     val noTipEnabled = extras.getBoolean(EntryExtraData.PARAM_ENABLE_NO_TIP_SELECTION, false)
     val tipName = extras.getString(EntryExtraData.PARAM_TIP_NAME)
@@ -349,7 +351,11 @@ private fun TotalAmountEntryRoute(extras: Bundle, viewModel: EntryViewModel) {
             viewModel.sendNext(Bundle().apply { putLong(EntryRequest.PARAM_TOTAL_AMOUNT, amount) })
         },
         onNoTip = {
-            viewModel.sendNext(Bundle().apply { putLong(EntryRequest.PARAM_TOTAL_AMOUNT, baseAmount) })
+            if (baseAmount == 0L && !lengthList.contains(0)) {
+                Toast(activity).show(promptInput, TYPE.FAILURE)
+            } else {
+                viewModel.sendNext(Bundle().apply { putLong(EntryRequest.PARAM_TOTAL_AMOUNT, baseAmount) })
+            }
         }
     )
 }

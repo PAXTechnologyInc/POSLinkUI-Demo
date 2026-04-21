@@ -612,20 +612,25 @@ internal fun PoslinkItemDetail.toReadableLine(index: Int, currencySymbol: String
         ?: "Item ${index + 1}"
     val quantityRaw = quantity?.takeIf { it.isNotBlank() }
     val unitRaw = unit?.takeIf { it.isNotBlank() }
+    val unitDisplay = when (unitRaw) {
+        "1" -> "1b"
+        "2" -> "ft"
+        else -> unitRaw.orEmpty()
+    }
     val unitPriceText = formatPoslinkMoney(unitPrice ?: price, symbol)
     val amountText = formatPoslinkMoney(price, symbol)
 
     val qtyAndUnit = when {
         quantityRaw.isNullOrBlank() -> ""
-        unitRaw.equals("x", ignoreCase = true) -> "x$quantityRaw"
-        unitRaw.isNullOrBlank() -> quantityRaw
-        else -> "$quantityRaw$unitRaw"
+        unitDisplay.equals("x", ignoreCase = true) -> "x$quantityRaw"
+        unitDisplay.isBlank() -> quantityRaw
+        else -> "$quantityRaw$unitDisplay"
     }
     val atUnitPrice = when {
         unitPriceText.isBlank() -> ""
-        unitRaw.equals("x", ignoreCase = true) -> "@$unitPriceText"
-        unitRaw.isNullOrBlank() -> "@$unitPriceText"
-        else -> "@$unitPriceText/$unitRaw"
+        unitDisplay.equals("x", ignoreCase = true) -> "@$unitPriceText"
+        unitDisplay.isBlank() -> "@$unitPriceText"
+        else -> "@$unitPriceText/$unitDisplay"
     }
     val leadingDetail = listOf(qtyAndUnit, atUnitPrice)
         .filter { it.isNotBlank() }

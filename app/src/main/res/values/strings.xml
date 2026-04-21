@@ -140,6 +140,7 @@
     <string name="pls_input_cid">Please Enter CID</string>
     <string name="prompt_input_4digit">Please Enter Last 4 Digits</string>
     <string name="prompt_input_all_digit">Please Enter All Digits</string>
+    <string name="prompt_input_type">Please Enter Correct Format Of Input Type</string>
     <string name="pls_input_orig_trans_date">Please Enter Original Transaction Date</string>
     <string name="pls_input_pin_again">PIN Error, Please Retry\n\nPlease Enter PIN</string>
     <string name="pls_input_pin_last">Last PIN Attempt\n\nPlease Enter PIN</string>

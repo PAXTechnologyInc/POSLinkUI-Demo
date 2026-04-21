@@ -2,13 +2,17 @@ package com.paxus.pay.poslinkui.demo.entry.text.amount
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,13 +24,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkSecondaryButton
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils
 
@@ -52,24 +57,45 @@ fun TotalAmountScreen(
     onNoTip: () -> Unit
 ) {
     var displayValue by remember { mutableStateOf(CurrencyUtils.convert(0L, content.currency)) }
+    var localSubmitted by remember { mutableStateOf(false) }
+    val interactionEnabled = !LocalEntryInteractionLocked.current && !localSubmitted
     val fieldShape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
     val inputHeight = PosLinkDesignTokens.ButtonHeight
+    val sidePadding = 20.dp
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        PosLinkText(
-            text = content.message,
-            role = PosLinkTextRole.ScreenTitle,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        PosLinkText(
-            text = "Base: " + CurrencyUtils.convert(content.baseAmount, content.currency),
-            role = PosLinkTextRole.Body
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+    ) {
+        Text(
+            text = CurrencyUtils.convert(content.baseAmount, content.currency),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp),
+            color = PosLinkDesignTokens.PrimaryTextColor,
+            fontSize = PosLinkDesignTokens.SectionTitleTextSize,
+            textAlign = TextAlign.Center
         )
         if (!content.tipName.isNullOrBlank()) {
-            PosLinkText(text = content.tipName, role = PosLinkTextRole.Supporting)
+            Text(
+                text = content.tipName,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp),
+                color = PosLinkDesignTokens.PrimaryTextColor,
+                fontSize = PosLinkDesignTokens.SectionTitleTextSize,
+                textAlign = TextAlign.Center
+            )
         }
-        Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
+        Text(
+            text = content.message,
+            modifier = Modifier.fillMaxWidth(),
+            color = PosLinkDesignTokens.PrimaryTextColor,
+            fontSize = PosLinkDesignTokens.TitleTextSize,
+            fontWeight = FontWeight.Normal
+        )
+        Spacer(modifier = Modifier.height(PosLinkDesignTokens.ControlGutter))
         BasicTextField(
             value = displayValue,
             onValueChange = {
@@ -83,15 +109,17 @@ fun TotalAmountScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(sidePadding)
                 .height(inputHeight),
+            enabled = interactionEnabled,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
             textStyle = TextStyle(
                 color = Color(0xFF222222),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center
             ),
             decorationBox = { inner ->
-                androidx.compose.foundation.layout.Box(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(inputHeight)
@@ -105,12 +133,24 @@ fun TotalAmountScreen(
         )
         Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
         if (content.noTipEnabled) {
-            PosLinkSecondaryButton(text = "No Tip", onClick = onNoTip)
-            Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
+            PosLinkSecondaryButton(
+                text = stringResource(R.string.no_tip),
+                onClick = {
+                    localSubmitted = true
+                    onNoTip()
+                },
+                modifier = Modifier.padding(vertical = 10.dp),
+                enabled = interactionEnabled
+            )
         }
         PosLinkPrimaryButton(
             text = stringResource(R.string.confirm).uppercase(),
-            onClick = { onConfirm(CurrencyUtils.parse(displayValue)) }
+            onClick = {
+                localSubmitted = true
+                onConfirm(CurrencyUtils.parse(displayValue))
+            },
+            enabled = interactionEnabled,
+            variant = com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButtonVariant.PoslinkLegacy
         )
     }
 }
