@@ -56,6 +56,7 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.pax.us.pay.ui.constant.entry.SecurityEntry
 import com.pax.us.pay.ui.constant.status.PINStatus
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyThemeButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkSurfaceCard
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
@@ -87,8 +88,8 @@ fun SecuritySecureAreaScreen(
     onContinue: () -> Unit
 ) {
     val isInputAccount = entryAction == SecurityEntry.ACTION_INPUT_ACCOUNT
-    val isCvvEntry = entryAction == SecurityEntry.ACTION_ENTER_VCODE
-    val isLegacySecurityFieldEntry = entryAction == SecurityEntry.ACTION_ENTER_VCODE ||
+    val isCvvEntry = isVcodeSecurityAction(entryAction)
+    val isLegacySecurityFieldEntry = isVcodeSecurityAction(entryAction) ||
         entryAction == SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS ||
         entryAction == SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS
     val pinReadyOnly = entryAction == SecurityEntry.ACTION_ENTER_PIN
@@ -157,6 +158,7 @@ fun SecuritySecureAreaScreen(
         SecuritySecureAreaPedPlaceholderSection(
             pinReadyOnly = pinReadyOnly,
             isInputAccount = isInputAccount,
+            isLegacySecurityFieldEntry = isLegacySecurityFieldEntry,
             boundsSent = boundsSent,
             onBoundsSent = { boundsSent = true },
             viewModel = viewModel,
@@ -217,20 +219,29 @@ private fun securitySecureAreaRootColumnModifier(
         } else {
             PosLinkDesignTokens.SpaceBetweenTextView
         },
-        bottom = if (pinReadyOnly) 0.dp else PosLinkDesignTokens.SpaceBetweenTextView
+        // `fragment_input_account.xml` uses parent `default_gap` only; extra 12dp here pushes the
+        // contactless logo row too far above the bottom edge.
+        bottom = if (pinReadyOnly) {
+            0.dp
+        } else if (isInputAccount) {
+            0.dp
+        } else {
+            PosLinkDesignTokens.SpaceBetweenTextView
+        }
     )
 
 @Composable
 private fun SecuritySecureAreaPedPlaceholderSection(
     pinReadyOnly: Boolean,
     isInputAccount: Boolean,
+    isLegacySecurityFieldEntry: Boolean,
     boundsSent: Boolean,
     onBoundsSent: () -> Unit,
     viewModel: EntryViewModel,
     onContinue: () -> Unit
 ) {
     val continueEnabled = !LocalEntryInteractionLocked.current
-    if (pinReadyOnly || isInputAccount) return
+    if (pinReadyOnly || isInputAccount || isLegacySecurityFieldEntry) return
     OutlinedTextField(
         value = "",
         onValueChange = {},
@@ -244,7 +255,7 @@ private fun SecuritySecureAreaPedPlaceholderSection(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .height(PosLinkDesignTokens.InputHeight)
+            .height(PosLinkDesignTokens.inputHeight())
             .onGloballyPositioned { coords ->
                 if (boundsSent || coords.size.width <= 0) return@onGloballyPositioned
                 onBoundsSent()
@@ -541,10 +552,13 @@ private fun LegacySecurityFieldBody(
 ) {
     val continueEnabled = !LocalEntryInteractionLocked.current
     val fieldHeight = dimensionResource(R.dimen.button_height)
+    val fieldGap = dimensionResource(R.dimen.margin_gap)
     val fieldCorner = dimensionResource(R.dimen.corner_radius)
+    val fieldInnerPadding = dimensionResource(R.dimen.padding_vertical)
     val fieldShape = RoundedCornerShape(fieldCorner)
     Column(modifier = Modifier.fillMaxWidth()) {
         PosLinkText(text = message, role = PosLinkTextRole.ScreenTitle)
+        Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
         BasicTextField(
             value = "",
             onValueChange = {},
@@ -556,6 +570,7 @@ private fun LegacySecurityFieldBody(
                 textAlign = TextAlign.Start
             ),
             modifier = Modifier
+                .padding(fieldGap)
                 .fillMaxWidth()
                 .height(fieldHeight)
                 .onGloballyPositioned { coords ->
@@ -577,18 +592,17 @@ private fun LegacySecurityFieldBody(
                         .fillMaxWidth()
                         .height(fieldHeight)
                         .background(color = Color(0xFFDBD4D9), shape = fieldShape)
-                        .padding(15.dp),
+                        .padding(fieldInnerPadding),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     innerTextField()
                 }
             }
         )
-        PosLinkPrimaryButton(
-            text = stringResource(R.string.confirm).uppercase(),
+        PosLinkLegacyThemeButton(
+            text = stringResource(R.string.confirm),
             onClick = onContinue,
-            enabled = continueEnabled,
-            variant = com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButtonVariant.PoslinkLegacy
+            enabled = continueEnabled
         )
     }
 }
@@ -996,7 +1010,7 @@ private fun InputAccountSecurityMainColumn(p: InputAccountSecurityMainColumnPara
             if (applyCreditSaleMainLayout) {
                 InputAccountConfirmButton(onClick = onContinue, enabled = continueEnabled)
             } else {
-                PosLinkPrimaryButton(
+                PosLinkLegacyThemeButton(
                     text = stringResource(R.string.confirm),
                     onClick = onContinue,
                     enabled = false
@@ -1008,7 +1022,11 @@ private fun InputAccountSecurityMainColumn(p: InputAccountSecurityMainColumnPara
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(top = PosLinkDesignTokens.ControlGutter)
+                // Match `fragment_input_account` `entry_mode_view` top/bottom 8dp margins.
+                .padding(
+                    top = PosLinkDesignTokens.ControlGutter,
+                    bottom = PosLinkDesignTokens.ControlGutter
+                )
         ) {
             val modes = inputModesWithCreditSaleNoNfcFallback(
                 enableInsert = enableInsert,

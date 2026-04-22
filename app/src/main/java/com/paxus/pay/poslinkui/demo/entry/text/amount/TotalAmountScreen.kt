@@ -29,7 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
+import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyThemeButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkSecondaryButton
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
@@ -60,8 +62,17 @@ fun TotalAmountScreen(
     var localSubmitted by remember { mutableStateOf(false) }
     val interactionEnabled = !LocalEntryInteractionLocked.current && !localSubmitted
     val fieldShape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
-    val inputHeight = PosLinkDesignTokens.ButtonHeight
+    val inputHeight = PosLinkDesignTokens.buttonHeight()
     val sidePadding = 20.dp
+    val submit = {
+        localSubmitted = true
+        onConfirm(CurrencyUtils.parse(displayValue))
+    }
+
+    EntryHardwareConfirmEffect(
+        enabled = interactionEnabled,
+        onConfirm = submit
+    )
 
     Column(
         modifier = Modifier
@@ -139,18 +150,13 @@ fun TotalAmountScreen(
                     localSubmitted = true
                     onNoTip()
                 },
-                modifier = Modifier.padding(vertical = 10.dp),
                 enabled = interactionEnabled
             )
         }
-        PosLinkPrimaryButton(
-            text = stringResource(R.string.confirm).uppercase(),
-            onClick = {
-                localSubmitted = true
-                onConfirm(CurrencyUtils.parse(displayValue))
-            },
-            enabled = interactionEnabled,
-            variant = com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButtonVariant.PoslinkLegacy
+        PosLinkLegacyThemeButton(
+            text = stringResource(R.string.confirm),
+            onClick = submit,
+            enabled = interactionEnabled
         )
     }
 }

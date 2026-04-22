@@ -43,9 +43,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFillAppearance
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFilledButton
+import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyThemeButton
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils
@@ -120,6 +120,14 @@ fun OrigTransDateScreen(
         }
     }
     var value by remember { mutableStateOf(TextFieldValue("", TextRange(0))) }
+    val submit = {
+        onConfirm(value.text.replace("[^0-9]".toRegex(), ""))
+    }
+
+    EntryHardwareConfirmEffect(
+        enabled = !interactionLocked,
+        onConfirm = submit
+    )
 
     Column(
         modifier = Modifier
@@ -129,7 +137,7 @@ fun OrigTransDateScreen(
         Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
         Text(
             text = message,
-            color = Color(0xFFDBD4D9),
+            color = PosLinkDesignTokens.PrimaryTextColor,
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Normal,
                 fontSize = PosLinkDesignTokens.TitleTextSize
@@ -153,7 +161,7 @@ fun OrigTransDateScreen(
             readOnly = interactionLocked,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(PosLinkDesignTokens.ButtonHeight)
+                .height(PosLinkDesignTokens.buttonHeight())
                 .focusRequester(focusRequester)
                 .onFocusChanged { focusState ->
                     isInputFocused = focusState.isFocused
@@ -172,7 +180,7 @@ fun OrigTransDateScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(PosLinkDesignTokens.ButtonHeight)
+                        .height(PosLinkDesignTokens.buttonHeight())
                         .border(
                             width = 2.dp,
                             color = Color(0xFFDBD4D9),
@@ -192,7 +200,7 @@ fun OrigTransDateScreen(
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 14.sp,
                                 lineHeight = 20.sp,
-                                color = Color(0xFF3C4045),
+                                color = PosLinkDesignTokens.OnLightTextColor,
                                 textAlign = TextAlign.Center
                             )
                         )
@@ -201,28 +209,11 @@ fun OrigTransDateScreen(
                 }
             }
         )
-        Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        PosLinkLegacyMaterialFilledButton(
-            onClick = { onConfirm(value.text.replace("[^0-9]".toRegex(), "")) },
+        PosLinkLegacyThemeButton(
+            text = stringResource(R.string.confirm),
+            onClick = submit,
             enabled = !interactionLocked,
-            modifier = Modifier.fillMaxWidth(),
-            appearance = PosLinkLegacyMaterialFillAppearance(
-                slotHeight = PosLinkDesignTokens.ButtonHeight,
-                shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
-                containerColor = Color(0xFF6E85B7),
-                disabledContainerColor = Color(0xFF6E85B7).copy(alpha = 0.38f)
-            )
-        ) {
-            Text(
-                text = stringResource(R.string.confirm).uppercase(Locale.US),
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                    letterSpacing = 0.sp,
-                    color = Color(0xFFECECEC)
-                )
-            )
-        }
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }

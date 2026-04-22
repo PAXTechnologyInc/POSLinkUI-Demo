@@ -2,16 +2,18 @@ package com.paxus.pay.poslinkui.demo.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import com.paxus.pay.poslinkui.demo.ui.device.LocalDeviceLayoutSpec
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import java.util.Locale
 
@@ -21,7 +23,7 @@ enum class PosLinkPrimaryButtonVariant {
 }
 
 private data class PosLinkPrimaryButtonStyle(
-    val cornerDp: Int,
+    val corner: Dp,
     val containerColor: Color,
     val disabledContainerColor: Color,
     val pressedContainerColor: Color?,
@@ -29,8 +31,8 @@ private data class PosLinkPrimaryButtonStyle(
 )
 
 /**
- * Full-width primary action (T030). Slot height uses the larger of [PosLinkDesignTokens.ButtonHeight] and
- * [LocalDeviceLayoutSpec.listItemMinHeight]; fill is inset like XML `MaterialButton` (see [PosLinkLegacyMaterialFilledButton]).
+ * Full-width primary action (T030). Slot height follows configuration-qualified `R.dimen.button_height`;
+ * fill is inset like XML `MaterialButton` (see [PosLinkLegacyMaterialFilledButton]).
  *
  * @param text Button label.
  * @param onClick Click handler.
@@ -44,45 +46,55 @@ fun PosLinkPrimaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     fillMaxWidth: Boolean = true,
-    variant: PosLinkPrimaryButtonVariant = PosLinkPrimaryButtonVariant.Default
+    variant: PosLinkPrimaryButtonVariant = PosLinkPrimaryButtonVariant.Default,
+    containerColorOverride: Color? = null,
+    disabledContainerColorOverride: Color? = null,
+    pressedContainerColorOverride: Color? = null,
+    textColorOverride: Color? = null,
+    textFontWeight: FontWeight = FontWeight.Medium,
+    textLetterSpacing: TextUnit = PosLinkDesignTokens.ButtonTextLetterSpacing,
+    allCapsOverride: Boolean? = null
 ) {
-    val spec = LocalDeviceLayoutSpec.current
-    val h = maxOf(PosLinkDesignTokens.ButtonHeight, spec.listItemMinHeight)
+    val h = dimensionResource(R.dimen.button_height)
+    val outerV = dimensionResource(R.dimen.margin_gap)
     val style = when (variant) {
         PosLinkPrimaryButtonVariant.Default -> PosLinkPrimaryButtonStyle(
-            cornerDp = PosLinkDesignTokens.CornerRadius.value.toInt(),
+            corner = PosLinkDesignTokens.LegacyButtonCornerRadius,
             containerColor = PosLinkDesignTokens.PrimaryColor,
-            disabledContainerColor = PosLinkDesignTokens.PrimaryColor.copy(alpha = 0.38f),
-            pressedContainerColor = null,
-            allCaps = false
+            disabledContainerColor = PosLinkDesignTokens.DisabledColor,
+            pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor,
+            allCaps = true
         )
         PosLinkPrimaryButtonVariant.PoslinkLegacy -> PosLinkPrimaryButtonStyle(
-            cornerDp = PosLinkDesignTokens.LegacyButtonCornerRadius.value.toInt(),
+            corner = PosLinkDesignTokens.LegacyButtonCornerRadius,
             containerColor = PosLinkDesignTokens.PrimaryColor,
-            disabledContainerColor = PosLinkDesignTokens.PrimaryColor.copy(alpha = 0.45f),
+            disabledContainerColor = PosLinkDesignTokens.DisabledColor,
             pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor,
-            // golive XML Button 保留 extras 传入大小写（如 Yes/No）；勿强制全大写
-            allCaps = false
+            // golive XML Button 淇濈暀 extras 浼犲叆澶у皬鍐欙紙濡?Yes/No锛夛紱鍕垮己鍒跺叏澶у啓
+            allCaps = true
         )
     }
     PosLinkLegacyMaterialFilledButton(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.padding(vertical = outerV),
         enabled = enabled,
         fillMaxWidth = fillMaxWidth,
         appearance = PosLinkLegacyMaterialFillAppearance(
             slotHeight = h,
-            shape = RoundedCornerShape(style.cornerDp.dp),
-            containerColor = style.containerColor,
-            disabledContainerColor = style.disabledContainerColor,
-            pressedContainerColor = style.pressedContainerColor
+            shape = RoundedCornerShape(style.corner),
+            containerColor = containerColorOverride ?: style.containerColor,
+            disabledContainerColor = disabledContainerColorOverride ?: style.disabledContainerColor,
+            pressedContainerColor = pressedContainerColorOverride ?: style.pressedContainerColor
         )
     ) {
-        val displayText = if (style.allCaps) text.uppercase(Locale.ROOT) else text
+        val displayText = if (allCapsOverride ?: style.allCaps) text.uppercase(Locale.ROOT) else text
         Text(
             text = displayText,
-            style = MaterialTheme.typography.labelLarge,
-            color = if (enabled) {
+            style = MaterialTheme.typography.labelLarge.copy(
+                fontWeight = textFontWeight,
+                letterSpacing = textLetterSpacing
+            ),
+            color = textColorOverride ?: if (enabled) {
                 PosLinkDesignTokens.PrimaryTextColor
             } else {
                 PosLinkDesignTokens.PrimaryTextColor.copy(alpha = 0.38f)
@@ -108,18 +120,59 @@ fun PosLinkSecondaryButton(
     enabled: Boolean = true,
     fillMaxWidth: Boolean = true
 ) {
-    val spec = LocalDeviceLayoutSpec.current
-    val h = maxOf(PosLinkDesignTokens.ButtonHeight, spec.listItemMinHeight)
-    val sizedModifier = modifier.height(h).then(if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier)
-    OutlinedButton(
+    val outerV = dimensionResource(R.dimen.margin_gap)
+    PosLinkLegacyMaterialFilledButton(
         onClick = onClick,
         enabled = enabled,
-        modifier = sizedModifier,
-        shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius),
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = PosLinkDesignTokens.PrimaryColor
+        modifier = modifier.padding(vertical = outerV),
+        fillMaxWidth = fillMaxWidth,
+        appearance = PosLinkLegacyMaterialFillAppearance(
+            slotHeight = dimensionResource(R.dimen.button_height),
+            shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
+            containerColor = PosLinkDesignTokens.PrimaryColor,
+            disabledContainerColor = PosLinkDesignTokens.DisabledColor,
+            pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor
         )
     ) {
-        Text(text = text, style = MaterialTheme.typography.labelLarge)
+        Text(
+            text = text.uppercase(Locale.ROOT),
+            style = MaterialTheme.typography.labelLarge.copy(
+                fontWeight = FontWeight.Medium,
+                letterSpacing = PosLinkDesignTokens.ButtonTextLetterSpacing
+            ),
+            color = if (enabled) {
+                PosLinkDesignTokens.PrimaryTextColor
+            } else {
+                PosLinkDesignTokens.PrimaryTextColor.copy(alpha = 0.38f)
+            }
+        )
     }
+}
+
+/**
+ * Legacy XML `<Button>` parity:
+ * - uses [PosLinkPrimaryButtonVariant.PoslinkLegacy] selector colors (normal/pressed),
+ * - keeps disabled background on primary color (legacy theme does not provide a disabled state shape),
+ * - keeps uppercase behavior by default.
+ */
+@Composable
+fun PosLinkLegacyThemeButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    fillMaxWidth: Boolean = true,
+    allCaps: Boolean = true
+) {
+    PosLinkPrimaryButton(
+        text = text,
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        fillMaxWidth = fillMaxWidth,
+        variant = PosLinkPrimaryButtonVariant.PoslinkLegacy,
+        disabledContainerColorOverride = PosLinkDesignTokens.PrimaryColor,
+        textColorOverride = PosLinkDesignTokens.PrimaryTextColor,
+        allCapsOverride = allCaps
+    )
 }

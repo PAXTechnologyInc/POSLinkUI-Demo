@@ -26,8 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.paxus.pay.poslinkui.demo.R
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFillAppearance
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFilledButton
+import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyThemeButton
+import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 
 /**
@@ -119,7 +119,7 @@ internal fun ContactlessLogoRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(PosLinkDesignTokens.ButtonHeight)
+            .height(PosLinkDesignTokens.buttonHeight())
             .background(
                 color = Color(0xFFDBD4D9),
                 shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
@@ -167,26 +167,10 @@ internal fun InputModeImageRow(
 
 @Composable
 internal fun InputAccountConfirmButton(onClick: () -> Unit, enabled: Boolean = true) {
-    PosLinkLegacyMaterialFilledButton(
+    PosLinkLegacyThemeButton(
+        text = stringResource(R.string.confirm),
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier.fillMaxWidth(),
-        appearance = PosLinkLegacyMaterialFillAppearance(
-            slotHeight = PosLinkDesignTokens.ButtonHeight,
-            shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
-            containerColor = PosLinkDesignTokens.PrimaryColor,
-            disabledContainerColor = PosLinkDesignTokens.PrimaryColor
-        )
-    ) {
-        Text(
-            text = stringResource(R.string.confirm).uppercase(),
-            style = TextStyle(
-                fontSize = PosLinkDesignTokens.BodyTextSize,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp,
-                textAlign = TextAlign.Center,
-                color = PosLinkDesignTokens.PrimaryTextColor
-            )
-        )
-    }
+        modifier = Modifier.fillMaxWidth()
+    )
 }

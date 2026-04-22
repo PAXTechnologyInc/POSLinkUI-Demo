@@ -25,6 +25,7 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest
 import com.pax.us.pay.ui.constant.entry.enumeration.FSAAmountType
 import com.pax.us.pay.ui.constant.entry.enumeration.FSAType
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkSecondaryButton
@@ -68,6 +69,30 @@ fun FsaAmountsEntryScreen(
     val amountPattern = "1-12"
     val amountLengths = remember(amountPattern) { ValuePatternUtils.getLengthList(amountPattern) }
     val maxDigits = amountLengths.maxOf { it ?: 0 }
+    val promptInputStr = stringResource(R.string.prompt_input)
+    val submit = {
+        val bundle = Bundle().apply {
+            putString(EntryRequest.PARAM_FSA_OPTION, fsaOption)
+        }
+        var valid = true
+        for ((_, reqKey) in options) {
+            val cents = CurrencyUtils.parse(displayByKey[reqKey])
+            if (cents == 0L && !amountLengths.contains(0)) {
+                onError(promptInputStr)
+                valid = false
+                break
+            }
+            bundle.putLong(reqKey, cents)
+        }
+        if (valid) {
+            onConfirm(bundle)
+        }
+    }
+
+    EntryHardwareConfirmEffect(
+        enabled = !interactionLocked,
+        onConfirm = submit
+    )
 
     Column(
         modifier = Modifier
@@ -125,24 +150,10 @@ fun FsaAmountsEntryScreen(
                 Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
             }
         }
-
-        val promptInputStr = stringResource(R.string.prompt_input)
         PosLinkPrimaryButton(
             text = stringResource(R.string.confirm),
             enabled = !interactionLocked,
-            onClick = {
-                val b = Bundle()
-                b.putString(EntryRequest.PARAM_FSA_OPTION, fsaOption)
-                for ((_, reqKey) in options) {
-                    val cents = CurrencyUtils.parse(displayByKey[reqKey])
-                    if (cents == 0L && !amountLengths.contains(0)) {
-                        onError(promptInputStr)
-                        return@PosLinkPrimaryButton
-                    }
-                    b.putLong(reqKey, cents)
-                }
-                onConfirm(b)
-            }
+            onClick = submit
         )
     }
 }

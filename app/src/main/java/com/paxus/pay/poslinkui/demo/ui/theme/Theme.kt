@@ -5,7 +5,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 
 /**
@@ -41,9 +40,16 @@ fun PosLinkTheme(
 private val LightColorScheme = lightColorScheme(
     primary = PosLinkDesignTokens.PrimaryColor,
     secondary = PosLinkDesignTokens.SecondaryColor,
+    tertiary = PosLinkDesignTokens.PastelAccent,
     background = PosLinkDesignTokens.BackgroundColor,
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onBackground = Color.Black,
-    onSurface = Color.Black
+    surface = PosLinkDesignTokens.SurfaceColor,
+    surfaceVariant = PosLinkDesignTokens.SurfaceMutedColor,
+    outline = PosLinkDesignTokens.BorderColor,
+    error = PosLinkDesignTokens.FailColor,
+    onPrimary = PosLinkDesignTokens.PrimaryTextColor,
+    onSecondary = PosLinkDesignTokens.PrimaryTextColor,
+    onBackground = PosLinkDesignTokens.PrimaryTextColor,
+    onSurface = PosLinkDesignTokens.PrimaryTextColor,
+    onSurfaceVariant = PosLinkDesignTokens.OnLightTextColor,
+    onError = PosLinkDesignTokens.PrimaryTextColor
 )

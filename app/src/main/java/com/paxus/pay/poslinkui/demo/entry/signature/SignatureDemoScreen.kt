@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,8 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.paxus.pay.poslinkui.demo.R
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFillAppearance
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFilledButton
+import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
+import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButtonVariant
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType
@@ -45,9 +44,9 @@ import kotlinx.coroutines.delay
  *
  * [SignatureFragment] never applies extra margins in code; spacing comes from the layout. The XML always
  * includes **two** `TextView`s under `sign_line_layout`. When `PARAM_SIGNLINE1/2` are absent, the Fragment
- * does not call `setText`, but the views still exist — on device they still occupy line box height. In
+ * does not call `setText`, but the views still exist 鈥?on device they still occupy line box height. In
  * Compose, **always** render two line slots with [minLines] so empty lines do not collapse (Untitled 8 /
- * `CREDIT_SALE——signature.png` adb case). Typography uses configuration-qualified [R.dimen.text_size_normal]
+ * `CREDIT_SALE鈥斺€攕ignature.png` adb case). Typography uses configuration-qualified [R.dimen.text_size_normal]
  * like `fragment_signature.xml` default TextView sizing.
  */
 @Composable
@@ -121,7 +120,7 @@ fun SignatureDemoScreen(
     val subtitleLineHeight = (res.getDimension(R.dimen.text_size_subtitle) / dm.scaledDensity * 1.4f).sp
     val signatureBoardHeightPx = (250f * density.density).toInt()
     val bottomBarReserved =
-        PosLinkDesignTokens.ButtonHeight + PosLinkDesignTokens.InlineSpacing * 2 + 5.dp
+        PosLinkDesignTokens.buttonHeight() + PosLinkDesignTokens.InlineSpacing * 2 + 5.dp
 
     Box(
         Modifier
@@ -296,22 +295,15 @@ private fun SignatureActionButton(
     enabled: Boolean = true,
     modifier: Modifier
 ) {
-    PosLinkLegacyMaterialFilledButton(
+    PosLinkPrimaryButton(
+        text = text,
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
-        appearance = PosLinkLegacyMaterialFillAppearance(
-            slotHeight = PosLinkDesignTokens.ButtonHeight,
-            shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
-            containerColor = background,
-            disabledContainerColor = background.copy(alpha = 0.38f)
-        )
-    ) {
-        Text(
-            text = text,
-            letterSpacing = 0.sp,
-            color = Color(0xFFECECEC),
-            fontWeight = FontWeight.Normal
-        )
-    }
+        variant = PosLinkPrimaryButtonVariant.PoslinkLegacy,
+        containerColorOverride = background,
+        disabledContainerColorOverride = background.copy(alpha = 0.38f),
+        textColorOverride = Color(0xFFECECEC),
+        allCapsOverride = false
+    )
 }

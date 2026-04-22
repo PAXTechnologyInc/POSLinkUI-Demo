@@ -29,7 +29,11 @@ import com.pax.us.pay.ui.constant.entry.enumeration.TransMode
 import com.pax.us.pay.ui.constant.status.StatusData
 import com.pax.us.pay.ui.constant.status.BatchStatus
 import com.pax.us.pay.ui.constant.status.CardStatus
+import com.pax.us.pay.ui.constant.status.ClssLightStatus
 import com.pax.us.pay.ui.constant.status.InformationStatus
+import com.pax.us.pay.ui.constant.status.LanguageStatus
+import com.pax.us.pay.ui.constant.status.PINStatus
+import com.pax.us.pay.ui.constant.status.SecurityStatus
 import com.pax.us.pay.ui.constant.status.Uncategory
 import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.entry.navigation.EntryNavigationHost
@@ -316,8 +320,9 @@ class EntryActivity : AppCompatActivity() {
         get() = entryViewModel?.statusOverlay?.value != null
 
     fun loadStatus(intent: Intent) {
-        val parsed = StatusMessageBuilder.build(intent, this)
         val action = intent.action
+        if (StatusIntentPolicy.isPassive(action)) return
+        val parsed = StatusMessageBuilder.build(intent, this)
         when {
             StatusIntentPolicy.isConclusive(action) -> Unit
             StatusIntentPolicy.isTransCompletedImmediateAbort(action, parsed.title) -> {
@@ -462,16 +467,36 @@ class EntryActivity : AppCompatActivity() {
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (this.isStatusPresent) return true
 
+        if (event.action == KeyEvent.ACTION_UP && shouldForwardComposeEntryKey(event.keyCode)) {
+            entryViewModel?.submitKeyEvent(event.keyCode)
+        }
+
         if (event.action == KeyEvent.ACTION_UP &&
             (event.keyCode == KeyEvent.KEYCODE_ENTER || event.keyCode == KeyEvent.KEYCODE_BACK)
         ) {
             val response = Bundle()
             response.putInt("keyCode", event.keyCode)
             supportFragmentManager.setFragmentResult("keyCode", response)
-            entryViewModel?.submitKeyEvent(event.keyCode)
             return true
         }
         return super.dispatchKeyEvent(event)
+    }
+
+    private fun shouldForwardComposeEntryKey(keyCode: Int): Boolean = when (keyCode) {
+        KeyEvent.KEYCODE_0,
+        KeyEvent.KEYCODE_1,
+        KeyEvent.KEYCODE_2,
+        KeyEvent.KEYCODE_3,
+        KeyEvent.KEYCODE_4,
+        KeyEvent.KEYCODE_5,
+        KeyEvent.KEYCODE_6,
+        KeyEvent.KEYCODE_7,
+        KeyEvent.KEYCODE_8,
+        KeyEvent.KEYCODE_9,
+        KeyEvent.KEYCODE_ENTER,
+        KeyEvent.KEYCODE_BACK,
+        KeyEvent.KEYCODE_DEL -> true
+        else -> false
     }
 
     /**
@@ -502,6 +527,7 @@ class EntryActivity : AppCompatActivity() {
             get() {
                 val filter = IntentFilter()
                 filter.addAction(EntryResponse.ACTION_ACCEPTED)
+                // FRD classifies DECLINED as a response broadcast, not a status-category live update.
                 filter.addAction(EntryResponse.ACTION_DECLINED)
                 return filter
             }
@@ -555,11 +581,16 @@ class EntryActivity : AppCompatActivity() {
 
                 //----------------Card Status-----------------
                 filter.addCategory(CardStatus.CATEGORY)
+                filter.addAction(CardStatus.CARD_INSERTED)
                 filter.addAction(CardStatus.CARD_REMOVED)
                 filter.addAction(CardStatus.CARD_REMOVAL_REQUIRED)
                 filter.addAction(CardStatus.CARD_QUICK_REMOVAL_REQUIRED)
                 filter.addAction(CardStatus.CARD_PROCESS_STARTED)
                 filter.addAction(CardStatus.CARD_PROCESS_COMPLETED)
+
+                //----------------Contactless Light Status-----------------
+                filter.addCategory(ClssLightStatus.CATEGORY)
+                filter.addAction(ClssLightStatus.CLSS_LIGHT_PROCESSING)
 
                 //----------------Batch Status-----------------
                 filter.addCategory(BatchStatus.CATEGORY)
@@ -567,6 +598,18 @@ class EntryActivity : AppCompatActivity() {
                 filter.addAction(BatchStatus.BATCH_SF_COMPLETED)
                 filter.addAction(BatchStatus.BATCH_CLOSE_UPLOADING)
                 filter.addAction(BatchStatus.BATCH_CLOSE_COMPLETED)
+
+                //----------------PIN Status-----------------
+                filter.addCategory(PINStatus.CATEGORY)
+                filter.addAction(PINStatus.PIN_ENTERING)
+
+                //----------------Security Status-----------------
+                filter.addCategory(SecurityStatus.CATEGORY)
+                filter.addAction(SecurityStatus.SECURITY_ENTERING)
+
+                //----------------Language Status-----------------
+                filter.addCategory(LanguageStatus.CATEGORY)
+                filter.addAction(LanguageStatus.SET_LANGUAGE)
 
                 //----------------Poslink Status-----------------
                 filter.addCategory(POSLINK_STATUS_CATEGORY)

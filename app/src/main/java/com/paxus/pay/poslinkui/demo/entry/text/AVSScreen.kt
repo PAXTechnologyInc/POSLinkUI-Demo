@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
@@ -61,6 +62,22 @@ fun AVSScreen(
     var addr by remember { mutableStateOf("") }
     var zip by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
+    val errAddr = stringResource(R.string.pls_input_address) + ": " +
+        stringResource(R.string.prompt_input_length, config.valuePatternAddr ?: "")
+    val errZip = stringResource(R.string.prompt_input_length, config.valuePatternZip ?: "") +
+        stringResource(R.string.pls_input_zip_code)
+    val submit = {
+        when {
+            !isLengthAllowedForPattern(addr.length, config.valuePatternAddr) -> onError(errAddr)
+            !isLengthAllowedForPattern(zip.length, config.valuePatternZip) -> onError(errZip)
+            else -> onConfirm(addr, zip)
+        }
+    }
+
+    EntryHardwareConfirmEffect(
+        enabled = !interactionLocked,
+        onConfirm = submit
+    )
 
     Column(
         modifier = Modifier
@@ -104,20 +121,10 @@ fun AVSScreen(
             singleLine = true
         )
         Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        val errAddr = stringResource(R.string.pls_input_address) + ": " +
-            stringResource(R.string.prompt_input_length, config.valuePatternAddr ?: "")
-        val errZip = stringResource(R.string.prompt_input_length, config.valuePatternZip ?: "") +
-            stringResource(R.string.pls_input_zip_code)
         PosLinkPrimaryButton(
             text = stringResource(R.string.confirm),
             enabled = !interactionLocked,
-            onClick = {
-                when {
-                    !isLengthAllowedForPattern(addr.length, config.valuePatternAddr) -> onError(errAddr)
-                    !isLengthAllowedForPattern(zip.length, config.valuePatternZip) -> onError(errZip)
-                    else -> onConfirm(addr, zip)
-                }
-            }
+            onClick = submit
         )
     }
 }

@@ -8,7 +8,11 @@ import com.pax.us.pay.ui.constant.entry.EntryRequest
 import com.pax.us.pay.ui.constant.entry.enumeration.SFType
 import com.pax.us.pay.ui.constant.status.BatchStatus
 import com.pax.us.pay.ui.constant.status.CardStatus
+import com.pax.us.pay.ui.constant.status.ClssLightStatus
 import com.pax.us.pay.ui.constant.status.InformationStatus
+import com.pax.us.pay.ui.constant.status.LanguageStatus
+import com.pax.us.pay.ui.constant.status.PINStatus
+import com.pax.us.pay.ui.constant.status.SecurityStatus
 import com.pax.us.pay.ui.constant.status.StatusData
 import com.pax.us.pay.ui.constant.status.Uncategory
 import com.paxus.pay.poslinkui.demo.R
@@ -133,6 +137,14 @@ object StatusDurations {
 
 object StatusIntentPolicy {
 
+    private val passiveActions: Set<String?> = buildSet {
+        add(CardStatus.CARD_INSERTED)
+        add(ClssLightStatus.CLSS_LIGHT_PROCESSING)
+        add(PINStatus.PIN_ENTERING)
+        add(SecurityStatus.SECURITY_ENTERING)
+        add(LanguageStatus.SET_LANGUAGE)
+    }
+
     private val conclusiveActions: Set<String?> = buildSet {
         add(CardStatus.CARD_REMOVED)
         add(CardStatus.CARD_PROCESS_COMPLETED)
@@ -152,6 +164,8 @@ object StatusIntentPolicy {
         add(Uncategory.LOG_UPLOAD_COMPLETED)
         add(Uncategory.FCP_FILE_UPDATE_COMPLETED)
     }
+
+    fun isPassive(action: String?): Boolean = action != null && passiveActions.contains(action)
 
     fun isConclusive(action: String?): Boolean = action != null && conclusiveActions.contains(action)
 

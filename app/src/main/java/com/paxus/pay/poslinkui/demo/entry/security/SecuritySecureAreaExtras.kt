@@ -2,6 +2,7 @@ package com.paxus.pay.poslinkui.demo.entry.security
 
 import android.os.Bundle
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
+import com.pax.us.pay.ui.constant.entry.SecurityEntry
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils
 
@@ -101,4 +102,15 @@ internal fun isInputAccountCreditSaleMainCase(
 ): Boolean {
     if (!isCreditSaleTransType(extras)) return false
     return listOf(enableInsert, enableTap, enableSwipe, enableManual).all { it }
+}
+
+/**
+ * Some hosts send CVV action as `ENTER_CVV` while SDK constants use `ACTION_ENTER_VCODE`.
+ * Normalize both action families so Compose branches and prompts stay consistent.
+ */
+internal fun isVcodeSecurityAction(entryAction: String?): Boolean {
+    if (entryAction.isNullOrBlank()) return false
+    if (entryAction == SecurityEntry.ACTION_ENTER_VCODE) return true
+    val token = entryAction.substringAfterLast('.').uppercase()
+    return token == "ENTER_VCODE" || token == "ENTER_CVV"
 }

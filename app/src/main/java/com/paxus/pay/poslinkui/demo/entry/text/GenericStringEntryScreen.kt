@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -30,8 +32,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.pax.us.pay.ui.constant.entry.enumeration.InputType
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
@@ -109,15 +114,29 @@ fun GenericStringEntryScreen(
         stringResource(R.string.confirm)
     }
     val promptInputStr = stringResource(R.string.prompt_input)
+    val submit = {
+        val t = text.trim()
+        if (!lengths.contains(t.length)) {
+            onError(promptInputStr)
+        } else {
+            onConfirm(t)
+        }
+    }
 
     LaunchedEffect(useLegacyFleetInputStyle) {
         if (!useLegacyFleetInputStyle) return@LaunchedEffect
+        delay(200)
         repeat(2) {
             focusRequester.requestFocus()
             keyboardController?.show()
             delay(120)
         }
     }
+
+    EntryHardwareConfirmEffect(
+        enabled = !interactionLocked,
+        onConfirm = submit
+    )
 
     Column(
         modifier = Modifier
@@ -140,18 +159,11 @@ fun GenericStringEntryScreen(
             readOnly = interactionLocked,
             focusRequester = focusRequester
         )
-        Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
         PosLinkPrimaryButton(
             text = confirmText,
             enabled = !interactionLocked,
-            onClick = {
-                val t = text.trim()
-                if (!lengths.contains(t.length)) {
-                    onError(promptInputStr)
-                    return@PosLinkPrimaryButton
-                }
-                onConfirm(t)
-            }
+            textLetterSpacing = if (useLegacyFleetInputStyle) 1.25.sp else PosLinkDesignTokens.ButtonTextLetterSpacing,
+            onClick = submit
         )
     }
 }
@@ -183,7 +195,7 @@ private fun GenericStringEntryTextField(
             readOnly = readOnly,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(PosLinkDesignTokens.ButtonHeight)
+                .height(PosLinkDesignTokens.buttonHeight())
                 .focusRequester(focusRequester),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
@@ -192,16 +204,22 @@ private fun GenericStringEntryTextField(
                 textAlign = TextAlign.Center,
                 color = Color(0xFF222222)
             ),
-            cursorBrush = SolidColor(Color(0xFF66A579)),
+            cursorBrush = SolidColor(PosLinkDesignTokens.PastelAccent),
             decorationBox = { inner ->
                 androidx.compose.foundation.layout.Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(PosLinkDesignTokens.ButtonHeight)
-                        .background(
-                            color = Color(0xFFDBD4D9),
+                        .height(PosLinkDesignTokens.buttonHeight())
+                        .border(
+                            width = 2.dp,
+                            color = PosLinkDesignTokens.BorderColor,
                             shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
-                        ),
+                        )
+                        .background(
+                            color = PosLinkDesignTokens.BorderColor,
+                            shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
+                        )
+                        .padding(horizontal = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     inner()

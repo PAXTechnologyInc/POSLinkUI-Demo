@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,9 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFillAppearance
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFilledButton
+import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyThemeButton
 import com.paxus.pay.poslinkui.demo.ui.device.LocalDeviceLayoutSpec
 import com.paxus.pay.poslinkui.demo.ui.device.DeviceProfileId
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
@@ -100,7 +101,6 @@ fun AmountScreen(
     val dm = res.displayMetrics
     val inputHeight = dimensionResource(R.dimen.button_height)
     val sectionSpacing = dimensionResource(R.dimen.space_between_textview)
-    val fieldButtonGap = dimensionResource(R.dimen.default_gap)
     val cornerRadius = dimensionResource(R.dimen.corner_radius)
     val fieldShape = RoundedCornerShape(cornerRadius)
     val titleTextSize = (res.getDimension(R.dimen.text_size_title) / dm.scaledDensity).sp
@@ -114,6 +114,16 @@ fun AmountScreen(
     val legacyHorizontalInset = (targetHorizontalPaddingDp - spec.screenHorizontalPaddingDp)
         .coerceAtLeast(0)
         .dp
+    val promptInputStr = stringResource(R.string.prompt_input)
+    val submit = {
+        val value = CurrencyUtils.parse(displayValue.text)
+        val lengthList = ValuePatternUtils.getLengthList(valuePattern ?: "")
+        if (value == 0L && !lengthList.contains(0)) {
+            onError(promptInputStr)
+        } else {
+            onConfirm(value)
+        }
+    }
 
     LaunchedEffect(Unit) {
         // Keep ENTER_AMOUNT screenshot parity stable when host applies watermark asynchronously.
@@ -133,6 +143,11 @@ fun AmountScreen(
         }
     }
 
+    EntryHardwareConfirmEffect(
+        enabled = !interactionLocked,
+        onConfirm = submit
+    )
+
     Column(
         modifier = Modifier
             .offset(y = topOffset)
@@ -141,14 +156,14 @@ fun AmountScreen(
             .verticalScroll(scrollState),
     ) {
         // fragment_amount: first TextView only has marginVertical (no extra Spacer above); root padding
-        // already separates content from the action bar — avoid stacking another full section gap.
+        // already separates content from the action bar 锟?avoid stacking another full section gap.
         Text(
             text = message,
             style = TextStyle(
-                color = Color(0xFFDBD4D9),
+                color = PosLinkDesignTokens.PrimaryTextColor,
                 fontWeight = FontWeight.Normal,
                 fontSize = titleTextSize,
-                lineHeight = titleTextSize
+                lineHeight = titleTextSize * 1.25f
             ),
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
@@ -171,7 +186,7 @@ fun AmountScreen(
                 .fillMaxWidth()
                 .height(inputHeight)
                 .focusRequester(focusRequester),
-            textStyle = TextStyle(
+            textStyle = MaterialTheme.typography.bodyLarge.copy(
                 textAlign = TextAlign.Center,
                 color = Color(0xFF222222),
                 fontWeight = FontWeight.Normal,
@@ -198,34 +213,11 @@ fun AmountScreen(
                 }
             }
         )
-        // Narrow gap like legacy (implicit) + avoids M3 elevation “tab” visually overlapping the field.
-        Spacer(modifier = Modifier.height(fieldButtonGap))
-        val promptInputStr = stringResource(R.string.prompt_input)
-        PosLinkLegacyMaterialFilledButton(
-            onClick = {
-                val value = CurrencyUtils.parse(displayValue.text)
-                val lengthList = ValuePatternUtils.getLengthList(valuePattern ?: "")
-                if (value == 0L && !lengthList.contains(0)) onError(promptInputStr)
-                else onConfirm(value)
-            },
+        PosLinkLegacyThemeButton(
+            text = stringResource(R.string.trans_confirm_btn),
+            onClick = submit,
             enabled = !interactionLocked,
-            modifier = Modifier.fillMaxWidth(),
-            appearance = PosLinkLegacyMaterialFillAppearance(
-                slotHeight = inputHeight,
-                shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
-                containerColor = Color(0xFF6E85B7),
-                disabledContainerColor = Color(0xFF6E85B7).copy(alpha = 0.38f)
-            )
-        ) {
-            Text(
-                text = stringResource(R.string.trans_confirm_btn),
-                style = TextStyle(
-                    fontSize = bodyTextSize,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.5.sp,
-                    color = Color(0xFFECECEC)
-                )
-            )
-        }
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }

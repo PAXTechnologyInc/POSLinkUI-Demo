@@ -20,7 +20,6 @@ object SecurityMessageFormatter {
         if (action == null) return hostMessage(extras)
         return when (action) {
             SecurityEntry.ACTION_ENTER_PIN -> pinPrompt(extras, res)
-            SecurityEntry.ACTION_ENTER_VCODE -> vcodePrompt(extras, res)
             SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS ->
                 res.getString(R.string.prompt_input_all_digit)
             SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS ->
@@ -29,7 +28,13 @@ object SecurityMessageFormatter {
             SecurityEntry.ACTION_MANAGE_INPUT_ACCOUNT ->
                 res.getString(R.string.hint_enter_account)
             SecurityEntry.ACTION_ENTER_ADMINISTRATION_PASSWORD -> adminPasswordPrompt(extras, res)
-            else -> hostMessage(extras)
+            else -> {
+                if (isVcodeSecurityAction(action)) {
+                    vcodePrompt(extras, res)
+                } else {
+                    hostMessage(extras)
+                }
+            }
         }
     }
 

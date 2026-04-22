@@ -1,24 +1,23 @@
 package com.paxus.pay.poslinkui.demo.entry.text.amount
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,14 +27,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
+import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyThemeButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
@@ -43,47 +49,6 @@ import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils
 import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils
 import com.paxus.pay.poslinkui.demo.view.SelectOptionsView
-
-private data class CashbackLayoutMetrics(
-    val titleToOptionsSpacing: Dp,
-    val optionsSpacing: Dp,
-    val optionsGridHeight: Dp,
-    val noThanksHeight: Dp
-)
-
-/**
- * Computes grid height and spacing for preset cashback options from option count and flow mode.
- */
-private fun cashbackLayoutMetrics(
-    options: List<SelectOptionsView.Option>,
-    disableOtherMode: Boolean
-): CashbackLayoutMetrics {
-    val titleToOptionsSpacing = PosLinkDesignTokens.SpaceBetweenTextView
-    val optionsSpacing = if (disableOtherMode) {
-        PosLinkDesignTokens.DenseGridSpacing
-    } else {
-        PosLinkDesignTokens.CompactSpacing
-    }
-    val optionsGridHeight = if (disableOtherMode) {
-        val rowCount = ((options.size + 1) / 2).coerceAtLeast(1)
-        PosLinkDesignTokens.ButtonHeight * rowCount +
-            PosLinkDesignTokens.DenseGridSpacing * (rowCount - 1) +
-            PosLinkDesignTokens.SpaceBetweenTextView
-    } else {
-        200.dp
-    }
-    val noThanksHeight = if (disableOtherMode) {
-        PosLinkDesignTokens.ButtonHeight + PosLinkDesignTokens.DenseGridSpacing
-    } else {
-        PosLinkDesignTokens.ButtonHeight
-    }
-    return CashbackLayoutMetrics(
-        titleToOptionsSpacing = titleToOptionsSpacing,
-        optionsSpacing = optionsSpacing,
-        optionsGridHeight = optionsGridHeight,
-        noThanksHeight = noThanksHeight
-    )
-}
 
 /**
  * Static configuration for [CashbackScreen].
@@ -99,6 +64,8 @@ data class CashbackScreenProps(
 
 /**
  * Compose screen for cashback entry (options + optional other amount).
+ * Visual baseline follows `golive/v1.03.00` `fragment_cashback.xml`,
+ * `layout_select_option_item.xml`, `item_cashback_option.xml`, and `values/dimens.xml`.
  */
 @Composable
 fun CashbackScreen(
@@ -107,116 +74,106 @@ fun CashbackScreen(
     onConfirm: (Long) -> Unit,
     onError: (String) -> Unit
 ) {
+    val interactionLocked = LocalEntryInteractionLocked.current
     var displayValue by remember { mutableStateOf("") }
-    val disableOtherMode = !props.promptOther && props.options.isNotEmpty()
-    val m = cashbackLayoutMetrics(props.options, disableOtherMode)
+    val res = LocalContext.current.resources
+    val density = LocalDensity.current
+    val buttonHeight = dimensionResource(R.dimen.button_height)
+    val marginGap = dimensionResource(R.dimen.margin_gap)
+    val sectionSpacing = dimensionResource(R.dimen.space_between_textview)
+    val cornerRadius = dimensionResource(R.dimen.corner_radius)
+    val optionTextSize = with(density) { res.getDimension(R.dimen.text_size_subtitle).toSp() }
+    val hintTextSize = with(density) { res.getDimension(R.dimen.text_size_hint).toSp() }
+    val bodyTextSize = with(density) { res.getDimension(R.dimen.text_size_normal).toSp() }
+    val optionTextStyle = MaterialTheme.typography.titleMedium.copy(
+        fontWeight = FontWeight.Normal,
+        fontSize = optionTextSize,
+        lineHeight = optionTextSize * 1.2f
+    )
+    val fieldTextStyle = MaterialTheme.typography.bodyLarge.copy(
+        fontWeight = FontWeight.Normal,
+        fontSize = bodyTextSize,
+        lineHeight = bodyTextSize * 1.4f,
+        textAlign = TextAlign.Center,
+        color = PosLinkDesignTokens.OnLightTextColor
+    )
+    val fieldLabelStyle = MaterialTheme.typography.bodySmall.copy(
+        fontWeight = FontWeight.Normal,
+        fontSize = hintTextSize,
+        lineHeight = hintTextSize * 1.2f
+    )
+    val promptInputStr = stringResource(R.string.prompt_input)
+    val submit = {
+        val value = if (displayValue.isBlank()) 0L else CurrencyUtils.parse(displayValue)
+        val lengthList = props.valuePattern
+            ?.takeIf { it.isNotBlank() }
+            ?.let {
+                runCatching { ValuePatternUtils.getLengthList(it) }
+                    .getOrElse { mutableListOf<Int?>() }
+            }
+            ?: mutableListOf<Int?>(0)
+        if (value == 0L && !lengthList.contains(0)) {
+            onError(promptInputStr)
+        } else {
+            onConfirm(value)
+        }
+    }
+
     LaunchedEffect(Unit) {
         Logger.i(props.parityLog)
     }
 
-    CashbackScreenMainColumn(
-        CashbackScreenMainColumnParams(
-            layout = CashbackScreenMainColumnLayoutParams(
-                m = m,
-                options = props.options,
-                promptOther = props.promptOther,
-                currency = props.currency,
-                maxLength = props.maxLength,
-                valuePattern = props.valuePattern
-            ),
-            interactions = CashbackScreenMainColumnInteractions(
-                displayValue = displayValue,
-                onDisplayValueChange = { displayValue = it },
-                onPresetOptionChosen = { amt ->
-                    displayValue = CurrencyUtils.convert(amt, props.currency)
-                    onOptionSelected(amt)
-                    onConfirm(amt)
-                },
-                onNoThanksChosen = {
-                    displayValue = ""
-                    onOptionSelected(0L)
-                    onConfirm(0L)
-                },
-                onError = onError,
-                onConfirm = onConfirm
-            )
-        )
+    EntryHardwareConfirmEffect(
+        enabled = !interactionLocked,
+        onConfirm = submit
     )
-}
 
-private data class CashbackScreenMainColumnLayoutParams(
-    val m: CashbackLayoutMetrics,
-    val options: List<SelectOptionsView.Option>,
-    val promptOther: Boolean,
-    val currency: String?,
-    val maxLength: Int,
-    val valuePattern: String?
-)
-
-private data class CashbackScreenMainColumnInteractions(
-    val displayValue: String,
-    val onDisplayValueChange: (String) -> Unit,
-    val onPresetOptionChosen: (Long) -> Unit,
-    val onNoThanksChosen: () -> Unit,
-    val onError: (String) -> Unit,
-    val onConfirm: (Long) -> Unit
-)
-
-private data class CashbackScreenMainColumnParams(
-    val layout: CashbackScreenMainColumnLayoutParams,
-    val interactions: CashbackScreenMainColumnInteractions
-)
-
-@Composable
-private fun CashbackScreenMainColumn(p: CashbackScreenMainColumnParams) {
-    val m = p.layout.m
-    val options = p.layout.options
-    val promptOther = p.layout.promptOther
-    val currency = p.layout.currency
-    val maxLength = p.layout.maxLength
-    val valuePattern = p.layout.valuePattern
-    val displayValue = p.interactions.displayValue
-    val onDisplayValueChange = p.interactions.onDisplayValueChange
-    val onPresetOptionChosen = p.interactions.onPresetOptionChosen
-    val onNoThanksChosen = p.interactions.onNoThanksChosen
-    val onError = p.interactions.onError
-    val onConfirm = p.interactions.onConfirm
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+    ) {
         PosLinkText(
             text = stringResource(R.string.select_cashback_amount),
             role = PosLinkTextRole.ScreenTitle,
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(m.titleToOptionsSpacing))
-        if (options.isNotEmpty()) {
+        Spacer(modifier = Modifier.height(sectionSpacing))
+        if (props.options.isNotEmpty()) {
             CashbackPresetOptionsBlock(
-                options = options,
-                optionsSpacing = m.optionsSpacing,
-                optionsGridHeight = m.optionsGridHeight,
-                noThanksHeight = m.noThanksHeight,
-                onPresetOptionClick = onPresetOptionChosen,
-                onNoThanksClick = onNoThanksChosen
+                options = props.options,
+                buttonHeight = buttonHeight,
+                marginGap = marginGap,
+                cornerRadius = cornerRadius,
+                optionTextStyle = optionTextStyle,
+                onPresetOptionClick = { amt ->
+                    displayValue = CurrencyUtils.convert(amt, props.currency)
+                    onOptionSelected(amt)
+                    onConfirm(amt)
+                },
+                onNoThanksClick = {
+                    displayValue = ""
+                    onOptionSelected(0L)
+                    onConfirm(0L)
+                }
             )
         }
-        if (promptOther || options.isEmpty()) {
-            Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
+        if (props.promptOther || props.options.isEmpty()) {
+            Spacer(modifier = Modifier.height(sectionSpacing))
             CashbackOtherAmountField(
                 displayValue = displayValue,
-                maxLength = maxLength,
-                currency = currency,
-                onDisplayValueChange = onDisplayValueChange
+                maxLength = props.maxLength,
+                currency = props.currency,
+                buttonHeight = buttonHeight,
+                marginGap = marginGap,
+                cornerRadius = cornerRadius,
+                fieldTextStyle = fieldTextStyle,
+                fieldLabelStyle = fieldLabelStyle,
+                onDisplayValueChange = { displayValue = it }
             )
-        }
-        Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        val promptInputStr = stringResource(R.string.prompt_input)
-        if (promptOther || options.isEmpty()) {
+            Spacer(modifier = Modifier.height(sectionSpacing))
             CashbackConfirmBar(
-                displayValue = displayValue,
-                valuePattern = valuePattern,
-                promptInputStr = promptInputStr,
-                confirmLabel = stringResource(R.string.confirm).uppercase(),
-                onError = onError,
-                onConfirm = onConfirm
+                onSubmit = submit
             )
         }
     }
@@ -225,66 +182,81 @@ private fun CashbackScreenMainColumn(p: CashbackScreenMainColumnParams) {
 @Composable
 private fun CashbackPresetOptionsBlock(
     options: List<SelectOptionsView.Option>,
-    optionsSpacing: Dp,
-    optionsGridHeight: Dp,
-    noThanksHeight: Dp,
+    buttonHeight: Dp,
+    marginGap: Dp,
+    cornerRadius: Dp,
+    optionTextStyle: TextStyle,
     onPresetOptionClick: (Long) -> Unit,
     onNoThanksClick: () -> Unit
 ) {
-    val controlsEnabled = !LocalEntryInteractionLocked.current
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier.height(optionsGridHeight),
-        contentPadding = PaddingValues(PosLinkDesignTokens.CompactSpacing),
-        horizontalArrangement = Arrangement.spacedBy(optionsSpacing),
-        verticalArrangement = Arrangement.spacedBy(optionsSpacing)
-    ) {
-        itemsIndexed(options) { _, opt ->
-            val amt = (opt.value as? Long) ?: 0L
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(PosLinkDesignTokens.ButtonHeight)
-                    .clickable(enabled = controlsEnabled) { onPresetOptionClick(amt) }
-                    .background(Color.Transparent)
-                    .padding(0.dp)
-                    .then(
-                        Modifier
-                            .background(Color.Transparent, RoundedCornerShape(PosLinkDesignTokens.CornerRadius))
-                            .border(
-                                width = 1.dp,
-                                color = Color(0xFFDBD4D9),
-                                shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
-                            )
-                    )
-            ) {
-                PosLinkText(
-                    text = opt.title ?: "",
-                    textAlign = TextAlign.Center,
-                    color = PosLinkDesignTokens.PrimaryTextColor,
-                    modifier = Modifier.align(Alignment.Center)
+    val rowGap = marginGap * 2
+    val optionRows = options.chunked(2)
+    optionRows.forEachIndexed { index, rowOptions ->
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = marginGap),
+            horizontalArrangement = Arrangement.spacedBy(rowGap)
+        ) {
+            rowOptions.forEach { option ->
+                CashbackOptionCard(
+                    modifier = Modifier.weight(1f),
+                    text = option.title.orEmpty(),
+                    buttonHeight = buttonHeight,
+                    cornerRadius = cornerRadius,
+                    textStyle = optionTextStyle,
+                    onClick = { onPresetOptionClick((option.value as? Long) ?: 0L) }
                 )
             }
+            repeat(2 - rowOptions.size) {
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+        if (index != optionRows.lastIndex) {
+            Spacer(modifier = Modifier.height(rowGap))
         }
     }
-    Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-    Box(
+    Spacer(modifier = Modifier.height(rowGap))
+    CashbackOptionCard(
         modifier = Modifier
             .fillMaxWidth()
-            .height(noThanksHeight)
-            .clickable(enabled = controlsEnabled) { onNoThanksClick() }
-            .background(Color.Transparent, RoundedCornerShape(PosLinkDesignTokens.CornerRadius))
+            .padding(horizontal = marginGap),
+        text = "No Thanks!!",
+        buttonHeight = buttonHeight,
+        cornerRadius = cornerRadius,
+        textStyle = optionTextStyle,
+        onClick = onNoThanksClick
+    )
+}
+
+@Composable
+private fun CashbackOptionCard(
+    text: String,
+    buttonHeight: Dp,
+    cornerRadius: Dp,
+    textStyle: TextStyle,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val controlsEnabled = !LocalEntryInteractionLocked.current
+    Box(
+        modifier = modifier
+            .height(buttonHeight)
             .border(
-                width = 1.dp,
-                color = Color(0xFFDBD4D9),
-                shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
+                width = PosLinkDesignTokens.BorderWidthThin,
+                color = PosLinkDesignTokens.BorderColor,
+                shape = RoundedCornerShape(cornerRadius)
             )
+            .background(Color.Transparent, RoundedCornerShape(cornerRadius))
+            .clickable(enabled = controlsEnabled, onClick = onClick),
+        contentAlignment = Alignment.Center
     ) {
-        PosLinkText(
-            text = "No Thanks!!",
-            textAlign = TextAlign.Center,
+        Text(
+            text = text,
+            style = textStyle,
             color = PosLinkDesignTokens.PrimaryTextColor,
-            modifier = Modifier.align(Alignment.Center)
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = PosLinkDesignTokens.ButtonHorizontalContentPadding)
         )
     }
 }
@@ -294,60 +266,76 @@ private fun CashbackOtherAmountField(
     displayValue: String,
     maxLength: Int,
     currency: String?,
+    buttonHeight: Dp,
+    marginGap: Dp,
+    cornerRadius: Dp,
+    fieldTextStyle: TextStyle,
+    fieldLabelStyle: TextStyle,
     onDisplayValueChange: (String) -> Unit
 ) {
     val interactionLocked = LocalEntryInteractionLocked.current
-    OutlinedTextField(
+    val fieldShape = RoundedCornerShape(cornerRadius)
+    BasicTextField(
         value = displayValue,
-        enabled = !interactionLocked,
-        onValueChange = {
-            val digits = it.replace("[^0-9]".toRegex(), "")
+        readOnly = interactionLocked,
+        onValueChange = { raw ->
+            val digits = raw.replace("[^0-9]".toRegex(), "")
             if (digits.length <= maxLength) {
                 onDisplayValueChange(
-                    CurrencyUtils.convert(digits.ifEmpty { "0" }.toLongOrNull() ?: 0L, currency)
+                    if (digits.isEmpty()) {
+                        ""
+                    } else {
+                        CurrencyUtils.convert(digits.toLongOrNull() ?: 0L, currency)
+                    }
                 )
             }
         },
-        modifier = Modifier.fillMaxWidth(),
-        placeholder = { PosLinkText(text = "Other", color = Color(0xFF222222)) },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = Color(0xFFDBD4D9),
-            unfocusedContainerColor = Color(0xFFDBD4D9),
-            focusedBorderColor = Color(0xFFDBD4D9),
-            unfocusedBorderColor = Color(0xFFDBD4D9),
-            focusedTextColor = Color(0xFF222222),
-            unfocusedTextColor = Color(0xFF222222),
-            focusedPlaceholderColor = Color(0xFF222222),
-            unfocusedPlaceholderColor = Color(0xFF222222)
-        ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(buttonHeight),
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        textStyle = fieldTextStyle,
+        cursorBrush = SolidColor(PosLinkDesignTokens.PastelAccent),
+        decorationBox = { innerTextField ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(buttonHeight)
+                    .border(2.dp, PosLinkDesignTokens.BorderColor, fieldShape)
+                    .background(PosLinkDesignTokens.BorderColor, fieldShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = PosLinkDesignTokens.FieldInnerHorizontalPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    innerTextField()
+                }
+                Text(
+                    text = stringResource(R.string.other),
+                    style = fieldLabelStyle,
+                    color = PosLinkDesignTokens.OnLightTextColor,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(start = marginGap * 2, top = marginGap)
+                )
+            }
+        }
     )
 }
 
 @Composable
 private fun CashbackConfirmBar(
-    displayValue: String,
-    valuePattern: String?,
-    promptInputStr: String,
-    confirmLabel: String,
-    onError: (String) -> Unit,
-    onConfirm: (Long) -> Unit
+    onSubmit: () -> Unit
 ) {
     val controlsEnabled = !LocalEntryInteractionLocked.current
-    PosLinkPrimaryButton(
-        text = confirmLabel,
+    PosLinkLegacyThemeButton(
+        text = stringResource(R.string.trans_confirm_btn),
         enabled = controlsEnabled,
-        onClick = {
-            val value = if (displayValue.isNotEmpty()) CurrencyUtils.parse(displayValue) else 0L
-            val lengthList = valuePattern
-                ?.takeIf { it.isNotBlank() }
-                ?.let {
-                    runCatching { ValuePatternUtils.getLengthList(it) }
-                        .getOrElse { mutableListOf<Int?>() }
-                }
-                ?: mutableListOf<Int?>(0)
-            if (value == 0L && !lengthList.contains(0)) onError(promptInputStr)
-            else onConfirm(value)
-        }
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onSubmit
     )
 }

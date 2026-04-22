@@ -42,58 +42,17 @@ internal data class PoslinkLegacyTitleLine(
 
 @Composable
 internal fun PoslinkFormattedTitle(title: String) {
-    val segments = remember(title) { parsePoslinkTitleSegments(title) }
-    segments.forEach { segment ->
-        Text(
-            text = segment.text,
-            modifier = Modifier.fillMaxWidth(),
-            color = PosLinkDesignTokens.PrimaryTextColor,
-            textAlign = segment.align,
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = if (segment.bold) FontWeight.Bold else FontWeight.SemiBold,
-                fontSize = resolvePoslinkTitleFontSize(segment.sizeLevel)
-            )
-        )
-    }
+    PoslinkLegacyTitleLikeText(raw = title, supportLineSep = true)
 }
 
 @Composable
 internal fun PoslinkFormattedTitleLegacy(title: String) {
-    val lines = remember(title) { parsePoslinkTitleLegacyLines(title) }
-    if (lines.isEmpty()) return
-    Column(modifier = Modifier.fillMaxWidth()) {
-        lines.forEach { line ->
-            Box(modifier = Modifier.fillMaxWidth()) {
-                line.left?.let { segment ->
-                    PoslinkLegacyTitleText(
-                        segment = segment,
-                        modifier = Modifier.align(Alignment.CenterStart)
-                    )
-                }
-                line.center?.let { segment ->
-                    PoslinkLegacyTitleText(
-                        segment = segment,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                line.right?.let { segment ->
-                    PoslinkLegacyTitleText(
-                        segment = segment,
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    )
-                }
-            }
-        }
-    }
+    PoslinkLegacyTitleLikeText(raw = title, supportLineSep = true)
 }
 
 @Composable
 internal fun PoslinkFormattedTextBoxTitle(title: String) {
-    if (shouldUseLegacyShowTextBoxSlotLayout(title)) {
-        PoslinkFormattedTextBoxSlotTitle(title = title)
-    } else {
-        PoslinkFormattedTitleLegacy(title = title)
-    }
+    PoslinkLegacyTitleLikeText(raw = title, supportLineSep = true)
 }
 
 internal fun shouldUseLegacyShowTextBoxSlotLayout(title: String): Boolean {

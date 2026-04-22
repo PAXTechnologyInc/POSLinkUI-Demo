@@ -111,7 +111,7 @@ private fun ReceiptPreviewEntryScreen(extras: Bundle, viewModel: EntryViewModel)
                 data = uri,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(PosLinkDesignTokens.ButtonHeight * 8),
+                    .height(PosLinkDesignTokens.buttonHeight() * 8),
                 options = PosLinkAsyncImageOptions(
                     contentDescription = null,
                     contentScale = ContentScale.Fit,

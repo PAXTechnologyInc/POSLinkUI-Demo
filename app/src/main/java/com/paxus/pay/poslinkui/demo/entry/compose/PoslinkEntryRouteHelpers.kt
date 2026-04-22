@@ -1,7 +1,9 @@
 package com.paxus.pay.poslinkui.demo.entry.compose
 
 import android.annotation.SuppressLint
+import android.graphics.Color as AndroidColor
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,16 +13,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -31,8 +35,6 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkAsyncImage
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkAsyncImageOptions
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFillAppearance
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFilledButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButtonVariant
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
@@ -49,10 +51,15 @@ import org.json.JSONObject
 internal data class PoslinkTextBoxButtonSpec(
     val name: String,
     val key: String,
-    val index: Int
+    val index: Int,
+    val containerColor: Color? = null
 )
 
 internal fun resolvePoslinkTextBoxButtons(extras: Bundle): List<PoslinkTextBoxButtonSpec> {
+    fun readValue(constKey: String, fallbackKey: String): String {
+        return extras.get(constKey)?.toString()?.takeIf { it.isNotBlank() }
+            ?: extras.get(fallbackKey)?.toString().orEmpty()
+    }
     fun readName(index: Int): String {
         val constKey = when (index) {
             1 -> EntryExtraData.PARAM_BUTTON_1_NAME
@@ -60,8 +67,7 @@ internal fun resolvePoslinkTextBoxButtons(extras: Bundle): List<PoslinkTextBoxBu
             else -> EntryExtraData.PARAM_BUTTON_3_NAME
         }
         val fallbackKey = "button${index}Name"
-        return extras.getString(constKey)?.takeIf { it.isNotBlank() }
-            ?: extras.getString(fallbackKey).orEmpty()
+        return readValue(constKey, fallbackKey)
     }
     fun readKey(index: Int): String {
         val constKey = when (index) {
@@ -70,8 +76,18 @@ internal fun resolvePoslinkTextBoxButtons(extras: Bundle): List<PoslinkTextBoxBu
             else -> EntryExtraData.PARAM_BUTTON_3_KEY
         }
         val fallbackKey = "button${index}Key"
-        return extras.getString(constKey)?.takeIf { it.isNotBlank() }
-            ?: extras.getString(fallbackKey).orEmpty()
+        return readValue(constKey, fallbackKey)
+    }
+    fun readColor(index: Int): Color? {
+        val constKey = when (index) {
+            1 -> EntryExtraData.PARAM_BUTTON_1_COLOR
+            2 -> EntryExtraData.PARAM_BUTTON_2_COLOR
+            else -> EntryExtraData.PARAM_BUTTON_3_COLOR
+        }
+        val raw = extras.get(constKey)?.toString()
+            ?: extras.get("button${index}Color")?.toString()
+            ?: extras.get("PARAM_BUTTON_${index}_COLOR")?.toString()
+        return parsePoslinkTextBoxButtonColor(raw)
     }
     return (1..3).mapNotNull { index ->
         val name = readName(index).trim()
@@ -81,10 +97,85 @@ internal fun resolvePoslinkTextBoxButtons(extras: Bundle): List<PoslinkTextBoxBu
             PoslinkTextBoxButtonSpec(
                 name = name,
                 key = readKey(index).trim(),
-                index = index
+                index = index,
+                containerColor = readColor(index)
             )
         }
     }
+}
+
+internal fun parsePoslinkTextBoxButtonColor(raw: String?): Color? {
+    val normalized = raw
+        ?.trim()
+        ?.removePrefix("#")
+        ?.takeIf { it.length == 6 && it.all { ch -> ch.isDigit() || ch.lowercaseChar() in 'a'..'f' } }
+        ?: return null
+    return runCatching { Color(AndroidColor.parseColor("#$normalized")) }.getOrNull()
+}
+
+internal fun isPoslinkTextBoxHardKeyEnabled(extras: Bundle): Boolean {
+    val raw = extras.get(EntryExtraData.PARAM_ENABLE_HARD_KEY)?.toString()
+        ?: extras.get("enableHardKey")?.toString()
+        ?: extras.get("PARAM_ENABLE_HARD_KEY")?.toString()
+        ?: return false
+    return raw.trim() == "1"
+}
+
+internal fun hasPoslinkTextBoxPhysicalKeyboard(extras: Bundle): Boolean {
+    val raw = extras.get(EntryExtraData.PARAM_HAS_PHYSICAL_KEYBOARD)?.toString()
+        ?: extras.get("hasPhyKeyboard")?.toString()
+        ?: extras.get("PARAM_HAS_PHYSICAL_KEYBOARD")?.toString()
+        ?: extras.get("hasPhysicalKeyboard")?.toString()
+        ?: return false
+    return raw.equals("true", ignoreCase = true) || raw == "1"
+}
+
+internal fun shouldDisplayPoslinkTextBoxButtons(extras: Bundle): Boolean {
+    return !isPoslinkTextBoxHardKeyEnabled(extras) || !hasPoslinkTextBoxPhysicalKeyboard(extras)
+}
+
+internal fun resolvePoslinkTextBoxHardKeyList(extras: Bundle): Set<String> {
+    val raw = extras.get(EntryExtraData.PARAM_HARD_KEY_LIST)?.toString()
+        ?: extras.get("hardKeyList")?.toString()
+        ?: extras.get("PARAM_HARD_KEY_LIST")?.toString()
+        ?: return emptySet()
+    return raw.trim()
+        .split(Regex("\\s+"))
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+        .toSet()
+}
+
+internal fun resolvePoslinkTextBoxHardKeyResponse(
+    buttons: List<PoslinkTextBoxButtonSpec>,
+    hardKeyList: Set<String>,
+    keyCode: Int
+): String? {
+    val keyName = when (keyCode) {
+        KeyEvent.KEYCODE_0 -> "KEY0"
+        KeyEvent.KEYCODE_1 -> "KEY1"
+        KeyEvent.KEYCODE_2 -> "KEY2"
+        KeyEvent.KEYCODE_3 -> "KEY3"
+        KeyEvent.KEYCODE_4 -> "KEY4"
+        KeyEvent.KEYCODE_5 -> "KEY5"
+        KeyEvent.KEYCODE_6 -> "KEY6"
+        KeyEvent.KEYCODE_7 -> "KEY7"
+        KeyEvent.KEYCODE_8 -> "KEY8"
+        KeyEvent.KEYCODE_9 -> "KEY9"
+        KeyEvent.KEYCODE_ENTER -> "KEYENTER"
+        KeyEvent.KEYCODE_BACK -> "KEYCANCEL"
+        KeyEvent.KEYCODE_DEL -> "KEYCLEAR"
+        else -> return null
+    }
+    if (hardKeyList.isNotEmpty() && keyName !in hardKeyList) return null
+    return buttons.firstOrNull { it.key.equals(keyName, ignoreCase = true) }?.key?.ifBlank { keyName }
+}
+
+internal fun resolvePoslinkTextBoxButtonRows(
+    buttons: List<PoslinkTextBoxButtonSpec>
+): List<List<PoslinkTextBoxButtonSpec>> = when (buttons.size) {
+    1, 2, 3 -> listOf(buttons)
+    else -> buttons.map(::listOf)
 }
 
 @Composable
@@ -92,34 +183,44 @@ internal fun PoslinkTextBoxButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    containerColor: Color = PosLinkDesignTokens.PrimaryColor
 ) {
-    val fill = PosLinkDesignTokens.PrimaryColor
-    PosLinkLegacyMaterialFilledButton(
+    val buttonMargin = dimensionResource(R.dimen.margin_gap)
+    val cells = remember(text) {
+        buildPoslinkValueLikeCells(text)
+            .map { it.copy(align = TextAlign.Center) }
+    }
+    Surface(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier
+            .padding(vertical = buttonMargin)
+            .height(dimensionResource(R.dimen.button_height)),
         enabled = enabled,
-        appearance = PosLinkLegacyMaterialFillAppearance(
-            slotHeight = PosLinkDesignTokens.ButtonHeight,
-            shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
-            containerColor = fill,
-            disabledContainerColor = fill.copy(alpha = 0.38f),
-            pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor
-        )
+        shape = RectangleShape,
+        color = if (enabled) containerColor else PosLinkDesignTokens.DisabledColor,
+        shadowElevation = 0.dp,
+        tonalElevation = 0.dp
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge.copy(color = Color(0xFFECECEC))
-        )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            PoslinkLegacyInlineTextContent(
+                cells = cells,
+                allowWrap = true,
+                textColor = if (enabled) {
+                    Color(0xFFECECEC)
+                } else {
+                    Color(0xFFECECEC).copy(alpha = 0.38f)
+                }
+            )
+        }
     }
 }
 
 internal fun normalizePoslinkTitleCommands(raw: String): String {
-    if (raw.isBlank()) return raw
-    // Some adb payloads escape title commands as \\L / \\R / \\B.
-    // Collapse one-or-more leading slashes before known commands to a single slash
-    // so legacy parser can consistently interpret alignment/weight/size markers.
-    return raw.replace(Regex("""\\+([LRCB123n])"""), """\\$1""")
+    return normalizePoslinkControlCommands(raw)
 }
 
 internal fun shouldRenderShowTextBoxCenterTitle(
@@ -136,23 +237,12 @@ internal fun shouldRenderShowTextBoxCenterTitle(
 
 @Composable
 internal fun PoslinkCenteredTextBoxTitle(rawTitle: String) {
-    val cleanedTitle = remember(rawTitle) {
-        rawTitle
-            .replace(Regex("""\\+[LRCB123n]"""), "")
-            .trim()
-    }
-    if (cleanedTitle.isBlank()) return
-    PosLinkText(
-        text = cleanedTitle,
-        role = PosLinkTextRole.ScreenTitle,
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center
-    )
+    PoslinkLegacyTitleLikeText(raw = rawTitle, supportLineSep = true)
 }
 
 internal fun containsShowTextBoxLineSepCommand(raw: String): Boolean {
     if (raw.isBlank()) return false
-    return Regex("""\\+n""").containsMatchIn(raw)
+    return Regex("""\\+n""").containsMatchIn(normalizePoslinkControlCommands(raw))
 }
 
 internal fun parseShowDialogFormCheckedIndexes(labelsProperty: String?, labelsSize: Int): Set<Int> {
@@ -276,7 +366,7 @@ internal fun JSONArray.findShowMessageFallbackText(path: String): PoslinkMessage
 }
 
 /**
- * 标题 + 正文（无图）：用于单 Scroll 或与 golive 一致时仅中间 List 区域滚动。
+ * 鏍囬 + 姝ｆ枃锛堟棤鍥撅級锛氱敤浜庡崟 Scroll 鎴栦笌 golive 涓€鑷存椂浠呬腑闂?List 鍖哄煙婊氬姩銆?
  */
 @Composable
 internal fun PoslinkMessageTitleAndMessages(
@@ -330,7 +420,7 @@ internal fun PoslinkMessageTitleAndMessages(
 }
 
 /**
- * 图片 + imageDesc：golive 中位于 `ll_desc_msg_list_show_message`（ImageView + 横向 ll_desc_list）。
+ * 鍥剧墖 + imageDesc锛歡olive 涓綅浜?`ll_desc_msg_list_show_message`锛圛mageView + 妯悜 ll_desc_list锛夈€?
  */
 @Composable
 internal fun PoslinkMessageImageDescBlock(
@@ -351,7 +441,7 @@ internal fun PoslinkMessageImageDescBlock(
     )
     if (imageDesc.isNotBlank()) {
         Spacer(Modifier.height(5.dp))
-        // golive：图注走 getTitleViewList + customizeFontSize，无字号命令时为 FONT_NORMAL_SP(24sp)，单段居中
+        // golive锛氬浘娉ㄨ蛋 getTitleViewList + customizeFontSize锛屾棤瀛楀彿鍛戒护鏃朵负 FONT_NORMAL_SP(24sp)锛屽崟娈靛眳涓?
         Text(
             text = imageDesc,
             modifier = Modifier.fillMaxWidth(),
@@ -451,7 +541,7 @@ internal fun PoslinkMessageDisplayLayout(p: PoslinkMessageDisplayLayoutParams) {
     val useLegacyImageBounds = visualMode != PoslinkMessageVisualMode.Default
     Box(modifier = Modifier.fillMaxSize()) {
         if (visualMode == PoslinkMessageVisualMode.ShowMessageLegacy) {
-            // golive fragment_show_message：ListView 单独滚动；图片+desc 在 list 与 tax 之间固定，不随列表滚动
+            // golive fragment_show_message锛歀istView 鍗曠嫭婊氬姩锛涘浘鐗?desc 鍦?list 涓?tax 涔嬮棿鍥哄畾锛屼笉闅忓垪琛ㄦ粴鍔?
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -539,7 +629,7 @@ internal fun PoslinkMessageDisplayLayout(p: PoslinkMessageDisplayLayoutParams) {
 internal fun PoslinkMessageListText(messageText: String) {
     val groups = remember(messageText) { parsePoslinkMessageGroups(messageText) }
     if (groups.isEmpty()) return
-    // golive MessageItemAdapter：虽传 R.dimen.text_size_normal，但 getViewList→customizeFontize 默认 FONT_NORMAL_SP=24sp
+    // golive MessageItemAdapter锛氳櫧浼?R.dimen.text_size_normal锛屼絾 getViewList鈫抍ustomizeFontize 榛樿 FONT_NORMAL_SP=24sp
     val lineStyle = MaterialTheme.typography.bodyLarge.copy(
         fontWeight = FontWeight.Normal,
         fontSize = PosLinkDesignTokens.PoslinkTextShowingNormalSp,
@@ -632,7 +722,7 @@ internal fun PoslinkTaxTotalRow(
     value: String,
     showMessageLegacy: Boolean = false
 ) {
-    // fragment_show_message.xml：tax/total 均为 text_size_subtitle(18sp)，标签粗体
+    // fragment_show_message.xml锛歵ax/total 鍧囦负 text_size_subtitle(18sp)锛屾爣绛剧矖浣?
     if (showMessageLegacy) {
         val labelStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
         val valueStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Normal)

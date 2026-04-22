@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -74,6 +75,7 @@ fun EntryScreenRouter(
     modifier: Modifier = Modifier
 ) {
     val activity = LocalContext.current as FragmentActivity
+    val currentState by rememberUpdatedState(state)
 
     LaunchedEffect(Unit) {
         viewModel.managerResponse.collect { ev ->
@@ -88,7 +90,10 @@ fun EntryScreenRouter(
 
     LaunchedEffect(Unit) {
         viewModel.keyEvents.collect { code ->
-            if (code == KeyEvent.KEYCODE_BACK) {
+            val bypassBackAbort = currentState.entryAction == PoslinkEntry.ACTION_SHOW_TEXT_BOX &&
+                isPoslinkTextBoxHardKeyEnabled(currentState.extras) &&
+                hasPoslinkTextBoxPhysicalKeyboard(currentState.extras)
+            if (code == KeyEvent.KEYCODE_BACK && !bypassBackAbort) {
                 viewModel.sendAbort()
             }
         }
@@ -375,41 +380,50 @@ private fun TipEntryRoute(
                 .getOrDefault(12)
         }
         ?: 12
+    val tipUnit = extras.getString(EntryExtraData.PARAM_TIP_UNIT, "C") ?: "C"
+    val isTipCentCase = !tipUnit.equals("D", ignoreCase = true)
     val tipOptionsRaw = extras.getStringArray(EntryExtraData.PARAM_TIP_OPTIONS) ?: emptyArray()
-    val parsedTipValues = tipOptionsRaw
-        .filterNotNull()
-        .map { CurrencyUtils.parse(it) }
-        .filter { it > 0L }
-    val isTipCentCase =
-        tipOptionsRaw.any { raw -> raw?.contains("%") == true } ||
-            parsedTipValues.any { it in 1L..300L }
+    val tipRateOptions = extras.getStringArray(EntryExtraData.PARAM_TIP_RATE_OPTIONS) ?: emptyArray()
     val tipOptions = tipOptionsRaw
         .filterNotNull()
         .filter { it.isNotBlank() }
         .mapIndexed { idx, rawTitle ->
-            val parsedCents = CurrencyUtils.parse(rawTitle)
-            val isPercentOption = rawTitle.contains("%") || isTipCentCase
-            val displayTitle = if (isTipCentCase) {
-                CurrencyUtils.convert(parsedCents, currency)
-            } else {
-                rawTitle
-            }
-            val displaySubtitle = if (isPercentOption) {
-                if (rawTitle.contains("%")) rawTitle.trim() else "${parsedCents}%"
-            } else {
-                (parsedCents / 100).toString()
-            }
+            val rawAmount = rawTitle.toLongOrNull() ?: 0L
+            val parsedCents = if (isTipCentCase) rawAmount else rawAmount * 100L
             SelectOptionsView.Option(
                 idx,
-                displayTitle,
-                displaySubtitle,
+                CurrencyUtils.convert(parsedCents, currency),
+                tipRateOptions.getOrNull(idx),
                 parsedCents
             )
         }
     val tipName = extras.getString(EntryExtraData.PARAM_TIP_NAME)
         ?: activity.getString(R.string.tip_name)
-    val baseAmount = extras.getLong(EntryRequest.PARAM_AMOUNT, 0L)
-    val noTipEnabled = extras.getBoolean(EntryExtraData.PARAM_ENABLE_NO_TIP_SELECTION, true)
+    val baseAmount = when {
+        extras.containsKey(EntryExtraData.PARAM_BASE_AMOUNT) ->
+            extras.getLong(EntryExtraData.PARAM_BASE_AMOUNT, -1L)
+        extras.containsKey("baseAmount") ->
+            extras.getLong("baseAmount", -1L)
+        else -> -1L
+    }
+    val noTipEnabled = extras.getBoolean(EntryExtraData.PARAM_ENABLE_NO_TIP_SELECTION, false)
+    val tipLengthList = valuePattern
+        ?.takeIf { it.isNotBlank() }
+        ?.let { runCatching { ValuePatternUtils.getLengthList(it) }.getOrElse { mutableListOf(0) } }
+        ?: mutableListOf(0)
+    fun canSubmitTip(value: Long): Boolean = value != 0L || tipLengthList.contains(0)
+    fun submitTip(value: Long, tipFieldModified: Boolean) {
+        if (value == 0L && !canSubmitTip(value)) {
+            Toast(activity).show(activity.getString(R.string.prompt_input), TYPE.FAILURE)
+            return
+        }
+        val payload = Bundle().apply {
+            if (!(value == 0L && tipFieldModified)) {
+                putLong(EntryRequest.PARAM_TIP, value)
+            }
+        }
+        viewModel.sendNext(payload)
+    }
     val tipParityLog = when {
         !noTipEnabled -> "TipDisableNoTip parity v3 active"
         isTipCentCase -> "TipCent parity v2 active"
@@ -435,20 +449,12 @@ private fun TipEntryRoute(
                 parityLog = tipParityLog
             ),
             callbacks = TipScreenCallbacks(
-                onTipOptionSelected = { },
-                onNoTipSelected = {
-                    viewModel.sendNext(
-                        Bundle().apply {
-                            putLong(EntryRequest.PARAM_TIP, 0L)
-                        }
-                    )
+                onTipOptionSelected = { selectedTip ->
+                    submitTip(selectedTip, tipFieldModified = false)
                 },
-                onConfirm = { amount, _ ->
-                    viewModel.sendNext(
-                        Bundle().apply {
-                            putLong(EntryRequest.PARAM_TIP, amount)
-                        }
-                    )
+                onNoTipSelected = { viewModel.sendNext(Bundle()) },
+                onConfirm = { amount, tipFieldModified ->
+                    submitTip(amount, tipFieldModified)
                 },
                 onError = { msg -> Toast(activity).show(msg, TYPE.FAILURE) }
             )
@@ -524,6 +530,7 @@ private fun GenericStringEntryRoute(
     viewModel: EntryViewModel
 ) {
     val useFleetLegacyInputStyle = isFleetTextInputAction(entryAction)
+    val fleetDefaults = fleetTextEntryDefaults[entryAction]
     if (entryAction == TextEntry.ACTION_ENTER_INVOICE_NUMBER) {
         InvoiceNumberEntryRoute(extras, activity, viewModel, responseKey, entryAction)
         return
@@ -586,17 +593,16 @@ private fun GenericStringEntryRoute(
     }
     val message = TextEntryMessageFormatter.singleLinePrompt(entryAction, extras, activity.resources)
     val pattern = extras.getString(EntryExtraData.PARAM_VALUE_PATTERN)
+        ?.takeIf { it.isNotBlank() }
+        ?: fleetDefaults?.valuePattern
     val maxLen = if (extras.containsKey(EntryExtraData.PARAM_MAX_LENGTH)) {
         extras.getInt(EntryExtraData.PARAM_MAX_LENGTH)
     } else {
-        null
+        pattern?.let { ValuePatternUtils.getMaxLength(it) }
+            ?.takeIf { it > 0 }
     }
-    val eInput = when (entryAction) {
-        TextEntry.ACTION_ENTER_DRIVER_ID -> InputType.NUM
-        TextEntry.ACTION_ENTER_HUBOMETER -> InputType.NUM
-        TextEntry.ACTION_ENTER_REEFER_HOURS -> InputType.NUM
-        else -> extras.getString(EntryExtraData.PARAM_EINPUT_TYPE)
-    }
+    val eInput = extras.getString(EntryExtraData.PARAM_EINPUT_TYPE)
+        ?: fleetDefaults?.inputType
     GenericStringEntryScreen(
         message = message,
         valuePattern = pattern,
@@ -612,17 +618,55 @@ private fun GenericStringEntryRoute(
 
 private fun isFleetTextInputAction(action: String?): Boolean = when (action) {
     TextEntry.ACTION_ENTER_ADDITIONAL_FLEET_DATA_1,
-    TextEntry.ACTION_ENTER_EMPLOYEE_NUMBER,
-    TextEntry.ACTION_ENTER_DRIVER_ID,
-    TextEntry.ACTION_ENTER_FLEET_PO_NUMBER,
-    TextEntry.ACTION_ENTER_JOB_ID,
+    TextEntry.ACTION_ENTER_ADDITIONAL_FLEET_DATA_2,
     TextEntry.ACTION_ENTER_CUSTOMER_DATA,
+    TextEntry.ACTION_ENTER_DEPARTMENT_NUMBER,
+    TextEntry.ACTION_ENTER_DRIVER_ID,
+    TextEntry.ACTION_ENTER_EMPLOYEE_NUMBER,
+    TextEntry.ACTION_ENTER_FLEET_PO_NUMBER,
     TextEntry.ACTION_ENTER_FLEET_PROMPT_CODE,
     TextEntry.ACTION_ENTER_HUBOMETER,
+    TextEntry.ACTION_ENTER_JOB_ID,
+    TextEntry.ACTION_ENTER_LICENSE_NUMBER,
+    TextEntry.ACTION_ENTER_MAINTENANCE_ID,
+    TextEntry.ACTION_ENTER_ODOMETER,
     TextEntry.ACTION_ENTER_REEFER_HOURS,
-    TextEntry.ACTION_ENTER_VEHICLE_ID -> true
+    TextEntry.ACTION_ENTER_TRAILER_ID,
+    TextEntry.ACTION_ENTER_TRIP_NUMBER,
+    TextEntry.ACTION_ENTER_UNIT_ID,
+    TextEntry.ACTION_ENTER_USER_ID,
+    TextEntry.ACTION_ENTER_VEHICLE_ID,
+    TextEntry.ACTION_ENTER_VEHICLE_NUMBER -> true
     else -> false
 }
+
+private data class FleetTextEntryDefaults(
+    val valuePattern: String,
+    val inputType: String
+)
+
+private val fleetTextEntryDefaults: Map<String, FleetTextEntryDefaults> = mapOf(
+    TextEntry.ACTION_ENTER_CUSTOMER_DATA to FleetTextEntryDefaults("0-24", InputType.ALLTEXT),
+    TextEntry.ACTION_ENTER_DEPARTMENT_NUMBER to FleetTextEntryDefaults("0-24", InputType.ALLTEXT),
+    TextEntry.ACTION_ENTER_DRIVER_ID to FleetTextEntryDefaults("0-20", InputType.NUM),
+    TextEntry.ACTION_ENTER_EMPLOYEE_NUMBER to FleetTextEntryDefaults("0-20", InputType.ALLTEXT),
+    TextEntry.ACTION_ENTER_FLEET_PROMPT_CODE to FleetTextEntryDefaults("0,2", InputType.NUM),
+    TextEntry.ACTION_ENTER_HUBOMETER to FleetTextEntryDefaults("0-9", InputType.NUM),
+    TextEntry.ACTION_ENTER_JOB_ID to FleetTextEntryDefaults("0-24", InputType.NUM),
+    TextEntry.ACTION_ENTER_LICENSE_NUMBER to FleetTextEntryDefaults("0-20", InputType.ALLTEXT),
+    TextEntry.ACTION_ENTER_MAINTENANCE_ID to FleetTextEntryDefaults("0-15", InputType.ALLTEXT),
+    TextEntry.ACTION_ENTER_ODOMETER to FleetTextEntryDefaults("0-16", InputType.NUM),
+    TextEntry.ACTION_ENTER_FLEET_PO_NUMBER to FleetTextEntryDefaults("0-10", InputType.ALLTEXT),
+    TextEntry.ACTION_ENTER_REEFER_HOURS to FleetTextEntryDefaults("0-7", InputType.NUM),
+    TextEntry.ACTION_ENTER_TRAILER_ID to FleetTextEntryDefaults("0-10", InputType.ALLTEXT),
+    TextEntry.ACTION_ENTER_TRIP_NUMBER to FleetTextEntryDefaults("0-15", InputType.ALLTEXT),
+    TextEntry.ACTION_ENTER_UNIT_ID to FleetTextEntryDefaults("0-10", InputType.ALLTEXT),
+    TextEntry.ACTION_ENTER_USER_ID to FleetTextEntryDefaults("0-24", InputType.ALLTEXT),
+    TextEntry.ACTION_ENTER_VEHICLE_ID to FleetTextEntryDefaults("0-16", InputType.NUM),
+    TextEntry.ACTION_ENTER_VEHICLE_NUMBER to FleetTextEntryDefaults("0-20", InputType.ALLTEXT),
+    TextEntry.ACTION_ENTER_ADDITIONAL_FLEET_DATA_1 to FleetTextEntryDefaults("0-20", InputType.ALLTEXT),
+    TextEntry.ACTION_ENTER_ADDITIONAL_FLEET_DATA_2 to FleetTextEntryDefaults("0-20", InputType.ALLTEXT)
+)
 
 @Composable
 private fun AdditionalFleetData2EntryRoute(
@@ -632,20 +676,25 @@ private fun AdditionalFleetData2EntryRoute(
     responseKey: String,
     entryAction: String?
 ) {
+    val fleetDefaults = fleetTextEntryDefaults[entryAction]
     val message = TextEntryMessageFormatter.singleLinePrompt(entryAction, extras, activity.resources)
     val pattern = extras.getString(EntryExtraData.PARAM_VALUE_PATTERN)
+        ?.takeIf { it.isNotBlank() }
+        ?: fleetDefaults?.valuePattern
     val maxLen = if (extras.containsKey(EntryExtraData.PARAM_MAX_LENGTH)) {
         extras.getInt(EntryExtraData.PARAM_MAX_LENGTH)
     } else {
-        null
+        pattern?.let { ValuePatternUtils.getMaxLength(it) }
+            ?.takeIf { it > 0 }
     }
-    val resolvedPattern = pattern?.takeIf { it.isNotBlank() }
-        ?: maxLen?.let { "1-$it" }
-        ?: "1-64"
-    InvoiceNumberScreen(
+    val eInput = extras.getString(EntryExtraData.PARAM_EINPUT_TYPE)
+        ?: fleetDefaults?.inputType
+    GenericStringEntryScreen(
         message = message,
-        valuePattern = resolvedPattern,
-        parityLog = "AdditionalFleetData2 parity v1 active",
+        valuePattern = pattern,
+        maxLengthFallback = maxLen,
+        eInputType = eInput,
+        useLegacyFleetInputStyle = true,
         onConfirm = { value ->
             viewModel.sendNext(Bundle().apply { putString(responseKey, value) })
         },

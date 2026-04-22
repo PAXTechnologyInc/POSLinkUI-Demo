@@ -17,7 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,12 +42,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFillAppearance
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFilledButton
+import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyThemeButton
 import com.paxus.pay.poslinkui.demo.ui.device.DeviceProfileId
 import com.paxus.pay.poslinkui.demo.ui.device.LocalDeviceLayoutSpec
-import com.paxus.pay.poslinkui.demo.ui.theme.LocalPosLinkLegacyMaterialButtonVerticalInset
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.utils.DeviceUtils
@@ -75,7 +73,7 @@ fun InvoiceNumberScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val spec = LocalDeviceLayoutSpec.current
     val sectionSpacing = PosLinkDesignTokens.SpaceBetweenTextView
-    val inputHeight = PosLinkDesignTokens.ButtonHeight
+    val inputHeight = PosLinkDesignTokens.buttonHeight()
     val fieldShape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
     val lengths = remember(valuePattern) { ValuePatternUtils.getLengthList(valuePattern) }
     val maxChars = remember(lengths) { lengths.maxOf { it ?: 0 } }
@@ -92,6 +90,15 @@ fun InvoiceNumberScreen(
     val legacyHorizontalInset = (targetHorizontalPaddingDp - spec.screenHorizontalPaddingDp)
         .coerceAtLeast(0)
         .dp
+    val promptInputStr = stringResource(R.string.prompt_input)
+    val submit = {
+        val text = value.text.trim()
+        if (!lengths.contains(text.length)) {
+            onError(promptInputStr)
+        } else {
+            onConfirm(text)
+        }
+    }
 
     LaunchedEffect(Unit) {
         val shouldShowSoftKeyboard = forceTextKeyboard || !isNumeric || !DeviceUtils.hasPhysicalKeyboard()
@@ -112,6 +119,11 @@ fun InvoiceNumberScreen(
         if (shouldShowSoftKeyboard) keyboardController?.show()
     }
 
+    EntryHardwareConfirmEffect(
+        enabled = !interactionLocked,
+        onConfirm = submit
+    )
+
     Column(
         modifier = Modifier
             .offset(y = topOffset)
@@ -122,7 +134,7 @@ fun InvoiceNumberScreen(
         Spacer(modifier = Modifier.height(sectionSpacing))
         Text(
             text = message,
-            color = Color(0xFFDBD4D9),
+            color = PosLinkDesignTokens.PrimaryTextColor,
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Normal,
                 fontSize = PosLinkDesignTokens.TitleTextSize
@@ -167,40 +179,11 @@ fun InvoiceNumberScreen(
                 }
             }
         )
-        Spacer(modifier = Modifier.height(sectionSpacing))
-        val promptInputStr = stringResource(R.string.prompt_input)
-        // Full-height fill (no legacy vertical inset): invoice row uses the same slot height as the field;
-        // inset would shorten the tinted surface and make 8dp corners look sharper than the field above.
-        CompositionLocalProvider(
-            LocalPosLinkLegacyMaterialButtonVerticalInset provides 0.dp
-        ) {
-            PosLinkLegacyMaterialFilledButton(
-                onClick = {
-                    val text = value.text.trim()
-                    if (!lengths.contains(text.length)) {
-                        onError(promptInputStr)
-                    } else {
-                        onConfirm(text)
-                    }
-                },
-                enabled = !interactionLocked,
-                modifier = Modifier.fillMaxWidth(),
-                appearance = PosLinkLegacyMaterialFillAppearance(
-                    slotHeight = inputHeight,
-                    shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
-                    containerColor = Color(0xFF6E85B7),
-                    disabledContainerColor = Color(0xFF6E85B7).copy(alpha = 0.38f)
-                )
-            ) {
-                Text(
-                    text = stringResource(R.string.trans_confirm_btn),
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        letterSpacing = 1.5.sp,
-                        color = Color(0xFFECECEC)
-                    )
-                )
-            }
-        }
+        PosLinkLegacyThemeButton(
+            text = stringResource(R.string.trans_confirm_btn),
+            onClick = submit,
+            enabled = !interactionLocked,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }

@@ -87,6 +87,7 @@ object EntryActionRegistry {
         add(SecurityEntry.ACTION_INPUT_ACCOUNT)
         add(SecurityEntry.ACTION_MANAGE_INPUT_ACCOUNT)
         add(SecurityEntry.ACTION_ENTER_VCODE)
+        add("com.pax.us.pay.action.ENTER_CVV")
         add(SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS)
         add(SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS)
         add(SecurityEntry.ACTION_ENTER_PIN)

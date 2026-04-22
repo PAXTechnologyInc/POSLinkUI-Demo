@@ -5,6 +5,8 @@ import android.graphics.Rect
 import android.view.KeyEvent
 import android.view.ViewGroup
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +31,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,8 +61,6 @@ import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.entry.text.GenericStringEntryScreen
 import com.paxus.pay.poslinkui.demo.entry.text.invoice.InvoiceNumberScreen
 import com.paxus.pay.poslinkui.demo.entry.signature.ElectronicSignatureView
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFillAppearance
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyMaterialFilledButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButtonVariant
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
@@ -73,13 +74,117 @@ import com.paxus.pay.poslinkui.demo.utils.Toast.TYPE
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils
 import com.paxus.pay.poslinkui.demo.viewmodel.EntryViewModel
 
-/** First-row button count in [PoslinkShowDialogThreeOptionsLayout] (remaining option is the full-width row). */
+/** First-row button count in SHOW_DIALOG / ShowTextBox legacy 2-column layouts. */
 private const val POSLINK_DIALOG_TOP_ROW_SLOT_COUNT = 2
-
-private const val POSLINK_DIALOG_RESPONSE_INDEX_THIRD = 3
 
 private class PoslinkSignatureViewRef {
     var view: ElectronicSignatureView? = null
+}
+
+private data class PoslinkShowDialogOption(
+    val index: Int,
+    val label: String
+)
+
+@Composable
+private fun PoslinkShowDialogButton(
+    rawText: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    val cells = remember(rawText) { buildPoslinkTitleLikeCells(rawText) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    Surface(
+        onClick = onClick,
+        modifier = modifier.height(dimensionResource(R.dimen.button_height)),
+        enabled = enabled,
+        shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
+        color = when {
+            !enabled -> PosLinkDesignTokens.DisabledColor
+            isPressed -> PosLinkDesignTokens.LegacyButtonPressedColor
+            else -> PosLinkDesignTokens.PrimaryColor
+        },
+        interactionSource = interactionSource,
+        shadowElevation = 0.dp,
+        tonalElevation = 0.dp
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            PoslinkLegacyInlineTextContent(
+                cells = cells,
+                allowWrap = true,
+                textColor = if (enabled) {
+                    PosLinkDesignTokens.PrimaryTextColor
+                } else {
+                    PosLinkDesignTokens.PrimaryTextColor.copy(alpha = 0.38f)
+                }
+            )
+        }
+    }
+}
+
+private fun resolvePoslinkShowDialogVisibleOptions(opts: Array<String?>): List<PoslinkShowDialogOption> {
+    return opts
+        .take(4)
+        .takeWhile { !it.isNullOrBlank() }
+        .mapIndexed { index, label ->
+            PoslinkShowDialogOption(
+                index = index + 1,
+                label = label.orEmpty()
+            )
+        }
+}
+
+private fun resolvePoslinkShowDialogKeyIndex(keyCode: Int): Int? = when (keyCode) {
+    KeyEvent.KEYCODE_1 -> 1
+    KeyEvent.KEYCODE_2 -> 2
+    KeyEvent.KEYCODE_3 -> 3
+    KeyEvent.KEYCODE_4 -> 4
+    else -> null
+}
+
+private fun submitPoslinkShowDialogSelection(viewModel: EntryViewModel, index: Int) {
+    viewModel.sendNext(
+        Bundle().apply {
+            putInt(EntryRequest.PARAM_INDEX, index)
+        }
+    )
+}
+
+@Composable
+private fun PoslinkShowDialogOptionsLayout(
+    options: List<PoslinkShowDialogOption>,
+    viewModel: EntryViewModel,
+    buttonsEnabled: Boolean
+) {
+    val buttonMargin = dimensionResource(R.dimen.margin_gap)
+    Column(modifier = Modifier.fillMaxWidth()) {
+        options.chunked(POSLINK_DIALOG_TOP_ROW_SLOT_COUNT).forEach { rowOptions ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = buttonMargin),
+                horizontalArrangement = Arrangement.spacedBy(buttonMargin * 2)
+            ) {
+                rowOptions.forEach { option ->
+                    PoslinkShowDialogButton(
+                        rawText = option.label,
+                        onClick = {
+                            submitPoslinkShowDialogSelection(viewModel, option.index)
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(vertical = buttonMargin),
+                        enabled = buttonsEnabled
+                    )
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -92,107 +197,28 @@ private fun PoslinkShowDialogContent(
     viewModel: EntryViewModel,
     buttonsEnabled: Boolean
 ) {
-    Column(Modifier.verticalScroll(rememberScrollState())) {
-        if (title.isNotBlank()) {
-            PoslinkFormattedTitle(title = title)
-        }
-        when (opts.size) {
-            2 -> PoslinkShowDialogTwoOptionsLayout(opts = opts, viewModel = viewModel, buttonsEnabled = buttonsEnabled)
-            3 -> PoslinkShowDialogThreeOptionsLayout(opts = opts, viewModel = viewModel, buttonsEnabled = buttonsEnabled)
-            else -> {
-                opts.forEachIndexed { index, label ->
-                    PosLinkPrimaryButton(
-                        text = label ?: "",
-                        onClick = {
-                            viewModel.sendNext(
-                                Bundle().apply { putInt(EntryRequest.PARAM_INDEX, index + 1) }
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(vertical = PosLinkDesignTokens.CompactSpacing),
-                        enabled = buttonsEnabled,
-                        variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
-                    )
-                }
+    val visibleOptions = remember(opts) { resolvePoslinkShowDialogVisibleOptions(opts) }
+    if (visibleOptions.isNotEmpty() && buttonsEnabled) {
+        LaunchedEffect(visibleOptions, buttonsEnabled) {
+            viewModel.keyEvents.collect { keyCode ->
+                val selectedIndex = resolvePoslinkShowDialogKeyIndex(keyCode) ?: return@collect
+                val option = visibleOptions.firstOrNull { it.index == selectedIndex } ?: return@collect
+                submitPoslinkShowDialogSelection(viewModel, option.index)
             }
         }
     }
-}
-
-@Composable
-private fun PoslinkShowDialogTwoOptionsLayout(
-    opts: Array<String?>,
-    viewModel: EntryViewModel,
-    buttonsEnabled: Boolean
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = PosLinkDesignTokens.CompactSpacing),
-        horizontalArrangement = Arrangement.spacedBy(PosLinkDesignTokens.ControlGutter)
-    ) {
-        opts.forEachIndexed { index, label ->
-            PosLinkPrimaryButton(
-                text = label ?: "",
-                onClick = {
-                    viewModel.sendNext(
-                        Bundle().apply { putInt(EntryRequest.PARAM_INDEX, index + 1) }
-                    )
-                },
-                modifier = Modifier.weight(1f),
-                enabled = buttonsEnabled,
-                variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
+    Column(Modifier.verticalScroll(rememberScrollState())) {
+        if (title.isNotBlank()) {
+            PoslinkShowDialogTitleLikeText(raw = title, supportLineSep = true)
+        }
+        if (visibleOptions.isNotEmpty()) {
+            PoslinkShowDialogOptionsLayout(
+                options = visibleOptions,
+                viewModel = viewModel,
+                buttonsEnabled = buttonsEnabled
             )
         }
     }
-}
-
-@Composable
-private fun PoslinkShowDialogThreeOptionsLayout(
-    opts: Array<String?>,
-    viewModel: EntryViewModel,
-    buttonsEnabled: Boolean
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = PosLinkDesignTokens.CompactSpacing),
-        horizontalArrangement = Arrangement.spacedBy(PosLinkDesignTokens.ControlGutter)
-    ) {
-        repeat(POSLINK_DIALOG_TOP_ROW_SLOT_COUNT) { slot ->
-            PosLinkPrimaryButton(
-                text = opts[slot].orEmpty(),
-                onClick = {
-                    viewModel.sendNext(
-                        Bundle().apply {
-                            putInt(EntryRequest.PARAM_INDEX, slot + 1)
-                        }
-                    )
-                },
-                modifier = Modifier.weight(1f),
-                enabled = buttonsEnabled,
-                variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
-            )
-        }
-    }
-    val thirdOptionLabel = opts.toList()
-        .asSequence()
-        .drop(POSLINK_DIALOG_TOP_ROW_SLOT_COUNT)
-        .firstOrNull()
-        .orEmpty()
-    PosLinkPrimaryButton(
-        text = thirdOptionLabel,
-        onClick = {
-            viewModel.sendNext(
-                Bundle().apply {
-                    putInt(EntryRequest.PARAM_INDEX, POSLINK_DIALOG_RESPONSE_INDEX_THIRD)
-                }
-            )
-        },
-        modifier = Modifier.padding(vertical = PosLinkDesignTokens.CompactSpacing),
-        enabled = buttonsEnabled,
-        variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
-    )
 }
 
 @Composable
@@ -200,17 +226,37 @@ private fun PoslinkRouteShowThankYou(extras: Bundle, viewModel: EntryViewModel, 
     val t = extras.getString(EntryExtraData.PARAM_TITLE).orEmpty()
     val m1 = extras.getString(EntryExtraData.PARAM_MESSAGE_1).orEmpty()
     val m2 = extras.getString(EntryExtraData.PARAM_MESSAGE_2).orEmpty()
-    Column(Modifier.verticalScroll(rememberScrollState())) {
-        if (t.isNotBlank()) PosLinkText(text = t, role = PosLinkTextRole.ScreenTitle)
-        if (m1.isNotBlank()) PosLinkText(text = m1)
-        if (m2.isNotBlank()) PosLinkText(text = m2)
-        Spacer(Modifier.height(PosLinkDesignTokens.SectionBreakSpacing))
-        PosLinkPrimaryButton(
-            text = stringResource(R.string.confirm),
-            onClick = { viewModel.sendNext(null) },
-            enabled = buttonsEnabled,
-            variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
-        )
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(Modifier.fillMaxWidth()) {
+            if (t.isNotBlank()) {
+                PoslinkLegacyTitleLikeText(
+                    raw = t,
+                    supportLineSep = true,
+                    allowWrap = true,
+                    maxLines = 4,
+                    allowCharacterWrap = true
+                )
+            }
+            if (m1.isNotBlank()) {
+                PoslinkLegacyValueLikeText(
+                    raw = m1,
+                    allowWrap = true,
+                    maxLines = 4,
+                    allowCharacterWrap = true
+                )
+            }
+            if (m2.isNotBlank()) {
+                PoslinkLegacyValueLikeText(
+                    raw = m2,
+                    allowWrap = true,
+                    maxLines = 4,
+                    allowCharacterWrap = true
+                )
+            }
+        }
     }
 }
 
@@ -222,7 +268,6 @@ private fun PoslinkRouteInputText(
 ) {
     val minL = extras.getString(EntryExtraData.PARAM_MIN_LENGTH)?.toIntOrNull() ?: 0
     val maxL = extras.getString(EntryExtraData.PARAM_MAX_LENGTH)?.toIntOrNull() ?: 64
-    val titleSize = dimensionResource(R.dimen.text_size_title).value.sp
     PoslinkTypedInputContent(
         title = extras.getString(EntryExtraData.PARAM_TITLE).orEmpty(),
         body = null,
@@ -230,10 +275,6 @@ private fun PoslinkRouteInputText(
         minLength = minL,
         maxLength = maxL,
         defaultValue = extras.getString(EntryExtraData.PARAM_DEFAULT_VALUE).orEmpty(),
-        titleFontSize = titleSize,
-        // Keep parity with golive TextField default on-light text color.
-        hintColor = Color(0xFF222222),
-        bodyAsLegacyText = false,
         onSubmit = { payload ->
             val b = Bundle()
             when (payload) {
@@ -527,7 +568,6 @@ private fun PoslinkRouteShowInputTextBox(
 ) {
     val minL = extras.getString(EntryExtraData.PARAM_MIN_LENGTH)?.toIntOrNull() ?: 0
     val maxL = extras.getString(EntryExtraData.PARAM_MAX_LENGTH)?.toIntOrNull() ?: 64
-    val titleSize = dimensionResource(R.dimen.text_size_supertitle).value.sp
     PoslinkTypedInputContent(
         title = extras.getString(EntryExtraData.PARAM_TITLE).orEmpty(),
         body = extras.getString(EntryExtraData.PARAM_TEXT),
@@ -535,9 +575,6 @@ private fun PoslinkRouteShowInputTextBox(
         minLength = minL,
         maxLength = maxL,
         defaultValue = extras.getString(EntryExtraData.PARAM_DEFAULT_VALUE).orEmpty(),
-        titleFontSize = titleSize,
-        hintColor = Color(0xFF222222),
-        bodyAsLegacyText = true,
         onSubmit = { payload ->
             val b = Bundle()
             when (payload) {
@@ -603,9 +640,6 @@ private fun PoslinkTypedInputContent(
     minLength: Int,
     maxLength: Int,
     defaultValue: String,
-    titleFontSize: androidx.compose.ui.unit.TextUnit,
-    hintColor: Color,
-    bodyAsLegacyText: Boolean,
     onSubmit: (Any) -> Unit,
     onError: (String) -> Unit
 ) {
@@ -655,57 +689,20 @@ private fun PoslinkTypedInputContent(
     val invalidDateMsg = stringResource(R.string.err_invalid_date)
     val invalidTimeMsg = stringResource(R.string.prompt_invalid_time)
     val promptInputType = stringResource(R.string.prompt_input_type)
-    val titleMargin = dimensionResource(R.dimen.space_between_textview)
+    val titleMargin = PosLinkDesignTokens.SpaceBetweenTextView
     val bodyTopMargin = 8.dp
-    val buttonHeight = dimensionResource(R.dimen.button_height)
     Column(Modifier.verticalScroll(rememberScrollState())) {
         Spacer(Modifier.height(titleMargin))
         Text(
             text = title.ifBlank { stringResource(R.string.enter) },
             modifier = Modifier.fillMaxWidth(),
             color = PosLinkDesignTokens.PrimaryTextColor,
-            fontSize = titleFontSize,
-            fontWeight = FontWeight.Normal
+            fontSize = 36.sp
         )
         Spacer(Modifier.height(titleMargin))
         if (!body.isNullOrBlank()) {
             Spacer(Modifier.height(bodyTopMargin))
-            if (bodyAsLegacyText) {
-                val hasLegacyCommands = body.contains("\\L") ||
-                    body.contains("\\R") ||
-                    body.contains("\\C") ||
-                    body.contains("\\B") ||
-                    body.contains("\\S") ||
-                    body.contains("\\N")
-                if (hasLegacyCommands) {
-                    PoslinkFormattedTitleLegacy(title = body)
-                } else {
-                    // Match golive ShowInputTextBoxFragment text_view plain text alignment.
-                    Text(
-                        text = body,
-                        modifier = Modifier.fillMaxWidth(),
-                        color = PosLinkDesignTokens.PrimaryTextColor,
-                        textAlign = TextAlign.Start,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = PosLinkDesignTokens.PoslinkTextShowingNormalSp,
-                            lineHeight = PosLinkDesignTokens.PoslinkTextShowingNormalLineHeight,
-                            fontWeight = FontWeight.Normal
-                        )
-                    )
-                }
-            } else {
-                Text(
-                    text = body,
-                    modifier = Modifier.fillMaxWidth(),
-                    color = PosLinkDesignTokens.PrimaryTextColor,
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontSize = PosLinkDesignTokens.PoslinkTextShowingNormalSp,
-                        lineHeight = PosLinkDesignTokens.PoslinkTextShowingNormalLineHeight,
-                        fontWeight = FontWeight.Normal
-                    )
-                )
-            }
+            PoslinkLegacySimpleTextList(raw = body)
         }
         BasicTextField(
             value = fieldValue,
@@ -746,7 +743,7 @@ private fun PoslinkTypedInputContent(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(buttonHeight),
+                .height(PosLinkDesignTokens.buttonHeight()),
             singleLine = true,
             enabled = interactionEnabled,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
@@ -770,7 +767,8 @@ private fun PoslinkTypedInputContent(
                     if (displayValue.isBlank() && hint.isNotBlank()) {
                         Text(
                             text = hint,
-                            color = hintColor,
+                            // Match golive TextField hint tint: pastel_text_color_on_light.
+                            color = Color(0xFF222222),
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
@@ -778,18 +776,19 @@ private fun PoslinkTypedInputContent(
                 }
             }
         )
-        PosLinkLegacyMaterialFilledButton(
+        PosLinkPrimaryButton(
+            text = stringResource(R.string.confirm).uppercase(Locale.ROOT),
             onClick = {
                 val rawDigits = displayValue.filter { it.isDigit() }
                 if (normalizedType == "4") {
                     val amount = CurrencyUtils.parse(displayValue)
                     if (minLength > 0 && amount <= 0L) {
                         onError(promptInput)
-                        return@PosLinkLegacyMaterialFilledButton
+                        return@PosLinkPrimaryButton
                     }
                     localSubmitted = true
                     onSubmit(amount)
-                    return@PosLinkLegacyMaterialFilledButton
+                    return@PosLinkPrimaryButton
                 }
                 val logicalValue = if (normalizedType in setOf("2", "3", "6", "7")) {
                     rawDigits
@@ -799,38 +798,22 @@ private fun PoslinkTypedInputContent(
                 val length = logicalValue.length
                 if (length < effectiveMinLength || length > effectiveMaxLength) {
                     onError(if (effectiveMinLength == effectiveMaxLength) promptInputType else promptLength)
-                    return@PosLinkLegacyMaterialFilledButton
+                    return@PosLinkPrimaryButton
                 }
                 if (normalizedType == "2" && !DateUtils().isValidateDate(rawDigits)) {
                     onError(invalidDateMsg)
-                    return@PosLinkLegacyMaterialFilledButton
+                    return@PosLinkPrimaryButton
                 }
                 if (normalizedType == "3" && !DateUtils().isValidateTime(rawDigits)) {
                     onError(invalidTimeMsg)
-                    return@PosLinkLegacyMaterialFilledButton
+                    return@PosLinkPrimaryButton
                 }
                 localSubmitted = true
                 onSubmit(logicalValue)
             },
             enabled = interactionEnabled,
-            appearance = PosLinkLegacyMaterialFillAppearance(
-                slotHeight = buttonHeight,
-                shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
-                containerColor = PosLinkDesignTokens.PrimaryColor,
-                disabledContainerColor = PosLinkDesignTokens.PrimaryColor.copy(alpha = 0.45f),
-                pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor
-            )
-        ) {
-            Text(
-                text = stringResource(R.string.confirm).uppercase(Locale.ROOT),
-                style = MaterialTheme.typography.labelLarge,
-                color = if (interactionEnabled) {
-                    PosLinkDesignTokens.PrimaryTextColor
-                } else {
-                    PosLinkDesignTokens.PrimaryTextColor.copy(alpha = 0.38f)
-                }
-            )
-        }
+            variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
+        )
     }
 }
 
@@ -945,7 +928,7 @@ private fun PoslinkRouteShowDialogForm(extras: Bundle, viewModel: EntryViewModel
     }
     var checkedSet by remember(labels, initialChecks) { mutableStateOf(initialChecks) }
     Column(Modifier.verticalScroll(rememberScrollState())) {
-        if (title.isNotBlank()) PoslinkFormattedTitle(title = title)
+        if (title.isNotBlank()) PoslinkLegacyTitleLikeText(raw = title, supportLineSep = true)
         labels.forEachIndexed { i, lb ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (buttonType == 2) {
@@ -1126,32 +1109,35 @@ private fun PoslinkSignBox1Screen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    horizontal = PosLinkDesignTokens.InlineSpacing,
-                    vertical = PosLinkDesignTokens.InlineSpacing
-                ),
-            horizontalArrangement = Arrangement.spacedBy(PosLinkDesignTokens.InlineSpacing)
+                .padding(bottom = PosLinkDesignTokens.InlineSpacing),
+            horizontalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             PoslinkSignatureButton(
                 text = stringResource(R.string.cancel_sign),
                 background = PosLinkDesignTokens.PastelWarning,
                 onClick = onCancel,
                 enabled = buttonsEnabled,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(PosLinkDesignTokens.InlineSpacing)
             )
             PoslinkSignatureButton(
                 text = stringResource(R.string.clear_sign),
                 background = PosLinkDesignTokens.PastelAccent,
                 onClick = onClear,
                 enabled = buttonsEnabled,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(PosLinkDesignTokens.InlineSpacing)
             )
             PoslinkSignatureButton(
                 text = stringResource(R.string.enter),
                 background = PosLinkDesignTokens.PrimaryColor,
                 onClick = onEnter,
                 enabled = buttonsEnabled,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(PosLinkDesignTokens.InlineSpacing)
             )
         }
     }
@@ -1237,32 +1223,35 @@ private fun PoslinkSignBox2Screen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    horizontal = PosLinkDesignTokens.InlineSpacing,
-                    vertical = PosLinkDesignTokens.InlineSpacing
-                ),
-            horizontalArrangement = Arrangement.spacedBy(PosLinkDesignTokens.InlineSpacing)
+                .padding(bottom = PosLinkDesignTokens.InlineSpacing),
+            horizontalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             PoslinkSignatureButton(
                 text = stringResource(R.string.cancel_sign),
                 background = PosLinkDesignTokens.PastelWarning,
                 onClick = onCancel,
                 enabled = buttonsEnabled,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(PosLinkDesignTokens.InlineSpacing)
             )
             PoslinkSignatureButton(
                 text = stringResource(R.string.clear_sign),
                 background = PosLinkDesignTokens.PastelAccent,
                 onClick = onClear,
                 enabled = buttonsEnabled,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(PosLinkDesignTokens.InlineSpacing)
             )
             PoslinkSignatureButton(
                 text = stringResource(R.string.enter),
                 background = PosLinkDesignTokens.PrimaryColor,
                 onClick = onEnter,
                 enabled = buttonsEnabled,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(PosLinkDesignTokens.InlineSpacing)
             )
         }
     }
@@ -1331,25 +1320,17 @@ private fun PoslinkSignatureButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
-    PosLinkLegacyMaterialFilledButton(
+    PosLinkPrimaryButton(
+        text = text,
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
-        appearance = PosLinkLegacyMaterialFillAppearance(
-            slotHeight = PosLinkDesignTokens.ButtonHeight,
-            shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
-            containerColor = background,
-            disabledContainerColor = background.copy(alpha = 0.38f)
-        )
-    ) {
-        Text(
-            text = text.uppercase(Locale.ROOT),
-            style = MaterialTheme.typography.labelLarge.copy(
-                letterSpacing = 0.5.sp,
-                color = Color(0xFFECECEC)
-            )
-        )
-    }
+        variant = PosLinkPrimaryButtonVariant.PoslinkLegacy,
+        containerColorOverride = background,
+        disabledContainerColorOverride = background.copy(alpha = 0.38f),
+        textColorOverride = Color(0xFFECECEC),
+        allCapsOverride = true
+    )
 }
 
 @Composable
@@ -1358,28 +1339,17 @@ private fun PoslinkTextBoxTwoPrimaryButtonRow(
     viewModel: EntryViewModel,
     buttonsEnabled: Boolean
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = PosLinkDesignTokens.CompactSpacing),
-        horizontalArrangement = Arrangement.spacedBy(PosLinkDesignTokens.ControlGutter)
-    ) {
+    val buttonMargin = dimensionResource(R.dimen.margin_gap)
+    Row(modifier = Modifier.fillMaxWidth()) {
         buttons.forEach { button ->
-            PosLinkPrimaryButton(
+            PoslinkTextBoxButton(
                 text = button.name,
-                onClick = {
-                    viewModel.sendNext(
-                        Bundle().apply {
-                            putString(
-                                EntryRequest.PARAM_BUTTON_NUMBER,
-                                button.key.ifBlank { button.index.toString() }
-                            )
-                        }
-                    )
-                },
-                modifier = Modifier.weight(1f),
+                onClick = { submitPoslinkTextBoxScreenSelection(viewModel, button.index) },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(buttonMargin),
                 enabled = buttonsEnabled,
-                variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
+                containerColor = button.containerColor ?: PosLinkDesignTokens.PrimaryColor
             )
         }
     }
@@ -1391,33 +1361,28 @@ private fun PoslinkTextBoxThreeButtonRow(
     viewModel: EntryViewModel,
     buttonsEnabled: Boolean
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = PosLinkDesignTokens.InlineSpacing,
-                vertical = PosLinkDesignTokens.InlineSpacing
-            ),
-        horizontalArrangement = Arrangement.spacedBy(PosLinkDesignTokens.ControlGutter)
-    ) {
+    val buttonMargin = dimensionResource(R.dimen.margin_gap)
+    Row(modifier = Modifier.fillMaxWidth()) {
         buttons.forEach { button ->
             PoslinkTextBoxButton(
                 text = button.name,
-                onClick = {
-                    viewModel.sendNext(
-                        Bundle().apply {
-                            putString(
-                                EntryRequest.PARAM_BUTTON_NUMBER,
-                                button.key.ifBlank { button.index.toString() }
-                            )
-                        }
-                    )
-                },
-                modifier = Modifier.weight(1f),
-                enabled = buttonsEnabled
+                onClick = { submitPoslinkTextBoxScreenSelection(viewModel, button.index) },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(buttonMargin),
+                enabled = buttonsEnabled,
+                containerColor = button.containerColor ?: PosLinkDesignTokens.PrimaryColor
             )
         }
     }
+}
+
+private fun submitPoslinkTextBoxScreenSelection(viewModel: EntryViewModel, buttonIndex: Int) {
+    viewModel.sendNext(
+        Bundle().apply {
+            putString(EntryRequest.PARAM_BUTTON_NUMBER, buttonIndex.toString())
+        }
+    )
 }
 
 @Composable
@@ -1427,50 +1392,68 @@ private fun PoslinkTextBoxButtons(extras: Bundle, viewModel: EntryViewModel, but
     val normalizedTitle = normalizePoslinkTitleCommands(title)
     val normalizedBody = normalizePoslinkTitleCommands(body)
     val buttons = resolvePoslinkTextBoxButtons(extras)
-    val centerAlignedTitleCase = shouldRenderShowTextBoxCenterTitle(
-        normalizedTitle = normalizedTitle,
-        normalizedBody = normalizedBody,
-        buttonCount = buttons.size
-    )
+    val shouldDisplayButtons = shouldDisplayPoslinkTextBoxButtons(extras)
+    val hardKeyList = resolvePoslinkTextBoxHardKeyList(extras)
+    val buttonMargin = dimensionResource(R.dimen.margin_gap)
+    if (!shouldDisplayButtons && buttons.isNotEmpty() && buttonsEnabled) {
+        LaunchedEffect(buttons, hardKeyList, buttonsEnabled) {
+            viewModel.keyEvents.collect { keyCode ->
+                resolvePoslinkTextBoxHardKeyResponse(
+                    buttons = buttons,
+                    hardKeyList = hardKeyList,
+                    keyCode = keyCode
+                )?.let { response ->
+                    viewModel.sendNext(
+                        Bundle().apply {
+                            putString(EntryRequest.PARAM_BUTTON_NUMBER, response)
+                        }
+                    )
+                }
+            }
+        }
+    }
     Column(modifier = Modifier.fillMaxSize()) {
         if (normalizedTitle.isNotBlank()) {
-            if (centerAlignedTitleCase) {
-                PoslinkCenteredTextBoxTitle(rawTitle = normalizedTitle)
-            } else {
-                PoslinkFormattedTextBoxTitle(title = normalizedTitle)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = buttonMargin * 2)
+            ) {
+                PoslinkLegacyTitleLikeText(raw = normalizedTitle, supportLineSep = true)
             }
         }
-        if (normalizedBody.isNotBlank()) {
-            if (normalizedTitle.isBlank() && containsShowTextBoxLineSepCommand(body)) {
-                PoslinkFormattedTitleLegacy(title = normalizedBody)
-            } else {
-                PosLinkText(text = normalizedBody)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+        ) {
+            if (normalizedBody.isNotBlank()) {
+                PoslinkLegacyTitleLikeText(raw = normalizedBody, supportLineSep = true)
             }
         }
-        Spacer(modifier = Modifier.weight(1f))
-        Column {
-            when (buttons.size) {
-                2 -> PoslinkTextBoxTwoPrimaryButtonRow(buttons, viewModel, buttonsEnabled)
-                3 -> PoslinkTextBoxThreeButtonRow(buttons, viewModel, buttonsEnabled)
-                else -> {
-                    buttons.forEach { button ->
-                        PosLinkPrimaryButton(
-                            text = button.name,
-                            onClick = {
-                                viewModel.sendNext(
-                                    Bundle().apply {
-                                        putString(
-                                            EntryRequest.PARAM_BUTTON_NUMBER,
-                                            button.key.ifBlank { button.index.toString() }
-                                        )
-                                    }
-                                )
-                            },
-                            modifier = Modifier
-                                .padding(vertical = PosLinkDesignTokens.CompactSpacing),
-                            enabled = buttonsEnabled,
-                            variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
-                        )
+        if (shouldDisplayButtons) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = buttonMargin)
+                    .padding(bottom = buttonMargin)
+            ) {
+                when (buttons.size) {
+                    2 -> PoslinkTextBoxTwoPrimaryButtonRow(buttons, viewModel, buttonsEnabled)
+                    3 -> PoslinkTextBoxThreeButtonRow(buttons, viewModel, buttonsEnabled)
+                    else -> {
+                        buttons.forEach { button ->
+                            PoslinkTextBoxButton(
+                                text = button.name,
+                                onClick = { submitPoslinkTextBoxScreenSelection(viewModel, button.index) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(buttonMargin),
+                                enabled = buttonsEnabled,
+                                containerColor = button.containerColor ?: PosLinkDesignTokens.PrimaryColor
+                            )
+                        }
                     }
                 }
             }

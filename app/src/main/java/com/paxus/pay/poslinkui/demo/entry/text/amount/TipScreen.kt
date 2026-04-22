@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,9 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -42,9 +43,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import com.paxus.pay.poslinkui.demo.R
+import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkSurfaceCard
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
 import com.paxus.pay.poslinkui.demo.ui.device.DeviceLayoutSpec
@@ -122,24 +123,19 @@ private fun tipScreenOptionHeight(
     compactNoTipLayout: Boolean
 ): Dp = when {
     isTipCentCase -> 65.dp
-    compactNoTipLayout -> PosLinkDesignTokens.ButtonHeight + 20.dp
-    else -> PosLinkDesignTokens.ButtonHeight + 24.dp
+    compactNoTipLayout -> PosLinkDesignTokens.ButtonHeight
+    else -> 65.dp
 }
 
-private fun tipScreenNoTipHeight(isTipCentCase: Boolean): Dp =
-    if (isTipCentCase) {
-        PosLinkDesignTokens.ButtonHeight
-    } else {
-        PosLinkDesignTokens.ButtonHeight + PosLinkDesignTokens.SpaceBetweenTextView
-    }
+private fun tipScreenNoTipHeight(): Dp = PosLinkDesignTokens.ButtonHeight
 
 private fun tipScreenInputHeight(
     isTipCentCase: Boolean,
     compactNoTipLayout: Boolean
 ): Dp = when {
     isTipCentCase -> PosLinkDesignTokens.ButtonHeight
-    compactNoTipLayout -> PosLinkDesignTokens.ButtonHeight + 10.dp
-    else -> PosLinkDesignTokens.ButtonHeight + 18.dp
+    compactNoTipLayout -> PosLinkDesignTokens.ButtonHeight
+    else -> PosLinkDesignTokens.ButtonHeight
 }
 
 private fun tipScreenSectionVerticalSpacing(
@@ -147,10 +143,10 @@ private fun tipScreenSectionVerticalSpacing(
     isCashbackPromptCase: Boolean,
     compactNoTipLayout: Boolean
 ): Dp = when {
-    isTipCentCase -> 0.dp
+    isTipCentCase -> PosLinkDesignTokens.InlineSpacing
     isCashbackPromptCase -> PosLinkDesignTokens.SpaceBetweenTextView
-    compactNoTipLayout -> PosLinkDesignTokens.DenseGridSpacing
-    else -> PosLinkDesignTokens.SpaceBetweenTextView
+    compactNoTipLayout -> PosLinkDesignTokens.InlineSpacing
+    else -> PosLinkDesignTokens.InlineSpacing
 }
 
 private fun tipScreenTitleAdjacentSpacing(compactNoTipLayout: Boolean): Dp =
@@ -177,13 +173,13 @@ private fun tipScreenLayoutMetrics(
         0.dp
     }
     val optionSpacing = when {
-        isTipCentCase -> PosLinkDesignTokens.InlineSpacing
+        isTipCentCase -> 0.dp
         isCashbackPromptCase -> PosLinkDesignTokens.ControlGutter
-        compactNoTipLayout -> PosLinkDesignTokens.DenseGridSpacing
-        else -> PosLinkDesignTokens.ControlGutter
+        compactNoTipLayout -> 0.dp
+        else -> 0.dp
     }
     val optionHeight = tipScreenOptionHeight(isTipCentCase, compactNoTipLayout)
-    val noTipHeight = tipScreenNoTipHeight(isTipCentCase)
+    val noTipHeight = tipScreenNoTipHeight()
     val optionsToInputSpacing = tipScreenSectionVerticalSpacing(
         isTipCentCase,
         isCashbackPromptCase,
@@ -477,21 +473,28 @@ private fun TipConfirmBar(
 ) {
     val controlsEnabled = !LocalEntryInteractionLocked.current
     val promptInputStr = stringResource(R.string.prompt_input)
-    PosLinkPrimaryButton(
-        text = stringResource(R.string.confirm),
+    val submit = {
+        val value = if (displayValue.isBlank()) 0L else CurrencyUtils.parse(displayValue)
+        val lengthList = valuePattern
+            ?.takeIf { it.isNotBlank() }
+            ?.let {
+                runCatching { ValuePatternUtils.getLengthList(it) }
+                    .getOrElse { mutableListOf<Int?>() }
+            }
+            ?: mutableListOf<Int?>(0)
+        if (value == 0L && !lengthList.contains(0)) onError(promptInputStr)
+        else onConfirm(value, tipFieldModified)
+    }
+
+    EntryHardwareConfirmEffect(
         enabled = controlsEnabled,
-        onClick = {
-            val value = if (displayValue.isBlank()) 0L else CurrencyUtils.parse(displayValue)
-            val lengthList = valuePattern
-                ?.takeIf { it.isNotBlank() }
-                ?.let {
-                    runCatching { ValuePatternUtils.getLengthList(it) }
-                        .getOrElse { mutableListOf<Int?>() }
-                }
-                ?: mutableListOf<Int?>(0)
-            if (value == 0L && !lengthList.contains(0)) onError(promptInputStr)
-            else onConfirm(value, tipFieldModified)
-        }
+        onConfirm = submit
+    )
+
+    PosLinkPrimaryButton(
+        text = stringResource(R.string.trans_confirm_btn),
+        enabled = controlsEnabled,
+        onClick = submit
     )
 }
 
@@ -649,23 +652,39 @@ private fun TipOptionSurfaceCard(
 ) {
     val controlsEnabled = !LocalEntryInteractionLocked.current
     val amt = (opt.value as? Long) ?: 0L
-    PosLinkSurfaceCard(
+    Box(
         modifier = modifier
+            .padding(PosLinkDesignTokens.InlineSpacing)
             .height(optionHeight)
-            .clickable(enabled = controlsEnabled) { onTipAmountChosen(amt) }
-    ) {
-        PosLinkText(
-            text = opt.title ?: "",
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-        if (showSubtitle && !opt.subtitle.isNullOrBlank()) {
-            PosLinkText(
-                text = opt.subtitle ?: "",
-                role = PosLinkTextRole.Supporting,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+            .border(
+                width = PosLinkDesignTokens.BorderWidthThin,
+                color = PosLinkDesignTokens.BorderColor,
+                shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
             )
+            .background(
+                color = Color.Transparent,
+                shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
+            )
+            .clickable(enabled = controlsEnabled) { onTipAmountChosen(amt) },
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = opt.title ?: "",
+                color = PosLinkDesignTokens.PrimaryTextColor,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = if (showSubtitle) FontWeight.Bold else FontWeight.Normal
+                )
+            )
+            if (showSubtitle && !opt.subtitle.isNullOrBlank()) {
+                Text(
+                    text = opt.subtitle ?: "",
+                    color = PosLinkDesignTokens.PrimaryTextColor,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
     }
 }
@@ -677,19 +696,31 @@ private fun TipNoTipChoiceCard(
     onNoTipClick: () -> Unit
 ) {
     val controlsEnabled = !LocalEntryInteractionLocked.current
-    Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-    PosLinkSurfaceCard(
+    val noTipText = stringResource(R.string.no_tip)
+    val noThanksText = stringResource(R.string.no_thanks)
+    Box(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(PosLinkDesignTokens.InlineSpacing)
             .height(noTipHeight)
-            .clickable(enabled = controlsEnabled) { onNoTipClick() }
-    ) {
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            PosLinkText(
-                text = if (isCashbackPromptCase) "No Thanks!!" else "No Tip",
-                textAlign = TextAlign.Center
+            .border(
+                width = PosLinkDesignTokens.BorderWidthThin,
+                color = PosLinkDesignTokens.BorderColor,
+                shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
             )
-        }
+            .background(
+                color = Color.Transparent,
+                shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
+            )
+            .clickable(enabled = controlsEnabled) { onNoTipClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = if (isCashbackPromptCase) noThanksText else noTipText,
+            color = PosLinkDesignTokens.PrimaryTextColor,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Normal)
+        )
     }
 }
 
@@ -726,6 +757,7 @@ private fun TipValueInputSection(p: TipValueInputSectionParams) {
 @Composable
 private fun TipCentAmountTextField(mode: TipValueInputMode, v: TipValueInputValues) {
     val interactionLocked = LocalEntryInteractionLocked.current
+    val otherText = stringResource(R.string.other)
     var textFieldValue by remember(v.displayValue) {
         mutableStateOf(
             TextFieldValue(
@@ -759,23 +791,39 @@ private fun TipCentAmountTextField(mode: TipValueInputMode, v: TipValueInputValu
         singleLine = true,
         textStyle = MaterialTheme.typography.bodyLarge.copy(
             textAlign = TextAlign.Center,
-            color = Color(0xFF222222)
+            color = PosLinkDesignTokens.OnLightTextColor
         ),
-        cursorBrush = SolidColor(Color(0xFF66A579)),
+        cursorBrush = SolidColor(PosLinkDesignTokens.PastelAccent),
         decorationBox = { innerTextField ->
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(v.inputHeight)
-                    .border(width = 2.dp, color = Color(0xFFDBD4D9), shape = v.fieldShape)
-                    .background(color = Color(0xFFDBD4D9), shape = v.fieldShape)
-                    .padding(horizontal = PosLinkDesignTokens.FieldInnerHorizontalPadding),
+                    .border(width = 2.dp, color = PosLinkDesignTokens.BorderColor, shape = v.fieldShape)
+                    .background(color = PosLinkDesignTokens.BorderColor, shape = v.fieldShape),
                 contentAlignment = Alignment.Center
             ) {
-                if (mode.tipOptions.isNotEmpty() && CurrencyUtils.parse(v.displayValue) == 0L) {
-                    PosLinkText(text = "Other", role = PosLinkTextRole.Supporting)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = PosLinkDesignTokens.FieldInnerHorizontalPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    innerTextField()
                 }
-                innerTextField()
+                if (mode.tipOptions.isNotEmpty()) {
+                    PosLinkText(
+                        text = otherText,
+                        role = PosLinkTextRole.Supporting,
+                        color = PosLinkDesignTokens.OnLightTextColor,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(
+                                start = PosLinkDesignTokens.InlineSpacing * 2,
+                                top = PosLinkDesignTokens.InlineSpacing
+                            )
+                    )
+                }
             }
         }
     )
@@ -784,9 +832,10 @@ private fun TipCentAmountTextField(mode: TipValueInputMode, v: TipValueInputValu
 @Composable
 private fun TipStandardAmountOutlinedField(mode: TipValueInputMode, v: TipValueInputValues) {
     val interactionLocked = LocalEntryInteractionLocked.current
-    OutlinedTextField(
+    val otherText = stringResource(R.string.other)
+    BasicTextField(
         value = v.displayValue,
-        enabled = !interactionLocked,
+        readOnly = interactionLocked,
         onValueChange = {
             v.onTipFieldEdited()
             val digits = it.replace("[^0-9]".toRegex(), "")
@@ -803,13 +852,44 @@ private fun TipStandardAmountOutlinedField(mode: TipValueInputMode, v: TipValueI
         modifier = Modifier
             .fillMaxWidth()
             .height(v.inputHeight),
-        label = { PosLinkText(text = "Other", role = PosLinkTextRole.Supporting) },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = Color(0xFFDBD4D9),
-            unfocusedContainerColor = Color(0xFFDBD4D9),
-            focusedBorderColor = Color(0xFFDBD4D9),
-            unfocusedBorderColor = Color(0xFFDBD4D9)
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        textStyle = MaterialTheme.typography.bodyLarge.copy(
+            textAlign = TextAlign.Center,
+            color = PosLinkDesignTokens.OnLightTextColor
         ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        cursorBrush = SolidColor(PosLinkDesignTokens.PastelAccent),
+        decorationBox = { innerTextField ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(v.inputHeight)
+                    .border(width = 2.dp, color = PosLinkDesignTokens.BorderColor, shape = v.fieldShape)
+                    .background(color = PosLinkDesignTokens.BorderColor, shape = v.fieldShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = PosLinkDesignTokens.FieldInnerHorizontalPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    innerTextField()
+                }
+                if (mode.tipOptions.isNotEmpty()) {
+                    PosLinkText(
+                        text = otherText,
+                        role = PosLinkTextRole.Supporting,
+                        color = PosLinkDesignTokens.OnLightTextColor,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(
+                                start = PosLinkDesignTokens.InlineSpacing * 2,
+                                top = PosLinkDesignTokens.InlineSpacing
+                            )
+                    )
+                }
+            }
+        }
     )
 }

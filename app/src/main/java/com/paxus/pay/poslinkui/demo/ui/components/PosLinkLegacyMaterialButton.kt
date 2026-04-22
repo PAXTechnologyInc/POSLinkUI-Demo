@@ -20,6 +20,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.paxus.pay.poslinkui.demo.ui.theme.LocalPosLinkLegacyMaterialButtonVerticalInset
+import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 
 /**
  * Visual layout for [PosLinkLegacyMaterialFilledButton] (slot height, shape, colors, padding).
@@ -36,7 +37,7 @@ data class PosLinkLegacyMaterialFillAppearance(
     val containerColor: Color,
     val disabledContainerColor: Color,
     val pressedContainerColor: Color? = null,
-    val horizontalContentPadding: Dp = 16.dp
+    val horizontalContentPadding: Dp = PosLinkDesignTokens.ButtonHorizontalContentPadding
 )
 
 /**

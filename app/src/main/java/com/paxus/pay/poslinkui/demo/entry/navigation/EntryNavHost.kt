@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.entry.EntryActivity
 import com.paxus.pay.poslinkui.demo.entry.compose.EntryScreenRouter
+import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryHardwareKeyEvents
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.entry.compose.StatusEntryOverlay
 import com.paxus.pay.poslinkui.demo.ui.PosLinkScreenRoot
@@ -46,7 +47,8 @@ fun EntryNavigationHost(
             val start =
                 if (wantsDemo) TransactionRoute.ComposeDemo.route else TransactionRoute.EntryMain.route
             CompositionLocalProvider(
-                LocalEntryInteractionLocked provides interactionLocked
+                LocalEntryInteractionLocked provides interactionLocked,
+                LocalEntryHardwareKeyEvents provides viewModel.keyEvents
             ) {
                 NavHost(
                     navController = navController,
