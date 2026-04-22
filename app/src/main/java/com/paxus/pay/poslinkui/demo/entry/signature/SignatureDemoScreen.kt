@@ -49,24 +49,31 @@ import kotlinx.coroutines.delay
  * `CREDIT_SALE鈥斺€攕ignature.png` adb case). Typography uses configuration-qualified [R.dimen.text_size_normal]
  * like `fragment_signature.xml` default TextView sizing.
  */
+data class SignatureDemoScreenProps(
+    val signLine1: String,
+    val signLine2: String,
+    val timeoutMs: Long,
+    val totalAmount: Long,
+    val currency: String?,
+    val enableCancel: Boolean,
+    val controlsEnabled: Boolean = true
+)
+
+private class SignatureViewHolder {
+    var view: ElectronicSignatureView? = null
+}
+
 @Composable
 fun SignatureDemoScreen(
-    signLine1: String,
-    signLine2: String,
-    timeoutMs: Long,
-    totalAmount: Long,
-    currency: String?,
-    enableCancel: Boolean,
-    /** After [onSubmit] / sendNext, false matches golive [EditabilityBlocker] (buttons disabled). */
-    controlsEnabled: Boolean = true,
+    props: SignatureDemoScreenProps,
     onHostTimeoutReset: () -> Unit = {},
     onCancel: () -> Unit,
     onSubmit: (ShortArray) -> Unit
 ) {
-    val safeTimeoutMs = timeoutMs.coerceAtLeast(0L)
+    val safeTimeoutMs = props.timeoutMs.coerceAtLeast(0L)
     var timeoutResetVersion by remember { mutableStateOf(0L) }
     var remainingMs by remember(safeTimeoutMs, timeoutResetVersion) { mutableStateOf(safeTimeoutMs) }
-    val signatureRef = remember { object { var view: ElectronicSignatureView? = null } }
+    val signatureRef = remember { SignatureViewHolder() }
     var isConfirmInFlight by remember { mutableStateOf(false) }
 
     LaunchedEffect(safeTimeoutMs, timeoutResetVersion) {
@@ -80,31 +87,19 @@ fun SignatureDemoScreen(
     }
 
     fun submitIfTouched() {
-        if (!controlsEnabled || isConfirmInFlight) return
+        if (!props.controlsEnabled || isConfirmInFlight) return
         val signatureView = signatureRef.view ?: return
         if (!signatureView.getTouched()) return
         isConfirmInFlight = true
         try {
-            val pathPos = signatureView.getPathPos()
-            var totalLen = 0
-            for (segment in pathPos) {
-                totalLen += segment.size
-            }
-            val signature = ShortArray(totalLen)
-            var index = 0
-            for (segment in pathPos) {
-                for (value in segment) {
-                    signature[index++] = value.toInt().toShort()
-                }
-            }
-            onSubmit(signature)
+            onSubmit(buildSignaturePayload(signatureView.getPathPos()))
         } finally {
             isConfirmInFlight = false
         }
     }
 
     fun clearAndResetTimeout() {
-        if (!controlsEnabled) return
+        if (!props.controlsEnabled) return
         signatureRef.view?.clear()
         timeoutResetVersion += 1L
         onHostTimeoutReset()
@@ -155,7 +150,7 @@ fun SignatureDemoScreen(
                     lineHeight = bodyLineHeight
                 )
                 Text(
-                    text = CurrencyUtils.convert(totalAmount, currency ?: CurrencyType.USD),
+                    text = CurrencyUtils.convert(props.totalAmount, props.currency ?: CurrencyType.USD),
                     color = PosLinkDesignTokens.PrimaryTextColor,
                     fontSize = bodyTextSize,
                     lineHeight = bodyLineHeight
@@ -164,7 +159,7 @@ fun SignatureDemoScreen(
             // Match fragment_signature: two TextViews always in sign_line_layout (SignatureFragment only setText when non-empty).
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = signLine1,
+                    text = props.signLine1,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     color = PosLinkDesignTokens.PrimaryTextColor,
@@ -173,7 +168,7 @@ fun SignatureDemoScreen(
                     minLines = 1
                 )
                 Text(
-                    text = signLine2,
+                    text = props.signLine2,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     color = PosLinkDesignTokens.PrimaryTextColor,
@@ -197,49 +192,19 @@ fun SignatureDemoScreen(
                 ) {
                     AndroidView(
                         factory = { context ->
-                            ElectronicSignatureView(context).apply {
-                                layoutParams = ViewGroup.LayoutParams(
-                                    ViewGroup.LayoutParams.MATCH_PARENT,
-                                    signatureBoardHeightPx
-                                )
-                                setBitmap(Rect(0, 0, 384, 128), 0, android.graphics.Color.WHITE)
-                                isFocusable = true
-                                isFocusableInTouchMode = true
-                                requestFocus()
-                                setOnKeyListener { _, keyCode, event ->
-                                    if (event.action != KeyEvent.ACTION_UP) {
-                                        return@setOnKeyListener false
-                                    }
-                                    when (keyCode) {
-                                        KeyEvent.KEYCODE_ENTER -> {
-                                            submitIfTouched()
-                                            true
-                                        }
-                                        KeyEvent.KEYCODE_DEL -> {
-                                            clearAndResetTimeout()
-                                            true
-                                        }
-                                        KeyEvent.KEYCODE_BACK -> {
-                                            onCancel()
-                                            true
-                                        }
-                                        else -> false
-                                    }
-                                }
-                                isEnabled = controlsEnabled
-                                signatureRef.view = this
-                            }
+                            createSignatureView(
+                                context = context,
+                                signatureBoardHeightPx = signatureBoardHeightPx,
+                                controlsEnabled = props.controlsEnabled,
+                                onSubmit = ::submitIfTouched,
+                                onClear = ::clearAndResetTimeout,
+                                onCancel = onCancel
+                            ).also { signatureRef.view = it }
                         },
                         update = { view ->
                             signatureRef.view = view
-                            view.isEnabled = controlsEnabled
-                            if (view.layoutParams.height != signatureBoardHeightPx) {
-                                view.layoutParams = view.layoutParams.apply {
-                                    width = ViewGroup.LayoutParams.MATCH_PARENT
-                                    height = signatureBoardHeightPx
-                                }
-                                view.requestLayout()
-                            }
+                            view.isEnabled = props.controlsEnabled
+                            updateSignatureViewLayout(view, signatureBoardHeightPx)
                         },
                         modifier = Modifier.fillMaxSize()
                     )
@@ -254,12 +219,12 @@ fun SignatureDemoScreen(
                 .padding(bottom = 5.dp),
             horizontalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            if (enableCancel) {
+            if (props.enableCancel) {
                 SignatureActionButton(
                     text = stringResource(R.string.cancel_sign),
                     background = Color(0xFFFF7878),
                     onClick = onCancel,
-                    enabled = controlsEnabled,
+                    enabled = props.controlsEnabled,
                     modifier = Modifier
                         .weight(1f)
                         .padding(5.dp)
@@ -269,7 +234,7 @@ fun SignatureDemoScreen(
                 text = stringResource(R.string.clear_sign),
                 background = Color(0xFF89AA97),
                 onClick = { clearAndResetTimeout() },
-                enabled = controlsEnabled,
+                enabled = props.controlsEnabled,
                 modifier = Modifier
                     .weight(1f)
                     .padding(5.dp)
@@ -278,13 +243,95 @@ fun SignatureDemoScreen(
                 text = stringResource(R.string.confirm),
                 background = Color(0xFF6E85B7),
                 onClick = { submitIfTouched() },
-                enabled = controlsEnabled,
+                enabled = props.controlsEnabled,
                 modifier = Modifier
                     .weight(1f)
                     .padding(5.dp)
             )
         }
     }
+}
+
+private fun buildSignaturePayload(pathPos: List<FloatArray>): ShortArray {
+    var totalLen = 0
+    for (segment in pathPos) {
+        totalLen += segment.size
+    }
+    val signature = ShortArray(totalLen)
+    var index = 0
+    for (segment in pathPos) {
+        for (value in segment) {
+            signature[index++] = value.toInt().toShort()
+        }
+    }
+    return signature
+}
+
+private fun createSignatureView(
+    context: android.content.Context,
+    signatureBoardHeightPx: Int,
+    controlsEnabled: Boolean,
+    onSubmit: () -> Unit,
+    onClear: () -> Unit,
+    onCancel: () -> Unit
+): ElectronicSignatureView {
+    return ElectronicSignatureView(context).apply {
+        layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            signatureBoardHeightPx
+        )
+        setBitmap(Rect(0, 0, 384, 128), 0, android.graphics.Color.WHITE)
+        isFocusable = true
+        isFocusableInTouchMode = true
+        requestFocus()
+        setOnKeyListener { _, keyCode, event ->
+            handleSignatureBoardKey(
+                keyCode = keyCode,
+                event = event,
+                onSubmit = onSubmit,
+                onClear = onClear,
+                onCancel = onCancel
+            )
+        }
+        isEnabled = controlsEnabled
+    }
+}
+
+private fun handleSignatureBoardKey(
+    keyCode: Int,
+    event: android.view.KeyEvent,
+    onSubmit: () -> Unit,
+    onClear: () -> Unit,
+    onCancel: () -> Unit
+): Boolean {
+    if (event.action != KeyEvent.ACTION_UP) return false
+    return when (keyCode) {
+        KeyEvent.KEYCODE_ENTER -> {
+            onSubmit()
+            true
+        }
+
+        KeyEvent.KEYCODE_DEL -> {
+            onClear()
+            true
+        }
+
+        KeyEvent.KEYCODE_BACK -> {
+            onCancel()
+            true
+        }
+
+        else -> false
+    }
+}
+
+private fun updateSignatureViewLayout(view: ElectronicSignatureView, signatureBoardHeightPx: Int) {
+    if (view.layoutParams.height == signatureBoardHeightPx) return
+    view.layoutParams = view.layoutParams.apply {
+        width = ViewGroup.LayoutParams.MATCH_PARENT
+        height = signatureBoardHeightPx
+    }
+    view.requestLayout()
 }
 
 @Composable

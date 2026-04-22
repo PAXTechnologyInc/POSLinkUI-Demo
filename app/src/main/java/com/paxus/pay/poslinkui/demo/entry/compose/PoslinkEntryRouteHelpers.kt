@@ -40,6 +40,7 @@ import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButtonVariant
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
+import java.util.Locale
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -127,7 +128,7 @@ internal fun hasPoslinkTextBoxPhysicalKeyboard(extras: Bundle): Boolean {
         ?: extras.get("PARAM_HAS_PHYSICAL_KEYBOARD")?.toString()
         ?: extras.get("hasPhysicalKeyboard")?.toString()
         ?: return false
-    return raw.equals("true", ignoreCase = true) || raw == "1"
+    return raw.uppercase(Locale.ROOT) == "TRUE" || raw == "1"
 }
 
 internal fun shouldDisplayPoslinkTextBoxButtons(extras: Bundle): Boolean {

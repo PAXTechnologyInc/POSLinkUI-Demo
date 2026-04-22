@@ -9,6 +9,7 @@ import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.pax.us.pay.ui.constant.entry.EntryRequest
 import com.pax.us.pay.ui.constant.entry.enumeration.CurrencyType
 import com.paxus.pay.poslinkui.demo.entry.signature.SignatureDemoScreen
+import com.paxus.pay.poslinkui.demo.entry.signature.SignatureDemoScreenProps
 import com.paxus.pay.poslinkui.demo.utils.TaskScheduler
 import com.paxus.pay.poslinkui.demo.viewmodel.EntryViewModel
 
@@ -37,13 +38,15 @@ fun SignatureCategoryEntryRoute(extras: Bundle, viewModel: EntryViewModel) {
     }
 
     SignatureDemoScreen(
-        signLine1 = l1,
-        signLine2 = l2,
-        timeoutMs = timeoutMs,
-        totalAmount = totalAmount,
-        currency = currency,
-        enableCancel = enableCancel,
-        controlsEnabled = controlsEnabled,
+        props = SignatureDemoScreenProps(
+            signLine1 = l1,
+            signLine2 = l2,
+            timeoutMs = timeoutMs,
+            totalAmount = totalAmount,
+            currency = currency,
+            enableCancel = enableCancel,
+            controlsEnabled = controlsEnabled
+        ),
         onHostTimeoutReset = { scheduleHostTimeout() },
         onCancel = { viewModel.sendAbort() },
         onSubmit = { signature ->

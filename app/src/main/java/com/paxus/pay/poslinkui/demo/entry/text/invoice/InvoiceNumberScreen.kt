@@ -45,11 +45,12 @@ import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyThemeButton
+import com.paxus.pay.poslinkui.demo.ui.device.DeviceLayoutSpec
 import com.paxus.pay.poslinkui.demo.ui.device.DeviceProfileId
 import com.paxus.pay.poslinkui.demo.ui.device.LocalDeviceLayoutSpec
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
-import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.utils.DeviceUtils
+import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils
 import kotlinx.coroutines.delay
@@ -86,13 +87,7 @@ fun InvoiceNumberScreen(
     val maxChars = remember(lengths) { lengths.maxOf { it ?: 0 } }
     val isNumeric = !forceTextKeyboard
     val keyboardType = if (forceTextKeyboard) KeyboardType.Text else KeyboardType.Number
-    val targetHorizontalPaddingDp = when (spec.profileId) {
-        DeviceProfileId.A920_CLASS, DeviceProfileId.A920MAX -> 20
-        else -> 20
-    }
-    val legacyHorizontalInset = (targetHorizontalPaddingDp - spec.screenHorizontalPaddingDp)
-        .coerceAtLeast(0)
-        .dp
+    val legacyHorizontalInset = remember(spec) { invoiceLegacyHorizontalInset(spec) }
     val promptInputStr = stringResource(R.string.prompt_input)
     val submit = {
         val text = value.text.trim()
@@ -103,31 +98,17 @@ fun InvoiceNumberScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        val shouldShowSoftKeyboard = forceTextKeyboard || !isNumeric || !DeviceUtils.hasPhysicalKeyboard()
-        if (eagerShowKeyboard) {
-            focusRequester.requestFocus()
-            if (shouldShowSoftKeyboard) keyboardController?.show()
-            delay(80)
-        }
-        repeat(10) { idx ->
-            activity?.let { ViewUtils().removeWaterMarkView(it) }
-            if (idx < 9) delay(150)
-        }
-        Logger.i(parityLog)
-        focusRequester.requestFocus()
-        if (shouldShowSoftKeyboard) keyboardController?.show()
-        delay(150)
-        focusRequester.requestFocus()
-        if (shouldShowSoftKeyboard) keyboardController?.show()
-    }
-
-    LaunchedEffect(interactionLocked) {
-        if (interactionLocked) {
-            keyboardController?.hide()
-            focusManager.clearFocus(force = true)
-        }
-    }
+    InvoiceNumberKeyboardEffects(
+        activity = activity,
+        forceTextKeyboard = forceTextKeyboard,
+        isNumeric = isNumeric,
+        eagerShowKeyboard = eagerShowKeyboard,
+        focusRequester = focusRequester,
+        keyboardController = keyboardController,
+        focusManager = focusManager,
+        interactionLocked = interactionLocked,
+        parityLog = parityLog
+    )
 
     EntryHardwareConfirmEffect(
         enabled = !interactionLocked,
@@ -152,58 +133,18 @@ fun InvoiceNumberScreen(
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(sectionSpacing))
-        val fieldContainerColor = if (interactionLocked) {
-            PosLinkDesignTokens.DisabledColor
-        } else {
-            PosLinkDesignTokens.BorderColor
-        }
-        BasicTextField(
+        InvoiceNumberField(
             value = value,
-            onValueChange = { newValue ->
-                val nextText = if (isNumeric) newValue.text.filter { it.isDigit() } else newValue.text
-                if (nextText.length <= maxChars) {
-                    value = TextFieldValue(text = nextText, selection = TextRange(nextText.length))
-                }
-            },
-            readOnly = interactionLocked,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(inputHeight)
-                .focusRequester(focusRequester),
-            textStyle = MaterialTheme.typography.bodyLarge.copy(
-                textAlign = TextAlign.Center,
-                color = PosLinkDesignTokens.OnLightTextColor,
-                fontSize = bodyTextSize,
-                lineHeight = bodyLineHeight
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            singleLine = true,
-            cursorBrush = SolidColor(
-                if (interactionLocked) Color.Transparent else PosLinkDesignTokens.PastelAccent
-            ),
-            decorationBox = { innerTextField ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(inputHeight)
-                        .then(
-                            if (interactionLocked) {
-                                Modifier
-                            } else {
-                                Modifier.border(
-                                    width = 2.dp,
-                                    color = PosLinkDesignTokens.BorderColor,
-                                    shape = fieldShape
-                                )
-                            }
-                        )
-                        .background(color = fieldContainerColor, shape = fieldShape)
-                        .padding(horizontal = PosLinkDesignTokens.FieldInnerHorizontalPadding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    innerTextField()
-                }
-            }
+            onValueChange = { value = it },
+            interactionLocked = interactionLocked,
+            focusRequester = focusRequester,
+            inputHeight = inputHeight,
+            fieldShape = fieldShape,
+            bodyTextSize = bodyTextSize,
+            bodyLineHeight = bodyLineHeight,
+            keyboardType = keyboardType,
+            isNumeric = isNumeric,
+            maxChars = maxChars
         )
         PosLinkLegacyThemeButton(
             text = stringResource(R.string.trans_confirm_btn),
@@ -212,4 +153,140 @@ fun InvoiceNumberScreen(
             modifier = Modifier.fillMaxWidth()
         )
     }
+}
+
+private fun invoiceLegacyHorizontalInset(spec: DeviceLayoutSpec) = when (spec.profileId) {
+    DeviceProfileId.A920_CLASS, DeviceProfileId.A920MAX -> 20
+    else -> 20
+}.minus(spec.screenHorizontalPaddingDp)
+    .coerceAtLeast(0)
+    .dp
+
+@Composable
+@OptIn(ExperimentalComposeUiApi::class)
+private fun InvoiceNumberKeyboardEffects(
+    activity: FragmentActivity?,
+    forceTextKeyboard: Boolean,
+    isNumeric: Boolean,
+    eagerShowKeyboard: Boolean,
+    focusRequester: FocusRequester,
+    keyboardController: androidx.compose.ui.platform.SoftwareKeyboardController?,
+    focusManager: androidx.compose.ui.focus.FocusManager,
+    interactionLocked: Boolean,
+    parityLog: String
+) {
+    LaunchedEffect(Unit) {
+        val shouldShowSoftKeyboard = forceTextKeyboard || !isNumeric || !DeviceUtils.hasPhysicalKeyboard()
+        if (eagerShowKeyboard) {
+            requestInvoiceFocus(focusRequester, keyboardController, shouldShowSoftKeyboard)
+            delay(80)
+        }
+        removeInvoiceWatermark(activity)
+        Logger.i(parityLog)
+        requestInvoiceFocus(focusRequester, keyboardController, shouldShowSoftKeyboard)
+        delay(150)
+        requestInvoiceFocus(focusRequester, keyboardController, shouldShowSoftKeyboard)
+    }
+
+    LaunchedEffect(interactionLocked) {
+        if (interactionLocked) {
+            keyboardController?.hide()
+            focusManager.clearFocus(force = true)
+        }
+    }
+}
+
+private suspend fun removeInvoiceWatermark(activity: FragmentActivity?) {
+    repeat(10) { idx ->
+        activity?.let { ViewUtils().removeWaterMarkView(it) }
+        if (idx < 9) delay(150)
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+private fun requestInvoiceFocus(
+    focusRequester: FocusRequester,
+    keyboardController: androidx.compose.ui.platform.SoftwareKeyboardController?,
+    shouldShowSoftKeyboard: Boolean
+) {
+    focusRequester.requestFocus()
+    if (shouldShowSoftKeyboard) {
+        keyboardController?.show()
+    }
+}
+
+private fun filterInvoiceFieldValue(
+    newValue: TextFieldValue,
+    isNumeric: Boolean,
+    maxChars: Int
+): TextFieldValue? {
+    val nextText = if (isNumeric) newValue.text.filter { it.isDigit() } else newValue.text
+    if (nextText.length > maxChars) return null
+    return TextFieldValue(text = nextText, selection = TextRange(nextText.length))
+}
+
+@Composable
+private fun InvoiceNumberField(
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    interactionLocked: Boolean,
+    focusRequester: FocusRequester,
+    inputHeight: androidx.compose.ui.unit.Dp,
+    fieldShape: RoundedCornerShape,
+    bodyTextSize: androidx.compose.ui.unit.TextUnit,
+    bodyLineHeight: androidx.compose.ui.unit.TextUnit,
+    keyboardType: KeyboardType,
+    isNumeric: Boolean,
+    maxChars: Int
+) {
+    val fieldContainerColor = if (interactionLocked) {
+        PosLinkDesignTokens.DisabledColor
+    } else {
+        PosLinkDesignTokens.BorderColor
+    }
+    BasicTextField(
+        value = value,
+        onValueChange = { newValue ->
+            filterInvoiceFieldValue(newValue, isNumeric, maxChars)?.let(onValueChange)
+        },
+        readOnly = interactionLocked,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(inputHeight)
+            .focusRequester(focusRequester),
+        textStyle = MaterialTheme.typography.bodyLarge.copy(
+            textAlign = TextAlign.Center,
+            color = PosLinkDesignTokens.OnLightTextColor,
+            fontSize = bodyTextSize,
+            lineHeight = bodyLineHeight
+        ),
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        singleLine = true,
+        cursorBrush = SolidColor(
+            if (interactionLocked) Color.Transparent else PosLinkDesignTokens.PastelAccent
+        ),
+        decorationBox = { innerTextField ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(inputHeight)
+                    .then(
+                        if (interactionLocked) {
+                            Modifier
+                        } else {
+                            Modifier.border(
+                                width = 2.dp,
+                                color = PosLinkDesignTokens.BorderColor,
+                                shape = fieldShape
+                            )
+                        }
+                    )
+                    .background(color = fieldContainerColor, shape = fieldShape)
+                    .padding(horizontal = PosLinkDesignTokens.FieldInnerHorizontalPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                innerTextField()
+            }
+        }
+    )
 }

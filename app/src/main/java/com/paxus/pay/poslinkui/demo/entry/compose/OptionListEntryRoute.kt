@@ -51,8 +51,8 @@ fun OptionListEntryRoute(
     val latestInteractionLocked = rememberUpdatedState(interactionLocked)
     var optionSubmitted by remember(action, extras) { mutableStateOf(false) }
     val latestOptionSubmitted = rememberUpdatedState(optionSubmitted)
-    val opts = extras.getStringArray(EntryExtraData.PARAM_OPTIONS) ?: emptyArray()
-    if (opts.isEmpty()) {
+    val optionLabels = remember(extras) { resolveOptionLabels(extras) }
+    if (optionLabels.isEmpty()) {
         BoxWithCenterText(stringResource(R.string.option_list_empty))
         return
     }
@@ -70,41 +70,27 @@ fun OptionListEntryRoute(
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-        if (action == OptionEntry.ACTION_SELECT_CURRENCY) {
-            val exchange = extras.getString(EntryExtraData.PARAM_EXCHANGE_RATE).orEmpty()
-            val markup = extras.getString(EntryExtraData.PARAM_MARKUP).orEmpty()
-            if (exchange.isNotBlank()) {
-                PosLinkText(text = exchange, role = PosLinkTextRole.Supporting)
-                Spacer(Modifier.height(PosLinkDesignTokens.CompactSpacing))
-            }
-            if (markup.isNotBlank()) {
-                PosLinkText(text = markup, role = PosLinkTextRole.Supporting)
-                Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
-            }
-        }
+        OptionListCurrencyInfo(action = action, extras = extras)
         Box(modifier = Modifier.fillMaxSize()) {
             AndroidView(
                 factory = { viewContext ->
                     SelectOptionsView(viewContext).apply {
-                        val consumed = AtomicBoolean(false)
-                        val activity = (viewContext as? Activity) ?: (context as? Activity)
-                        if (activity != null) {
-                            val items = opts.mapIndexed { index, label ->
-                                SelectOptionsView.Option(index, label ?: "", null, index)
-                            }.toMutableList()
-                            initialize(activity, 1, items) { option ->
-                                if (!consumed.compareAndSet(false, true)) return@initialize
-                                if (latestInteractionLocked.value || latestOptionSubmitted.value) return@initialize
-                                val selectedIndex = (option?.value as? Int) ?: return@initialize
+                        initializeOptionListView(
+                            view = this,
+                            activity = (viewContext as? Activity) ?: (context as? Activity),
+                            optionLabels = optionLabels,
+                            isInteractionLocked = { latestInteractionLocked.value },
+                            isOptionSubmitted = { latestOptionSubmitted.value },
+                            onOptionSelected = { selectedIndex ->
                                 optionSubmitted = true
-                                lockOptionView(this@apply)
+                                lockOptionView(this)
                                 viewModel.sendNext(
                                     Bundle().apply {
                                         putInt(EntryRequest.PARAM_INDEX, selectedIndex)
                                     }
                                 )
                             }
-                        }
+                        )
                     }
                 },
                 update = { view ->
@@ -114,6 +100,47 @@ fun OptionListEntryRoute(
                 modifier = Modifier.fillMaxSize()
             )
         }
+    }
+}
+
+private fun resolveOptionLabels(extras: Bundle): List<String> =
+    extras.getStringArray(EntryExtraData.PARAM_OPTIONS)
+        ?.map { it.orEmpty() }
+        .orEmpty()
+
+@Composable
+private fun OptionListCurrencyInfo(action: String?, extras: Bundle) {
+    if (action != OptionEntry.ACTION_SELECT_CURRENCY) return
+    val exchange = extras.getString(EntryExtraData.PARAM_EXCHANGE_RATE).orEmpty()
+    val markup = extras.getString(EntryExtraData.PARAM_MARKUP).orEmpty()
+    if (exchange.isNotBlank()) {
+        PosLinkText(text = exchange, role = PosLinkTextRole.Supporting)
+        Spacer(Modifier.height(PosLinkDesignTokens.CompactSpacing))
+    }
+    if (markup.isNotBlank()) {
+        PosLinkText(text = markup, role = PosLinkTextRole.Supporting)
+        Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
+    }
+}
+
+private fun initializeOptionListView(
+    view: SelectOptionsView,
+    activity: Activity?,
+    optionLabels: List<String>,
+    isInteractionLocked: () -> Boolean,
+    isOptionSubmitted: () -> Boolean,
+    onOptionSelected: (Int) -> Unit
+) {
+    if (activity == null) return
+    val consumed = AtomicBoolean(false)
+    val items = optionLabels.mapIndexed { index, label ->
+        SelectOptionsView.Option(index, label, null, index)
+    }.toMutableList()
+    view.initialize(activity, 1, items) { option ->
+        if (!consumed.compareAndSet(false, true)) return@initialize
+        if (isInteractionLocked() || isOptionSubmitted()) return@initialize
+        val selectedIndex = (option?.value as? Int) ?: return@initialize
+        onOptionSelected(selectedIndex)
     }
 }
 

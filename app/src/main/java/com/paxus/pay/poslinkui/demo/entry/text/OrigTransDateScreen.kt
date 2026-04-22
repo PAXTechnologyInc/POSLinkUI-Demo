@@ -50,7 +50,6 @@ import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyThemeButton
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.utils.ViewUtils
-import java.util.Locale
 import kotlinx.coroutines.delay
 
 private fun formatDate(input: String, format: String): String {

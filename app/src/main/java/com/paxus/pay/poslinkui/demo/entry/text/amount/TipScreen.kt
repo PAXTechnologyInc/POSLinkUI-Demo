@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -129,28 +127,17 @@ private data class TipScreenLayoutMetrics(
 private fun tipScreenOptionHeight(
     isTipCentCase: Boolean,
     compactNoTipLayout: Boolean
-): Dp = when {
-    isTipCentCase -> 65.dp
-    compactNoTipLayout -> PosLinkDesignTokens.ButtonHeight
-    else -> 65.dp
+): Dp = if (!isTipCentCase && compactNoTipLayout) {
+    PosLinkDesignTokens.ButtonHeight
+} else {
+    65.dp
 }
 
 private fun tipScreenNoTipHeight(): Dp = PosLinkDesignTokens.ButtonHeight
 
-private fun tipScreenInputHeight(
-    isTipCentCase: Boolean,
-    compactNoTipLayout: Boolean
-): Dp = when {
-    isTipCentCase -> PosLinkDesignTokens.ButtonHeight
-    compactNoTipLayout -> PosLinkDesignTokens.ButtonHeight
-    else -> PosLinkDesignTokens.ButtonHeight
-}
+private fun tipScreenInputHeight(): Dp = PosLinkDesignTokens.ButtonHeight
 
-private fun tipScreenSectionVerticalSpacing(
-    isTipCentCase: Boolean,
-    isCashbackPromptCase: Boolean,
-    compactNoTipLayout: Boolean
-): Dp = 0.dp
+private fun tipScreenSectionVerticalSpacing(): Dp = 0.dp
 
 private fun tipScreenTitleAdjacentSpacing(compactNoTipLayout: Boolean): Dp =
     if (compactNoTipLayout) PosLinkDesignTokens.DenseGridSpacing
@@ -171,25 +158,12 @@ private fun tipScreenLayoutMetrics(
     } else {
         0.dp
     }
-    val optionSpacing = when {
-        isTipCentCase -> 0.dp
-        isCashbackPromptCase -> PosLinkDesignTokens.ControlGutter
-        compactNoTipLayout -> 0.dp
-        else -> 0.dp
-    }
+    val optionSpacing = if (isCashbackPromptCase) PosLinkDesignTokens.ControlGutter else 0.dp
     val optionHeight = tipScreenOptionHeight(isTipCentCase, compactNoTipLayout)
     val noTipHeight = tipScreenNoTipHeight()
-    val optionsToInputSpacing = tipScreenSectionVerticalSpacing(
-        isTipCentCase,
-        isCashbackPromptCase,
-        compactNoTipLayout
-    )
-    val inputToConfirmSpacing = tipScreenSectionVerticalSpacing(
-        isTipCentCase,
-        isCashbackPromptCase,
-        compactNoTipLayout
-    )
-    val inputHeight = tipScreenInputHeight(isTipCentCase, compactNoTipLayout)
+    val optionsToInputSpacing = tipScreenSectionVerticalSpacing()
+    val inputToConfirmSpacing = tipScreenSectionVerticalSpacing()
+    val inputHeight = tipScreenInputHeight()
     val amountToTitleSpacing = tipScreenTitleAdjacentSpacing(compactNoTipLayout)
     val titleToOptionsSpacing = tipScreenTitleAdjacentSpacing(compactNoTipLayout)
     return TipScreenLayoutMetrics(

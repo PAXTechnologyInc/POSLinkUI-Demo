@@ -63,6 +63,7 @@ import com.paxus.pay.poslinkui.demo.viewmodel.EntryUiState
 import com.paxus.pay.poslinkui.demo.viewmodel.EntryViewModel
 import com.paxus.pay.poslinkui.demo.viewmodel.ManagerResponseEvent
 import com.paxus.pay.poslinkui.demo.viewmodel.SecondScreenInfoViewModel
+import java.util.Locale
 import kotlinx.coroutines.delay
 
 /**
@@ -381,7 +382,7 @@ private fun TipEntryRoute(
         }
         ?: 12
     val tipUnit = extras.getString(EntryExtraData.PARAM_TIP_UNIT, "C") ?: "C"
-    val isTipCentCase = !tipUnit.equals("D", ignoreCase = true)
+    val isTipCentCase = tipUnit.uppercase(Locale.ROOT) != "D"
     val tipOptionsRaw = extras.getStringArray(EntryExtraData.PARAM_TIP_OPTIONS) ?: emptyArray()
     val tipRateOptions = extras.getStringArray(EntryExtraData.PARAM_TIP_RATE_OPTIONS) ?: emptyArray()
     val tipOptions = tipOptionsRaw
@@ -407,10 +408,12 @@ private fun TipEntryRoute(
         else -> -1L
     }
     val noTipEnabled = extras.getBoolean(EntryExtraData.PARAM_ENABLE_NO_TIP_SELECTION, false)
-    val tipLengthList = valuePattern
+    val tipLengthList: Set<Int> = valuePattern
         ?.takeIf { it.isNotBlank() }
         ?.let { runCatching { ValuePatternUtils.getLengthList(it) }.getOrElse { mutableListOf(0) } }
-        ?: mutableListOf(0)
+        ?.mapNotNull { it }
+        ?.toSet()
+        ?: setOf(0)
     fun canSubmitTip(value: Long): Boolean = value != 0L || tipLengthList.contains(0)
     fun submitTip(value: Long, tipFieldModified: Boolean) {
         if (value == 0L && !canSubmitTip(value)) {

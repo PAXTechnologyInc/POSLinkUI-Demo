@@ -56,10 +56,7 @@ import java.util.Locale
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.pax.us.pay.ui.constant.entry.EntryRequest
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry
-import com.pax.us.pay.ui.constant.entry.enumeration.InputType
 import com.paxus.pay.poslinkui.demo.R
-import com.paxus.pay.poslinkui.demo.entry.text.GenericStringEntryScreen
-import com.paxus.pay.poslinkui.demo.entry.text.invoice.InvoiceNumberScreen
 import com.paxus.pay.poslinkui.demo.entry.signature.ElectronicSignatureView
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButtonVariant
@@ -71,7 +68,6 @@ import com.paxus.pay.poslinkui.demo.utils.DateUtils
 import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.utils.Toast
 import com.paxus.pay.poslinkui.demo.utils.Toast.TYPE
-import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils
 import com.paxus.pay.poslinkui.demo.viewmodel.EntryViewModel
 
 /** First-row button count in SHOW_DIALOG / ShowTextBox legacy 2-column layouts. */
