@@ -42,9 +42,10 @@ description: >-
 2. **跑完回归**  
    按用户给定的 `--match` / node id / `run_case_by_intent.py` 参数执行，**直至 pytest 结束**（通过或失败均生成报告）。报告通常在 **`POSUInew/reports/*.html`**。
 
-3. **解析报告**  
-   - 从 HTML 或控制台日志提取：**断言原文**、**SSIM 与阈值**、**Actual / Expected PNG 路径**、**pytest node id**、**报告 HTML 文件名**。  
-   - 若有多条失败：**逐条**处理，禁止只汇总「Failed N」。
+3. **解析报告与用例关联**  
+   - 从 HTML 或控制台日志提取：**断言原文**、**SSIM 与阈值**、**Actual / Expected PNG 路径**。
+   - **强制要求**：提取准确的测试用例名（如从 `testId` 或文件名提取），禁止使用 `unknown`。
+   - **关联 ADB 命令**：通过读取并解析 `assets/test_cases.xlsx`，提取与当前失败用例对应的 `adb_commands`，并附带在测试报告中。
 
 4. **应用门禁**  
    - SSIM &lt; 0.97（或脚本配置的阈值）→ 记 **未通过主图门禁**。  
@@ -53,10 +54,14 @@ description: >-
 5. **落盘 Markdown**  
    - 目录：**`specs/posuinew-gate-reports/<YYYY-MM-DD>/`**（或用户指定子目录）。  
    - **汇总文件**：`gate-run-summary.md`（一次运行的元数据、总通过/失败、报告路径列表）。  
-   - **单条缺陷**：`BUG-<序号或case简名>.md`，内容遵循仓库内模板 **`specs/posuinew-gate-reports/_template-bug-report.md`**。  
-   - 每个 `.md` 文件须含 YAML frontmatter（`summary`、`read_when`、`title`），见模板。
+   - **单条缺陷**：`BUG-<精确的用例名>.md`，内容包含该用例对应的 ADB 启动命令及截图对比。
 
-### 5b. 视觉与 SSIM（**强制**，供开发 Skill 直接对照）
+6. **并发子代理视觉对比分析（由主 Agent 自动派发）**
+   - **禁止行为**：主 Agent 不要尝试在主对话中串行读取几十张图片（会导致严重超时和上下文污染），也不允许写代码直接调用第三方模型 API 去做视觉分析。
+   - **子代理派发**：主 Agent 须使用 `Task` 工具（`subagent_type="generalPurpose"`, `model="claude-3-5-sonnet-20241022"` 或用户要求的其他支持多模态的 auto 模型），为未通过门禁的用例并发启动多个子代理，并指定 `run_in_background=true`。
+   - **执行指南参考**：使用该步骤前，需完整参考 `@.cursor/agents/ui-parity-vision-reviewer.md` 内配置的任务描述。要求子代理利用原生的视觉能力对比两张图的具体 UI 差异（少了或多了什么元素、控件的内外间距/尺寸对不上、文本粗细或大小不一致），然后使用工具将差异分析回写并覆盖对应 `BUG-xxx.md` 中的占位符。
+
+7. **输出告知用户**
 
 每条 **`BUG-*.md`** 必须同时包含以下内容，**不可仅写路径而不给图与分数**：
 
