@@ -41,7 +41,7 @@ class EntryActionAndCategoryFilterFragment : Fragment(R.layout.fragment_interfac
     ) : FragmentStateAdapter(fragmentManager, lifecycle) {
         override fun createFragment(position: Int): Fragment {
             return entryActionFilterManager.getCategories().getOrNull(position)?.let {
-                EntryActionFilterByCategoryFragment(it)
+                EntryActionFilterByCategoryFragment.newInstance(it)
             } ?: throw IndexOutOfBoundsException("Invalid category position: $position")
         }
 

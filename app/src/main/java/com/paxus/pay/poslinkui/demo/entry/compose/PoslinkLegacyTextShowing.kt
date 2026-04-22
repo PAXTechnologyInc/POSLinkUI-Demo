@@ -263,6 +263,91 @@ private class PoslinkShowDialogTitleSlotBuilder(
     fun isBlank(): Boolean = text.isEmpty()
 }
 
+private data class PoslinkShowDialogParseState(
+    val slot: PoslinkShowDialogSlotKey = PoslinkShowDialogSlotKey.CENTER,
+    val bold: Boolean = false,
+    val fontSize: TextUnit = POSLINK_FONT_NORMAL
+)
+
+private data class PoslinkShowDialogCommandResult(
+    val nextIndex: Int,
+    val state: PoslinkShowDialogParseState,
+    val textToAppend: String? = null
+)
+
+private fun poslinkShowDialogAlignFor(slot: PoslinkShowDialogSlotKey): TextAlign = when (slot) {
+    PoslinkShowDialogSlotKey.LEFT -> TextAlign.Left
+    PoslinkShowDialogSlotKey.CENTER -> TextAlign.Center
+    PoslinkShowDialogSlotKey.RIGHT -> TextAlign.Right
+}
+
+private fun poslinkShowDialogSlotFor(cmd: Char): PoslinkShowDialogSlotKey = when (cmd) {
+    'L' -> PoslinkShowDialogSlotKey.LEFT
+    'R' -> PoslinkShowDialogSlotKey.RIGHT
+    else -> PoslinkShowDialogSlotKey.CENTER
+}
+
+private fun poslinkShowDialogFontFor(cmd: Char): TextUnit = when (cmd) {
+    '1' -> POSLINK_FONT_SMALL
+    '3' -> POSLINK_FONT_BIG
+    else -> POSLINK_FONT_NORMAL
+}
+
+private fun consumePoslinkShowDialogCommand(
+    normalized: String,
+    index: Int,
+    state: PoslinkShowDialogParseState,
+    supportLineSep: Boolean
+): PoslinkShowDialogCommandResult? {
+    if (normalized[index] != '\\' || index + 1 >= normalized.length) return null
+    val cmd = normalized[index + 1]
+    return when (cmd) {
+        'L', 'C', 'R' -> PoslinkShowDialogCommandResult(
+            nextIndex = index + 2,
+            state = PoslinkShowDialogParseState(slot = poslinkShowDialogSlotFor(cmd))
+        )
+
+        'B' -> PoslinkShowDialogCommandResult(
+            nextIndex = index + 2,
+            state = state.copy(bold = true)
+        )
+
+        '1', '2', '3' -> PoslinkShowDialogCommandResult(
+            nextIndex = index + 2,
+            state = state.copy(fontSize = poslinkShowDialogFontFor(cmd))
+        )
+
+        'n' -> {
+            if (!supportLineSep) return null
+            PoslinkShowDialogCommandResult(
+                nextIndex = index + 2,
+                state = state,
+                textToAppend = "\n"
+            )
+        }
+
+        else -> null
+    }
+}
+
+private fun ensurePoslinkShowDialogCompanionSlots(
+    slots: MutableMap<PoslinkShowDialogSlotKey, PoslinkShowDialogTitleSlot>
+) {
+    if (PoslinkShowDialogSlotKey.CENTER !in slots) return
+    if (PoslinkShowDialogSlotKey.LEFT !in slots) {
+        slots[PoslinkShowDialogSlotKey.LEFT] = PoslinkShowDialogTitleSlot(
+            text = AnnotatedString(" "),
+            align = TextAlign.Left
+        )
+    }
+    if (PoslinkShowDialogSlotKey.RIGHT !in slots) {
+        slots[PoslinkShowDialogSlotKey.RIGHT] = PoslinkShowDialogTitleSlot(
+            text = AnnotatedString(" "),
+            align = TextAlign.Right
+        )
+    }
+}
+
 internal fun buildPoslinkShowDialogTitleSlots(
     raw: String,
     supportLineSep: Boolean = false
@@ -270,72 +355,29 @@ internal fun buildPoslinkShowDialogTitleSlots(
     if (raw.isBlank()) return emptyList()
     val normalized = normalizePoslinkControlCommands(raw).replace("\r", "")
     val slotBuilders = linkedMapOf<PoslinkShowDialogSlotKey, PoslinkShowDialogTitleSlotBuilder>()
-    var currentSlot = PoslinkShowDialogSlotKey.CENTER
-    var currentBold = false
-    var currentFontSize = POSLINK_FONT_NORMAL
+    var state = PoslinkShowDialogParseState()
 
     fun builderFor(slot: PoslinkShowDialogSlotKey): PoslinkShowDialogTitleSlotBuilder {
         return slotBuilders.getOrPut(slot) {
             PoslinkShowDialogTitleSlotBuilder(
-                align = when (slot) {
-                    PoslinkShowDialogSlotKey.LEFT -> TextAlign.Left
-                    PoslinkShowDialogSlotKey.CENTER -> TextAlign.Center
-                    PoslinkShowDialogSlotKey.RIGHT -> TextAlign.Right
-                }
+                align = poslinkShowDialogAlignFor(slot)
             )
         }
     }
 
-    fun resetInlineStyle() {
-        currentBold = false
-        currentFontSize = POSLINK_FONT_NORMAL
-    }
-
     var index = 0
     while (index < normalized.length) {
-        val current = normalized[index]
-        if (current == '\\' && index + 1 < normalized.length) {
-            when (val cmd = normalized[index + 1]) {
-                'L', 'C', 'R' -> {
-                    currentSlot = when (cmd) {
-                        'L' -> PoslinkShowDialogSlotKey.LEFT
-                        'R' -> PoslinkShowDialogSlotKey.RIGHT
-                        else -> PoslinkShowDialogSlotKey.CENTER
-                    }
-                    resetInlineStyle()
-                    builderFor(currentSlot)
-                    index += 2
-                    continue
-                }
-
-                'B' -> {
-                    currentBold = true
-                    builderFor(currentSlot)
-                    index += 2
-                    continue
-                }
-
-                '1', '2', '3' -> {
-                    currentFontSize = when (cmd) {
-                        '1' -> POSLINK_FONT_SMALL
-                        '3' -> POSLINK_FONT_BIG
-                        else -> POSLINK_FONT_NORMAL
-                    }
-                    builderFor(currentSlot)
-                    index += 2
-                    continue
-                }
-
-                'n' -> {
-                    if (supportLineSep) {
-                        builderFor(currentSlot).append("\n", currentBold, currentFontSize)
-                        index += 2
-                        continue
-                    }
-                }
+        val command = consumePoslinkShowDialogCommand(normalized, index, state, supportLineSep)
+        if (command != null) {
+            state = command.state
+            val builder = builderFor(state.slot)
+            command.textToAppend?.let { text ->
+                builder.append(text, state.bold, state.fontSize)
             }
+            index = command.nextIndex
+            continue
         }
-        builderFor(currentSlot).append(current.toString(), currentBold, currentFontSize)
+        builderFor(state.slot).append(normalized[index].toString(), state.bold, state.fontSize)
         index++
     }
 
@@ -344,20 +386,7 @@ internal fun buildPoslinkShowDialogTitleSlots(
         .mapValues { (_, builder) -> builder.build() }
         .toMutableMap()
 
-    if (PoslinkShowDialogSlotKey.CENTER in slots) {
-        if (PoslinkShowDialogSlotKey.LEFT !in slots) {
-            slots[PoslinkShowDialogSlotKey.LEFT] = PoslinkShowDialogTitleSlot(
-                text = AnnotatedString(" "),
-                align = TextAlign.Left
-            )
-        }
-        if (PoslinkShowDialogSlotKey.RIGHT !in slots) {
-            slots[PoslinkShowDialogSlotKey.RIGHT] = PoslinkShowDialogTitleSlot(
-                text = AnnotatedString(" "),
-                align = TextAlign.Right
-            )
-        }
-    }
+    ensurePoslinkShowDialogCompanionSlots(slots)
 
     return listOfNotNull(
         slots[PoslinkShowDialogSlotKey.LEFT],
@@ -530,10 +559,32 @@ internal fun filterPoslinkLegacyItems(
 }
 
 internal fun sortPoslinkLegacyItems(items: List<PrintDataItem>): List<PrintDataItem> {
+    val ordering = collectPoslinkLegacyItemOrdering(items)
+    ordering.leftItem?.let { ordering.tempList.add(0, it) }
+    ordering.rightItem?.let(ordering.tempList::add)
+    insertCenteredPoslinkLegacyItem(
+        tempList = ordering.tempList,
+        centerItem = ordering.centerItem,
+        leftCount = ordering.leftCount,
+        rightCount = ordering.rightCount
+    )
+    padCenteredPoslinkLegacyPair(ordering.tempList)
+    return ordering.tempList
+}
+
+private data class PoslinkLegacyItemOrdering(
+    val tempList: MutableList<PrintDataItem>,
+    val leftItem: PrintDataItem?,
+    val rightItem: PrintDataItem?,
+    val centerItem: PrintDataItem?,
+    val leftCount: Int,
+    val rightCount: Int
+)
+
+private fun collectPoslinkLegacyItemOrdering(items: List<PrintDataItem>): PoslinkLegacyItemOrdering {
     var leftCount = 0
     var rightCount = 0
     var centerCount = 0
-
     val tempList = mutableListOf<PrintDataItem>()
     var leftItem: PrintDataItem? = null
     var rightItem: PrintDataItem? = null
@@ -560,48 +611,53 @@ internal fun sortPoslinkLegacyItems(items: List<PrintDataItem>): List<PrintDataI
         }
     }
 
-    leftItem?.let { tempList.add(0, it) }
-    rightItem?.let(tempList::add)
-    centerItem?.let { center ->
+    return PoslinkLegacyItemOrdering(
+        tempList = tempList,
+        leftItem = leftItem,
+        rightItem = rightItem,
+        centerItem = centerItem,
+        leftCount = leftCount,
+        rightCount = rightCount
+    )
+}
+
+private fun insertCenteredPoslinkLegacyItem(
+    tempList: MutableList<PrintDataItem>,
+    centerItem: PrintDataItem?,
+    leftCount: Int,
+    rightCount: Int
+) {
+    centerItem ?: return
+    when {
+        tempList.size > 2 -> tempList.add(tempList.size / 2 + 1, centerItem)
+        tempList.size == 2 -> tempList.add(tempList.size / 2, centerItem)
+        tempList.size == 1 && leftCount != 0 -> tempList.add(1, centerItem)
+        tempList.size == 1 && rightCount != 0 -> tempList.add(0, centerItem)
+        else -> tempList.add(centerItem)
+    }
+}
+
+private fun padCenteredPoslinkLegacyPair(tempList: MutableList<PrintDataItem>) {
+    if (tempList.size != 2) return
+    var containCenter = false
+    var addLeft = false
+    var addRight = false
+    var addBold = false
+
+    tempList.forEach { item ->
         when {
-            tempList.size > 2 -> tempList.add(tempList.size / 2 + 1, center)
-            tempList.size == 2 -> tempList.add(tempList.size / 2, center)
-            tempList.size == 1 -> {
-                when {
-                    leftCount != 0 -> tempList.add(1, center)
-                    rightCount != 0 -> tempList.add(0, center)
-                    else -> tempList.add(center)
-                }
-            }
-
-            else -> tempList.add(center)
+            item.cmds.contains(PrintDataItem.CENTER_ALIGN) -> containCenter = true
+            item.cmds.contains(PrintDataItem.LEFT_ALIGN) -> addRight = true
+            item.cmds.contains(PrintDataItem.RIGHT_ALIGN) -> addLeft = true
+            item.cmds.contains(PrintDataItem.BOLD) -> addBold = true
         }
     }
 
-    if (tempList.size == 2) {
-        var containCenter = false
-        var addLeft = false
-        var addRight = false
-        var addBold = false
-
-        tempList.forEach { item ->
-            when {
-                item.cmds.contains(PrintDataItem.CENTER_ALIGN) -> containCenter = true
-                item.cmds.contains(PrintDataItem.LEFT_ALIGN) -> addRight = true
-                item.cmds.contains(PrintDataItem.RIGHT_ALIGN) -> addLeft = true
-                item.cmds.contains(PrintDataItem.BOLD) -> addBold = true
-            }
-        }
-
-        if (containCenter) {
-            if (addLeft) {
-                tempList.add(0, PrintDataItem(" ", mutableListOf(PrintDataItem.LEFT_ALIGN)))
-            }
-            if (addRight || addBold) {
-                tempList.add(PrintDataItem(" ", mutableListOf(PrintDataItem.RIGHT_ALIGN)))
-            }
-        }
+    if (!containCenter) return
+    if (addLeft) {
+        tempList.add(0, PrintDataItem(" ", mutableListOf(PrintDataItem.LEFT_ALIGN)))
     }
-
-    return tempList
+    if (addRight || addBold) {
+        tempList.add(PrintDataItem(" ", mutableListOf(PrintDataItem.RIGHT_ALIGN)))
+    }
 }

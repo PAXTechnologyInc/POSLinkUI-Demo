@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -38,6 +36,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
@@ -49,6 +48,11 @@ import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils
 import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils
 import com.paxus.pay.poslinkui.demo.view.SelectOptionsView
+
+private val LegacyCashbackOptionStrokeWidth = (0.3f * 160f / 25.4f).dp
+private val LegacyCashbackOptionTitleSize = 18.sp
+private val LegacyCashbackFieldValueSize = 14.sp
+private val LegacyCashbackFieldHintSize = 11.sp
 
 /**
  * Static configuration for [CashbackScreen].
@@ -75,32 +79,37 @@ fun CashbackScreen(
     onError: (String) -> Unit
 ) {
     val interactionLocked = LocalEntryInteractionLocked.current
-    var displayValue by remember { mutableStateOf("") }
-    val res = LocalContext.current.resources
-    val density = LocalDensity.current
+    var displayValue by remember(props.promptOther, props.options, props.currency) {
+        mutableStateOf(
+            if (props.promptOther || props.options.isEmpty()) {
+                CurrencyUtils.convert(0L, props.currency)
+            } else {
+                ""
+            }
+        )
+    }
     val buttonHeight = dimensionResource(R.dimen.button_height)
     val marginGap = dimensionResource(R.dimen.margin_gap)
     val sectionSpacing = dimensionResource(R.dimen.space_between_textview)
     val cornerRadius = dimensionResource(R.dimen.corner_radius)
-    val optionTextSize = with(density) { res.getDimension(R.dimen.text_size_subtitle).toSp() }
-    val hintTextSize = with(density) { res.getDimension(R.dimen.text_size_hint).toSp() }
-    val bodyTextSize = with(density) { res.getDimension(R.dimen.text_size_normal).toSp() }
-    val optionTextStyle = MaterialTheme.typography.titleMedium.copy(
+    val optionTextStyle = TextStyle(
         fontWeight = FontWeight.Normal,
-        fontSize = optionTextSize,
-        lineHeight = optionTextSize * 1.2f
+        fontSize = LegacyCashbackOptionTitleSize,
+        lineHeight = LegacyCashbackOptionTitleSize,
+        textAlign = TextAlign.Center
     )
-    val fieldTextStyle = MaterialTheme.typography.bodyLarge.copy(
+    val fieldTextStyle = TextStyle(
         fontWeight = FontWeight.Normal,
-        fontSize = bodyTextSize,
-        lineHeight = bodyTextSize * 1.4f,
+        fontSize = LegacyCashbackFieldValueSize,
+        lineHeight = LegacyCashbackFieldValueSize,
         textAlign = TextAlign.Center,
         color = PosLinkDesignTokens.OnLightTextColor
     )
-    val fieldLabelStyle = MaterialTheme.typography.bodySmall.copy(
+    val fieldLabelStyle = TextStyle(
         fontWeight = FontWeight.Normal,
-        fontSize = hintTextSize,
-        lineHeight = hintTextSize * 1.2f
+        fontSize = LegacyCashbackFieldHintSize,
+        lineHeight = LegacyCashbackFieldHintSize,
+        color = PosLinkDesignTokens.OnLightTextColor
     )
     val promptInputStr = stringResource(R.string.prompt_input)
     val submit = {
@@ -152,7 +161,7 @@ fun CashbackScreen(
                     onConfirm(amt)
                 },
                 onNoThanksClick = {
-                    displayValue = ""
+                    displayValue = CurrencyUtils.convert(0L, props.currency)
                     onOptionSelected(0L)
                     onConfirm(0L)
                 }
@@ -171,7 +180,7 @@ fun CashbackScreen(
                 fieldLabelStyle = fieldLabelStyle,
                 onDisplayValueChange = { displayValue = it }
             )
-            Spacer(modifier = Modifier.height(sectionSpacing))
+            Spacer(modifier = Modifier.height(marginGap))
             CashbackConfirmBar(
                 onSubmit = submit
             )
@@ -243,7 +252,7 @@ private fun CashbackOptionCard(
         modifier = modifier
             .height(buttonHeight)
             .border(
-                width = PosLinkDesignTokens.BorderWidthThin,
+                width = LegacyCashbackOptionStrokeWidth,
                 color = PosLinkDesignTokens.BorderColor,
                 shape = RoundedCornerShape(cornerRadius)
             )
@@ -282,11 +291,7 @@ private fun CashbackOtherAmountField(
             val digits = raw.replace("[^0-9]".toRegex(), "")
             if (digits.length <= maxLength) {
                 onDisplayValueChange(
-                    if (digits.isEmpty()) {
-                        ""
-                    } else {
-                        CurrencyUtils.convert(digits.toLongOrNull() ?: 0L, currency)
-                    }
+                    CurrencyUtils.convert(digits.ifEmpty { "0" }.toLongOrNull() ?: 0L, currency)
                 )
             }
         },
@@ -317,7 +322,6 @@ private fun CashbackOtherAmountField(
                 Text(
                     text = stringResource(R.string.other),
                     style = fieldLabelStyle,
-                    color = PosLinkDesignTokens.OnLightTextColor,
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(start = marginGap * 2, top = marginGap)

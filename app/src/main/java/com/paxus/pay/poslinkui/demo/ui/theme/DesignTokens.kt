@@ -23,6 +23,11 @@ object PosLinkDesignTokens {
     // golive option/button borders map to `@color/pastel_on_background`.
     val BorderColor = Color(0xFFDBD4D9)
     val LegacyButtonPressedColor = Color(0xFF303F9F)
+    // Matches golive keyboard_input_confirm screenshots after submit locks the legacy button.
+    val LegacyButtonLockedColor = Color(0xFF041935)
+    val LegacyButtonLockedTextColor = Color(0xFF03162E)
+    // Legacy MaterialComponents/AppCompat primary buttons render closer to white than body text.
+    val PrimaryActionTextColor = Color(0xFFFFFFFF)
     /** 与 golive `pastel_warning` / cancel_sign 按钮 tint 一致。 */
     val PastelWarning = Color(0xFFFF7878)
     /** 与 golive `pastel_accent` / clear_sign 按钮 tint 一致。 */
@@ -65,7 +70,8 @@ object PosLinkDesignTokens {
      * Matches Material Components Button default text tracking used by golive/v1.03.00
      * (theme does not override `buttonStyle`; `<Button>` inherits TextAppearance.MaterialComponents.Button).
      */
-    val ButtonTextLetterSpacing: TextUnit = 0.sp
+    val ButtonTextLetterSpacing: TextUnit = 1.25.sp
+    val EntryTitleLineHeightMultiplier: Float = 1.25f
 
     /**
      * Configuration-qualified button height (resource qualifier overlays in `res/values.../dimens.xml`),

@@ -37,6 +37,7 @@ data class PosLinkLegacyMaterialFillAppearance(
     val containerColor: Color,
     val disabledContainerColor: Color,
     val pressedContainerColor: Color? = null,
+    val verticalInset: Dp? = null,
     val horizontalContentPadding: Dp = PosLinkDesignTokens.ButtonHorizontalContentPadding
 )
 
@@ -62,7 +63,7 @@ fun PosLinkLegacyMaterialFilledButton(
     appearance: PosLinkLegacyMaterialFillAppearance,
     content: @Composable () -> Unit
 ) {
-    val insetV = LocalPosLinkLegacyMaterialButtonVerticalInset.current
+    val insetV = appearance.verticalInset ?: LocalPosLinkLegacyMaterialButtonVerticalInset.current
     val fillHeight = (appearance.slotHeight - insetV * 2).coerceAtLeast(1.dp)
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()

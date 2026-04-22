@@ -46,17 +46,25 @@ fun PosLinkPrimaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     fillMaxWidth: Boolean = true,
+    includeOuterVerticalPadding: Boolean = true,
+    verticalInsetOverride: Dp? = null,
     variant: PosLinkPrimaryButtonVariant = PosLinkPrimaryButtonVariant.Default,
     containerColorOverride: Color? = null,
     disabledContainerColorOverride: Color? = null,
     pressedContainerColorOverride: Color? = null,
     textColorOverride: Color? = null,
+    disabledTextColorOverride: Color? = null,
     textFontWeight: FontWeight = FontWeight.Medium,
     textLetterSpacing: TextUnit = PosLinkDesignTokens.ButtonTextLetterSpacing,
     allCapsOverride: Boolean? = null
-) {
+    ) {
     val h = dimensionResource(R.dimen.button_height)
     val outerV = dimensionResource(R.dimen.margin_gap)
+    val layoutModifier = if (includeOuterVerticalPadding) {
+        modifier.padding(vertical = outerV)
+    } else {
+        modifier
+    }
     val style = when (variant) {
         PosLinkPrimaryButtonVariant.Default -> PosLinkPrimaryButtonStyle(
             corner = PosLinkDesignTokens.LegacyButtonCornerRadius,
@@ -76,7 +84,7 @@ fun PosLinkPrimaryButton(
     }
     PosLinkLegacyMaterialFilledButton(
         onClick = onClick,
-        modifier = modifier.padding(vertical = outerV),
+        modifier = layoutModifier,
         enabled = enabled,
         fillMaxWidth = fillMaxWidth,
         appearance = PosLinkLegacyMaterialFillAppearance(
@@ -84,7 +92,8 @@ fun PosLinkPrimaryButton(
             shape = RoundedCornerShape(style.corner),
             containerColor = containerColorOverride ?: style.containerColor,
             disabledContainerColor = disabledContainerColorOverride ?: style.disabledContainerColor,
-            pressedContainerColor = pressedContainerColorOverride ?: style.pressedContainerColor
+            pressedContainerColor = pressedContainerColorOverride ?: style.pressedContainerColor,
+            verticalInset = verticalInsetOverride
         )
     ) {
         val displayText = if (allCapsOverride ?: style.allCaps) text.uppercase(Locale.ROOT) else text
@@ -94,10 +103,11 @@ fun PosLinkPrimaryButton(
                 fontWeight = textFontWeight,
                 letterSpacing = textLetterSpacing
             ),
-            color = textColorOverride ?: if (enabled) {
-                PosLinkDesignTokens.PrimaryTextColor
-            } else {
-                PosLinkDesignTokens.PrimaryTextColor.copy(alpha = 0.38f)
+            color = when {
+                enabled -> textColorOverride ?: PosLinkDesignTokens.PrimaryActionTextColor
+                disabledTextColorOverride != null -> disabledTextColorOverride
+                textColorOverride != null -> textColorOverride.copy(alpha = 0.38f)
+                else -> PosLinkDesignTokens.PrimaryActionTextColor.copy(alpha = 0.38f)
             }
         )
     }
@@ -118,20 +128,28 @@ fun PosLinkSecondaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    fillMaxWidth: Boolean = true
+    fillMaxWidth: Boolean = true,
+    includeOuterVerticalPadding: Boolean = true,
+    verticalInsetOverride: Dp? = null
 ) {
     val outerV = dimensionResource(R.dimen.margin_gap)
+    val layoutModifier = if (includeOuterVerticalPadding) {
+        modifier.padding(vertical = outerV)
+    } else {
+        modifier
+    }
     PosLinkLegacyMaterialFilledButton(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.padding(vertical = outerV),
+        modifier = layoutModifier,
         fillMaxWidth = fillMaxWidth,
         appearance = PosLinkLegacyMaterialFillAppearance(
             slotHeight = dimensionResource(R.dimen.button_height),
             shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
             containerColor = PosLinkDesignTokens.PrimaryColor,
             disabledContainerColor = PosLinkDesignTokens.DisabledColor,
-            pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor
+            pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor,
+            verticalInset = verticalInsetOverride
         )
     ) {
         Text(
@@ -141,9 +159,9 @@ fun PosLinkSecondaryButton(
                 letterSpacing = PosLinkDesignTokens.ButtonTextLetterSpacing
             ),
             color = if (enabled) {
-                PosLinkDesignTokens.PrimaryTextColor
+                PosLinkDesignTokens.PrimaryActionTextColor
             } else {
-                PosLinkDesignTokens.PrimaryTextColor.copy(alpha = 0.38f)
+                PosLinkDesignTokens.PrimaryActionTextColor.copy(alpha = 0.38f)
             }
         )
     }
@@ -162,6 +180,8 @@ fun PosLinkLegacyThemeButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     fillMaxWidth: Boolean = true,
+    includeOuterVerticalPadding: Boolean = false,
+    verticalInsetOverride: Dp? = null,
     allCaps: Boolean = true
 ) {
     PosLinkPrimaryButton(
@@ -170,9 +190,12 @@ fun PosLinkLegacyThemeButton(
         modifier = modifier,
         enabled = enabled,
         fillMaxWidth = fillMaxWidth,
+        includeOuterVerticalPadding = includeOuterVerticalPadding,
+        verticalInsetOverride = verticalInsetOverride,
         variant = PosLinkPrimaryButtonVariant.PoslinkLegacy,
-        disabledContainerColorOverride = PosLinkDesignTokens.PrimaryColor,
-        textColorOverride = PosLinkDesignTokens.PrimaryTextColor,
+        disabledContainerColorOverride = PosLinkDesignTokens.LegacyButtonLockedColor,
+        textColorOverride = PosLinkDesignTokens.PrimaryActionTextColor,
+        disabledTextColorOverride = PosLinkDesignTokens.LegacyButtonLockedTextColor,
         allCapsOverride = allCaps
     )
 }

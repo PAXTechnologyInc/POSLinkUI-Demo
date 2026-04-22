@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckedTextView
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,10 +19,16 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class EntryActionFilterByCategoryFragment(var category: EntryCategory) :
+class EntryActionFilterByCategoryFragment :
     Fragment(R.layout.fragment_interface_action_by_category) {
     @Inject
     lateinit var entryActionFilterManager: EntryActionFilterManager
+
+    private val categoryKey: String?
+        get() = arguments?.getString(ARG_CATEGORY_KEY)
+
+    private val categoryName: String
+        get() = arguments?.getString(ARG_CATEGORY_NAME).orEmpty()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,14 +37,14 @@ class EntryActionFilterByCategoryFragment(var category: EntryCategory) :
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState) ?: return null
 
-        (view.findViewById<View>(R.id.interface_filter_title) as TextView).text = category.name
+        (view.findViewById<View>(R.id.interface_filter_title) as TextView).text = categoryName
 
         val interfaceActionRecyclerView =
             view.findViewById<RecyclerView>(R.id.interface_filter_recycler_view)
         interfaceActionRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         interfaceActionRecyclerView.adapter = InterfaceActionFilterAdapter(
             requireContext(),
-            entryActionFilterManager.getStaticEntryActionListByCategory(category.category)
+            entryActionFilterManager.getStaticEntryActionListByCategory(categoryKey)
         )
 
         return view
@@ -107,6 +114,20 @@ class EntryActionFilterByCategoryFragment(var category: EntryCategory) :
             init {
                 interfaceActionNameTextView =
                     itemView.findViewById<CheckedTextView>(R.id.interface_action_name)
+            }
+        }
+    }
+
+    companion object {
+        private const val ARG_CATEGORY_KEY = "arg_category_key"
+        private const val ARG_CATEGORY_NAME = "arg_category_name"
+
+        fun newInstance(category: EntryCategory): EntryActionFilterByCategoryFragment {
+            return EntryActionFilterByCategoryFragment().apply {
+                arguments = bundleOf(
+                    ARG_CATEGORY_KEY to category.category,
+                    ARG_CATEGORY_NAME to category.name
+                )
             }
         }
     }

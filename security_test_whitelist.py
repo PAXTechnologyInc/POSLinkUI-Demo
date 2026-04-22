@@ -52,14 +52,11 @@ major_components_whitelist = {
 
 # 用例标题: Dependency Licence Detection (开源许可证合规检查)
 # 示例: license_compliance_whitelist = {'GNU Library or Lesser General Public License'}
-license_compliance_whitelist = {'javacsv-2.0.jar',
-                                'jaxb-api-2.2.12.jar',
-                                'xpp3-1.1.4c.jar',
-                                'jakarta.annotation-api-2.0.0.jar'}
+license_compliance_whitelist = {}
 
 # 用例标题: Font License Compliance Check (字体库侵权检查)
 # 示例: fonts_whitelist = {'aaa.ttf'}
-fonts_whitelist = {'NotoSans-SemiBold.ttf'}
+fonts_whitelist = {}
 
 # 用例标题: Fragment Injection Check (Fragment注入检查)
 # 示例: Fragment_whitelist_flag = True，是否跳过可选用例，False跳过检查
@@ -76,7 +73,7 @@ dex_dynamic_loading_whitelist_flag = True
 # 用例标题: Module Comparison Between SonarQube Configuration File and Gradle Settings File
 # (sonar文件扫描模块与gradle文件模块对比检查)
 # 示例: sonar_whitelist = ['gradlew', 'gradlew.bat', 'gradle-wrapper.jar']
-sonar_whitelist = ['VERSION_CATALOGS']
+sonar_whitelist = []
 
 # 用例标题: Application Anti-Screenshot and Anti-Screen-Recording Check (应用防截屏防录屏检查)
 # 示例: prohibit_screenshots = True，是否跳过可选用例，False跳过检查

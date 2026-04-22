@@ -210,9 +210,9 @@ internal fun PoslinkTextBoxButton(
                 cells = cells,
                 allowWrap = true,
                 textColor = if (enabled) {
-                    Color(0xFFECECEC)
+                    PosLinkDesignTokens.PrimaryActionTextColor
                 } else {
-                    Color(0xFFECECEC).copy(alpha = 0.38f)
+                    PosLinkDesignTokens.PrimaryActionTextColor.copy(alpha = 0.38f)
                 }
             )
         }

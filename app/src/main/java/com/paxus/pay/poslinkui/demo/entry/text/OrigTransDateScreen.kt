@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -95,6 +96,14 @@ fun OrigTransDateScreen(
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val scrollState = rememberScrollState()
+    val res = LocalContext.current.resources
+    val dm = res.displayMetrics
+    val sectionSpacing = dimensionResource(R.dimen.space_between_textview)
+    val inputHeight = dimensionResource(R.dimen.button_height)
+    val cornerRadius = dimensionResource(R.dimen.corner_radius)
+    val titleTextSize = (res.getDimension(R.dimen.text_size_title) / dm.scaledDensity).sp
+    val bodyTextSize = (res.getDimension(R.dimen.text_size_normal) / dm.scaledDensity).sp
+    val bodyLineHeight = (res.getDimension(R.dimen.text_size_normal) / dm.scaledDensity * 1.4f).sp
     var isInputFocused by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -134,19 +143,20 @@ fun OrigTransDateScreen(
             .fillMaxWidth()
             .verticalScroll(scrollState)
     ) {
-        Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
+        Spacer(modifier = Modifier.height(sectionSpacing))
         Text(
             text = message,
             color = PosLinkDesignTokens.PrimaryTextColor,
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Normal,
-                fontSize = PosLinkDesignTokens.TitleTextSize
+                fontSize = titleTextSize,
+                lineHeight = titleTextSize * PosLinkDesignTokens.EntryTitleLineHeightMultiplier
             ),
             modifier = Modifier.fillMaxWidth(),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
+        Spacer(modifier = Modifier.height(sectionSpacing))
         BasicTextField(
             value = value,
             onValueChange = { nextValue ->
@@ -161,15 +171,15 @@ fun OrigTransDateScreen(
             readOnly = interactionLocked,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(PosLinkDesignTokens.buttonHeight())
+                .height(inputHeight)
                 .focusRequester(focusRequester)
                 .onFocusChanged { focusState ->
                     isInputFocused = focusState.isFocused
                 },
             textStyle = MaterialTheme.typography.bodyMedium.copy(
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
-                lineHeight = 20.sp,
+                fontSize = bodyTextSize,
+                lineHeight = bodyLineHeight,
                 textAlign = TextAlign.Center,
                 color = Color(0xFF222222)
             ),
@@ -180,15 +190,15 @@ fun OrigTransDateScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(PosLinkDesignTokens.buttonHeight())
+                        .height(inputHeight)
                         .border(
                             width = 2.dp,
                             color = Color(0xFFDBD4D9),
-                            shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
+                            shape = RoundedCornerShape(cornerRadius)
                         )
                         .background(
                             color = Color(0xFFDBD4D9),
-                            shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
+                            shape = RoundedCornerShape(cornerRadius)
                         )
                         .padding(horizontal = PosLinkDesignTokens.FieldInnerHorizontalPadding),
                     contentAlignment = Alignment.Center
@@ -198,8 +208,8 @@ fun OrigTransDateScreen(
                             text = getPlaceholder(resolvedFormat),
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Normal,
-                                fontSize = 14.sp,
-                                lineHeight = 20.sp,
+                                fontSize = bodyTextSize,
+                                lineHeight = bodyLineHeight,
                                 color = PosLinkDesignTokens.OnLightTextColor,
                                 textAlign = TextAlign.Center
                             )

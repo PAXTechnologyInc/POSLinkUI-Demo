@@ -35,12 +35,14 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
@@ -60,6 +62,12 @@ import com.paxus.pay.poslinkui.demo.view.SelectOptionsView
 import kotlinx.coroutines.delay
 
 data class TipInfo(val name: String?, val amount: String?)
+
+private val LegacyTipOptionStrokeWidth = (0.3f * 160f / 25.4f).dp
+private val LegacyTipOptionTitleSize = 18.sp
+private val LegacyTipOptionSubtitleSize = 11.sp
+private val LegacyTipFieldValueSize = 14.sp
+private val LegacyTipFieldHintSize = 11.sp
 
 /** Callbacks for tip / cashback-prompt flows shown by [TipScreen]. */
 data class TipScreenCallbacks(
@@ -142,12 +150,7 @@ private fun tipScreenSectionVerticalSpacing(
     isTipCentCase: Boolean,
     isCashbackPromptCase: Boolean,
     compactNoTipLayout: Boolean
-): Dp = when {
-    isTipCentCase -> PosLinkDesignTokens.InlineSpacing
-    isCashbackPromptCase -> PosLinkDesignTokens.SpaceBetweenTextView
-    compactNoTipLayout -> PosLinkDesignTokens.InlineSpacing
-    else -> PosLinkDesignTokens.InlineSpacing
-}
+): Dp = 0.dp
 
 private fun tipScreenTitleAdjacentSpacing(compactNoTipLayout: Boolean): Dp =
     if (compactNoTipLayout) PosLinkDesignTokens.DenseGridSpacing
@@ -162,11 +165,7 @@ private fun tipScreenLayoutMetrics(
     compactNoTipLayout: Boolean,
     spec: DeviceLayoutSpec
 ): TipScreenLayoutMetrics {
-    val topOffset = if (isTipCentCase && spec.profileId == DeviceProfileId.A920_CLASS) {
-        (-spec.screenVerticalPaddingDp).dp
-    } else {
-        0.dp
-    }
+    val topOffset = 0.dp
     val centHorizontalInset = if (isTipCentCase && spec.profileId == DeviceProfileId.A920_CLASS) {
         (28 - spec.screenHorizontalPaddingDp).coerceAtLeast(0).dp
     } else {
@@ -233,7 +232,7 @@ fun TipScreen(model: TipScreenModel) {
     val activity = LocalContext.current as? FragmentActivity
     val spec = LocalDeviceLayoutSpec.current
     var displayValue by remember(isCashbackPromptCase, currency) {
-        mutableStateOf(if (isCashbackPromptCase) "" else CurrencyUtils.convert(0L, currency))
+        mutableStateOf(CurrencyUtils.convert(0L, currency))
     }
     var tipFieldModified by remember { mutableStateOf(false) }
     val compactNoTipLayout = tipOptions.isNotEmpty() && !noTipEnabled
@@ -286,7 +285,7 @@ fun TipScreen(model: TipScreenModel) {
                     if (noTipTriggersSubmit) {
                         onNoTipSelected()
                     } else {
-                        displayValue = ""
+                        displayValue = CurrencyUtils.convert(0L, currency)
                         tipFieldModified = false
                         onTipOptionSelected(0L)
                     }
@@ -494,6 +493,7 @@ private fun TipConfirmBar(
     PosLinkPrimaryButton(
         text = stringResource(R.string.trans_confirm_btn),
         enabled = controlsEnabled,
+        includeOuterVerticalPadding = false,
         onClick = submit
     )
 }
@@ -657,7 +657,7 @@ private fun TipOptionSurfaceCard(
             .padding(PosLinkDesignTokens.InlineSpacing)
             .height(optionHeight)
             .border(
-                width = PosLinkDesignTokens.BorderWidthThin,
+                width = LegacyTipOptionStrokeWidth,
                 color = PosLinkDesignTokens.BorderColor,
                 shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
             )
@@ -673,8 +673,10 @@ private fun TipOptionSurfaceCard(
                 text = opt.title ?: "",
                 color = PosLinkDesignTokens.PrimaryTextColor,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = if (showSubtitle) FontWeight.Bold else FontWeight.Normal
+                style = TextStyle(
+                    fontSize = LegacyTipOptionTitleSize,
+                    fontWeight = if (showSubtitle) FontWeight.Bold else FontWeight.Normal,
+                    lineHeight = LegacyTipOptionTitleSize
                 )
             )
             if (showSubtitle && !opt.subtitle.isNullOrBlank()) {
@@ -682,7 +684,11 @@ private fun TipOptionSurfaceCard(
                     text = opt.subtitle ?: "",
                     color = PosLinkDesignTokens.PrimaryTextColor,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodySmall
+                    style = TextStyle(
+                        fontSize = LegacyTipOptionSubtitleSize,
+                        fontWeight = FontWeight.Normal,
+                        lineHeight = LegacyTipOptionSubtitleSize
+                    )
                 )
             }
         }
@@ -704,7 +710,7 @@ private fun TipNoTipChoiceCard(
             .padding(PosLinkDesignTokens.InlineSpacing)
             .height(noTipHeight)
             .border(
-                width = PosLinkDesignTokens.BorderWidthThin,
+                width = LegacyTipOptionStrokeWidth,
                 color = PosLinkDesignTokens.BorderColor,
                 shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
             )
@@ -719,7 +725,11 @@ private fun TipNoTipChoiceCard(
             text = if (isCashbackPromptCase) noThanksText else noTipText,
             color = PosLinkDesignTokens.PrimaryTextColor,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Normal)
+            style = TextStyle(
+                fontSize = LegacyTipOptionTitleSize,
+                fontWeight = FontWeight.Normal,
+                lineHeight = LegacyTipOptionTitleSize
+            )
         )
     }
 }
@@ -789,7 +799,10 @@ private fun TipCentAmountTextField(mode: TipValueInputMode, v: TipValueInputValu
             .height(v.inputHeight),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
-        textStyle = MaterialTheme.typography.bodyLarge.copy(
+        textStyle = TextStyle(
+            fontSize = LegacyTipFieldValueSize,
+            fontWeight = FontWeight.Normal,
+            lineHeight = LegacyTipFieldValueSize,
             textAlign = TextAlign.Center,
             color = PosLinkDesignTokens.OnLightTextColor
         ),
@@ -812,10 +825,12 @@ private fun TipCentAmountTextField(mode: TipValueInputMode, v: TipValueInputValu
                     innerTextField()
                 }
                 if (mode.tipOptions.isNotEmpty()) {
-                    PosLinkText(
+                    Text(
                         text = otherText,
-                        role = PosLinkTextRole.Supporting,
                         color = PosLinkDesignTokens.OnLightTextColor,
+                        fontSize = LegacyTipFieldHintSize,
+                        fontWeight = FontWeight.Normal,
+                        lineHeight = LegacyTipFieldHintSize,
                         modifier = Modifier
                             .align(Alignment.TopStart)
                             .padding(
@@ -841,11 +856,7 @@ private fun TipStandardAmountOutlinedField(mode: TipValueInputMode, v: TipValueI
             val digits = it.replace("[^0-9]".toRegex(), "")
             if (digits.length <= v.maxLength) {
                 v.onDisplayValueChange(
-                    if (mode.isCashbackPromptCase && digits.isEmpty()) {
-                        ""
-                    } else {
-                        CurrencyUtils.convert(digits.ifEmpty { "0" }.toLongOrNull() ?: 0L, v.currency)
-                    }
+                    CurrencyUtils.convert(digits.ifEmpty { "0" }.toLongOrNull() ?: 0L, v.currency)
                 )
             }
         },
@@ -854,7 +865,10 @@ private fun TipStandardAmountOutlinedField(mode: TipValueInputMode, v: TipValueI
             .height(v.inputHeight),
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        textStyle = MaterialTheme.typography.bodyLarge.copy(
+        textStyle = TextStyle(
+            fontSize = LegacyTipFieldValueSize,
+            fontWeight = FontWeight.Normal,
+            lineHeight = LegacyTipFieldValueSize,
             textAlign = TextAlign.Center,
             color = PosLinkDesignTokens.OnLightTextColor
         ),
@@ -877,10 +891,12 @@ private fun TipStandardAmountOutlinedField(mode: TipValueInputMode, v: TipValueI
                     innerTextField()
                 }
                 if (mode.tipOptions.isNotEmpty()) {
-                    PosLinkText(
+                    Text(
                         text = otherText,
-                        role = PosLinkTextRole.Supporting,
                         color = PosLinkDesignTokens.OnLightTextColor,
+                        fontSize = LegacyTipFieldHintSize,
+                        fontWeight = FontWeight.Normal,
+                        lineHeight = LegacyTipFieldHintSize,
                         modifier = Modifier
                             .align(Alignment.TopStart)
                             .padding(

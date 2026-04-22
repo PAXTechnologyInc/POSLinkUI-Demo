@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,13 +29,14 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,11 +70,18 @@ fun InvoiceNumberScreen(
     val scrollState = rememberScrollState()
     val activity = LocalContext.current as? FragmentActivity
     val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val spec = LocalDeviceLayoutSpec.current
-    val sectionSpacing = PosLinkDesignTokens.SpaceBetweenTextView
-    val inputHeight = PosLinkDesignTokens.buttonHeight()
-    val fieldShape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
+    val res = LocalContext.current.resources
+    val dm = res.displayMetrics
+    val sectionSpacing = dimensionResource(R.dimen.space_between_textview)
+    val inputHeight = dimensionResource(R.dimen.button_height)
+    val cornerRadius = dimensionResource(R.dimen.corner_radius)
+    val fieldShape = RoundedCornerShape(cornerRadius)
+    val titleTextSize = (res.getDimension(R.dimen.text_size_title) / dm.scaledDensity).sp
+    val bodyTextSize = (res.getDimension(R.dimen.text_size_normal) / dm.scaledDensity).sp
+    val bodyLineHeight = (res.getDimension(R.dimen.text_size_normal) / dm.scaledDensity * 1.4f).sp
     val lengths = remember(valuePattern) { ValuePatternUtils.getLengthList(valuePattern) }
     val maxChars = remember(lengths) { lengths.maxOf { it ?: 0 } }
     val isNumeric = !forceTextKeyboard
@@ -82,10 +89,6 @@ fun InvoiceNumberScreen(
     val targetHorizontalPaddingDp = when (spec.profileId) {
         DeviceProfileId.A920_CLASS, DeviceProfileId.A920MAX -> 20
         else -> 20
-    }
-    val topOffset = when (spec.profileId) {
-        DeviceProfileId.A920_CLASS, DeviceProfileId.A920MAX -> (-spec.screenVerticalPaddingDp).dp
-        else -> 0.dp
     }
     val legacyHorizontalInset = (targetHorizontalPaddingDp - spec.screenHorizontalPaddingDp)
         .coerceAtLeast(0)
@@ -119,6 +122,13 @@ fun InvoiceNumberScreen(
         if (shouldShowSoftKeyboard) keyboardController?.show()
     }
 
+    LaunchedEffect(interactionLocked) {
+        if (interactionLocked) {
+            keyboardController?.hide()
+            focusManager.clearFocus(force = true)
+        }
+    }
+
     EntryHardwareConfirmEffect(
         enabled = !interactionLocked,
         onConfirm = submit
@@ -126,7 +136,6 @@ fun InvoiceNumberScreen(
 
     Column(
         modifier = Modifier
-            .offset(y = topOffset)
             .padding(horizontal = legacyHorizontalInset)
             .fillMaxWidth()
             .verticalScroll(scrollState),
@@ -137,14 +146,17 @@ fun InvoiceNumberScreen(
             color = PosLinkDesignTokens.PrimaryTextColor,
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Normal,
-                fontSize = PosLinkDesignTokens.TitleTextSize
+                fontSize = titleTextSize,
+                lineHeight = titleTextSize * PosLinkDesignTokens.EntryTitleLineHeightMultiplier
             ),
-            modifier = Modifier.fillMaxWidth(),
-            maxLines = 1,
-            softWrap = false,
-            overflow = TextOverflow.Clip
+            modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(sectionSpacing))
+        val fieldContainerColor = if (interactionLocked) {
+            PosLinkDesignTokens.DisabledColor
+        } else {
+            PosLinkDesignTokens.BorderColor
+        }
         BasicTextField(
             value = value,
             onValueChange = { newValue ->
@@ -160,18 +172,32 @@ fun InvoiceNumberScreen(
                 .focusRequester(focusRequester),
             textStyle = MaterialTheme.typography.bodyLarge.copy(
                 textAlign = TextAlign.Center,
-                color = Color(0xFF222222)
+                color = PosLinkDesignTokens.OnLightTextColor,
+                fontSize = bodyTextSize,
+                lineHeight = bodyLineHeight
             ),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             singleLine = true,
-            cursorBrush = SolidColor(Color(0xFF66A579)),
+            cursorBrush = SolidColor(
+                if (interactionLocked) Color.Transparent else PosLinkDesignTokens.PastelAccent
+            ),
             decorationBox = { innerTextField ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(inputHeight)
-                        .border(width = 2.dp, color = Color(0xFFDBD4D9), shape = fieldShape)
-                        .background(color = Color(0xFFDBD4D9), shape = fieldShape)
+                        .then(
+                            if (interactionLocked) {
+                                Modifier
+                            } else {
+                                Modifier.border(
+                                    width = 2.dp,
+                                    color = PosLinkDesignTokens.BorderColor,
+                                    shape = fieldShape
+                                )
+                            }
+                        )
+                        .background(color = fieldContainerColor, shape = fieldShape)
                         .padding(horizontal = PosLinkDesignTokens.FieldInnerHorizontalPadding),
                     contentAlignment = Alignment.Center
                 ) {

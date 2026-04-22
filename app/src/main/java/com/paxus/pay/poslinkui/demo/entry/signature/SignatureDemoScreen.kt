@@ -303,7 +303,7 @@ private fun SignatureActionButton(
         variant = PosLinkPrimaryButtonVariant.PoslinkLegacy,
         containerColorOverride = background,
         disabledContainerColorOverride = background.copy(alpha = 0.38f),
-        textColorOverride = Color(0xFFECECEC),
+        textColorOverride = PosLinkDesignTokens.PrimaryActionTextColor,
         allCapsOverride = false
     )
 }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,8 +27,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -38,10 +42,9 @@ import com.pax.us.pay.ui.constant.entry.enumeration.InputType
 import com.paxus.pay.poslinkui.demo.R
 import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
+import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyThemeButton
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
+import com.paxus.pay.poslinkui.demo.utils.DeviceUtils
 import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils
 import kotlinx.coroutines.delay
 
@@ -104,9 +107,13 @@ fun GenericStringEntryScreen(
     val scroll = rememberScrollState()
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val res = LocalContext.current.resources
+    val dm = res.displayMetrics
     val derived = remember(valuePattern, maxLengthFallback, eInputType) {
         deriveGenericStringEntryState(valuePattern, maxLengthFallback, eInputType)
     }
+    val sectionSpacing = dimensionResource(R.dimen.space_between_textview)
+    val titleTextSize = (res.getDimension(R.dimen.text_size_title) / dm.scaledDensity).sp
     val lengths = derived.lengths
     val confirmText = if (useLegacyFleetInputStyle) {
         stringResource(R.string.trans_confirm_btn)
@@ -123,13 +130,13 @@ fun GenericStringEntryScreen(
         }
     }
 
-    LaunchedEffect(useLegacyFleetInputStyle) {
-        if (!useLegacyFleetInputStyle) return@LaunchedEffect
-        delay(200)
+    LaunchedEffect(derived.keyboardType) {
+        val shouldShowSoftKeyboard = !DeviceUtils.hasPhysicalKeyboard()
+        delay(120)
         repeat(2) {
             focusRequester.requestFocus()
-            keyboardController?.show()
-            delay(120)
+            if (shouldShowSoftKeyboard) keyboardController?.show()
+            delay(150)
         }
     }
 
@@ -143,26 +150,31 @@ fun GenericStringEntryScreen(
             .fillMaxWidth()
             .verticalScroll(scroll)
     ) {
-        PosLinkText(
+        Spacer(modifier = Modifier.height(sectionSpacing))
+        Text(
             text = message,
-            role = PosLinkTextRole.ScreenTitle,
+            color = PosLinkDesignTokens.PrimaryTextColor,
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Normal,
+                fontSize = titleTextSize,
+                lineHeight = titleTextSize * PosLinkDesignTokens.EntryTitleLineHeightMultiplier
+            ),
             modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
+        Spacer(modifier = Modifier.height(sectionSpacing))
         GenericStringEntryTextField(
             text = text,
             onTextChange = { text = it },
-            useLegacyFleetInputStyle = useLegacyFleetInputStyle,
             keyboardType = derived.keyboardType,
             mask = derived.mask,
             maxChars = derived.maxChars,
             readOnly = interactionLocked,
             focusRequester = focusRequester
         )
-        PosLinkPrimaryButton(
+        PosLinkLegacyThemeButton(
             text = confirmText,
             enabled = !interactionLocked,
-            textLetterSpacing = if (useLegacyFleetInputStyle) 1.25.sp else PosLinkDesignTokens.ButtonTextLetterSpacing,
+            modifier = Modifier.fillMaxWidth(),
             onClick = submit
         )
     }
@@ -172,13 +184,15 @@ fun GenericStringEntryScreen(
 private fun GenericStringEntryTextField(
     text: String,
     onTextChange: (String) -> Unit,
-    useLegacyFleetInputStyle: Boolean,
     keyboardType: KeyboardType,
     mask: Boolean,
     maxChars: Int,
     readOnly: Boolean,
     focusRequester: FocusRequester
 ) {
+    val inputHeight = PosLinkDesignTokens.buttonHeight()
+    val cornerRadius = dimensionResource(R.dimen.corner_radius)
+    val fieldShape = RoundedCornerShape(cornerRadius)
     val applyFiltered: (String) -> Unit = { raw ->
         val next = when (keyboardType) {
             KeyboardType.Number -> raw.filter { it.isDigit() }
@@ -188,53 +202,41 @@ private fun GenericStringEntryTextField(
             onTextChange(next)
         }
     }
-    if (useLegacyFleetInputStyle) {
-        BasicTextField(
-            value = text,
-            onValueChange = applyFiltered,
-            readOnly = readOnly,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(PosLinkDesignTokens.buttonHeight())
-                .focusRequester(focusRequester),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            visualTransformation = if (mask) PasswordVisualTransformation() else VisualTransformation.None,
-            textStyle = MaterialTheme.typography.bodyLarge.copy(
-                textAlign = TextAlign.Center,
-                color = Color(0xFF222222)
-            ),
-            cursorBrush = SolidColor(PosLinkDesignTokens.PastelAccent),
-            decorationBox = { inner ->
-                androidx.compose.foundation.layout.Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(PosLinkDesignTokens.buttonHeight())
-                        .border(
-                            width = 2.dp,
-                            color = PosLinkDesignTokens.BorderColor,
-                            shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
-                        )
-                        .background(
-                            color = PosLinkDesignTokens.BorderColor,
-                            shape = RoundedCornerShape(PosLinkDesignTokens.CornerRadius)
-                        )
-                        .padding(horizontal = 8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    inner()
-                }
+    BasicTextField(
+        value = text,
+        onValueChange = applyFiltered,
+        readOnly = readOnly,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(inputHeight)
+            .focusRequester(focusRequester),
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        visualTransformation = if (mask) PasswordVisualTransformation() else VisualTransformation.None,
+        textStyle = MaterialTheme.typography.bodyLarge.copy(
+            textAlign = TextAlign.Center,
+            color = PosLinkDesignTokens.OnLightTextColor
+        ),
+        cursorBrush = SolidColor(PosLinkDesignTokens.PastelAccent),
+        decorationBox = { inner ->
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(inputHeight)
+                    .border(
+                        width = 2.dp,
+                        color = PosLinkDesignTokens.BorderColor,
+                        shape = fieldShape
+                    )
+                    .background(
+                        color = PosLinkDesignTokens.BorderColor,
+                        shape = fieldShape
+                    )
+                    .padding(horizontal = PosLinkDesignTokens.FieldInnerHorizontalPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                inner()
             }
-        )
-    } else {
-        androidx.compose.material3.OutlinedTextField(
-            value = text,
-            onValueChange = applyFiltered,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !readOnly,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            visualTransformation = if (mask) PasswordVisualTransformation() else VisualTransformation.None
-        )
-    }
+        }
+    )
 }

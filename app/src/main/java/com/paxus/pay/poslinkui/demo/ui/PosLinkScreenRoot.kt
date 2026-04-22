@@ -27,12 +27,7 @@ fun PosLinkScreenRoot(
         modifier = modifier.fillMaxSize(),
         color = PosLinkDesignTokens.BackgroundColor
     ) {
-        val padding = PaddingValues(
-            start = spec.screenHorizontalPadding,
-            top = spec.screenVerticalPadding,
-            end = spec.screenHorizontalPadding,
-            bottom = spec.screenVerticalPadding
-        )
+        val padding = PaddingValues(horizontal = spec.screenHorizontalPadding)
         Box(Modifier.padding(padding)) {
             content(padding)
         }

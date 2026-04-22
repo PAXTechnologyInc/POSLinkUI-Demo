@@ -98,20 +98,20 @@ public class ElectronicSignatureView extends View {
 
     public ElectronicSignatureView(Context context) {
         super(context);
-        init(context);
+        initializeView(context);
     }
 
     public ElectronicSignatureView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        initializeView(context);
     }
 
     public ElectronicSignatureView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        initializeView(context);
     }
 
-    public void init(Context context) {
+    private void initializeView(Context context) {
         setContentDescription("ElectronicSignatureView");
         mPaintWidth = (int) context.getResources().getDimension(R.dimen.paint_width);
         mGesturePaint.setAntiAlias(true);
@@ -148,7 +148,7 @@ public class ElectronicSignatureView extends View {
                 touchMove(event);
                 break;
             case MotionEvent.ACTION_UP:
-                touchUp(event);
+                touchUp();
                 break;
             default:
                 break;
@@ -232,7 +232,7 @@ public class ElectronicSignatureView extends View {
     }
 
     // up from screen
-    private void touchUp(MotionEvent event) {
+    private void touchUp() {
         //dataListener.onUp((short)event.getX(), (short)event.getY());
         cacheCanvas.drawPath(mPath, mGesturePaint);
         PathMeasure pathMeasure = new PathMeasure(mPath, false);
@@ -296,31 +296,30 @@ public class ElectronicSignatureView extends View {
      * @param blank      side blank area
      */
     public void save(String path, boolean clearBlank, int blank) {
-        new Thread(() -> {
-            Bitmap bitmap = cachebBitmap;
-            if (clearBlank) {
-                bitmap = clearBlank(bitmap, blank, mBackColor);
-            }
-            // BitmapUtil.createScaledBitmapByHeight(srcBitmap, 300);// compress bitmap
-            bitmap = placeBitmapIntoRect(bitmap, rect, padding, background);
+        new Thread(() -> saveBitmapToPath(path, clearBlank, blank)).start();
+    }
 
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
-            byte[] buffer = bos.toByteArray();
-            if (buffer != null) {
-                File file = new File(path);
-                if (!file.delete()) {
-                    Logger.INSTANCE.d(file.toString() + "is not existed");
-                }
+    private void saveBitmapToPath(String path, boolean clearBlank, int blank) {
+        Bitmap bitmap = cachebBitmap;
+        if (clearBlank) {
+            bitmap = clearBlank(bitmap, blank, mBackColor);
+        }
+        // BitmapUtil.createScaledBitmapByHeight(srcBitmap, 300);// compress bitmap
+        bitmap = placeBitmapIntoRect(bitmap, rect, padding, background);
 
-                try (OutputStream outputStream = new FileOutputStream(file)) {
-                    outputStream.write(buffer);
-                } catch (Exception e) {
-                    Logger.INSTANCE.e(e);
-                }
-            }
-        }).start();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+        byte[] buffer = bos.toByteArray();
+        File file = new File(path);
+        if (!file.delete()) {
+            Logger.INSTANCE.d(file + "is not existed");
+        }
 
+        try (OutputStream outputStream = new FileOutputStream(file)) {
+            outputStream.write(buffer);
+        } catch (Exception e) {
+            Logger.INSTANCE.e(e);
+        }
     }
 
     /**
@@ -342,7 +341,7 @@ public class ElectronicSignatureView extends View {
             bp.getPixels(pixels, 0, width, 0, y, width, 1);
             for (int pix : pixels) {
                 if (pix != backColor) {
-                    return y - blank > 0 ? y - blank : 0;
+                    return Math.max(y - blank, 0);
                 }
             }
         }
@@ -355,7 +354,7 @@ public class ElectronicSignatureView extends View {
             bp.getPixels(pixels, 0, width, 0, y, width, 1);
             for (int pix : pixels) {
                 if (pix != backColor) {
-                    return y + blank > height - 1 ? height - 1 : y + blank;
+                    return Math.min(y + blank, height - 1);
                 }
             }
         }
@@ -368,7 +367,7 @@ public class ElectronicSignatureView extends View {
             bp.getPixels(pixels, 0, 1, x, 0, 1, height);
             for (int pix : pixels) {
                 if (pix != backColor) {
-                    return x - blank > 0 ? x - blank : 0;
+                    return Math.max(x - blank, 0);
                 }
             }
         }
@@ -381,7 +380,7 @@ public class ElectronicSignatureView extends View {
             bp.getPixels(pixels, 0, 1, x, 0, 1, height);
             for (int pix : pixels) {
                 if (pix != backColor) {
-                    return x + blank > width - 1 ? width - 1 : x + blank;
+                    return Math.min(x + blank, width - 1);
                 }
             }
         }
@@ -415,7 +414,7 @@ public class ElectronicSignatureView extends View {
      */
     public void setPaintWidth(int paintWidth) {
         this.mPaintWidth = paintWidth > 0 ? paintWidth : 5;
-        mGesturePaint.setStrokeWidth(paintWidth);
+        mGesturePaint.setStrokeWidth(mPaintWidth);
     }
 
     public void setBackColor(int backColor) {
@@ -483,8 +482,9 @@ public class ElectronicSignatureView extends View {
     }
 
     public void setSampleRate(int sampleRate) {
-        if (sampleRate >= 1)
+        if (sampleRate >= 1) {
             this.sampleRate = sampleRate;
+        }
     }
 
 }

@@ -2,7 +2,6 @@
 
 import android.os.Bundle
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,8 +16,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
-import java.math.BigDecimal
 import java.math.RoundingMode
+import java.util.Locale
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -576,18 +575,19 @@ internal fun PoslinkItemDetail.toReadableLine(index: Int, currencySymbol: String
         "2" -> "ft"
         else -> unitRaw.orEmpty()
     }
+    val isMultiplierUnit = unitDisplay.uppercase(Locale.ROOT) == "X"
     val unitPriceText = formatPoslinkMoney(unitPrice ?: price, symbol)
     val amountText = formatPoslinkMoney(price, symbol)
 
     val qtyAndUnit = when {
         quantityRaw.isNullOrBlank() -> ""
-        unitDisplay.equals("x", ignoreCase = true) -> "x$quantityRaw"
+        isMultiplierUnit -> "x$quantityRaw"
         unitDisplay.isBlank() -> quantityRaw
         else -> "$quantityRaw$unitDisplay"
     }
     val atUnitPrice = when {
         unitPriceText.isBlank() -> ""
-        unitDisplay.equals("x", ignoreCase = true) -> "@$unitPriceText"
+        isMultiplierUnit -> "@$unitPriceText"
         unitDisplay.isBlank() -> "@$unitPriceText"
         else -> "@$unitPriceText/$unitDisplay"
     }

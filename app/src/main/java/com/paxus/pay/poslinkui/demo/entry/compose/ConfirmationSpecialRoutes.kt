@@ -238,8 +238,7 @@ private fun SurchargeFeeEntryScreen(extras: Bundle, viewModel: EntryViewModel) {
         )
         Spacer(Modifier.height(15.dp))
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(PosLinkDesignTokens.CompactSpacing)
+            modifier = Modifier.fillMaxWidth()
         ) {
             PosLinkPrimaryButton(
                 text = stringResource(R.string.confirm_option_yes),

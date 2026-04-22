@@ -17,9 +17,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.pax.us.pay.ui.constant.entry.OptionEntry
@@ -53,10 +57,16 @@ fun OptionListEntryRoute(
         return
     }
     val context = LocalContext.current
+    val titleTextSize = (resources.getDimension(R.dimen.text_size_title) / resources.displayMetrics.scaledDensity).sp
     Column(modifier = Modifier.fillMaxSize()) {
-        PosLinkText(
+        Text(
             text = OptionEntryMessageFormatter.title(action, extras, resources),
-            role = PosLinkTextRole.ScreenTitle,
+            color = PosLinkDesignTokens.PrimaryTextColor,
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Normal,
+                fontSize = titleTextSize,
+                lineHeight = titleTextSize * PosLinkDesignTokens.EntryTitleLineHeightMultiplier
+            ),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))

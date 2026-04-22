@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.ui.ExperimentalComposeUiApi::class)
+
 package com.paxus.pay.poslinkui.demo.entry.security
 
 import android.content.BroadcastReceiver
@@ -6,8 +8,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.graphics.Rect
-import android.view.LayoutInflater
-import android.view.View
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,16 +30,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -48,7 +53,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.pax.us.pay.ui.constant.entry.EntryRequest
@@ -68,6 +72,7 @@ import com.paxus.pay.poslinkui.demo.viewmodel.EntryViewModel
 import com.paxus.pay.poslinkui.demo.viewmodel.SecondScreenInfoViewModel
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import kotlin.math.roundToInt
+import java.util.Locale
 
 /**
  * Demo security Entry: notifies BroadPOS via [com.pax.us.pay.ui.constant.entry.EntryRequest.ACTION_SECURITY_AREA],
@@ -93,14 +98,13 @@ fun SecuritySecureAreaScreen(
         entryAction == SecurityEntry.ACTION_ENTER_CARD_ALL_DIGITS ||
         entryAction == SecurityEntry.ACTION_ENTER_CARD_LAST_4_DIGITS
     val pinReadyOnly = entryAction == SecurityEntry.ACTION_ENTER_PIN
-    val isCreditSalePinMain = pinReadyOnly && isCreditSaleTransType(extras)
     val hasPhysicalKeyboard = remember { DeviceUtils.hasPhysicalKeyboard() }
     val isUsingExternalPinPad = extras.getBooleanCompat(
         EntryExtraData.PARAM_IS_EXTERNAL_PINPAD,
         false,
         "isExternalPinPad"
     )
-    val shouldShowCustomPinPad = pinReadyOnly && isCreditSalePinMain && !hasPhysicalKeyboard && !isUsingExternalPinPad
+    val shouldShowCustomPinPad = pinReadyOnly && !hasPhysicalKeyboard && !isUsingExternalPinPad
     val showPinBypass = remember(extras, pinReadyOnly) {
         pinReadyOnly && canBypassPin(extras)
     }
@@ -128,15 +132,13 @@ fun SecuritySecureAreaScreen(
     Column(
         modifier = securitySecureAreaRootColumnModifier(
             pinReadyOnly = pinReadyOnly,
-            isInputAccount = isInputAccount,
-            isCreditSalePinMain = isCreditSalePinMain
+            isInputAccount = isInputAccount
         )
     ) {
         SecuritySecureAreaPrimaryBody(
             SecuritySecureAreaPrimaryBodyParams(
                 pinUi = SecuritySecureAreaPinUiParams(
                     pinReadyOnly = pinReadyOnly,
-                    isCreditSalePinMain = isCreditSalePinMain,
                     shouldShowCustomPinPad = shouldShowCustomPinPad,
                     isLegacySecurityFieldEntry = isLegacySecurityFieldEntry,
                     isInputAccount = isInputAccount,
@@ -176,7 +178,11 @@ private fun SecuritySecureAreaEntrySideEffects(
     onPinCleared: () -> Unit
 ) {
     val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     if (pinStatusEnabled) {
+        LaunchedEffect(entryAction) {
+            keyboardController?.hide()
+        }
         DisposableEffect(entryAction, context) {
             val receiver = object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
@@ -206,11 +212,10 @@ private fun SecuritySecureAreaEntrySideEffects(
 
 private fun securitySecureAreaRootColumnModifier(
     pinReadyOnly: Boolean,
-    isInputAccount: Boolean,
-    isCreditSalePinMain: Boolean
+    isInputAccount: Boolean
 ): Modifier = Modifier
     .fillMaxWidth()
-    .then(if (isCreditSalePinMain || isInputAccount) Modifier.fillMaxHeight() else Modifier)
+    .then(if (pinReadyOnly || isInputAccount) Modifier.fillMaxHeight() else Modifier)
     .padding(
         top = if (pinReadyOnly) {
             PosLinkDesignTokens.SpaceBetweenTextView
@@ -230,6 +235,25 @@ private fun securitySecureAreaRootColumnModifier(
         }
     )
 
+private data class LegacySecureAreaBounds(
+    val x: Int,
+    val y: Int,
+    val width: Int,
+    val height: Int
+)
+
+private fun LayoutCoordinates.toLegacySecureAreaBounds(activity: FragmentActivity): LegacySecureAreaBounds {
+    val position = positionInWindow()
+    val decorView = activity.window.decorView
+    val barHeight = Rect().also { decorView.getWindowVisibleDisplayFrame(it) }.top
+    return LegacySecureAreaBounds(
+        x = position.x.roundToInt(),
+        y = (position.y - barHeight).roundToInt(),
+        width = size.width,
+        height = size.height
+    )
+}
+
 @Composable
 private fun SecuritySecureAreaPedPlaceholderSection(
     pinReadyOnly: Boolean,
@@ -241,6 +265,7 @@ private fun SecuritySecureAreaPedPlaceholderSection(
     onContinue: () -> Unit
 ) {
     val continueEnabled = !LocalEntryInteractionLocked.current
+    val activity = LocalContext.current as FragmentActivity
     if (pinReadyOnly || isInputAccount || isLegacySecurityFieldEntry) return
     OutlinedTextField(
         value = "",
@@ -259,12 +284,12 @@ private fun SecuritySecureAreaPedPlaceholderSection(
             .onGloballyPositioned { coords ->
                 if (boundsSent || coords.size.width <= 0) return@onGloballyPositioned
                 onBoundsSent()
-                val pos = coords.positionInWindow()
+                val legacyBounds = coords.toLegacySecureAreaBounds(activity)
                 viewModel.sendSecurityAreaBounds(
-                    pos.x.roundToInt(),
-                    pos.y.roundToInt(),
-                    coords.size.width,
-                    coords.size.height,
+                    legacyBounds.x,
+                    legacyBounds.y,
+                    legacyBounds.width,
+                    legacyBounds.height,
                     null,
                     null
                 )
@@ -280,7 +305,6 @@ private fun SecuritySecureAreaPedPlaceholderSection(
 /** PIN / input-account presentation fields for [SecuritySecureAreaPrimaryBody]. */
 private data class SecuritySecureAreaPinUiParams(
     val pinReadyOnly: Boolean,
-    val isCreditSalePinMain: Boolean,
     val shouldShowCustomPinPad: Boolean,
     val isLegacySecurityFieldEntry: Boolean,
     val isInputAccount: Boolean,
@@ -313,7 +337,6 @@ private data class SecuritySecureAreaPrimaryBodyParams(
 @Composable
 private fun SecuritySecureAreaPrimaryBody(params: SecuritySecureAreaPrimaryBodyParams) {
     val pinReadyOnly = params.pinUi.pinReadyOnly
-    val isCreditSalePinMain = params.pinUi.isCreditSalePinMain
     val shouldShowCustomPinPad = params.pinUi.shouldShowCustomPinPad
     val isLegacySecurityFieldEntry = params.pinUi.isLegacySecurityFieldEntry
     val isInputAccount = params.pinUi.isInputAccount
@@ -335,29 +358,18 @@ private fun SecuritySecureAreaPrimaryBody(params: SecuritySecureAreaPrimaryBodyP
     } else {
         message
     }
+    val pinTotalAmountText = if (pinReadyOnly) resolveInputAccountTotalAmount(extras) else null
     when {
-        pinReadyOnly && isCreditSalePinMain -> {
+        pinReadyOnly -> {
             PinMainBody(
                 isLandscapeBySize = isLandscapeBySize,
                 showCustomPinPad = shouldShowCustomPinPad,
                 marginGap = marginGap,
+                totalAmountText = pinTotalAmountText,
                 pinLines = pinLines,
                 pinPromptMessage = pinPromptMessage,
                 showPinBypass = showPinBypass,
                 pinMaskText = pinMaskText,
-                boundsSent = boundsSent,
-                onBoundsSent = onBoundsSent,
-                viewModel = viewModel
-            )
-        }
-        pinReadyOnly -> {
-            PinPromptAndInput(
-                pinLines = pinLines,
-                fallbackMessage = pinPromptMessage,
-                showPinBypass = showPinBypass,
-                pinMaskText = pinMaskText,
-                boundsSent = boundsSent,
-                onBoundsSent = onBoundsSent,
                 viewModel = viewModel
             )
         }
@@ -399,12 +411,11 @@ private fun PinMainBody(
     isLandscapeBySize: Boolean,
     showCustomPinPad: Boolean,
     marginGap: androidx.compose.ui.unit.Dp,
+    totalAmountText: String?,
     pinLines: List<String>,
     pinPromptMessage: String,
     showPinBypass: Boolean,
     pinMaskText: String,
-    boundsSent: Boolean,
-    onBoundsSent: () -> Unit,
     viewModel: EntryViewModel
 ) {
     if (!showCustomPinPad) {
@@ -416,14 +427,15 @@ private fun PinMainBody(
                 .padding(marginGap)
         ) {
             PinPromptAndInput(
+                isLandscapeBySize = isLandscapeBySize,
+                totalAmountText = totalAmountText,
                 pinLines = pinLines,
                 fallbackMessage = pinPromptMessage,
                 showPinBypass = showPinBypass,
                 pinMaskText = pinMaskText,
-                boundsSent = boundsSent,
-                onBoundsSent = onBoundsSent,
-                viewModel = viewModel
+                marginGap = marginGap
             )
+            Spacer(modifier = Modifier.weight(1f))
         }
         return
     }
@@ -448,13 +460,13 @@ private fun PinMainBody(
                         .fillMaxHeight()
                 ) {
                     PinPromptAndInput(
+                        isLandscapeBySize = isLandscapeBySize,
+                        totalAmountText = totalAmountText,
                         pinLines = pinLines,
                         fallbackMessage = pinPromptMessage,
                         showPinBypass = showPinBypass,
                         pinMaskText = pinMaskText,
-                        boundsSent = boundsSent,
-                        onBoundsSent = onBoundsSent,
-                        viewModel = viewModel
+                        marginGap = marginGap
                     )
                     Spacer(modifier = Modifier.weight(1f))
                 }
@@ -482,13 +494,13 @@ private fun PinMainBody(
             val keyboardHeight = maxHeight * 0.5f
             Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
                 PinPromptAndInput(
+                    isLandscapeBySize = isLandscapeBySize,
+                    totalAmountText = totalAmountText,
                     pinLines = pinLines,
                     fallbackMessage = pinPromptMessage,
                     showPinBypass = showPinBypass,
                     pinMaskText = pinMaskText,
-                    boundsSent = boundsSent,
-                    onBoundsSent = onBoundsSent,
-                    viewModel = viewModel
+                    marginGap = marginGap
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Box(
@@ -509,27 +521,34 @@ private fun PinMainBody(
 
 @Composable
 private fun PinPromptAndInput(
+    isLandscapeBySize: Boolean,
+    totalAmountText: String?,
     pinLines: List<String>,
     fallbackMessage: String,
     showPinBypass: Boolean,
     pinMaskText: String,
-    boundsSent: Boolean,
-    onBoundsSent: () -> Unit,
-    viewModel: EntryViewModel
+    marginGap: androidx.compose.ui.unit.Dp
 ) {
-    val pinPrompt = fallbackMessage.ifBlank { pinLines.joinToString("\n") }
+    if (totalAmountText != null) {
+        PinAmountRow(
+            totalAmountText = totalAmountText,
+            isLandscapeBySize = isLandscapeBySize
+        )
+    }
+    val pinPrompt = if (pinLines.isNotEmpty()) pinLines.joinToString("\n") else fallbackMessage
+    val promptTextSize = dimensionResource(R.dimen.text_size_normal).value.sp
     Text(
         text = pinPrompt,
         modifier = Modifier.fillMaxWidth(),
         color = PosLinkDesignTokens.PrimaryTextColor,
-        fontSize = dimensionResource(R.dimen.text_size_normal).value.sp
+        fontSize = promptTextSize,
+        lineHeight = promptTextSize * 1.3f,
+        fontWeight = FontWeight.Normal
     )
     Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
     PinSecurePlaceholderField(
         pinMaskText = pinMaskText,
-        boundsSent = boundsSent,
-        onBoundsSent = onBoundsSent,
-        viewModel = viewModel
+        marginGap = marginGap
     )
     if (showPinBypass) {
         Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
@@ -551,6 +570,7 @@ private fun LegacySecurityFieldBody(
     onContinue: () -> Unit
 ) {
     val continueEnabled = !LocalEntryInteractionLocked.current
+    val activity = LocalContext.current as FragmentActivity
     val fieldHeight = dimensionResource(R.dimen.button_height)
     val fieldGap = dimensionResource(R.dimen.margin_gap)
     val fieldCorner = dimensionResource(R.dimen.corner_radius)
@@ -576,12 +596,12 @@ private fun LegacySecurityFieldBody(
                 .onGloballyPositioned { coords ->
                     if (boundsSent || coords.size.width <= 0) return@onGloballyPositioned
                     onBoundsSent()
-                    val pos = coords.positionInWindow()
+                    val legacyBounds = coords.toLegacySecureAreaBounds(activity)
                     viewModel.sendSecurityAreaBounds(
-                        pos.x.roundToInt(),
-                        pos.y.roundToInt(),
-                        coords.size.width,
-                        coords.size.height,
+                        legacyBounds.x,
+                        legacyBounds.y,
+                        legacyBounds.width,
+                        legacyBounds.height,
                         null,
                         null
                     )
@@ -608,121 +628,273 @@ private fun LegacySecurityFieldBody(
 }
 
 /**
- * Visible PIN placeholder (light gray rounded bar) so the secure area bounds match the prototype;
- * the PED draws the real PIN, not this composable.
+ * Legacy PIN amount row from `fragment_pin.xml`.
+ */
+@Composable
+private fun PinAmountRow(
+    totalAmountText: String,
+    isLandscapeBySize: Boolean
+) {
+    val amountTextSize = if (isLandscapeBySize) {
+        dimensionResource(R.dimen.text_size_normal).value.sp
+    } else {
+        dimensionResource(R.dimen.text_size_subtitle).value.sp
+    }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = stringResource(R.string.total_amount),
+            color = PosLinkDesignTokens.PrimaryTextColor,
+            fontSize = amountTextSize,
+            fontWeight = FontWeight.Normal
+        )
+        Text(
+            text = totalAmountText,
+            color = PosLinkDesignTokens.PrimaryTextColor,
+            fontSize = amountTextSize,
+            fontWeight = FontWeight.Normal
+        )
+    }
+    Spacer(modifier = Modifier.height(PosLinkDesignTokens.SpaceBetweenTextView))
+}
+
+/**
+ * Visible PIN placeholder uses the legacy TextView look only; it never requests secure bounds.
  */
 @Composable
 private fun PinSecurePlaceholderField(
     pinMaskText: String,
-    boundsSent: Boolean,
-    onBoundsSent: () -> Unit,
-    viewModel: EntryViewModel
+    marginGap: androidx.compose.ui.unit.Dp
 ) {
     val fieldHeight = dimensionResource(R.dimen.button_height)
     val fieldCorner = dimensionResource(R.dimen.corner_radius)
     val fieldShape = RoundedCornerShape(fieldCorner)
-    val fieldSurface = Color(0xFFDBD4D9)
-    BasicTextField(
-        value = pinMaskText,
-        onValueChange = { },
-        readOnly = true,
-        singleLine = true,
-        textStyle = TextStyle(
-            fontSize = dimensionResource(R.dimen.text_size_subtitle).value.sp,
-            color = colorResource(R.color.pastel_text_color_on_light),
-            textAlign = TextAlign.Center
-        ),
+    Box(
         modifier = Modifier
+            .padding(horizontal = marginGap, vertical = 10.dp)
             .fillMaxWidth()
             .height(fieldHeight)
-            .onGloballyPositioned { coords ->
-                if (boundsSent || coords.size.width <= 0) return@onGloballyPositioned
-                onBoundsSent()
-                val pos = coords.positionInWindow()
-                viewModel.sendSecurityAreaBounds(
-                    pos.x.roundToInt(),
-                    pos.y.roundToInt(),
-                    coords.size.width,
-                    coords.size.height,
-                    null,
-                    null
-                )
-            },
-        decorationBox = { innerTextField ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(fieldHeight)
-                    .background(color = fieldSurface, shape = fieldShape)
-                        .padding(10.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                innerTextField()
-            }
-        }
-    )
+            .background(color = colorResource(R.color.pastel_on_background), shape = fieldShape)
+            .padding(10.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = pinMaskText,
+            modifier = Modifier.fillMaxWidth(),
+            color = colorResource(R.color.pastel_text_color_on_light),
+            fontSize = dimensionResource(R.dimen.text_size_subtitle).value.sp,
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 /**
- * Reuses legacy XML keyboard to keep key size/margins/font parity with golive.
+ * Compose-native legacy PIN pad that only reports key rects and never creates a second input path.
  */
 @Composable
 private fun PinPadKeyboard(
     modifier: Modifier = Modifier,
     viewModel: EntryViewModel
 ) {
-    var pinLayoutSent by remember { mutableStateOf(false) }
-    AndroidView(
-        modifier = modifier.fillMaxWidth().fillMaxHeight(),
-        factory = { context ->
-            LayoutInflater.from(context).inflate(R.layout.fragment_pin_custom_keyboard, null, false)
-        },
-        update = { root ->
-            if (pinLayoutSent) return@AndroidView
-            root.post {
-                if (pinLayoutSent) return@post
-                val keyBundle = buildPinKeyLayoutBundle(root)
-                if (keyBundle.size() == 13) {
-                    viewModel.sendPinKeyLayout(keyBundle)
-                    viewModel.sendSecurityAreaPinReady()
-                    pinLayoutSent = true
-                }
+    val configuration = LocalConfiguration.current
+    val keyRects = remember(configuration.orientation) { mutableStateMapOf<String, Rect>() }
+    var pinLayoutSent by remember(configuration.orientation) { mutableStateOf(false) }
+    val defaultGap = dimensionResource(R.dimen.default_gap)
+    val lightKeyText = colorResource(R.color.pastel_text_color_on_light)
+    val cancelColor = colorResource(R.color.cancel)
+    val clearColor = colorResource(R.color.clear)
+    val enterColor = colorResource(R.color.enter)
+
+    LaunchedEffect(keyRects.size, pinLayoutSent) {
+        if (!pinLayoutSent && keyRects.size == 13) {
+            val keyBundle = Bundle().apply {
+                keyRects.forEach { (key, value) -> putParcelable(key, value) }
+            }
+            viewModel.sendPinKeyLayout(keyBundle)
+            viewModel.sendSecurityAreaPinReady()
+            pinLayoutSent = true
+        }
+    }
+
+    Row(
+        modifier = modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.spacedBy(defaultGap)
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(3f)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.spacedBy(defaultGap)
+        ) {
+            PinDigitRow(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                keys = listOf(
+                    EntryRequest.PARAM_KEY_1 to "1",
+                    EntryRequest.PARAM_KEY_2 to "2",
+                    EntryRequest.PARAM_KEY_3 to "3"
+                ),
+                gap = defaultGap,
+                textColor = lightKeyText,
+                onKeyRectChanged = { key, rect -> keyRects[key] = rect }
+            )
+            PinDigitRow(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                keys = listOf(
+                    EntryRequest.PARAM_KEY_4 to "4",
+                    EntryRequest.PARAM_KEY_5 to "5",
+                    EntryRequest.PARAM_KEY_6 to "6"
+                ),
+                gap = defaultGap,
+                textColor = lightKeyText,
+                onKeyRectChanged = { key, rect -> keyRects[key] = rect }
+            )
+            PinDigitRow(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                keys = listOf(
+                    EntryRequest.PARAM_KEY_7 to "7",
+                    EntryRequest.PARAM_KEY_8 to "8",
+                    EntryRequest.PARAM_KEY_9 to "9"
+                ),
+                gap = defaultGap,
+                textColor = lightKeyText,
+                onKeyRectChanged = { key, rect -> keyRects[key] = rect }
+            )
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(defaultGap)
+            ) {
+                Spacer(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                )
+                PinPadKey(
+                    requestKey = EntryRequest.PARAM_KEY_0,
+                    label = "0",
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    backgroundColor = Color.White,
+                    textColor = lightKeyText,
+                    onKeyRectChanged = { key, rect -> keyRects[key] = rect }
+                )
+                Spacer(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                )
             }
         }
-    )
-}
-
-private fun buildPinKeyLayoutBundle(root: View): Bundle {
-    val keyMap = listOf(
-        EntryRequest.PARAM_KEY_0 to R.id.key_0,
-        EntryRequest.PARAM_KEY_1 to R.id.key_1,
-        EntryRequest.PARAM_KEY_2 to R.id.key_2,
-        EntryRequest.PARAM_KEY_3 to R.id.key_3,
-        EntryRequest.PARAM_KEY_4 to R.id.key_4,
-        EntryRequest.PARAM_KEY_5 to R.id.key_5,
-        EntryRequest.PARAM_KEY_6 to R.id.key_6,
-        EntryRequest.PARAM_KEY_7 to R.id.key_7,
-        EntryRequest.PARAM_KEY_8 to R.id.key_8,
-        EntryRequest.PARAM_KEY_9 to R.id.key_9,
-        EntryRequest.PARAM_KEY_CLEAR to R.id.key_clear,
-        EntryRequest.PARAM_KEY_ENTER to R.id.key_enter,
-        EntryRequest.PARAM_KEY_CANCEL to R.id.key_cancel
-    )
-    return Bundle().apply {
-        keyMap.forEach { (key, id) ->
-            val keyView = root.findViewById<View>(id) ?: return@forEach
-            val location = IntArray(2)
-            keyView.getLocationOnScreen(location)
-            putParcelable(
-                key,
-                Rect(
-                    location[0],
-                    location[1],
-                    location[0] + keyView.width,
-                    location[1] + keyView.height
-                )
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.spacedBy(defaultGap)
+        ) {
+            PinPadKey(
+                requestKey = EntryRequest.PARAM_KEY_CANCEL,
+                label = "Cancel",
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                backgroundColor = cancelColor,
+                textColor = Color.White,
+                onKeyRectChanged = { key, rect -> keyRects[key] = rect }
+            )
+            PinPadKey(
+                requestKey = EntryRequest.PARAM_KEY_CLEAR,
+                label = "Clear",
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                backgroundColor = clearColor,
+                textColor = Color.White,
+                onKeyRectChanged = { key, rect -> keyRects[key] = rect }
+            )
+            PinPadKey(
+                requestKey = EntryRequest.PARAM_KEY_ENTER,
+                label = "Enter",
+                modifier = Modifier
+                    .weight(2f)
+                    .fillMaxWidth(),
+                backgroundColor = enterColor,
+                textColor = Color.White,
+                onKeyRectChanged = { key, rect -> keyRects[key] = rect }
             )
         }
+    }
+}
+
+@Composable
+private fun PinDigitRow(
+    modifier: Modifier = Modifier,
+    keys: List<Pair<String, String>>,
+    gap: androidx.compose.ui.unit.Dp,
+    textColor: Color,
+    onKeyRectChanged: (String, Rect) -> Unit
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(gap)
+    ) {
+        keys.forEach { (requestKey, label) ->
+            PinPadKey(
+                requestKey = requestKey,
+                label = label,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                backgroundColor = Color.White,
+                textColor = textColor,
+                onKeyRectChanged = onKeyRectChanged
+            )
+        }
+    }
+}
+
+@Composable
+private fun PinPadKey(
+    requestKey: String,
+    label: String,
+    modifier: Modifier,
+    backgroundColor: Color,
+    textColor: Color,
+    onKeyRectChanged: (String, Rect) -> Unit
+) {
+    Box(
+        modifier = modifier
+            .background(backgroundColor)
+            .onGloballyPositioned { coords ->
+                if (coords.size.width <= 0 || coords.size.height <= 0) return@onGloballyPositioned
+                val pos = coords.positionInWindow()
+                onKeyRectChanged(
+                    requestKey,
+                    Rect(
+                        pos.x.roundToInt(),
+                        pos.y.roundToInt(),
+                        pos.x.roundToInt() + coords.size.width,
+                        pos.y.roundToInt() + coords.size.height
+                    )
+                )
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = label,
+            color = textColor,
+            fontSize = dimensionResource(R.dimen.text_size_subtitle).value.sp,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
@@ -738,11 +910,13 @@ private fun InputAccountPanSecureField(
     onBoundsSent: () -> Unit,
     viewModel: EntryViewModel
 ) {
+    val activity = LocalContext.current as FragmentActivity
     val fieldHeight = dimensionResource(R.dimen.button_height)
     val fieldCorner = dimensionResource(R.dimen.corner_radius)
     val fieldShape = RoundedCornerShape(fieldCorner)
     val fieldSurface = Color(0xFFDBD4D9)
     val panTextPurple = Color(0xFF9C27B0)
+    val panTextColorHex = String.format(Locale.ROOT, "%08X", panTextPurple.toArgb())
     BasicTextField(
         value = "",
         onValueChange = {},
@@ -759,14 +933,14 @@ private fun InputAccountPanSecureField(
             .onGloballyPositioned { coords ->
                 if (boundsSent || coords.size.width <= 0) return@onGloballyPositioned
                 onBoundsSent()
-                val pos = coords.positionInWindow()
+                val legacyBounds = coords.toLegacySecureAreaBounds(activity)
                 viewModel.sendSecurityAreaBounds(
-                    pos.x.roundToInt(),
-                    pos.y.roundToInt(),
-                    coords.size.width,
-                    coords.size.height,
+                    legacyBounds.x,
+                    legacyBounds.y,
+                    legacyBounds.width,
+                    legacyBounds.height,
                     "Card Number",
-                    null
+                    panTextColorHex
                 )
             },
         decorationBox = { innerTextField ->

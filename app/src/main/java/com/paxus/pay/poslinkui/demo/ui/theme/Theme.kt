@@ -46,10 +46,10 @@ private val LightColorScheme = lightColorScheme(
     surfaceVariant = PosLinkDesignTokens.SurfaceMutedColor,
     outline = PosLinkDesignTokens.BorderColor,
     error = PosLinkDesignTokens.FailColor,
-    onPrimary = PosLinkDesignTokens.PrimaryTextColor,
-    onSecondary = PosLinkDesignTokens.PrimaryTextColor,
+    onPrimary = PosLinkDesignTokens.PrimaryActionTextColor,
+    onSecondary = PosLinkDesignTokens.PrimaryActionTextColor,
     onBackground = PosLinkDesignTokens.PrimaryTextColor,
     onSurface = PosLinkDesignTokens.PrimaryTextColor,
     onSurfaceVariant = PosLinkDesignTokens.OnLightTextColor,
-    onError = PosLinkDesignTokens.PrimaryTextColor
+    onError = PosLinkDesignTokens.PrimaryActionTextColor
 )

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,7 +47,6 @@ import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyThemeButton
 import com.paxus.pay.poslinkui.demo.ui.device.LocalDeviceLayoutSpec
-import com.paxus.pay.poslinkui.demo.ui.device.DeviceProfileId
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import kotlin.math.roundToInt
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils
@@ -107,10 +105,6 @@ fun AmountScreen(
     val bodyTextSize = (res.getDimension(R.dimen.text_size_normal) / dm.scaledDensity).sp
     val bodyLineHeight = (res.getDimension(R.dimen.text_size_normal) / dm.scaledDensity * 1.4f).sp
     val targetHorizontalPaddingDp = dimensionResource(R.dimen.padding_horizontal).value.roundToInt()
-    val topOffset = when (spec.profileId) {
-        DeviceProfileId.A920_CLASS, DeviceProfileId.A920MAX -> (-spec.screenVerticalPaddingDp).dp
-        else -> 0.dp
-    }
     val legacyHorizontalInset = (targetHorizontalPaddingDp - spec.screenHorizontalPaddingDp)
         .coerceAtLeast(0)
         .dp
@@ -150,20 +144,20 @@ fun AmountScreen(
 
     Column(
         modifier = Modifier
-            .offset(y = topOffset)
             .padding(horizontal = legacyHorizontalInset)
             .fillMaxWidth()
             .verticalScroll(scrollState),
     ) {
         // fragment_amount: first TextView only has marginVertical (no extra Spacer above); root padding
         // already separates content from the action bar 锟?avoid stacking another full section gap.
+        Spacer(modifier = Modifier.height(sectionSpacing))
         Text(
             text = message,
             style = TextStyle(
                 color = PosLinkDesignTokens.PrimaryTextColor,
                 fontWeight = FontWeight.Normal,
                 fontSize = titleTextSize,
-                lineHeight = titleTextSize * 1.25f
+                lineHeight = titleTextSize * PosLinkDesignTokens.EntryTitleLineHeightMultiplier
             ),
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
