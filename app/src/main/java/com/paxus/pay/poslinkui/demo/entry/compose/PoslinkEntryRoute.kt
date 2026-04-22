@@ -222,6 +222,7 @@ private fun PoslinkRouteInputText(
 ) {
     val minL = extras.getString(EntryExtraData.PARAM_MIN_LENGTH)?.toIntOrNull() ?: 0
     val maxL = extras.getString(EntryExtraData.PARAM_MAX_LENGTH)?.toIntOrNull() ?: 64
+    val titleSize = dimensionResource(R.dimen.text_size_title).value.sp
     PoslinkTypedInputContent(
         title = extras.getString(EntryExtraData.PARAM_TITLE).orEmpty(),
         body = null,
@@ -229,6 +230,10 @@ private fun PoslinkRouteInputText(
         minLength = minL,
         maxLength = maxL,
         defaultValue = extras.getString(EntryExtraData.PARAM_DEFAULT_VALUE).orEmpty(),
+        titleFontSize = titleSize,
+        // Keep parity with golive TextField default on-light text color.
+        hintColor = Color(0xFF222222),
+        bodyAsLegacyText = false,
         onSubmit = { payload ->
             val b = Bundle()
             when (payload) {
@@ -522,6 +527,7 @@ private fun PoslinkRouteShowInputTextBox(
 ) {
     val minL = extras.getString(EntryExtraData.PARAM_MIN_LENGTH)?.toIntOrNull() ?: 0
     val maxL = extras.getString(EntryExtraData.PARAM_MAX_LENGTH)?.toIntOrNull() ?: 64
+    val titleSize = dimensionResource(R.dimen.text_size_supertitle).value.sp
     PoslinkTypedInputContent(
         title = extras.getString(EntryExtraData.PARAM_TITLE).orEmpty(),
         body = extras.getString(EntryExtraData.PARAM_TEXT),
@@ -529,6 +535,9 @@ private fun PoslinkRouteShowInputTextBox(
         minLength = minL,
         maxLength = maxL,
         defaultValue = extras.getString(EntryExtraData.PARAM_DEFAULT_VALUE).orEmpty(),
+        titleFontSize = titleSize,
+        hintColor = Color(0xFF222222),
+        bodyAsLegacyText = true,
         onSubmit = { payload ->
             val b = Bundle()
             when (payload) {
@@ -594,6 +603,9 @@ private fun PoslinkTypedInputContent(
     minLength: Int,
     maxLength: Int,
     defaultValue: String,
+    titleFontSize: androidx.compose.ui.unit.TextUnit,
+    hintColor: Color,
+    bodyAsLegacyText: Boolean,
     onSubmit: (Any) -> Unit,
     onError: (String) -> Unit
 ) {
@@ -643,20 +655,57 @@ private fun PoslinkTypedInputContent(
     val invalidDateMsg = stringResource(R.string.err_invalid_date)
     val invalidTimeMsg = stringResource(R.string.prompt_invalid_time)
     val promptInputType = stringResource(R.string.prompt_input_type)
-    val titleMargin = PosLinkDesignTokens.SpaceBetweenTextView
+    val titleMargin = dimensionResource(R.dimen.space_between_textview)
     val bodyTopMargin = 8.dp
+    val buttonHeight = dimensionResource(R.dimen.button_height)
     Column(Modifier.verticalScroll(rememberScrollState())) {
         Spacer(Modifier.height(titleMargin))
         Text(
             text = title.ifBlank { stringResource(R.string.enter) },
             modifier = Modifier.fillMaxWidth(),
             color = PosLinkDesignTokens.PrimaryTextColor,
-            fontSize = 36.sp
+            fontSize = titleFontSize,
+            fontWeight = FontWeight.Normal
         )
         Spacer(Modifier.height(titleMargin))
         if (!body.isNullOrBlank()) {
             Spacer(Modifier.height(bodyTopMargin))
-            PoslinkFormattedTitleLegacy(title = body)
+            if (bodyAsLegacyText) {
+                val hasLegacyCommands = body.contains("\\L") ||
+                    body.contains("\\R") ||
+                    body.contains("\\C") ||
+                    body.contains("\\B") ||
+                    body.contains("\\S") ||
+                    body.contains("\\N")
+                if (hasLegacyCommands) {
+                    PoslinkFormattedTitleLegacy(title = body)
+                } else {
+                    // Match golive ShowInputTextBoxFragment text_view plain text alignment.
+                    Text(
+                        text = body,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = PosLinkDesignTokens.PrimaryTextColor,
+                        textAlign = TextAlign.Start,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontSize = PosLinkDesignTokens.PoslinkTextShowingNormalSp,
+                            lineHeight = PosLinkDesignTokens.PoslinkTextShowingNormalLineHeight,
+                            fontWeight = FontWeight.Normal
+                        )
+                    )
+                }
+            } else {
+                Text(
+                    text = body,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = PosLinkDesignTokens.PrimaryTextColor,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = PosLinkDesignTokens.PoslinkTextShowingNormalSp,
+                        lineHeight = PosLinkDesignTokens.PoslinkTextShowingNormalLineHeight,
+                        fontWeight = FontWeight.Normal
+                    )
+                )
+            }
         }
         BasicTextField(
             value = fieldValue,
@@ -697,7 +746,7 @@ private fun PoslinkTypedInputContent(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(PosLinkDesignTokens.ButtonHeight),
+                .height(buttonHeight),
             singleLine = true,
             enabled = interactionEnabled,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
@@ -721,8 +770,7 @@ private fun PoslinkTypedInputContent(
                     if (displayValue.isBlank() && hint.isNotBlank()) {
                         Text(
                             text = hint,
-                            // Match golive TextField hint tint: pastel_text_color_on_light.
-                            color = Color(0xFF222222),
+                            color = hintColor,
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
@@ -730,19 +778,18 @@ private fun PoslinkTypedInputContent(
                 }
             }
         )
-        PosLinkPrimaryButton(
-            text = stringResource(R.string.confirm).uppercase(Locale.ROOT),
+        PosLinkLegacyMaterialFilledButton(
             onClick = {
                 val rawDigits = displayValue.filter { it.isDigit() }
                 if (normalizedType == "4") {
                     val amount = CurrencyUtils.parse(displayValue)
                     if (minLength > 0 && amount <= 0L) {
                         onError(promptInput)
-                        return@PosLinkPrimaryButton
+                        return@PosLinkLegacyMaterialFilledButton
                     }
                     localSubmitted = true
                     onSubmit(amount)
-                    return@PosLinkPrimaryButton
+                    return@PosLinkLegacyMaterialFilledButton
                 }
                 val logicalValue = if (normalizedType in setOf("2", "3", "6", "7")) {
                     rawDigits
@@ -752,22 +799,38 @@ private fun PoslinkTypedInputContent(
                 val length = logicalValue.length
                 if (length < effectiveMinLength || length > effectiveMaxLength) {
                     onError(if (effectiveMinLength == effectiveMaxLength) promptInputType else promptLength)
-                    return@PosLinkPrimaryButton
+                    return@PosLinkLegacyMaterialFilledButton
                 }
                 if (normalizedType == "2" && !DateUtils().isValidateDate(rawDigits)) {
                     onError(invalidDateMsg)
-                    return@PosLinkPrimaryButton
+                    return@PosLinkLegacyMaterialFilledButton
                 }
                 if (normalizedType == "3" && !DateUtils().isValidateTime(rawDigits)) {
                     onError(invalidTimeMsg)
-                    return@PosLinkPrimaryButton
+                    return@PosLinkLegacyMaterialFilledButton
                 }
                 localSubmitted = true
                 onSubmit(logicalValue)
             },
             enabled = interactionEnabled,
-            variant = PosLinkPrimaryButtonVariant.PoslinkLegacy
-        )
+            appearance = PosLinkLegacyMaterialFillAppearance(
+                slotHeight = buttonHeight,
+                shape = RoundedCornerShape(PosLinkDesignTokens.LegacyButtonCornerRadius),
+                containerColor = PosLinkDesignTokens.PrimaryColor,
+                disabledContainerColor = PosLinkDesignTokens.PrimaryColor.copy(alpha = 0.45f),
+                pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor
+            )
+        ) {
+            Text(
+                text = stringResource(R.string.confirm).uppercase(Locale.ROOT),
+                style = MaterialTheme.typography.labelLarge,
+                color = if (interactionEnabled) {
+                    PosLinkDesignTokens.PrimaryTextColor
+                } else {
+                    PosLinkDesignTokens.PrimaryTextColor.copy(alpha = 0.38f)
+                }
+            )
+        }
     }
 }
 
