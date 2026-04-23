@@ -1,9 +1,7 @@
 ﻿package com.paxus.pay.poslinkui.demo.entry.compose
 
 import android.os.Bundle
-import android.graphics.Rect
 import android.view.KeyEvent
-import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,10 +21,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,18 +44,14 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
 import java.util.Locale
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.pax.us.pay.ui.constant.entry.EntryRequest
 import com.pax.us.pay.ui.constant.entry.PoslinkEntry
 import com.paxus.pay.poslinkui.demo.R
-import com.paxus.pay.poslinkui.demo.entry.signature.ElectronicSignatureView
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButton
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkPrimaryButtonVariant
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkText
-import com.paxus.pay.poslinkui.demo.ui.components.PosLinkTextRole
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.CurrencyUtils
 import com.paxus.pay.poslinkui.demo.utils.DateUtils

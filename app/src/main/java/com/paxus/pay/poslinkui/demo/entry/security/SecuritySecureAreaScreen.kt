@@ -9,7 +9,6 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.graphics.Rect
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -37,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
@@ -50,11 +48,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
 import com.pax.us.pay.ui.constant.entry.EntryRequest
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.pax.us.pay.ui.constant.entry.SecurityEntry
@@ -69,10 +65,8 @@ import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.DeviceUtils
 import com.paxus.pay.poslinkui.demo.utils.Logger
 import com.paxus.pay.poslinkui.demo.viewmodel.EntryViewModel
-import com.paxus.pay.poslinkui.demo.viewmodel.SecondScreenInfoViewModel
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import kotlin.math.roundToInt
-import java.util.Locale
 
 /**
  * Demo security Entry: notifies BroadPOS via [com.pax.us.pay.ui.constant.entry.EntryRequest.ACTION_SECURITY_AREA],
