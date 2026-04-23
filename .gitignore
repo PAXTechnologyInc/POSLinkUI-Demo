@@ -14,6 +14,8 @@ local.properties
 out/
 build/
 .tools/
+.gradle-user-home/
+.gradle-test-cache/
 
 # SSIM / device screenshot baselines (local only; do not version PNGs)
 Expected_Result/**/*.png
