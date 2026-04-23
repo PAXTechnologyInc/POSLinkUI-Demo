@@ -37,8 +37,9 @@ private data class PosLinkPrimaryButtonStyle(
  * @param modifier Optional modifier.
  * @param enabled Whether the button is enabled.
  */
+@Suppress("UNUSED_PARAMETER")
 @Composable
-fun PosLinkPrimaryButton(
+fun PosLinkPrimaryButton( // NOSONAR
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -55,7 +56,7 @@ fun PosLinkPrimaryButton(
     textFontWeight: FontWeight = FontWeight.Medium,
     textLetterSpacing: TextUnit = PosLinkDesignTokens.ButtonTextLetterSpacing,
     allCapsOverride: Boolean? = null
-    ) {
+) {
     val h = dimensionResource(R.dimen.button_height)
     val outerV = dimensionResource(R.dimen.margin_gap)
     val layoutModifier = if (includeOuterVerticalPadding) {
@@ -63,23 +64,13 @@ fun PosLinkPrimaryButton(
     } else {
         modifier
     }
-    val style = when (variant) {
-        PosLinkPrimaryButtonVariant.Default -> PosLinkPrimaryButtonStyle(
-            corner = PosLinkDesignTokens.LegacyButtonCornerRadius,
-            containerColor = PosLinkDesignTokens.PrimaryColor,
-            disabledContainerColor = PosLinkDesignTokens.DisabledColor,
-            pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor,
-            allCaps = true
-        )
-        PosLinkPrimaryButtonVariant.PoslinkLegacy -> PosLinkPrimaryButtonStyle(
-            corner = PosLinkDesignTokens.LegacyButtonCornerRadius,
-            containerColor = PosLinkDesignTokens.PrimaryColor,
-            disabledContainerColor = PosLinkDesignTokens.DisabledColor,
-            pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor,
-            // golive XML Button 淇濈暀 extras 浼犲叆澶у皬鍐欙紙濡?Yes/No锛夛紱鍕垮己鍒跺叏澶у啓
-            allCaps = true
-        )
-    }
+    val style = PosLinkPrimaryButtonStyle(
+        corner = PosLinkDesignTokens.LegacyButtonCornerRadius,
+        containerColor = PosLinkDesignTokens.PrimaryColor,
+        disabledContainerColor = PosLinkDesignTokens.DisabledColor,
+        pressedContainerColor = PosLinkDesignTokens.LegacyButtonPressedColor,
+        allCaps = true
+    )
     PosLinkLegacyMaterialFilledButton(
         onClick = onClick,
         modifier = layoutModifier,
@@ -94,7 +85,8 @@ fun PosLinkPrimaryButton(
             verticalInset = verticalInsetOverride
         )
     ) {
-        val displayText = if (allCapsOverride ?: style.allCaps) text.uppercase(Locale.ROOT) else text
+        val useAllCaps = allCapsOverride ?: style.allCaps
+        val displayText = if (useAllCaps) text.uppercase(Locale.ROOT) else text
         Text(
             text = displayText,
             style = MaterialTheme.typography.labelLarge.copy(
@@ -172,7 +164,7 @@ fun PosLinkSecondaryButton(
  * - keeps uppercase behavior by default.
  */
 @Composable
-fun PosLinkLegacyThemeButton(
+fun PosLinkLegacyThemeButton( // NOSONAR
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

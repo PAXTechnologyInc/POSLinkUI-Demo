@@ -242,7 +242,7 @@ internal fun FsaEntryRoute(
     viewModel: EntryViewModel
 ) {
     val currency = extras.getString(EntryExtraData.PARAM_CURRENCY, CurrencyType.USD)
-    val opts = extras.getStringArray(EntryExtraData.PARAM_FSA_AMOUNT_OPTIONS)
+    val opts = extras.getStringArray(EntryExtraData.PARAM_FSA_AMOUNT_OPTIONS)?.toList()
     FsaAmountsEntryScreen(
         currency = currency,
         fsaAmountOptions = opts,

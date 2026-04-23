@@ -408,13 +408,13 @@ private fun TipEntryRoute(
         else -> -1L
     }
     val noTipEnabled = extras.getBoolean(EntryExtraData.PARAM_ENABLE_NO_TIP_SELECTION, false)
-    val tipLengthList: Set<Int> = valuePattern
+    val tipAllowedLengths: Set<Int> = valuePattern
         ?.takeIf { it.isNotBlank() }
         ?.let { runCatching { ValuePatternUtils.getLengthList(it) }.getOrElse { mutableListOf(0) } }
         ?.mapNotNull { it }
         ?.toSet()
         ?: setOf(0)
-    fun canSubmitTip(value: Long): Boolean = value != 0L || tipLengthList.contains(0)
+    fun canSubmitTip(value: Long): Boolean = value != 0L || tipAllowedLengths.contains(0)
     fun submitTip(value: Long, tipFieldModified: Boolean) {
         if (value == 0L && !canSubmitTip(value)) {
             Toast(activity).show(activity.getString(R.string.prompt_input), TYPE.FAILURE)

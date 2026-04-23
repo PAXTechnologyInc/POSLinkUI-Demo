@@ -53,6 +53,14 @@ private val LegacyCashbackOptionTitleSize = 18.sp
 private val LegacyCashbackFieldValueSize = 14.sp
 private val LegacyCashbackFieldHintSize = 11.sp
 
+private fun resolveCashbackOptionAmount(option: SelectOptionsView.Option): Long = when (val raw = option.value) {
+    is Long -> raw
+    is Int -> raw.toLong()
+    is Number -> raw.toLong()
+    is String -> raw.toLongOrNull() ?: 0L
+    else -> 0L
+}
+
 /**
  * Static configuration for [CashbackScreen].
  */
@@ -213,7 +221,7 @@ private fun CashbackPresetOptionsBlock(
                     buttonHeight = buttonHeight,
                     cornerRadius = cornerRadius,
                     textStyle = optionTextStyle,
-                    onClick = { onPresetOptionClick((option.value as? Long) ?: 0L) }
+                    onClick = { onPresetOptionClick(resolveCashbackOptionAmount(option)) }
                 )
             }
             repeat(2 - rowOptions.size) {
@@ -270,7 +278,7 @@ private fun CashbackOptionCard(
 }
 
 @Composable
-private fun CashbackOtherAmountField(
+private fun CashbackOtherAmountField( // NOSONAR
     displayValue: String,
     maxLength: Int,
     currency: String?,

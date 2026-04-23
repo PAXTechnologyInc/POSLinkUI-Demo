@@ -76,7 +76,7 @@ public class ElectronicSignatureView extends View {
     private boolean isTouched = false;
 
     /**
-     * Paint width px锛?     */
+     * Paint width px閿?     */
     private int mPaintWidth;
 
     /**
@@ -153,7 +153,7 @@ public class ElectronicSignatureView extends View {
             default:
                 break;
         }
-        // 鏇存柊缁樺埗
+        // 閺囧瓨鏌婄紒妯哄煑
         invalidate();
         return true;
     }
@@ -222,7 +222,7 @@ public class ElectronicSignatureView extends View {
             float cY = (y + previousY) / 2;
 
             //dataListener.onMove((short)previousX, (short)previousY, (short)x, (short)y);
-            // seconds bezier curve to smooth curve锛沺reviousX, previousY as working point锛宑X, cY as end point
+            // seconds bezier curve to smooth curve閿涙埠reviousX, previousY as working point閿涘畱X, cY as end point
             mPath.quadTo(previousX, previousY, cX, cY);
 
             // for next start, take the previous end point x\y coordinate as next start point x\y coordinate
@@ -272,7 +272,7 @@ public class ElectronicSignatureView extends View {
     }
 
     /**
-     * 淇濆瓨bitmap
+     * 娣囨繂鐡╞itmap
      *
      * @param clearBlank to clear blank
      * @param blank      board size
@@ -388,7 +388,7 @@ public class ElectronicSignatureView extends View {
     }
 
     /**
-     * Progressive scan clear boundary blank銆?     *
+     * Progressive scan clear boundary blank閵?     *
      * @param bp    the bitmap
      * @param blank How many pixels are left in the margin
      * @return formatted bitmap
@@ -453,7 +453,15 @@ public class ElectronicSignatureView extends View {
             size = 0.5f;
         }
         matrix.postScale(size, size);// get zoom size
-        Bitmap bitmap1 = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true); // 鏍规嵁缂╂斁姣斾緥鑾峰彇鏂扮殑浣嶅浘
+        Bitmap bitmap1 = Bitmap.createBitmap(
+                bitmap,
+                0,
+                0,
+                bitmap.getWidth(),
+                bitmap.getHeight(),
+                matrix,
+                true
+        ); // 閺嶈宓佺紓鈺傛杹濮ｆ柧绶ラ懢宄板絿閺傛壆娈戞担宥呮禈
 
         Bitmap newBitmap = Bitmap.createBitmap(rect.width(), rect.height(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(newBitmap);
@@ -486,5 +494,4 @@ public class ElectronicSignatureView extends View {
             this.sampleRate = sampleRate;
         }
     }
-
 }

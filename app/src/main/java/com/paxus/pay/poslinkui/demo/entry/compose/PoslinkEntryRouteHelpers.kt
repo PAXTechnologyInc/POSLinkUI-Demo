@@ -29,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import com.pax.us.pay.ui.constant.entry.EntryExtraData
 import com.paxus.pay.poslinkui.demo.R
@@ -135,7 +134,7 @@ internal fun shouldDisplayPoslinkTextBoxButtons(extras: Bundle): Boolean {
     return !isPoslinkTextBoxHardKeyEnabled(extras) || !hasPoslinkTextBoxPhysicalKeyboard(extras)
 }
 
-internal fun resolvePoslinkTextBoxHardKeyList(extras: Bundle): Set<String> {
+internal fun resolvePoslinkTextBoxHardKeyCodes(extras: Bundle): Set<String> {
     val raw = extras.get(EntryExtraData.PARAM_HARD_KEY_LIST)?.toString()
         ?: extras.get("hardKeyList")?.toString()
         ?: extras.get("PARAM_HARD_KEY_LIST")?.toString()
@@ -149,7 +148,7 @@ internal fun resolvePoslinkTextBoxHardKeyList(extras: Bundle): Set<String> {
 
 internal fun resolvePoslinkTextBoxHardKeyResponse(
     buttons: List<PoslinkTextBoxButtonSpec>,
-    hardKeyList: Set<String>,
+    enabledHardKeys: Set<String>,
     keyCode: Int
 ): String? {
     val keyName = when (keyCode) {
@@ -168,7 +167,7 @@ internal fun resolvePoslinkTextBoxHardKeyResponse(
         KeyEvent.KEYCODE_DEL -> "KEYCLEAR"
         else -> return null
     }
-    if (hardKeyList.isNotEmpty() && keyName !in hardKeyList) return null
+    if (enabledHardKeys.isNotEmpty() && keyName !in enabledHardKeys) return null
     return buttons.firstOrNull { it.key.equals(keyName, ignoreCase = true) }?.key?.ifBlank { keyName }
 }
 

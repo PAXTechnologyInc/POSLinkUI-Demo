@@ -47,7 +47,7 @@ import com.paxus.pay.poslinkui.demo.utils.ValuePatternUtils
 @Composable
 fun FsaAmountsEntryScreen(
     currency: String?,
-    fsaAmountOptions: Array<String>?,
+    fsaAmountOptions: List<String>?,
     onConfirm: (Bundle) -> Unit,
     onError: (String) -> Unit
 ) {

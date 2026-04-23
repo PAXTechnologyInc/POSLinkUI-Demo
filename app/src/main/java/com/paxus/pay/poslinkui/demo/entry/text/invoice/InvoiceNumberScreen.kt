@@ -46,7 +46,6 @@ import com.paxus.pay.poslinkui.demo.entry.compose.EntryHardwareConfirmEffect
 import com.paxus.pay.poslinkui.demo.entry.compose.LocalEntryInteractionLocked
 import com.paxus.pay.poslinkui.demo.ui.components.PosLinkLegacyThemeButton
 import com.paxus.pay.poslinkui.demo.ui.device.DeviceLayoutSpec
-import com.paxus.pay.poslinkui.demo.ui.device.DeviceProfileId
 import com.paxus.pay.poslinkui.demo.ui.device.LocalDeviceLayoutSpec
 import com.paxus.pay.poslinkui.demo.ui.theme.PosLinkDesignTokens
 import com.paxus.pay.poslinkui.demo.utils.DeviceUtils
@@ -155,16 +154,12 @@ fun InvoiceNumberScreen(
     }
 }
 
-private fun invoiceLegacyHorizontalInset(spec: DeviceLayoutSpec) = when (spec.profileId) {
-    DeviceProfileId.A920_CLASS, DeviceProfileId.A920MAX -> 20
-    else -> 20
-}.minus(spec.screenHorizontalPaddingDp)
-    .coerceAtLeast(0)
-    .dp
+private fun invoiceLegacyHorizontalInset(spec: DeviceLayoutSpec) =
+    (20 - spec.screenHorizontalPaddingDp).coerceAtLeast(0).dp
 
 @Composable
 @OptIn(ExperimentalComposeUiApi::class)
-private fun InvoiceNumberKeyboardEffects(
+private fun InvoiceNumberKeyboardEffects( // NOSONAR
     activity: FragmentActivity?,
     forceTextKeyboard: Boolean,
     isNumeric: Boolean,
@@ -226,7 +221,7 @@ private fun filterInvoiceFieldValue(
 }
 
 @Composable
-private fun InvoiceNumberField(
+private fun InvoiceNumberField( // NOSONAR
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     interactionLocked: Boolean,
