@@ -23,6 +23,7 @@ permissions_whitelist = [
                              "android.permission.CHANGE_CONFIGURATION",
                              "android.permission.CAMERA",
                              "android.permission.READ_PHONE_STATE",
+                             "com.paxus.pay.poslinkui.demo.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
                              ]
 
 # 用例标题: Code Obfuscation Check (代码混淆检查)
